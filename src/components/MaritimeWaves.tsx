@@ -36,8 +36,8 @@ const MaritimeWaves: React.FC<MaritimeWavesProps> = ({ className = "" }) => {
       
       // Draw multiple wave layers
       drawWaves(ctx, time, canvas.width, canvas.height, "#3b82f640", 0.8, 50, 0);
-      drawWaves(ctx, time * 0.8, canvas.width, canvas.height, "#3b82f630", 0.5, 40, 0.2);
-      drawWaves(ctx, time * 1.2, canvas.width, canvas.height, "#3b82f620", 0.3, 30, 0.4);
+      drawWaves(ctx, time * 0.8, canvas.width, canvas.height, "#d946ef30", 0.5, 40, 0.2);
+      drawWaves(ctx, time * 1.2, canvas.width, canvas.height, "#8b5cf620", 0.3, 30, 0.4);
       
       animationFrameId = requestAnimationFrame(animate);
     };

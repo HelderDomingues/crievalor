@@ -11,10 +11,13 @@ const Footer = () => {
       <div className="container mx-auto px-4 py-12 md:py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
           <div className="space-y-4">
-            <h3 className="text-xl font-bold text-foreground flex items-center">
-              <span className="text-primary mr-1">Crie</span>
-              <span>Valor</span>
-            </h3>
+            <Link to="/" className="flex items-center space-x-2">
+              <img 
+                src="/lovable-uploads/fc868084-d22b-4877-907b-fe02e64fc501.png" 
+                alt="Crie Valor Logo" 
+                className="h-10"
+              />
+            </Link>
             <p className="text-muted-foreground text-sm">
               Transformando negócios através da inteligência artificial e estratégia 
               de alto rendimento para empresas de todos os tamanhos.
@@ -123,8 +126,24 @@ const Footer = () => {
           </div>
         </div>
 
-        <div className="border-t border-border mt-10 pt-6 text-center">
-          <p className="text-muted-foreground text-sm">
+        {/* Legal Links */}
+        <div className="mt-10 pt-6 border-t border-border">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+            <Link to="/politica-de-privacidade" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+              Política de Privacidade
+            </Link>
+            <Link to="/politica-de-reembolso" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+              Política de Entrega e Reembolso
+            </Link>
+            <Link to="/termos-de-servico" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+              Termos de Serviço
+            </Link>
+            <Link to="#" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+              Acessibilidade
+            </Link>
+          </div>
+          
+          <p className="text-muted-foreground text-sm text-center">
             © {currentYear} Crie Valor. Todos os direitos reservados.
           </p>
         </div>

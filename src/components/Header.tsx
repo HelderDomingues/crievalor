@@ -60,10 +60,13 @@ const Header = () => {
           <div className="flex items-center">
             <Link
               to="/"
-              className="text-xl md:text-2xl font-bold text-foreground flex items-center"
+              className="flex items-center"
             >
-              <span className="text-primary mr-1">Crie</span>
-              <span>Valor</span>
+              <img 
+                src="/lovable-uploads/fc868084-d22b-4877-907b-fe02e64fc501.png" 
+                alt="Crie Valor Logo" 
+                className="h-8 mr-2"
+              />
             </Link>
           </div>
 

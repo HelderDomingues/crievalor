@@ -2,6 +2,7 @@
 import React, { useEffect, useRef } from "react";
 import { ArrowRight, Brain, Zap, BarChart3 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import MaritimeWaves from "./MaritimeWaves";
 
 interface HeroSectionProps {
   title: string;
@@ -193,6 +194,9 @@ const HeroSection = ({
         className="absolute inset-0 w-full h-full z-0"
       ></canvas>
       
+      {/* Maritime Waves animation */}
+      <MaritimeWaves className="z-10" />
+      
       {/* Background gradient */}
       <div className="absolute inset-0 hero-gradient opacity-90 z-10"></div>
       
@@ -213,6 +217,24 @@ const HeroSection = ({
       
       <div className="container mx-auto px-4 relative z-30">
         <div className="max-w-3xl mx-auto text-center">
+          {isMarHero ? (
+            <div className="mb-6 animate-fade-in">
+              <img 
+                src="/lovable-uploads/91e6888f-e3da-40dc-8c55-5718c15ada21.png" 
+                alt="MAR - Mapa para Alto Rendimento" 
+                className="h-24 mx-auto"
+              />
+            </div>
+          ) : (
+            <div className="mb-6 animate-fade-in">
+              <img 
+                src="/lovable-uploads/fc868084-d22b-4877-907b-fe02e64fc501.png" 
+                alt="Crie Valor Logo" 
+                className="h-16 mx-auto"
+              />
+            </div>
+          )}
+          
           <div className="bg-primary/10 text-primary rounded-full px-4 py-2 inline-block mb-4 animate-fade-in">
             {subtitle}
           </div>
