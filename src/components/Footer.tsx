@@ -1,0 +1,136 @@
+
+import React from "react";
+import { Link } from "react-router-dom";
+import { Mail, Phone, MapPin, Linkedin, Instagram, Twitter } from "lucide-react";
+
+const Footer = () => {
+  const currentYear = new Date().getFullYear();
+
+  return (
+    <footer className="bg-secondary/50 border-t border-border">
+      <div className="container mx-auto px-4 py-12 md:py-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
+          <div className="space-y-4">
+            <h3 className="text-xl font-bold text-foreground flex items-center">
+              <span className="text-primary mr-1">Crie</span>
+              <span>Valor</span>
+            </h3>
+            <p className="text-muted-foreground text-sm">
+              Transformando negócios através da inteligência artificial e estratégia 
+              de alto rendimento para empresas de todos os tamanhos.
+            </p>
+            <div className="flex space-x-4 pt-2">
+              <a 
+                href="https://linkedin.com" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-muted-foreground hover:text-primary transition-colors"
+                aria-label="LinkedIn"
+              >
+                <Linkedin size={20} />
+              </a>
+              <a 
+                href="https://instagram.com" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-muted-foreground hover:text-primary transition-colors"
+                aria-label="Instagram"
+              >
+                <Instagram size={20} />
+              </a>
+              <a 
+                href="https://twitter.com" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-muted-foreground hover:text-primary transition-colors"
+                aria-label="Twitter"
+              >
+                <Twitter size={20} />
+              </a>
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            <h4 className="text-base font-medium text-foreground">Navegação</h4>
+            <ul className="space-y-2">
+              <li>
+                <Link to="/" className="text-muted-foreground hover:text-primary transition-colors text-sm">
+                  Home
+                </Link>
+              </li>
+              <li>
+                <Link to="/mar" className="text-muted-foreground hover:text-primary transition-colors text-sm">
+                  MAR - Mapa para Alto Rendimento
+                </Link>
+              </li>
+              <li>
+                <Link to="/sobre" className="text-muted-foreground hover:text-primary transition-colors text-sm">
+                  Sobre Nós
+                </Link>
+              </li>
+              <li>
+                <Link to="/contato" className="text-muted-foreground hover:text-primary transition-colors text-sm">
+                  Contato
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          <div className="space-y-4">
+            <h4 className="text-base font-medium text-foreground">Produtos</h4>
+            <ul className="space-y-2">
+              <li>
+                <Link to="/mar" className="text-muted-foreground hover:text-primary transition-colors text-sm">
+                  MAR - Mapa para Alto Rendimento
+                </Link>
+              </li>
+              <li>
+                <Link to="/" className="text-muted-foreground hover:text-primary transition-colors text-sm">
+                  Consultoria Estratégica
+                </Link>
+              </li>
+              <li>
+                <Link to="/" className="text-muted-foreground hover:text-primary transition-colors text-sm">
+                  Treinamentos
+                </Link>
+              </li>
+              <li>
+                <Link to="/" className="text-muted-foreground hover:text-primary transition-colors text-sm">
+                  Workshops
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          <div className="space-y-4">
+            <h4 className="text-base font-medium text-foreground">Contato</h4>
+            <ul className="space-y-3">
+              <li className="flex items-start space-x-3">
+                <Mail size={18} className="text-primary mt-0.5" />
+                <span className="text-muted-foreground text-sm">contato@crievalor.com.br</span>
+              </li>
+              <li className="flex items-start space-x-3">
+                <Phone size={18} className="text-primary mt-0.5" />
+                <span className="text-muted-foreground text-sm">(XX) XXXX-XXXX</span>
+              </li>
+              <li className="flex items-start space-x-3">
+                <MapPin size={18} className="text-primary mt-0.5" />
+                <span className="text-muted-foreground text-sm">
+                  São Paulo, SP - Brasil
+                </span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div className="border-t border-border mt-10 pt-6 text-center">
+          <p className="text-muted-foreground text-sm">
+            © {currentYear} Crie Valor. Todos os direitos reservados.
+          </p>
+        </div>
+      </div>
+    </footer>
+  );
+};
+
+export default Footer;
