@@ -1,4 +1,3 @@
-
 import React from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -7,7 +6,22 @@ import MarExplanation from "@/components/MarExplanation";
 import TestimonialCarousel from "@/components/TestimonialCarousel";
 import PricingSection from "@/components/PricingSection";
 import ContactSection from "@/components/ContactSection";
-import { Brain, BarChart3, ChevronRight, Check, Clock, DollarSign, FileText, LineChart } from "lucide-react";
+import MaritimeWaves from "@/components/MaritimeWaves";
+import CompassAnimation from "@/components/CompassAnimation";
+import { motion } from "framer-motion";
+import { 
+  Brain, 
+  BarChart3, 
+  ChevronRight, 
+  Check, 
+  Clock, 
+  DollarSign, 
+  FileText, 
+  LineChart,
+  Anchor,
+  Compass,
+  Map
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const Mar = () => {
@@ -16,18 +30,142 @@ const Mar = () => {
       <Header />
       
       <main className="flex-grow">
-        <HeroSection
-          title="MAR - Mapa para Alto Rendimento"
-          subtitle="Solução Inovadora"
-          description="Uma abordagem revolucionária que combina IA e consultoria humana para criar estratégias de negócios excepcionais com velocidade e custo acessível."
-          ctaText="Solicitar uma demonstração"
-          ctaUrl="#contato"
-          secondaryCtaText="Ver preços"
-          secondaryCtaUrl="#precos"
-          isMarHero={true}
-        />
+        <section className="pt-16 md:pt-24 pb-16 md:pb-24 relative overflow-hidden">
+          <div className="absolute inset-0 overflow-hidden pointer-events-none">
+            <div className="absolute w-full h-full">
+              <video
+                autoPlay
+                muted
+                loop
+                playsInline
+                className="absolute w-full h-full object-cover opacity-20"
+              >
+                <source src="https://elements-video-cover-images-0.imgix.net/files/127898251/preview.mp4?auto=compress&crop=edges&fit=crop&fm=webm&h=630&w=1200&s=c02f382afdd899a14a67fa1c8d348947" type="video/mp4" />
+                Your browser does not support the video tag.
+              </video>
+            </div>
+            <MaritimeWaves className="opacity-30" />
+          </div>
+          
+          <div className="container mx-auto px-4 relative z-10">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+              <motion.div
+                initial={{ opacity: 0, x: -30 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.8 }}
+              >
+                <div className="inline-flex items-center bg-primary/10 text-primary px-4 py-2 rounded-full mb-6">
+                  <Anchor className="mr-2 h-4 w-4" />
+                  <span className="text-sm font-medium">Mapa para Alto Rendimento</span>
+                </div>
+                <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
+                  Navegue rumo ao <span className="text-primary">sucesso</span> com o MAR
+                </h1>
+                <p className="text-xl text-muted-foreground mb-8">
+                  Uma abordagem revolucionária que combina IA e consultoria humana para criar estratégias 
+                  de negócios excepcionais com velocidade e custo acessível.
+                </p>
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <Button size="lg" className="shadow-glow">
+                    <a href="#contato">Solicitar uma demonstração</a>
+                  </Button>
+                  <Button variant="outline" size="lg">
+                    <a href="#precos">Ver preços</a>
+                  </Button>
+                </div>
+                
+                <div className="grid grid-cols-3 gap-4 mt-12">
+                  <div className="bg-secondary/30 rounded-lg p-4 text-center">
+                    <div className="text-2xl font-bold text-primary mb-1">2-4</div>
+                    <div className="text-sm text-muted-foreground">Semanas para entrega</div>
+                  </div>
+                  <div className="bg-secondary/30 rounded-lg p-4 text-center">
+                    <div className="text-2xl font-bold text-primary mb-1">80%</div>
+                    <div className="text-sm text-muted-foreground">Economia de custos</div>
+                  </div>
+                  <div className="bg-secondary/30 rounded-lg p-4 text-center">
+                    <div className="text-2xl font-bold text-primary mb-1">100%</div>
+                    <div className="text-sm text-muted-foreground">Personalizado</div>
+                  </div>
+                </div>
+              </motion.div>
+              
+              <motion.div
+                initial={{ opacity: 0, x: 30 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.8, delay: 0.2 }}
+                className="relative"
+              >
+                <div className="relative">
+                  <div className="bg-card rounded-xl overflow-hidden shadow-xl border border-border p-6 glow-border">
+                    <div className="flex justify-between items-center mb-6">
+                      <div className="flex items-center">
+                        <Compass className="h-6 w-6 text-primary mr-3" />
+                        <div>
+                          <h3 className="font-bold">MAR</h3>
+                          <p className="text-sm text-muted-foreground">Seu mapa estratégico</p>
+                        </div>
+                      </div>
+                      <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
+                        <Anchor className="h-4 w-4 text-primary" />
+                      </div>
+                    </div>
+                    
+                    <div className="space-y-4">
+                      <div className="p-3 bg-secondary/30 rounded-lg flex items-start gap-3">
+                        <div className="bg-primary/10 p-2 rounded-full">
+                          <Brain className="h-5 w-5 text-primary" />
+                        </div>
+                        <div>
+                          <h4 className="font-medium text-sm">Análise Inteligente</h4>
+                          <p className="text-xs text-muted-foreground">IA + expertise humana</p>
+                        </div>
+                      </div>
+                      
+                      <div className="p-3 bg-secondary/30 rounded-lg flex items-start gap-3">
+                        <div className="bg-primary/10 p-2 rounded-full">
+                          <Map className="h-5 w-5 text-primary" />
+                        </div>
+                        <div>
+                          <h4 className="font-medium text-sm">Rota Estratégica</h4>
+                          <p className="text-xs text-muted-foreground">Plano de ação detalhado</p>
+                        </div>
+                      </div>
+                      
+                      <div className="p-3 bg-secondary/30 rounded-lg flex items-start gap-3">
+                        <div className="bg-primary/10 p-2 rounded-full">
+                          <BarChart3 className="h-5 w-5 text-primary" />
+                        </div>
+                        <div>
+                          <h4 className="font-medium text-sm">Métricas e KPIs</h4>
+                          <p className="text-xs text-muted-foreground">Acompanhamento de resultados</p>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="flex justify-center my-6">
+                      <CompassAnimation size={150} className="opacity-80" />
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="absolute -top-4 -right-4 w-20 h-20 bg-primary/10 rounded-full blur-xl"></div>
+                <div className="absolute -bottom-6 -left-6 w-32 h-32 bg-primary/10 rounded-full blur-xl"></div>
+              </motion.div>
+            </div>
+          </div>
+          
+          <div className="absolute bottom-0 left-0 w-full">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320" className="w-full h-auto">
+              <path 
+                fill="rgba(59,130,246,0.05)" 
+                fillOpacity="1" 
+                d="M0,192L48,176C96,160,192,128,288,128C384,128,480,160,576,160C672,160,768,128,864,112C960,96,1056,96,1152,112C1248,128,1344,160,1392,176L1440,192L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
+              ></path>
+            </svg>
+          </div>
+        </section>
         
-        {/* Introduction Section */}
         <section className="py-16 md:py-24 relative">
           <div className="absolute inset-0 overflow-hidden">
             <div className="blur-dot w-64 h-64 top-20 -right-32 opacity-10"></div>
@@ -160,7 +298,6 @@ const Mar = () => {
           </div>
         </section>
         
-        {/* Process Section */}
         <section className="py-16 md:py-24 bg-secondary/30 relative">
           <div className="container mx-auto px-4 relative z-10">
             <div className="max-w-3xl mx-auto text-center mb-16">
@@ -177,7 +314,6 @@ const Mar = () => {
           </div>
         </section>
         
-        {/* Compare Section */}
         <section className="py-16 md:py-24 relative">
           <div className="absolute inset-0 overflow-hidden">
             <div className="blur-dot w-64 h-64 top-1/3 -left-32 opacity-10"></div>
@@ -258,7 +394,6 @@ const Mar = () => {
           </div>
         </section>
         
-        {/* Results Section */}
         <section className="py-16 md:py-24 bg-secondary/30 relative">
           <div className="container mx-auto px-4 relative z-10">
             <div className="max-w-3xl mx-auto text-center mb-16">
@@ -307,12 +442,10 @@ const Mar = () => {
           </div>
         </section>
         
-        {/* Pricing Section */}
         <section id="precos">
           <PricingSection />
         </section>
         
-        {/* FAQ Section */}
         <section className="py-16 md:py-24 relative">
           <div className="absolute inset-0 overflow-hidden">
             <div className="blur-dot w-64 h-64 -bottom-32 -right-32 opacity-10"></div>
@@ -372,8 +505,9 @@ const Mar = () => {
           </div>
         </section>
         
-        {/* Contact Section */}
-        <ContactSection />
+        <section className="py-16 md:py-24 relative">
+          <ContactSection />
+        </section>
       </main>
       
       <Footer />

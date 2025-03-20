@@ -86,6 +86,58 @@
   .section-padding {
     @apply py-16 md:py-24;
   }
+  
+  /* Maritime theme elements */
+  .wave-divider {
+    position: relative;
+    height: 60px;
+    width: 100%;
+    overflow: hidden;
+  }
+  
+  .wave-divider::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 200%;
+    background-repeat: repeat-x;
+    background-position: center;
+    background-size: 50px 30px;
+    background-image: radial-gradient(ellipse at 50% 100%, rgba(59, 130, 246, 0.2) 50%, transparent 50%);
+    animation: wave-animation 10s linear infinite;
+  }
+  
+  .shadow-glow {
+    box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
+    transition: box-shadow 0.3s ease;
+  }
+  
+  .shadow-glow:hover {
+    box-shadow: 0 0 25px rgba(59, 130, 246, 0.7);
+  }
+  
+  .compass-rotate {
+    animation: compass-rotate 30s linear infinite;
+  }
+  
+  .water-ripple {
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .water-ripple::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at center, rgba(59, 130, 246, 0.2) 0%, transparent 70%);
+    transform: scale(0);
+    opacity: 0;
+    animation: ripple 3s infinite;
+  }
 }
 
 @layer utilities {
@@ -99,6 +151,68 @@
   
   .transition-all-cubic {
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .animate-pulse-subtle {
+    animation: pulse-subtle 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+  
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+}
+
+/* Keyframe Animations */
+@keyframes wave-animation {
+  0% {
+    transform: translateX(0) translateY(0);
+  }
+  100% {
+    transform: translateX(-50px) translateY(0);
+  }
+}
+
+@keyframes pulse-subtle {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.9;
+    transform: scale(1.03);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes compass-rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes ripple {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.5);
+    opacity: 0.3;
+  }
+  100% {
+    transform: scale(2);
+    opacity: 0;
   }
 }
 
