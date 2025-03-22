@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
@@ -50,7 +51,9 @@ const SubscriptionPage = () => {
 
     async function loadSubscription() {
       try {
+        console.log("Loading subscription data for user...");
         const sub = await subscriptionService.getCurrentSubscription();
+        console.log("Subscription loaded:", sub);
         setSubscription(sub);
       } catch (error) {
         console.error("Error loading subscription:", error);
@@ -88,6 +91,8 @@ const SubscriptionPage = () => {
       if (!url) {
         throw new Error("No checkout URL returned from Stripe");
       }
+      
+      console.log("Redirecting to Stripe checkout:", url);
       
       // Redirect to Stripe Checkout
       window.location.href = url;
@@ -155,6 +160,22 @@ const SubscriptionPage = () => {
     });
   };
 
+  // Find the plan name from the stored plan_id (which is actually a Stripe Price ID)
+  const getCurrentPlanName = () => {
+    if (!subscription?.plan_id) return "N/A";
+    
+    const plan = subscriptionService.getPlanFromPriceId(subscription.plan_id);
+    return plan ? plan.name : subscription.plan_id;
+  };
+
+  // Check if the current subscription matches a specific plan
+  const isPlanCurrent = (planId: string) => {
+    if (!subscription || !subscription.plan_id) return false;
+    
+    const plan = Object.values(PLANS).find(p => p.id === planId);
+    return plan?.stripe_price_id === subscription.plan_id;
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex flex-col">
@@ -202,7 +223,7 @@ const SubscriptionPage = () => {
                 <CardContent className="space-y-4">
                   <div>
                     <p className="text-sm font-medium">Plano:</p>
-                    <p>{subscription.plan_id}</p>
+                    <p>{getCurrentPlanName()}</p>
                   </div>
                   <div>
                     <p className="text-sm font-medium">Válida até:</p>
@@ -254,7 +275,7 @@ const SubscriptionPage = () => {
                     onClick={() => handleSubscribe(plan.id)}
                     disabled={
                       isCheckingOut || 
-                      (subscription?.status === "active" && subscription?.plan_id === plan.stripe_price_id)
+                      (subscription?.status === "active" && isPlanCurrent(plan.id))
                     }
                   >
                     {isCheckingOut ? (
@@ -262,7 +283,7 @@ const SubscriptionPage = () => {
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                         Processando...
                       </>
-                    ) : subscription?.status === "active" && subscription?.plan_id === plan.stripe_price_id ? (
+                    ) : isPlanCurrent(plan.id) ? (
                       "Plano Atual"
                     ) : (
                       "Assinar"

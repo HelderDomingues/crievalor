@@ -39,6 +39,13 @@ export const PLANS = {
   },
 };
 
+// Map plan IDs to Stripe price IDs for easy lookup
+const PLAN_TO_PRICE_ID_MAP = {
+  basic_plan: "price_1R5XpZP90koqLuyYBKb2OTOg",
+  pro_plan: "price_1R5Xq2P90koqLuyYgTcwJz7Y",
+  enterprise_plan: "price_1R5XqQP90koqLuyYmIG7S5sz",
+};
+
 export const subscriptionService = {
   async createCheckoutSession(planId: string, successUrl: string, cancelUrl: string) {
     // Find the plan with the matching ID
@@ -47,6 +54,8 @@ export const subscriptionService = {
     if (!plan) {
       throw new Error(`Plan with ID ${planId} not found`);
     }
+    
+    console.log(`Creating checkout for plan: ${planId}, with price ID: ${plan.stripe_price_id}`);
     
     // Use the stripe_price_id for the Stripe checkout
     const { data: sessionData, error } = await supabase.functions.invoke("stripe", {
@@ -69,11 +78,13 @@ export const subscriptionService = {
       throw new Error("No data returned from checkout session creation");
     }
 
+    console.log("Checkout session created successfully:", sessionData);
     return sessionData;
   },
 
   async getCurrentSubscription(): Promise<Subscription | null> {
     try {
+      console.log("Fetching current subscription...");
       const { data, error } = await supabase.functions.invoke("stripe", {
         body: {
           action: "get-subscription",
@@ -86,6 +97,7 @@ export const subscriptionService = {
         return null;
       }
 
+      console.log("Subscription data received:", data);
       return data.subscription;
     } catch (error) {
       console.error("Error in getCurrentSubscription:", error);
@@ -94,6 +106,7 @@ export const subscriptionService = {
   },
 
   async cancelSubscription(subscriptionId: string) {
+    console.log(`Attempting to cancel subscription: ${subscriptionId}`);
     const { data, error } = await supabase.functions.invoke("stripe", {
       body: {
         action: "cancel-subscription",
@@ -104,9 +117,11 @@ export const subscriptionService = {
     });
 
     if (error) {
+      console.error("Error canceling subscription:", error);
       throw new Error(`Error canceling subscription: ${error.message}`);
     }
 
+    console.log("Subscription canceled successfully:", data);
     return data;
   },
 
@@ -114,10 +129,17 @@ export const subscriptionService = {
   async hasActiveSubscription(): Promise<boolean> {
     try {
       const subscription = await this.getCurrentSubscription();
-      return subscription !== null && ["active", "trialing"].includes(subscription.status);
+      const isActive = subscription !== null && ["active", "trialing"].includes(subscription.status);
+      console.log(`Active subscription check: ${isActive}`);
+      return isActive;
     } catch (error) {
       console.error("Error checking subscription status:", error);
       return false;
     }
   },
+  
+  // Helper function to get plan information from Stripe price ID
+  getPlanFromPriceId(priceId: string) {
+    return Object.values(PLANS).find(plan => plan.stripe_price_id === priceId);
+  }
 };

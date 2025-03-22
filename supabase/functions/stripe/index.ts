@@ -30,6 +30,8 @@ serve(async (req) => {
       });
     }
     
+    console.log("Stripe key available, initializing Stripe client");
+    
     const stripe = new Stripe(stripeSecretKey, {
       apiVersion: "2023-10-16",
     });
@@ -40,6 +42,8 @@ serve(async (req) => {
       const body = await req.json();
       action = body.action;
       data = body.data;
+      
+      console.log(`Processing action: ${action}`);
       
       if (!action) {
         throw new Error("Missing action parameter");
@@ -73,6 +77,7 @@ serve(async (req) => {
       });
     }
 
+    console.log(`Authenticated user: ${user.id}`);
     let result;
     
     switch (action) {
@@ -104,6 +109,7 @@ serve(async (req) => {
         if (!customerId) {
           // Create a new customer
           try {
+            console.log("Creating new Stripe customer");
             const customer = await stripe.customers.create({
               email: user.email,
               metadata: {
@@ -119,10 +125,13 @@ serve(async (req) => {
               headers: { ...corsHeaders, "Content-Type": "application/json" },
             });
           }
+        } else {
+          console.log(`Using existing customer: ${customerId}`);
         }
         
         // Create checkout session
         try {
+          console.log("Creating Stripe checkout session");
           const session = await stripe.checkout.sessions.create({
             customer: customerId,
             line_items: [
@@ -151,6 +160,7 @@ serve(async (req) => {
         break;
         
       case "get-subscription":
+        console.log(`Fetching subscription for user: ${user.id}`);
         const { data: userSubscription, error: fetchError } = await supabase
           .from("subscriptions")
           .select("*")
@@ -165,6 +175,7 @@ serve(async (req) => {
           });
         }
         
+        console.log("Subscription data:", userSubscription);
         result = { subscription: userSubscription };
         break;
         
@@ -177,6 +188,8 @@ serve(async (req) => {
             headers: { ...corsHeaders, "Content-Type": "application/json" },
           });
         }
+        
+        console.log(`Verifying subscription: ${subscriptionId} for user: ${user.id}`);
         
         // Verify the subscription belongs to the user
         const { data: subData, error: verifyError } = await supabase
@@ -203,9 +216,11 @@ serve(async (req) => {
         
         // Cancel the subscription in Stripe
         try {
+          console.log(`Canceling Stripe subscription: ${subscriptionId}`);
           await stripe.subscriptions.cancel(subscriptionId);
           
           // Update the subscription status in the database
+          console.log("Updating subscription status in database");
           await supabase
             .from("subscriptions")
             .update({ status: "canceled" })
