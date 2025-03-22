@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Link } from "react-router-dom";
 import { Mail, Phone, MapPin, Linkedin, Instagram, Twitter } from "lucide-react";
@@ -114,19 +113,19 @@ const Footer = () => {
               </li>
               <li className="flex items-start space-x-3">
                 <Phone size={18} className="text-primary mt-0.5" />
-                <span className="text-muted-foreground text-sm">(XX) XXXX-XXXX</span>
+                <span className="text-muted-foreground text-sm">67 99654-2991 (MS)<br/>47 99215-0289 (SC)</span>
               </li>
               <li className="flex items-start space-x-3">
                 <MapPin size={18} className="text-primary mt-0.5" />
-                <span className="text-muted-foreground text-sm">
-                  São Paulo, SP - Brasil
-                </span>
+                <div className="text-muted-foreground text-sm">
+                  <div>MS: Campo Grande</div>
+                  <div>SC: Navegantes</div>
+                </div>
               </li>
             </ul>
           </div>
         </div>
 
-        {/* Legal Links */}
         <div className="mt-10 pt-6 border-t border-border">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
             <Link to="/politica-de-privacidade" className="text-sm text-muted-foreground hover:text-primary transition-colors">
