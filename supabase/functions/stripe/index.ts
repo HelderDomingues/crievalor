@@ -8,6 +8,13 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+// Test pricing configuration - use these instead of hardcoded price IDs
+const TEST_PRICE_IDS = {
+  price_basic: "price_1PGkXX2eZvKYlo2CNH9w1r3L",     // Replace with actual test price IDs
+  price_pro: "price_1PGkXs2eZvKYlo2CUvCGXsFe",       // Replace with actual test price IDs
+  price_enterprise: "price_1PGkYB2eZvKYlo2CZrwzM75I", // Replace with actual test price IDs
+};
+
 serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === "OPTIONS") {
@@ -54,6 +61,11 @@ serve(async (req) => {
       case "create-checkout-session":
         const { priceId, successUrl, cancelUrl } = data;
         
+        // Map the price ID to a test price ID if needed
+        const actualPriceId = TEST_PRICE_IDS[priceId] || priceId;
+        
+        console.log(`Creating checkout session for price ID: ${priceId} (mapped to: ${actualPriceId})`);
+        
         // Get or create Stripe customer for the user
         const { data: subscriptions, error: subError } = await supabase
           .from("subscriptions")
@@ -79,7 +91,7 @@ serve(async (req) => {
           customer: customerId,
           line_items: [
             {
-              price: priceId,
+              price: actualPriceId,
               quantity: 1,
             },
           ],
@@ -143,6 +155,7 @@ serve(async (req) => {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (error) {
+    console.error("Error in stripe function:", error);
     return new Response(JSON.stringify({ error: error.message }), {
       status: 400,
       headers: { ...corsHeaders, "Content-Type": "application/json" },

@@ -11,6 +11,7 @@ import { Separator } from "@/components/ui/separator";
 import { CheckCircle, AlertCircle, Loader2 } from "lucide-react";
 import { subscriptionService, PLANS, Subscription } from "@/services/subscriptionService";
 import { useToast } from "@/hooks/use-toast";
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 
 const SubscriptionPage = () => {
   const navigate = useNavigate();
@@ -20,6 +21,7 @@ const SubscriptionPage = () => {
   const [loading, setLoading] = useState(true);
   const [isCheckingOut, setIsCheckingOut] = useState(false);
   const [isCanceling, setIsCanceling] = useState(false);
+  const [checkoutError, setCheckoutError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!user) {
@@ -46,16 +48,18 @@ const SubscriptionPage = () => {
     loadSubscription();
   }, [user, navigate, toast]);
 
-  const handleSubscribe = async (priceId: string) => {
+  const handleSubscribe = async (planId: string) => {
     if (!user) {
       navigate("/auth");
       return;
     }
 
     setIsCheckingOut(true);
+    setCheckoutError(null);
+    
     try {
       const { url } = await subscriptionService.createCheckoutSession(
-        priceId,
+        planId,
         `${window.location.origin}/subscription?success=true`,
         `${window.location.origin}/subscription?canceled=true`
       );
@@ -64,6 +68,7 @@ const SubscriptionPage = () => {
       window.location.href = url;
     } catch (error) {
       console.error("Error creating checkout session:", error);
+      setCheckoutError("Não foi possível iniciar o processo de assinatura.");
       toast({
         title: "Erro ao iniciar checkout",
         description: "Não foi possível iniciar o processo de assinatura.",
@@ -144,6 +149,16 @@ const SubscriptionPage = () => {
       <main className="flex-grow py-16">
         <div className="container mx-auto px-4">
           <h1 className="text-3xl font-bold mb-8">Planos e Assinaturas</h1>
+          
+          {checkoutError && (
+            <Alert variant="destructive" className="mb-6">
+              <AlertCircle className="h-4 w-4" />
+              <AlertTitle>Erro ao iniciar checkout</AlertTitle>
+              <AlertDescription>
+                {checkoutError}
+              </AlertDescription>
+            </Alert>
+          )}
           
           {subscription && ["active", "trialing"].includes(subscription.status) && (
             <div className="mb-12">

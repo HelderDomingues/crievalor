@@ -17,32 +17,43 @@ export interface Subscription {
 // Pricing plans
 export const PLANS = {
   BASIC: {
-    id: "price_basic",
+    id: "basic_plan", // Changed from "price_basic" to a generic ID
     name: "Plano Básico",
     price: "R$ 89,90",
     features: ["Consultoria inicial", "Acesso ao material básico", "Suporte por email"],
+    stripe_price_id: "price_basic", // Added separate property for the Stripe price ID
   },
   PRO: {
-    id: "price_pro",
+    id: "pro_plan", // Changed from "price_pro" to a generic ID
     name: "Plano Profissional",
     price: "R$ 299,90",
     features: ["Tudo do Plano Básico", "Mentoria mensal", "Acesso à comunidade", "Suporte prioritário"],
+    stripe_price_id: "price_pro", // Added separate property for the Stripe price ID
   },
   ENTERPRISE: {
-    id: "price_enterprise",
+    id: "enterprise_plan", // Changed from "price_enterprise" to a generic ID
     name: "Plano Empresarial",
     price: "R$ 799,90",
     features: ["Tudo do Plano Profissional", "Consultoria personalizada", "Mentoria semanal", "Acesso a conteúdo exclusivo"],
+    stripe_price_id: "price_enterprise", // Added separate property for the Stripe price ID
   },
 };
 
 export const subscriptionService = {
   async createCheckoutSession(priceId: string, successUrl: string, cancelUrl: string) {
+    // Find the plan with the matching ID
+    const plan = Object.values(PLANS).find(plan => plan.id === priceId);
+    
+    if (!plan) {
+      throw new Error(`Plan with ID ${priceId} not found`);
+    }
+    
+    // Use the stripe_price_id for the Stripe checkout
     const { data: sessionData, error } = await supabase.functions.invoke("stripe", {
       body: {
         action: "create-checkout-session",
         data: {
-          priceId,
+          priceId: plan.stripe_price_id,
           successUrl,
           cancelUrl,
         },
