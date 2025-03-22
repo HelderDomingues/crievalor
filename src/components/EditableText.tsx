@@ -23,25 +23,12 @@ const EditableText: React.FC<EditableTextProps> = ({
   }, [initialText]);
 
   useEffect(() => {
-    // Focus the editable element and place cursor at the end when entering edit mode
+    // Only focus the element when entering edit mode
     if (isEditing && textRef.current) {
       textRef.current.focus();
-      
-      // Place cursor at the end of the text
-      const range = document.createRange();
-      const selection = window.getSelection();
-      
-      if (textRef.current.childNodes.length > 0) {
-        range.setStart(textRef.current.childNodes[0], text.length);
-        range.collapse(true);
-        
-        if (selection) {
-          selection.removeAllRanges();
-          selection.addRange(range);
-        }
-      }
+      // Don't manipulate the cursor position - let the browser handle it naturally
     }
-  }, [isEditing, text]);
+  }, [isEditing]);
 
   const handleDoubleClick = () => {
     setIsEditing(true);
@@ -67,6 +54,11 @@ const EditableText: React.FC<EditableTextProps> = ({
     }
   };
 
+  const handleInput = (e: React.FormEvent<HTMLDivElement>) => {
+    // Update text state without manipulating cursor
+    setText((e.target as HTMLDivElement).innerText);
+  };
+
   // Render the appropriate tag based on the 'as' prop
   const renderContent = () => {
     const commonProps = {
@@ -82,8 +74,7 @@ const EditableText: React.FC<EditableTextProps> = ({
       suppressContentEditableWarning: true,
       onBlur: handleBlur,
       onKeyDown: handleKeyDown,
-      onInput: (e: React.FormEvent<HTMLDivElement>) => 
-        setText((e.target as HTMLDivElement).innerText),
+      onInput: handleInput,
       dangerouslySetInnerHTML: { __html: text }
     };
     
