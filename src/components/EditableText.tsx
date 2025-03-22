@@ -49,36 +49,39 @@ const EditableText: React.FC<EditableTextProps> = ({
     }
   };
 
-  // Renderiza o elemento com base na prop 'as'
-  const Element = as as keyof JSX.IntrinsicElements;
+  // Renderiza baseado no tipo do elemento
+  const renderElement = () => {
+    if (isEditing) {
+      return React.createElement(
+        as,
+        {
+          ref: elementRef,
+          className: `${className} outline-none border-b-2 border-primary focus:border-primary cursor-text`,
+          contentEditable: true,
+          suppressContentEditableWarning: true,
+          onBlur: handleBlur,
+          onKeyDown: handleKeyDown,
+          onInput: (e: React.FormEvent<HTMLElement>) => {
+            const target = e.target as HTMLElement;
+            setText(target.textContent || "");
+          },
+          dangerouslySetInnerHTML: { __html: text }
+        }
+      );
+    }
 
-  if (isEditing) {
-    return (
-      <Element
-        ref={elementRef as any}
-        className={`${className} outline-none border-b-2 border-primary focus:border-primary cursor-text`}
-        contentEditable
-        suppressContentEditableWarning
-        onBlur={handleBlur}
-        onKeyDown={handleKeyDown}
-        onInput={(e) => {
-          const target = e.target as HTMLElement;
-          setText(target.textContent || "");
-        }}
-        dangerouslySetInnerHTML={{ __html: text }}
-      />
+    return React.createElement(
+      as,
+      {
+        ref: elementRef,
+        className: `${className} hover:ring-2 hover:ring-primary/20 hover:ring-offset-2 cursor-pointer transition-all duration-200`,
+        onDoubleClick: handleDoubleClick,
+      },
+      text
     );
-  }
+  };
 
-  return (
-    <Element
-      ref={elementRef as any}
-      className={`${className} hover:ring-2 hover:ring-primary/20 hover:ring-offset-2 cursor-pointer transition-all duration-200`}
-      onDoubleClick={handleDoubleClick}
-    >
-      {text}
-    </Element>
-  );
+  return renderElement();
 };
 
 export default EditableText;
