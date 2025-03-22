@@ -208,7 +208,7 @@ const HeroSection = ({
           
           <h1 style={{
           animationDelay: "0.2s"
-        }} className="sm:text-5xl font-bold mb-6 animate-fade-in md:text-5xl text-3xl">
+        }} className="sm:text-5xl font-bold mb-6 animate-fade-in text-3xl md:text-5xl">
             {title}
           </h1>
           
