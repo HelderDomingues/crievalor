@@ -26,13 +26,16 @@ const EditableText: React.FC<EditableTextProps> = ({
     if (isEditing && inputRef.current) {
       inputRef.current.focus();
       
-      // Set cursor at the end of text
-      const range = document.createRange();
+      // Set selection range to the end of the content
       const selection = window.getSelection();
+      const range = document.createRange();
+      
       if (inputRef.current.childNodes.length > 0) {
-        const lastNode = inputRef.current.childNodes[0];
-        range.setStart(lastNode, lastNode.textContent?.length || 0);
-        range.collapse(true);
+        const lastChild = inputRef.current.childNodes[0];
+        const length = lastChild.textContent?.length || 0;
+        
+        range.setStart(lastChild, length);
+        range.setEnd(lastChild, length);
         selection?.removeAllRanges();
         selection?.addRange(range);
       }
@@ -64,6 +67,7 @@ const EditableText: React.FC<EditableTextProps> = ({
     }
   };
   
+  // Using a separate function to maintain cursor position
   const handleInput = (e: React.FormEvent<HTMLDivElement>) => {
     const newText = e.currentTarget.textContent || "";
     setText(newText);
@@ -81,9 +85,8 @@ const EditableText: React.FC<EditableTextProps> = ({
         onBlur={handleBlur}
         onKeyDown={handleKeyDown}
         onInput={handleInput}
-      >
-        {text}
-      </div>
+        dangerouslySetInnerHTML={{ __html: text }}
+      />
     );
   }
 
