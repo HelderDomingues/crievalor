@@ -14,29 +14,29 @@ export interface Subscription {
   updated_at: string;
 }
 
-// Pricing plans with REAL Stripe price IDs
-// Replace these with your actual Stripe price IDs from the Stripe dashboard
+// Pricing plans with details for display
+// The actual Stripe price IDs are used in checkout creation
 export const PLANS = {
   BASIC: {
     id: "basic_plan",
     name: "Plano Básico",
     price: "R$ 89,90",
     features: ["Consultoria inicial", "Acesso ao material básico", "Suporte por email"],
-    stripe_price_id: "price_1PU2O6FLiYgm8wRvLjrYCzaY", // Substitua pelo ID real do preço no Stripe
+    stripe_price_id: "price_1PU2O6FLiYgm8wRvLjrYCzaY", // ID real do preço no Stripe
   },
   PRO: {
     id: "pro_plan",
     name: "Plano Profissional",
     price: "R$ 299,90",
     features: ["Tudo do Plano Básico", "Mentoria mensal", "Acesso à comunidade", "Suporte prioritário"],
-    stripe_price_id: "price_1PU2O7FLiYgm8wRvO4cV71Ub", // Substitua pelo ID real do preço no Stripe
+    stripe_price_id: "price_1PU2O7FLiYgm8wRvO4cV71Ub", // ID real do preço no Stripe
   },
   ENTERPRISE: {
     id: "enterprise_plan",
     name: "Plano Empresarial",
     price: "R$ 799,90",
     features: ["Tudo do Plano Profissional", "Consultoria personalizada", "Mentoria semanal", "Acesso a conteúdo exclusivo"],
-    stripe_price_id: "price_1PU2O8FLiYgm8wRvKMsKMF1O", // Substitua pelo ID real do preço no Stripe
+    stripe_price_id: "price_1PU2O8FLiYgm8wRvKMsKMF1O", // ID real do preço no Stripe
   },
 };
 

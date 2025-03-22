@@ -1,3 +1,4 @@
+
 import { serve } from "https://deno.land/std@0.208.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.38.4";
 import Stripe from 'https://esm.sh/stripe@12.18.0';
@@ -101,8 +102,9 @@ serve(async (req) => {
           console.log(`Using existing Stripe customer: ${customerId}`);
         }
         
-        // Create checkout session with actual Stripe price ID
-        console.log(`Creating checkout session with direct price ID: ${priceId}`);
+        // Create checkout session with the provided Stripe price ID directly
+        // No need to map from internal IDs to Stripe IDs anymore
+        console.log(`Creating checkout session with price ID: ${priceId}`);
         const session = await stripe.checkout.sessions.create({
           customer: customerId,
           line_items: [
@@ -116,7 +118,7 @@ serve(async (req) => {
           cancel_url: cancelUrl,
           metadata: {
             user_id: user.id,
-            plan_id: planId || priceId  // Store our internal plan ID if provided
+            plan_id: planId // Store our internal plan ID
           },
         });
         
