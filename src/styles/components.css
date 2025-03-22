@@ -1,0 +1,26 @@
+
+@layer components {
+  .glass-card {
+    @apply bg-opacity-20 backdrop-blur-lg border border-white/10 shadow-lg;
+  }
+
+  .glow-border {
+    @apply border border-primary/30 shadow-[0_0_15px_rgba(59,130,246,0.5)];
+  }
+
+  .link-underline {
+    @apply relative after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-0 after:bg-primary after:transition-all after:duration-300 hover:after:w-full;
+  }
+  
+  .hero-gradient {
+    background: linear-gradient(135deg, rgba(20, 30, 48, 0.95) 0%, rgba(36, 59, 85, 0.95) 100%);
+  }
+  
+  .blur-dot {
+    @apply absolute rounded-full bg-primary/30 blur-lg;
+  }
+
+  .section-padding {
+    @apply py-16 md:py-24;
+  }
+}
