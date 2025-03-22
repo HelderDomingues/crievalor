@@ -60,6 +60,7 @@ const Index = () => {
           ctaUrl="/mar"
           secondaryCtaText="Fale Conosco"
           secondaryCtaUrl="#contato"
+          backgroundVideo="home"
         />
         
         {/* Features Section */}

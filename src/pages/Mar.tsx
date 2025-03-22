@@ -8,6 +8,7 @@ import PricingSection from "@/components/PricingSection";
 import ContactSection from "@/components/ContactSection";
 import MaritimeWaves from "@/components/MaritimeWaves";
 import CompassAnimation from "@/components/CompassAnimation";
+import VideoSection from "@/components/VideoSection";
 import { motion } from "framer-motion";
 import { 
   Brain, 
@@ -165,6 +166,11 @@ const Mar = () => {
             </svg>
           </div>
         </section>
+        
+        <VideoSection 
+          title="Descubra o MAR em Detalhes"
+          description="Assista nossa apresentação completa sobre como o MAR pode transformar sua estratégia de negócios."
+        />
         
         <section className="py-16 md:py-24 relative">
           <div className="absolute inset-0 overflow-hidden">

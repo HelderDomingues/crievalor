@@ -1,4 +1,3 @@
-
 import React from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -7,6 +6,13 @@ import ContactSection from "@/components/ContactSection";
 import { Users, Award, BarChart, Target } from "lucide-react";
 
 const Mentorias = () => {
+  // Example hero images - replace with your actual images
+  const heroImages = [
+    "https://images.unsplash.com/photo-1519389950473-47ba0277781c?q=80&w=2070",
+    "https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=2070",
+    "https://images.unsplash.com/photo-1507537297725-24a1c029d3ca?q=80&w=2070"
+  ];
+
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
@@ -20,6 +26,7 @@ const Mentorias = () => {
           ctaUrl="#contato"
           secondaryCtaText="Conheça o Método"
           secondaryCtaUrl="#metodo"
+          backgroundImages={heroImages}
         />
         
         {/* Approach Section */}
