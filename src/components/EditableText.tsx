@@ -72,7 +72,7 @@ const EditableText: React.FC<EditableTextProps> = ({
         onChange={handleChange}
         onBlur={handleBlur}
         onKeyDown={handleKeyDown}
-        className={`${className} outline-none border-b-2 border-primary focus:border-primary cursor-text w-full resize-none overflow-hidden`}
+        className={`${className} outline-none border-b-2 border-primary focus:border-primary cursor-text w-full resize-none overflow-hidden bg-background text-foreground`}
         style={{ 
           height: 'auto',
           minHeight: '1.5em'
