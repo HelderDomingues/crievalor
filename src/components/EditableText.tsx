@@ -16,18 +16,11 @@ const EditableText: React.FC<EditableTextProps> = ({
 }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [text, setText] = useState(initialText);
-  const textRef = useRef<HTMLDivElement>(null);
+  const textRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     setText(initialText);
   }, [initialText]);
-
-  useEffect(() => {
-    // Only focus the element when entering edit mode
-    if (isEditing && textRef.current) {
-      textRef.current.focus();
-    }
-  }, [isEditing]);
 
   const handleDoubleClick = () => {
     setIsEditing(true);
@@ -53,73 +46,65 @@ const EditableText: React.FC<EditableTextProps> = ({
     }
   };
 
-  // We're not going to use dangerouslySetInnerHTML anymore
-  // as it can cause cursor positioning issues
-  const renderContent = () => {
-    const commonProps = {
-      className: isEditing 
-        ? `${className} outline-none border-b-2 border-primary focus:border-primary cursor-text` 
-        : `${className} hover:ring-2 hover:ring-primary/20 hover:ring-offset-2 cursor-pointer transition-all duration-200`
-    };
-    
-    // For editable mode, don't use dangerouslySetInnerHTML
-    const editableProps = {
-      ...commonProps,
+  // Create element based on 'as' prop
+  const createElementWithRef = (
+    tag: string,
+    props: React.HTMLAttributes<HTMLElement>
+  ) => {
+    return React.createElement(tag, {
+      ...props,
       ref: textRef,
+    });
+  };
+
+  // Render appropriate element
+  const renderEditableElement = () => {
+    const baseClassName = isEditing
+      ? `${className} outline-none border-b-2 border-primary focus:border-primary cursor-text`
+      : `${className} hover:ring-2 hover:ring-primary/20 hover:ring-offset-2 cursor-pointer transition-all duration-200`;
+
+    // Common props for both states
+    const commonProps = {
+      className: baseClassName,
+    };
+
+    // Props specific to editing state
+    const editingProps = {
+      ...commonProps,
       contentEditable: true,
       suppressContentEditableWarning: true,
       onBlur: handleBlur,
       onKeyDown: handleKeyDown,
-      // We'll let the browser handle cursor positioning naturally
+      onInput: (e: React.FormEvent<HTMLElement>) => {
+        const element = e.target as HTMLElement;
+        setText(element.textContent || "");
+      },
     };
-    
+
+    // Props specific to display state
     const displayProps = {
       ...commonProps,
       onDoubleClick: handleDoubleClick,
     };
-    
-    // Use children instead of dangerouslySetInnerHTML
-    const renderElement = (props: any) => {
-      const finalProps = isEditing ? editableProps : displayProps;
-      
-      switch (as) {
-        case "h1": return <h1 {...finalProps}>{text}</h1>;
-        case "h2": return <h2 {...finalProps}>{text}</h2>;
-        case "h3": return <h3 {...finalProps}>{text}</h3>;
-        case "h4": return <h4 {...finalProps}>{text}</h4>;
-        case "h5": return <h5 {...finalProps}>{text}</h5>;
-        case "h6": return <h6 {...finalProps}>{text}</h6>;
-        case "span": return <span {...finalProps}>{text}</span>;
-        case "p":
-        default: return <p {...finalProps}>{text}</p>;
-      }
-    };
-    
-    return renderElement({});
+
+    // Choose props based on editing state
+    const props = isEditing ? editingProps : displayProps;
+
+    // Create the appropriate element
+    switch (as) {
+      case "h1": return createElementWithRef("h1", { ...props, children: text });
+      case "h2": return createElementWithRef("h2", { ...props, children: text });
+      case "h3": return createElementWithRef("h3", { ...props, children: text });
+      case "h4": return createElementWithRef("h4", { ...props, children: text });
+      case "h5": return createElementWithRef("h5", { ...props, children: text });
+      case "h6": return createElementWithRef("h6", { ...props, children: text });
+      case "span": return createElementWithRef("span", { ...props, children: text });
+      case "p":
+      default: return createElementWithRef("p", { ...props, children: text });
+    }
   };
 
-  // Add an event listener to update the text state when the content changes
-  useEffect(() => {
-    const currentRef = textRef.current;
-    
-    const handleInput = () => {
-      if (currentRef) {
-        setText(currentRef.textContent || "");
-      }
-    };
-    
-    if (isEditing && currentRef) {
-      currentRef.addEventListener("input", handleInput);
-    }
-    
-    return () => {
-      if (currentRef) {
-        currentRef.removeEventListener("input", handleInput);
-      }
-    };
-  }, [isEditing]);
-
-  return renderContent();
+  return renderEditableElement();
 };
 
 export default EditableText;
