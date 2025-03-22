@@ -16,7 +16,7 @@ const EditableText: React.FC<EditableTextProps> = ({
 }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [text, setText] = useState(initialText);
-  const inputRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
     setText(initialText);
@@ -25,20 +25,9 @@ const EditableText: React.FC<EditableTextProps> = ({
   useEffect(() => {
     if (isEditing && inputRef.current) {
       inputRef.current.focus();
-      
-      // Set selection range to the end of the content
-      const selection = window.getSelection();
-      const range = document.createRange();
-      
-      if (inputRef.current.childNodes.length > 0) {
-        const lastChild = inputRef.current.childNodes[0];
-        const length = lastChild.textContent?.length || 0;
-        
-        range.setStart(lastChild, length);
-        range.setEnd(lastChild, length);
-        selection?.removeAllRanges();
-        selection?.addRange(range);
-      }
+      // Set cursor at the end
+      inputRef.current.selectionStart = inputRef.current.value.length;
+      inputRef.current.selectionEnd = inputRef.current.value.length;
     }
   }, [isEditing]);
 
@@ -50,8 +39,8 @@ const EditableText: React.FC<EditableTextProps> = ({
     finishEditing();
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter") {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       finishEditing();
     } else if (e.key === "Escape") {
@@ -60,32 +49,34 @@ const EditableText: React.FC<EditableTextProps> = ({
     }
   };
 
+  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setText(e.target.value);
+  };
+
   const finishEditing = () => {
     setIsEditing(false);
     if (onSave && text !== initialText) {
       onSave(text);
     }
   };
-  
-  // Using a separate function to maintain cursor position
-  const handleInput = (e: React.FormEvent<HTMLDivElement>) => {
-    const newText = e.currentTarget.textContent || "";
-    setText(newText);
-  };
 
+  // Use React.createElement for dynamic component rendering
   const Component = as;
 
   if (isEditing) {
+    // Use textarea instead of contentEditable div for better cursor control
     return (
-      <div
+      <textarea
         ref={inputRef}
-        className={`${className} outline-none border-b-2 border-primary focus:border-primary cursor-text`}
-        contentEditable
-        suppressContentEditableWarning
+        value={text}
+        onChange={handleChange}
         onBlur={handleBlur}
         onKeyDown={handleKeyDown}
-        onInput={handleInput}
-        dangerouslySetInnerHTML={{ __html: text }}
+        className={`${className} outline-none border-b-2 border-primary focus:border-primary cursor-text w-full resize-none overflow-hidden`}
+        style={{ 
+          height: 'auto',
+          minHeight: '1.5em'
+        }}
       />
     );
   }
