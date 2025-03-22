@@ -13,6 +13,11 @@ import Chatbot from "./components/Chatbot";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import RefundPolicy from "./pages/RefundPolicy";
 import TermsOfService from "./pages/TermsOfService";
+import Mentorias from "./pages/Mentorias";
+import Consultoria from "./pages/Consultoria";
+import EscolaGestao from "./pages/EscolaGestao";
+import IdentidadeVisual from "./pages/IdentidadeVisual";
+import Projetos from "./pages/Projetos";
 
 const queryClient = new QueryClient();
 
@@ -27,6 +32,11 @@ const App = () => (
           <Route path="/mar" element={<Mar />} />
           <Route path="/sobre" element={<Sobre />} />
           <Route path="/contato" element={<Contato />} />
+          <Route path="/mentorias" element={<Mentorias />} />
+          <Route path="/consultoria" element={<Consultoria />} />
+          <Route path="/escola-de-gestao" element={<EscolaGestao />} />
+          <Route path="/identidade-visual" element={<IdentidadeVisual />} />
+          <Route path="/projetos" element={<Projetos />} />
           <Route path="/politica-de-privacidade" element={<PrivacyPolicy />} />
           <Route path="/politica-de-reembolso" element={<RefundPolicy />} />
           <Route path="/termos-de-servico" element={<TermsOfService />} />

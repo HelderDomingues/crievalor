@@ -7,6 +7,8 @@ import FeatureCard from "@/components/FeatureCard";
 import TestimonialCarousel from "@/components/TestimonialCarousel";
 import PricingSection from "@/components/PricingSection";
 import ContactSection from "@/components/ContactSection";
+import ServicesSection from "@/components/ServicesSection";
+import ClientLogosCarousel from "@/components/ClientLogosCarousel";
 import { Link } from "react-router-dom";
 import { Brain, Target, Zap, Lightbulb, TrendingUp, Users, ArrowRight, Anchor, Map, BarChart3 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -238,6 +240,12 @@ const Index = () => {
             </div>
           </div>
         </section>
+        
+        {/* Services Section (New) */}
+        <ServicesSection />
+        
+        {/* Client Logos Section (New) */}
+        <ClientLogosCarousel />
         
         {/* Testimonials Section */}
         <section className="py-16 md:py-24 bg-secondary/30">
