@@ -26,7 +26,6 @@ const EditableText: React.FC<EditableTextProps> = ({
     // Only focus the element when entering edit mode
     if (isEditing && textRef.current) {
       textRef.current.focus();
-      // Don't manipulate the cursor position - let the browser handle it naturally
     }
   }, [isEditing]);
 
@@ -54,12 +53,8 @@ const EditableText: React.FC<EditableTextProps> = ({
     }
   };
 
-  const handleInput = (e: React.FormEvent<HTMLDivElement>) => {
-    // Update text state without manipulating cursor
-    setText((e.target as HTMLDivElement).innerText);
-  };
-
-  // Render the appropriate tag based on the 'as' prop
+  // We're not going to use dangerouslySetInnerHTML anymore
+  // as it can cause cursor positioning issues
   const renderContent = () => {
     const commonProps = {
       className: isEditing 
@@ -67,6 +62,7 @@ const EditableText: React.FC<EditableTextProps> = ({
         : `${className} hover:ring-2 hover:ring-primary/20 hover:ring-offset-2 cursor-pointer transition-all duration-200`
     };
     
+    // For editable mode, don't use dangerouslySetInnerHTML
     const editableProps = {
       ...commonProps,
       ref: textRef,
@@ -74,30 +70,54 @@ const EditableText: React.FC<EditableTextProps> = ({
       suppressContentEditableWarning: true,
       onBlur: handleBlur,
       onKeyDown: handleKeyDown,
-      onInput: handleInput,
-      dangerouslySetInnerHTML: { __html: text }
+      // We'll let the browser handle cursor positioning naturally
     };
     
     const displayProps = {
       ...commonProps,
       onDoubleClick: handleDoubleClick,
-      children: text
     };
     
-    const props = isEditing ? editableProps : displayProps;
+    // Use children instead of dangerouslySetInnerHTML
+    const renderElement = (props: any) => {
+      const finalProps = isEditing ? editableProps : displayProps;
+      
+      switch (as) {
+        case "h1": return <h1 {...finalProps}>{text}</h1>;
+        case "h2": return <h2 {...finalProps}>{text}</h2>;
+        case "h3": return <h3 {...finalProps}>{text}</h3>;
+        case "h4": return <h4 {...finalProps}>{text}</h4>;
+        case "h5": return <h5 {...finalProps}>{text}</h5>;
+        case "h6": return <h6 {...finalProps}>{text}</h6>;
+        case "span": return <span {...finalProps}>{text}</span>;
+        case "p":
+        default: return <p {...finalProps}>{text}</p>;
+      }
+    };
     
-    switch (as) {
-      case "h1": return <h1 {...props} />;
-      case "h2": return <h2 {...props} />;
-      case "h3": return <h3 {...props} />;
-      case "h4": return <h4 {...props} />;
-      case "h5": return <h5 {...props} />;
-      case "h6": return <h6 {...props} />;
-      case "span": return <span {...props} />;
-      case "p":
-      default: return <p {...props} />;
-    }
+    return renderElement({});
   };
+
+  // Add an event listener to update the text state when the content changes
+  useEffect(() => {
+    const currentRef = textRef.current;
+    
+    const handleInput = () => {
+      if (currentRef) {
+        setText(currentRef.textContent || "");
+      }
+    };
+    
+    if (isEditing && currentRef) {
+      currentRef.addEventListener("input", handleInput);
+    }
+    
+    return () => {
+      if (currentRef) {
+        currentRef.removeEventListener("input", handleInput);
+      }
+    };
+  }, [isEditing]);
 
   return renderContent();
 };
