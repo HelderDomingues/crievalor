@@ -175,7 +175,7 @@ const HeroSection = ({
       <MaritimeWaves className="z-10" />
       
       {/* Background gradient */}
-      <div className="absolute inset-0 hero-gradient opacity-90 z-10"></div>
+      <div className="absolute inset-0 hero-gradient opacity-90 z-10 bg-transparent"></div>
       
       {/* Decorative elements */}
       {isMarHero && <>
