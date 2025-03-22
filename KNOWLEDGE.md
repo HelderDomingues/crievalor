@@ -29,7 +29,12 @@
 2. **MAR page**: Details about the MAR methodology
 3. **About page (Sobre)**: Company information and values
 4. **Contact page (Contato)**: Contact forms and information
-5. **Legal pages**: Privacy Policy, Refund Policy, Terms of Service
+5. **Dedicated Services Pages ({nomeServiço})** Informations about each individual service (The MAR product already have a dedicated page. No need to create another)
+6. **Login or Sign Up Page (login/cadastro)** Page to allow users to register or log in to their accounts
+7. **Members Area (Área de Membros)** Colective members feed/pages
+8. **Members Private Page (Página privada do Membro)** Private page with users informations and exclusive content
+9. **Blog Section (blog)** Blog section with all necessary tools for creating blog posts (must have integration with make to automate the process)
+10. **Legal pages**: Privacy Policy, Refund Policy, Terms of Service
 
 ## Key Components
 - HeroSection: Main banner with animations
@@ -70,6 +75,16 @@
 
 ## Languages
 - The website must be accessible in Portuguese (Brazil) (this is the primary language, English (international) (this is the secondary languague)
+
+## Informações da empresa
+Telefones de contato/Whatsapp: +55 67 99654-2991 e +55 47 99215-0289
+Email: contato@crievalor.com.br
+Endereços:
+Mato Grosso Do Sul (Principal)
+Rua Roque Tertuliano de Andrade, 836. Campo Grande/MS
+
+Santa Catarina
+Rua Bolívia,59. Navegantes/SC
 
 ## Sobre a empresa Crie Valor
  Crie Valor é uma empresa de consultoria com mais de dez anos de experiência, dedicada a auxiliar empresas a atingirem seus objetivos por meio de projetos personalizados que atendem às necessidades específicas de cada negócio. citeturn0search0
