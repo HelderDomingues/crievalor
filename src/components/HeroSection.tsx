@@ -199,7 +199,7 @@ const HeroSection = ({
           {isMarHero ? <div className="mb-6 animate-fade-in">
               <img src="/lovable-uploads/91e6888f-e3da-40dc-8c55-5718c15ada21.png" alt="MAR - Mapa para Alto Rendimento" className="h-24 mx-auto" />
             </div> : <div className="mb-6 animate-fade-in">
-              <img src="/lovable-uploads/fc868084-d22b-4877-907b-fe02e64fc501.png" alt="Crie Valor Logo" className="h-16 mx-auto" />
+              
             </div>}
           
           <div className="bg-primary/10 text-primary rounded-full px-4 py-2 inline-block mb-4 animate-fade-in">
@@ -208,7 +208,7 @@ const HeroSection = ({
           
           <h1 style={{
           animationDelay: "0.2s"
-        }} className="text-4xl sm:text-5xl font-bold mb-6 animate-fade-in md:text-5xl">
+        }} className="sm:text-5xl font-bold mb-6 animate-fade-in md:text-5xl text-3xl">
             {title}
           </h1>
           
