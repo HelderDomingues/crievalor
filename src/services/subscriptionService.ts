@@ -1,3 +1,4 @@
+
 import { supabase } from "@/integrations/supabase/client";
 
 // Define subscription types
@@ -60,6 +61,8 @@ export const subscriptionService = {
             priceId: plan.stripe_price_id,
             successUrl,
             cancelUrl,
+            // Pass the actual plan ID for our internal reference
+            planId: plan.id
           },
         },
       });

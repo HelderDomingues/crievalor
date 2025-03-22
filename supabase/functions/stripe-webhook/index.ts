@@ -1,4 +1,3 @@
-
 import { serve } from "https://deno.land/std@0.208.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.38.4";
 import Stripe from 'https://esm.sh/stripe@12.18.0';
@@ -44,6 +43,7 @@ serve(async (req) => {
         const customerId = session.customer;
         const subscriptionId = session.subscription;
         const userId = session.metadata.user_id;
+        const planId = session.metadata.plan_id;
         
         if (!userId) {
           throw new Error("User ID missing in session metadata");
@@ -51,7 +51,6 @@ serve(async (req) => {
         
         // Get subscription details from Stripe
         const subscription = await stripe.subscriptions.retrieve(subscriptionId);
-        const priceId = subscription.items.data[0].price.id;
         
         // Insert or update subscription record
         const { error } = await supabase
@@ -60,7 +59,7 @@ serve(async (req) => {
             user_id: userId,
             stripe_customer_id: customerId,
             stripe_subscription_id: subscriptionId,
-            plan_id: priceId,
+            plan_id: planId || subscription.items.data[0].price.id, // Use our internal plan ID if available
             status: subscription.status,
             current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
           }, {

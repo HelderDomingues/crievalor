@@ -1,4 +1,3 @@
-
 import { serve } from "https://deno.land/std@0.208.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.38.4";
 import Stripe from 'https://esm.sh/stripe@12.18.0';
@@ -6,13 +5,6 @@ import Stripe from 'https://esm.sh/stripe@12.18.0';
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-};
-
-// Hard-coded price IDs for testing - Replace with your actual Stripe test price IDs
-const TEST_PRICE_IDS = {
-  price_basic: "price_1PGkXX2eZvKYlo2CNH9w1r3L",
-  price_pro: "price_1PGkXs2eZvKYlo2CUvCGXsFe",
-  price_enterprise: "price_1PGkYB2eZvKYlo2CZrwzM75I",
 };
 
 serve(async (req) => {
@@ -73,16 +65,13 @@ serve(async (req) => {
     
     switch (action) {
       case "create-checkout-session":
-        const { priceId, successUrl, cancelUrl } = data;
+        const { priceId, successUrl, cancelUrl, planId } = data;
         
         if (!priceId || !successUrl || !cancelUrl) {
           throw new Error("Missing required parameters");
         }
         
-        // Map the price ID to a test price ID
-        const actualPriceId = TEST_PRICE_IDS[priceId] || priceId;
-        
-        console.log(`Creating checkout session for price ID: ${priceId} (mapped to: ${actualPriceId})`);
+        console.log(`Creating checkout session for price ID: ${priceId}`);
         
         // Get or create Stripe customer for the user
         const { data: subscriptions, error: subError } = await supabase
@@ -112,13 +101,13 @@ serve(async (req) => {
           console.log(`Using existing Stripe customer: ${customerId}`);
         }
         
-        // Create checkout session
-        console.log(`Creating checkout session with price: ${actualPriceId}`);
+        // Create checkout session with actual Stripe price ID
+        console.log(`Creating checkout session with direct price ID: ${priceId}`);
         const session = await stripe.checkout.sessions.create({
           customer: customerId,
           line_items: [
             {
-              price: actualPriceId,
+              price: priceId,
               quantity: 1,
             },
           ],
@@ -127,6 +116,7 @@ serve(async (req) => {
           cancel_url: cancelUrl,
           metadata: {
             user_id: user.id,
+            plan_id: planId || priceId  // Store our internal plan ID if provided
           },
         });
         
