@@ -16,7 +16,7 @@ const EditableText: React.FC<EditableTextProps> = ({
 }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [text, setText] = useState(initialText);
-  const textRef = useRef<HTMLElement>(null);
+  const textRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
     setText(initialText);
@@ -46,13 +46,14 @@ const EditableText: React.FC<EditableTextProps> = ({
     }
   };
 
-  const Component = as;
+  // Use a dynamic component approach that correctly handles the ref type
+  const Component = as as keyof JSX.IntrinsicElements;
 
   return (
     <>
       {isEditing ? (
         <Component
-          ref={textRef}
+          ref={textRef as any}
           contentEditable
           suppressContentEditableWarning
           className={`${className} outline-none border-b-2 border-primary focus:border-primary cursor-text`}

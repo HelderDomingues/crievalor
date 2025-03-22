@@ -240,19 +240,21 @@ const HeroSection = ({
             <EditableText initialText={subtitle} as="span" />
           </div>
           
-          <EditableText 
-            initialText={title}
-            as="h1"
-            className="text-4xl sm:text-5xl md:text-6xl font-bold mb-6 animate-fade-in" 
-            style={{ animationDelay: "0.2s" }}
-          />
+          <div className="animate-fade-in" style={{ animationDelay: "0.2s" }}>
+            <EditableText 
+              initialText={title}
+              as="h1"
+              className="text-4xl sm:text-5xl md:text-6xl font-bold mb-6"
+            />
+          </div>
           
-          <EditableText 
-            initialText={description}
-            as="p"
-            className="text-lg md:text-xl text-muted-foreground mb-8 animate-fade-in" 
-            style={{ animationDelay: "0.4s" }}
-          />
+          <div className="animate-fade-in" style={{ animationDelay: "0.4s" }}>
+            <EditableText 
+              initialText={description}
+              as="p"
+              className="text-lg md:text-xl text-muted-foreground mb-8"
+            />
+          </div>
           
           <div className="flex flex-col sm:flex-row justify-center gap-4 animate-fade-in" style={{ animationDelay: "0.6s" }}>
             <Button
