@@ -51,7 +51,7 @@ const Index = () => {
       
       <main className="flex-grow">
         <HeroSection
-          title="Transforme sua empresa com estratégias baseadas em IA"
+          title="Transforme com estratégias personalizadas"
           subtitle="Crie Valor"
           description="Somos especialistas em desenvolver estratégias de alto impacto que combinam o poder da inteligência artificial com a experiência humana."
           ctaText="Conheça o MAR"
