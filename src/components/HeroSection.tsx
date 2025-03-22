@@ -37,7 +37,7 @@ const HeroSection: React.FC<HeroSectionProps> = (props) => {
 
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden pt-16">
-      {props.backgroundVideo && props.backgroundVideo === 'home' ? (
+      {props.backgroundVideo ? (
         <div className="absolute inset-0 z-0">
           <div className="absolute inset-0 bg-black/60 z-10"></div>
           <video
@@ -46,8 +46,13 @@ const HeroSection: React.FC<HeroSectionProps> = (props) => {
             loop
             playsInline
             className="absolute w-full h-full object-cover"
+            poster="/placeholder.svg"
           >
-            <source src="https://elements-video-cover-images-0.imgix.net/files/127898251/preview.mp4?auto=compress&crop=edges&fit=crop&fm=webm&h=630&w=1200&s=c02f382afdd899a14a67fa1c8d348947" type="video/mp4" />
+            {props.backgroundVideo === 'home' ? (
+              <source src="https://elements-video-cover-images-0.imgix.net/files/127898251/preview.mp4?auto=compress&crop=edges&fit=crop&fm=webm&h=630&w=1200&s=c02f382afdd899a14a67fa1c8d348947" type="video/mp4" />
+            ) : (
+              <source src={`/videos/${props.backgroundVideo}`} type="video/mp4" />
+            )}
             Seu navegador não suporta vídeos.
           </video>
         </div>
