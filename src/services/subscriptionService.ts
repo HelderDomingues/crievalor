@@ -1,0 +1,97 @@
+
+import { supabase } from "@/integrations/supabase/client";
+
+// Define subscription types
+export interface Subscription {
+  id: string;
+  user_id: string;
+  stripe_customer_id: string | null;
+  stripe_subscription_id: string | null;
+  plan_id: string;
+  status: string;
+  current_period_end: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+// Pricing plans
+export const PLANS = {
+  BASIC: {
+    id: "price_basic",
+    name: "Plano Básico",
+    price: "R$ 89,90",
+    features: ["Consultoria inicial", "Acesso ao material básico", "Suporte por email"],
+  },
+  PRO: {
+    id: "price_pro",
+    name: "Plano Profissional",
+    price: "R$ 299,90",
+    features: ["Tudo do Plano Básico", "Mentoria mensal", "Acesso à comunidade", "Suporte prioritário"],
+  },
+  ENTERPRISE: {
+    id: "price_enterprise",
+    name: "Plano Empresarial",
+    price: "R$ 799,90",
+    features: ["Tudo do Plano Profissional", "Consultoria personalizada", "Mentoria semanal", "Acesso a conteúdo exclusivo"],
+  },
+};
+
+export const subscriptionService = {
+  async createCheckoutSession(priceId: string, successUrl: string, cancelUrl: string) {
+    const { data: sessionData, error } = await supabase.functions.invoke("stripe", {
+      body: {
+        action: "create-checkout-session",
+        data: {
+          priceId,
+          successUrl,
+          cancelUrl,
+        },
+      },
+    });
+
+    if (error) {
+      throw new Error(`Error creating checkout session: ${error.message}`);
+    }
+
+    return sessionData;
+  },
+
+  async getCurrentSubscription(): Promise<Subscription | null> {
+    const { data, error } = await supabase.functions.invoke("stripe", {
+      body: {
+        action: "get-subscription",
+        data: {},
+      },
+    });
+
+    if (error) {
+      console.error("Error fetching subscription:", error);
+      return null;
+    }
+
+    return data.subscription;
+  },
+
+  async cancelSubscription(subscriptionId: string) {
+    const { data, error } = await supabase.functions.invoke("stripe", {
+      body: {
+        action: "cancel-subscription",
+        data: {
+          subscriptionId,
+        },
+      },
+    });
+
+    if (error) {
+      throw new Error(`Error canceling subscription: ${error.message}`);
+    }
+
+    return data;
+  },
+
+  // Helper function to check if user has an active subscription
+  async hasActiveSubscription(): Promise<boolean> {
+    const subscription = await this.getCurrentSubscription();
+    return subscription !== null && ["active", "trialing"].includes(subscription.status);
+  },
+};

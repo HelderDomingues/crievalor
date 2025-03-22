@@ -22,6 +22,7 @@ import Projetos from "./pages/Projetos";
 import PortfolioAdmin from "./pages/PortfolioAdmin";
 import Auth from "./pages/Auth";
 import Profile from "./pages/Profile";
+import Subscription from "./pages/Subscription";
 
 const queryClient = new QueryClient();
 
@@ -45,6 +46,7 @@ const App = () => (
             <Route path="/portfolio-admin" element={<PortfolioAdmin />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/profile" element={<Profile />} />
+            <Route path="/subscription" element={<Subscription />} />
             <Route path="/politica-de-privacidade" element={<PrivacyPolicy />} />
             <Route path="/politica-de-reembolso" element={<RefundPolicy />} />
             <Route path="/termos-de-servico" element={<TermsOfService />} />
