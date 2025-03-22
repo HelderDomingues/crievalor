@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, X, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import AuthHeader from "@/components/AuthHeader";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -91,10 +92,16 @@ const Header = () => {
             >
               Fale Conosco
             </Button>
+            
+            {/* Add AuthHeader component here */}
+            <div className="ml-4">
+              <AuthHeader />
+            </div>
           </nav>
 
-          {/* Mobile Menu Button */}
-          <div className="md:hidden">
+          {/* Mobile Menu Button and AuthHeader for mobile */}
+          <div className="md:hidden flex items-center gap-2">
+            <AuthHeader />
             <button
               onClick={toggleMenu}
               className="text-foreground p-2 rounded-full hover:bg-secondary transition-colors"
