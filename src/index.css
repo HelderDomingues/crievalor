@@ -138,6 +138,24 @@
     opacity: 0;
     animation: ripple 3s infinite;
   }
+  
+  /* Grid mesh styles */
+  .grid-mesh {
+    background-size: 30px 30px;
+    background-image: 
+      linear-gradient(to right, rgba(73, 84, 170, 0.1) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(73, 84, 170, 0.1) 1px, transparent 1px);
+  }
+  
+  .light-streak {
+    position: absolute;
+    background: linear-gradient(90deg, transparent, rgba(123, 97, 255, 0.4), transparent);
+    height: 1px;
+    width: 100px;
+    opacity: 0;
+    transform-origin: left center;
+    animation: light-streak 8s ease-in-out infinite;
+  }
 }
 
 @layer utilities {
@@ -159,6 +177,10 @@
   
   .animate-float {
     animation: float 6s ease-in-out infinite;
+  }
+  
+  .animate-glow {
+    animation: glow 4s ease-in-out infinite;
   }
 }
 
@@ -213,6 +235,30 @@
   100% {
     transform: scale(2);
     opacity: 0;
+  }
+}
+
+@keyframes glow {
+  0%, 100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+@keyframes light-streak {
+  0% {
+    opacity: 0;
+    transform: scaleX(0) translateX(0) rotate(35deg);
+  }
+  20% {
+    opacity: 0.8;
+    transform: scaleX(1) translateX(20%) rotate(35deg);
+  }
+  100% {
+    opacity: 0;
+    transform: scaleX(1) translateX(100%) rotate(35deg);
   }
 }
 

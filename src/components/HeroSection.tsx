@@ -2,6 +2,8 @@ import React, { useEffect, useRef } from "react";
 import { ArrowRight, Brain, Zap, BarChart3 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import MaritimeWaves from "./MaritimeWaves";
+import AIGridMesh from "./AIGridMesh";
+
 interface HeroSectionProps {
   title: string;
   subtitle: string;
@@ -12,6 +14,7 @@ interface HeroSectionProps {
   secondaryCtaUrl?: string;
   isMarHero?: boolean;
 }
+
 const HeroSection = ({
   title,
   subtitle,
@@ -23,13 +26,13 @@ const HeroSection = ({
   isMarHero = false
 }: HeroSectionProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    // Set canvas dimensions
     const resizeCanvas = () => {
       canvas.width = canvas.offsetWidth;
       canvas.height = canvas.offsetHeight;
@@ -37,7 +40,6 @@ const HeroSection = ({
     resizeCanvas();
     window.addEventListener("resize", resizeCanvas);
 
-    // Neural network simulation
     class Node {
       x: number;
       y: number;
@@ -52,7 +54,7 @@ const HeroSection = ({
         this.x = x;
         this.y = y;
         this.radius = Math.random() * 1.5 + 1;
-        this.color = "rgba(59, 130, 246, 0.7)"; // Primary color
+        this.color = "rgba(59, 130, 246, 0.7)";
         this.vx = (Math.random() - 0.5) * 0.3;
         this.vy = (Math.random() - 0.5) * 0.3;
         this.connectedNodes = [];
@@ -64,14 +66,12 @@ const HeroSection = ({
         this.y += this.vy;
         this.pulseValue += this.pulseSpeed;
 
-        // Bounce off edges
         if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
         if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
       }
       draw() {
         if (!ctx) return;
 
-        // Pulsing effect
         const pulseOpacity = (Math.sin(this.pulseValue) + 1) * 0.3 + 0.2;
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
@@ -83,10 +83,7 @@ const HeroSection = ({
         this.connectedNodes.forEach(node => {
           const distance = Math.sqrt((this.x - node.x) ** 2 + (this.y - node.y) ** 2);
           if (distance < 100) {
-            // Calculate opacity based on distance
             const opacity = 1 - distance / 100;
-
-            // Draw the connection
             ctx.beginPath();
             ctx.moveTo(this.x, this.y);
             ctx.lineTo(node.x, node.y);
@@ -94,7 +91,6 @@ const HeroSection = ({
             ctx.lineWidth = opacity * 0.8;
             ctx.stroke();
 
-            // Data transmission animation
             if (Math.random() < 0.001) {
               animateDataTransmission(this.x, this.y, node.x, node.y);
             }
@@ -103,15 +99,13 @@ const HeroSection = ({
       }
     }
 
-    // Create nodes
     const nodes: Node[] = [];
-    const nodeCount = Math.min(80, Math.floor(canvas.width * canvas.height / 10000)); // Responsive node count
+    const nodeCount = Math.min(80, Math.floor(canvas.width * canvas.height / 10000));
 
     for (let i = 0; i < nodeCount; i++) {
       nodes.push(new Node(Math.random() * canvas.width, Math.random() * canvas.height));
     }
 
-    // Connect nodes
     nodes.forEach(node => {
       nodes.forEach(otherNode => {
         if (node !== otherNode && Math.random() < 0.1) {
@@ -120,7 +114,6 @@ const HeroSection = ({
       });
     });
 
-    // Data transmission animation
     const dataTransmissions: any[] = [];
     function animateDataTransmission(x1: number, y1: number, x2: number, y2: number) {
       dataTransmissions.push({
@@ -133,19 +126,16 @@ const HeroSection = ({
       });
     }
 
-    // Animation loop
     function animate() {
       if (!ctx) return;
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      // Update and draw nodes
       nodes.forEach(node => {
         node.update();
         node.draw();
         node.connectNodes();
       });
 
-      // Update and draw data transmissions
       for (let i = dataTransmissions.length - 1; i >= 0; i--) {
         const dt = dataTransmissions[i];
         dt.progress += dt.speed;
@@ -167,17 +157,16 @@ const HeroSection = ({
       window.removeEventListener("resize", resizeCanvas);
     };
   }, []);
+
   return <section className="relative min-h-screen flex items-center overflow-hidden pt-16">
-      {/* Neural network background */}
-      <canvas ref={canvasRef} className="absolute inset-0 w-full h-full z-0"></canvas>
+      <canvas ref={canvasRef} className="absolute inset-0 w-full h-full z-0 opacity-40"></canvas>
       
-      {/* Maritime Waves animation */}
+      <AIGridMesh className="z-5" />
+      
       <MaritimeWaves className="z-10" />
       
-      {/* Background gradient */}
-      <div className="absolute inset-0 hero-gradient opacity-90 z-10 bg-transparent"></div>
+      <div className="absolute inset-0 hero-gradient opacity-70 z-10 bg-transparent"></div>
       
-      {/* Decorative elements */}
       {isMarHero && <>
           <div className="absolute top-1/4 left-10 md:left-20 z-20 animate-float opacity-20 hidden md:block">
             <Brain size={80} className="text-primary" />
@@ -234,7 +223,6 @@ const HeroSection = ({
         </div>
       </div>
       
-      {/* Scroll indicator */}
       <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2 z-30 animate-bounce">
         <div className="w-8 h-12 rounded-full border-2 border-muted-foreground flex justify-center items-start p-1">
           <div className="w-1 h-2 bg-muted-foreground rounded-full animate-pulse-subtle"></div>
@@ -242,4 +230,5 @@ const HeroSection = ({
       </div>
     </section>;
 };
+
 export default HeroSection;
