@@ -18,6 +18,7 @@ import Consultoria from "./pages/Consultoria";
 import EscolaGestao from "./pages/EscolaGestao";
 import IdentidadeVisual from "./pages/IdentidadeVisual";
 import Projetos from "./pages/Projetos";
+import PortfolioAdmin from "./pages/PortfolioAdmin";
 
 const queryClient = new QueryClient();
 
@@ -37,6 +38,7 @@ const App = () => (
           <Route path="/escola-de-gestao" element={<EscolaGestao />} />
           <Route path="/identidade-visual" element={<IdentidadeVisual />} />
           <Route path="/projetos" element={<Projetos />} />
+          <Route path="/portfolio-admin" element={<PortfolioAdmin />} />
           <Route path="/politica-de-privacidade" element={<PrivacyPolicy />} />
           <Route path="/politica-de-reembolso" element={<RefundPolicy />} />
           <Route path="/termos-de-servico" element={<TermsOfService />} />
