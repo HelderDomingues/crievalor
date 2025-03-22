@@ -52,7 +52,7 @@ const Index = () => {
       <main className="flex-grow">
         <HeroSection
           title="Transforme sua empresa com estratégias personalizadas"
-          subtitle="Crie Valor"
+          subtitle="Bem-vindo(a) à Crie Valor"
           description="Somos especialistas em desenvolver estratégias de alto impacto que combinam o poder da inteligência artificial com a experiência humana."
           ctaText="Conheça o MAR"
           ctaUrl="/mar"
