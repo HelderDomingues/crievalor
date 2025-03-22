@@ -1,19 +1,15 @@
-
 import React from "react";
 import { Mail, Phone, MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-
 const ContactSection = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // In a real application, you would handle form submission here
     console.log("Form submitted");
   };
-
-  return (
-    <section id="contato" className="py-16 md:py-24 relative bg-secondary/30">
+  return <section id="contato" className="py-16 md:py-24 relative bg-secondary/30">
       {/* Background elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="blur-dot w-64 h-64 top-20 -right-32 opacity-10"></div>
@@ -36,8 +32,9 @@ const ContactSection = () => {
                   <Phone className="h-6 w-6 text-primary" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-medium">Telefone</h3>
-                  <p className="text-muted-foreground">(XX) XXXX-XXXX</p>
+                  <h3 className="text-lg font-medium">Telefone/Whatsapp</h3>
+                  <p className="text-muted-foreground">67 99654-2991 (MS)
+47 99215-0289 (SC</p>
                 </div>
               </div>
               
@@ -56,8 +53,8 @@ const ContactSection = () => {
                   <MessageSquare className="h-6 w-6 text-primary" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-medium">WhatsApp</h3>
-                  <p className="text-muted-foreground">(XX) XXXX-XXXX</p>
+                  <h3 className="text-lg font-medium">Endereços:</h3>
+                  <p className="text-muted-foreground">Rua Roque Tertuliano de Andrade, 836. Campo Grande/Ms</p>
                 </div>
               </div>
             </div>
@@ -72,25 +69,14 @@ const ContactSection = () => {
                   <label htmlFor="name" className="text-sm font-medium">
                     Nome
                   </label>
-                  <Input
-                    id="name"
-                    placeholder="Seu nome"
-                    required
-                    className="bg-secondary/50 border-border"
-                  />
+                  <Input id="name" placeholder="Seu nome" required className="bg-secondary/50 border-border" />
                 </div>
                 
                 <div className="space-y-2">
                   <label htmlFor="email" className="text-sm font-medium">
                     E-mail
                   </label>
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="seu@email.com"
-                    required
-                    className="bg-secondary/50 border-border"
-                  />
+                  <Input id="email" type="email" placeholder="seu@email.com" required className="bg-secondary/50 border-border" />
                 </div>
               </div>
               
@@ -98,24 +84,14 @@ const ContactSection = () => {
                 <label htmlFor="company" className="text-sm font-medium">
                   Empresa
                 </label>
-                <Input
-                  id="company"
-                  placeholder="Nome da empresa"
-                  className="bg-secondary/50 border-border"
-                />
+                <Input id="company" placeholder="Nome da empresa" className="bg-secondary/50 border-border" />
               </div>
               
               <div className="space-y-2">
                 <label htmlFor="message" className="text-sm font-medium">
                   Mensagem
                 </label>
-                <Textarea
-                  id="message"
-                  placeholder="Como podemos ajudar?"
-                  rows={4}
-                  required
-                  className="bg-secondary/50 border-border resize-none"
-                />
+                <Textarea id="message" placeholder="Como podemos ajudar?" rows={4} required className="bg-secondary/50 border-border resize-none" />
               </div>
               
               <Button type="submit" className="w-full">
@@ -129,8 +105,6 @@ const ContactSection = () => {
           </div>
         </div>
       </div>
-    </section>
-  );
+    </section>;
 };
-
 export default ContactSection;
