@@ -14,76 +14,57 @@ export interface Subscription {
   updated_at: string;
 }
 
-// Pricing plans with details for display
-// The actual Stripe price IDs are used in checkout creation
+// Pricing plans
 export const PLANS = {
   BASIC: {
-    id: "basic_plan",
+    id: "basic_plan", // Changed from "price_basic" to a generic ID
     name: "Plano Básico",
     price: "R$ 89,90",
     features: ["Consultoria inicial", "Acesso ao material básico", "Suporte por email"],
-    stripe_price_id: "price_1PU2O6FLiYgm8wRvLjrYCzaY", // ID real do preço no Stripe
+    stripe_price_id: "price_basic", // Added separate property for the Stripe price ID
   },
   PRO: {
-    id: "pro_plan",
+    id: "pro_plan", // Changed from "price_pro" to a generic ID
     name: "Plano Profissional",
     price: "R$ 299,90",
     features: ["Tudo do Plano Básico", "Mentoria mensal", "Acesso à comunidade", "Suporte prioritário"],
-    stripe_price_id: "price_1PU2O7FLiYgm8wRvO4cV71Ub", // ID real do preço no Stripe
+    stripe_price_id: "price_pro", // Added separate property for the Stripe price ID
   },
   ENTERPRISE: {
-    id: "enterprise_plan",
+    id: "enterprise_plan", // Changed from "price_enterprise" to a generic ID
     name: "Plano Empresarial",
     price: "R$ 799,90",
     features: ["Tudo do Plano Profissional", "Consultoria personalizada", "Mentoria semanal", "Acesso a conteúdo exclusivo"],
-    stripe_price_id: "price_1PU2O8FLiYgm8wRvKMsKMF1O", // ID real do preço no Stripe
+    stripe_price_id: "price_enterprise", // Added separate property for the Stripe price ID
   },
 };
 
 export const subscriptionService = {
   async createCheckoutSession(priceId: string, successUrl: string, cancelUrl: string) {
-    try {
-      console.log(`Creating checkout session for plan: ${priceId}`);
-      
-      // Find the plan with the matching ID
-      const plan = Object.values(PLANS).find(plan => plan.id === priceId);
-      
-      if (!plan) {
-        throw new Error(`Plan with ID ${priceId} not found`);
-      }
-      
-      console.log(`Using Stripe price ID: ${plan.stripe_price_id}`);
-      
-      // Use the stripe_price_id for the Stripe checkout
-      const { data: sessionData, error } = await supabase.functions.invoke("stripe", {
-        body: {
-          action: "create-checkout-session",
-          data: {
-            priceId: plan.stripe_price_id,
-            successUrl,
-            cancelUrl,
-            // Pass the actual plan ID for our internal reference
-            planId: plan.id
-          },
-        },
-      });
-
-      if (error) {
-        console.error("Error from Stripe function:", error);
-        throw new Error(`Error creating checkout session: ${error.message}`);
-      }
-
-      if (!sessionData || !sessionData.url) {
-        console.error("Invalid response from Stripe function:", sessionData);
-        throw new Error("Invalid response from checkout session");
-      }
-
-      console.log("Checkout session created successfully:", sessionData.sessionId);
-      return sessionData;
-    } catch (error) {
-      console.error("Error in createCheckoutSession:", error);
-      throw error;
+    // Find the plan with the matching ID
+    const plan = Object.values(PLANS).find(plan => plan.id === priceId);
+    
+    if (!plan) {
+      throw new Error(`Plan with ID ${priceId} not found`);
     }
+    
+    // Use the stripe_price_id for the Stripe checkout
+    const { data: sessionData, error } = await supabase.functions.invoke("stripe", {
+      body: {
+        action: "create-checkout-session",
+        data: {
+          priceId: plan.stripe_price_id,
+          successUrl,
+          cancelUrl,
+        },
+      },
+    });
+
+    if (error) {
+      throw new Error(`Error creating checkout session: ${error.message}`);
+    }
+
+    return sessionData;
   },
 
   async getCurrentSubscription(): Promise<Subscription | null> {

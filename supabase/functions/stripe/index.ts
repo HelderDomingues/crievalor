@@ -8,6 +8,13 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+// Test pricing configuration - use these instead of hardcoded price IDs
+const TEST_PRICE_IDS = {
+  price_basic: "price_1PGkXX2eZvKYlo2CNH9w1r3L",     // Replace with actual test price IDs
+  price_pro: "price_1PGkXs2eZvKYlo2CUvCGXsFe",       // Replace with actual test price IDs
+  price_enterprise: "price_1PGkYB2eZvKYlo2CZrwzM75I", // Replace with actual test price IDs
+};
+
 serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === "OPTIONS") {
@@ -22,23 +29,12 @@ serve(async (req) => {
 
     // Initialize Stripe
     const stripeSecretKey = Deno.env.get("STRIPE_SECRET_KEY") || "";
-    if (!stripeSecretKey) {
-      console.error("Missing STRIPE_SECRET_KEY environment variable");
-      return new Response(JSON.stringify({ error: "Server configuration error" }), {
-        status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-
     const stripe = new Stripe(stripeSecretKey, {
       apiVersion: "2023-10-16",
     });
 
     // Parse request body
     const { action, data } = await req.json();
-    
-    console.log(`Processing ${action} action with data:`, JSON.stringify(data));
-    
     const authHeader = req.headers.get("Authorization");
     
     if (!authHeader) {
@@ -53,26 +49,22 @@ serve(async (req) => {
     const { data: { user }, error: userError } = await supabase.auth.getUser(token);
     
     if (userError || !user) {
-      console.error("Auth error:", userError);
       return new Response(JSON.stringify({ error: "Not authorized", details: userError }), {
         status: 401,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    console.log(`User authenticated: ${user.id}`);
-    
     let result;
     
     switch (action) {
       case "create-checkout-session":
-        const { priceId, successUrl, cancelUrl, planId } = data;
+        const { priceId, successUrl, cancelUrl } = data;
         
-        if (!priceId || !successUrl || !cancelUrl) {
-          throw new Error("Missing required parameters");
-        }
+        // Map the price ID to a test price ID if needed
+        const actualPriceId = TEST_PRICE_IDS[priceId] || priceId;
         
-        console.log(`Creating checkout session for price ID: ${priceId}`);
+        console.log(`Creating checkout session for price ID: ${priceId} (mapped to: ${actualPriceId})`);
         
         // Get or create Stripe customer for the user
         const { data: subscriptions, error: subError } = await supabase
@@ -81,15 +73,10 @@ serve(async (req) => {
           .eq("user_id", user.id)
           .maybeSingle();
         
-        if (subError) {
-          console.error("Error fetching subscription:", subError);
-        }
-        
         let customerId = subscriptions?.stripe_customer_id;
         
         if (!customerId) {
           // Create a new customer
-          console.log(`Creating new Stripe customer for user ${user.id}`);
           const customer = await stripe.customers.create({
             email: user.email,
             metadata: {
@@ -97,19 +84,14 @@ serve(async (req) => {
             },
           });
           customerId = customer.id;
-          console.log(`Created Stripe customer: ${customerId}`);
-        } else {
-          console.log(`Using existing Stripe customer: ${customerId}`);
         }
         
-        // Create checkout session with the provided Stripe price ID directly
-        // No need to map from internal IDs to Stripe IDs anymore
-        console.log(`Creating checkout session with price ID: ${priceId}`);
+        // Create checkout session
         const session = await stripe.checkout.sessions.create({
           customer: customerId,
           line_items: [
             {
-              price: priceId,
+              price: actualPriceId,
               quantity: 1,
             },
           ],
@@ -118,11 +100,9 @@ serve(async (req) => {
           cancel_url: cancelUrl,
           metadata: {
             user_id: user.id,
-            plan_id: planId // Store our internal plan ID
           },
         });
         
-        console.log(`Checkout session created: ${session.id}`);
         result = { sessionId: session.id, url: session.url };
         break;
         
