@@ -21,21 +21,21 @@ export const PLANS = {
     name: "Plano Básico",
     price: "R$ 89,90",
     features: ["Consultoria inicial", "Acesso ao material básico", "Suporte por email"],
-    stripe_price_id: "price_basic", // Replace with your actual Stripe price ID
+    stripe_price_id: "price_1R5XpZP90koqLuyYBKb2OTOg", // Replace with your actual Stripe price ID
   },
   PRO: {
     id: "pro_plan",
     name: "Plano Profissional",
     price: "R$ 299,90",
     features: ["Tudo do Plano Básico", "Mentoria mensal", "Acesso à comunidade", "Suporte prioritário"],
-    stripe_price_id: "price_pro", // Replace with your actual Stripe price ID
+    stripe_price_id: "price_1R5Xq2P90koqLuyYgTcwJz7Y", // Replace with your actual Stripe price ID
   },
   ENTERPRISE: {
     id: "enterprise_plan",
     name: "Plano Empresarial",
     price: "R$ 799,90",
     features: ["Tudo do Plano Profissional", "Consultoria personalizada", "Mentoria semanal", "Acesso a conteúdo exclusivo"],
-    stripe_price_id: "price_enterprise", // Replace with your actual Stripe price ID
+    stripe_price_id: "price_1R5XqQP90koqLuyYmIG7S5sz", // Replace with your actual Stripe price ID
   },
 };
 
