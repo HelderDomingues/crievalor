@@ -1,12 +1,33 @@
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import HeroSection from "@/components/HeroSection";
 import PortfolioGallery from "@/components/PortfolioGallery";
 import ContactSection from "@/components/ContactSection";
+import { getPortfolioProjects } from "@/services/portfolioService";
+import { PortfolioProject } from "@/types/portfolio";
 
 const IdentidadeVisual = () => {
+  const [projects, setProjects] = useState<PortfolioProject[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Load projects on component mount
+  useEffect(() => {
+    const loadProjects = async () => {
+      try {
+        const data = await getPortfolioProjects();
+        setProjects(data);
+      } catch (error) {
+        console.error("Error loading portfolio projects:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadProjects();
+  }, []);
+
   // Example hero images - replace with your actual images
   const heroImages = [
     "https://images.unsplash.com/photo-1586717791821-3f44a563fa4c?q=80&w=2070",
@@ -41,7 +62,13 @@ const IdentidadeVisual = () => {
               </p>
             </div>
             
-            <PortfolioGallery />
+            {isLoading ? (
+              <div className="flex justify-center py-12">
+                <p>Carregando projetos...</p>
+              </div>
+            ) : (
+              <PortfolioGallery projects={projects} />
+            )}
           </div>
         </section>
         
