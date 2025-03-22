@@ -16,72 +16,85 @@ const EditableText: React.FC<EditableTextProps> = ({
 }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [text, setText] = useState(initialText);
-  const elementRef = useRef<HTMLElement>(null);
+  const inputRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setText(initialText);
   }, [initialText]);
 
-  // Lida com duplo clique para iniciar edição
+  useEffect(() => {
+    if (isEditing && inputRef.current) {
+      inputRef.current.focus();
+      
+      // Set cursor at the end of text
+      const range = document.createRange();
+      const selection = window.getSelection();
+      if (inputRef.current.childNodes.length > 0) {
+        const lastNode = inputRef.current.childNodes[0];
+        range.setStart(lastNode, lastNode.textContent?.length || 0);
+        range.collapse(true);
+        selection?.removeAllRanges();
+        selection?.addRange(range);
+      }
+    }
+  }, [isEditing]);
+
   const handleDoubleClick = () => {
     setIsEditing(true);
   };
 
-  // Lida com a perda de foco para salvar
   const handleBlur = () => {
-    setIsEditing(false);
-    if (onSave && text !== initialText) {
-      onSave(text);
-    }
+    finishEditing();
   };
 
-  // Lida com teclas Enter para salvar e Escape para cancelar
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter") {
       e.preventDefault();
-      setIsEditing(false);
-      if (onSave && text !== initialText) {
-        onSave(text);
-      }
+      finishEditing();
     } else if (e.key === "Escape") {
       setIsEditing(false);
       setText(initialText);
     }
   };
 
-  // Renderiza baseado no tipo do elemento
-  const renderElement = () => {
-    if (isEditing) {
-      return React.createElement(
-        as,
-        {
-          ref: elementRef,
-          className: `${className} outline-none border-b-2 border-primary focus:border-primary cursor-text`,
-          contentEditable: true,
-          suppressContentEditableWarning: true,
-          onBlur: handleBlur,
-          onKeyDown: handleKeyDown,
-          onInput: (e: React.FormEvent<HTMLElement>) => {
-            const target = e.target as HTMLElement;
-            setText(target.textContent || "");
-          },
-          dangerouslySetInnerHTML: { __html: text }
-        }
-      );
+  const finishEditing = () => {
+    setIsEditing(false);
+    if (onSave && text !== initialText) {
+      onSave(text);
     }
-
-    return React.createElement(
-      as,
-      {
-        ref: elementRef,
-        className: `${className} hover:ring-2 hover:ring-primary/20 hover:ring-offset-2 cursor-pointer transition-all duration-200`,
-        onDoubleClick: handleDoubleClick,
-      },
-      text
-    );
+  };
+  
+  const handleInput = (e: React.FormEvent<HTMLDivElement>) => {
+    const newText = e.currentTarget.textContent || "";
+    setText(newText);
   };
 
-  return renderElement();
+  const Component = as;
+
+  if (isEditing) {
+    return (
+      <div
+        ref={inputRef}
+        className={`${className} outline-none border-b-2 border-primary focus:border-primary cursor-text`}
+        contentEditable
+        suppressContentEditableWarning
+        onBlur={handleBlur}
+        onKeyDown={handleKeyDown}
+        onInput={handleInput}
+      >
+        {text}
+      </div>
+    );
+  }
+
+  return (
+    <Component
+      className={`${className} hover:ring-2 hover:ring-primary/20 hover:ring-offset-2 cursor-pointer transition-all duration-200`}
+      onDoubleClick={handleDoubleClick}
+    >
+      {text}
+    </Component>
+  );
 };
 
 export default EditableText;
