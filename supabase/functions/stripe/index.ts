@@ -8,13 +8,6 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-// Test pricing configuration - use these instead of hardcoded price IDs
-const TEST_PRICE_IDS = {
-  price_basic: "price_1PGkXX2eZvKYlo2CNH9w1r3L",     // Replace with actual test price IDs
-  price_pro: "price_1PGkXs2eZvKYlo2CUvCGXsFe",       // Replace with actual test price IDs
-  price_enterprise: "price_1PGkYB2eZvKYlo2CZrwzM75I", // Replace with actual test price IDs
-};
-
 serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === "OPTIONS") {
@@ -29,12 +22,36 @@ serve(async (req) => {
 
     // Initialize Stripe
     const stripeSecretKey = Deno.env.get("STRIPE_SECRET_KEY") || "";
+    if (!stripeSecretKey) {
+      console.error("Missing STRIPE_SECRET_KEY");
+      return new Response(JSON.stringify({ error: "Server configuration error - missing Stripe key" }), {
+        status: 500,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+    
     const stripe = new Stripe(stripeSecretKey, {
       apiVersion: "2023-10-16",
     });
 
     // Parse request body
-    const { action, data } = await req.json();
+    let action, data;
+    try {
+      const body = await req.json();
+      action = body.action;
+      data = body.data;
+      
+      if (!action) {
+        throw new Error("Missing action parameter");
+      }
+    } catch (error) {
+      console.error("Error parsing request:", error);
+      return new Response(JSON.stringify({ error: "Invalid request format" }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+    
     const authHeader = req.headers.get("Authorization");
     
     if (!authHeader) {
@@ -49,6 +66,7 @@ serve(async (req) => {
     const { data: { user }, error: userError } = await supabase.auth.getUser(token);
     
     if (userError || !user) {
+      console.error("Auth error:", userError);
       return new Response(JSON.stringify({ error: "Not authorized", details: userError }), {
         status: 401,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -61,10 +79,14 @@ serve(async (req) => {
       case "create-checkout-session":
         const { priceId, successUrl, cancelUrl } = data;
         
-        // Map the price ID to a test price ID if needed
-        const actualPriceId = TEST_PRICE_IDS[priceId] || priceId;
+        if (!priceId || !successUrl || !cancelUrl) {
+          return new Response(JSON.stringify({ error: "Missing required parameters for checkout" }), {
+            status: 400,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          });
+        }
         
-        console.log(`Creating checkout session for price ID: ${priceId} (mapped to: ${actualPriceId})`);
+        console.log(`Creating checkout session for price ID: ${priceId}`);
         
         // Get or create Stripe customer for the user
         const { data: subscriptions, error: subError } = await supabase
@@ -73,37 +95,59 @@ serve(async (req) => {
           .eq("user_id", user.id)
           .maybeSingle();
         
+        if (subError) {
+          console.error("Error fetching subscription:", subError);
+        }
+        
         let customerId = subscriptions?.stripe_customer_id;
         
         if (!customerId) {
           // Create a new customer
-          const customer = await stripe.customers.create({
-            email: user.email,
-            metadata: {
-              supabase_id: user.id,
-            },
-          });
-          customerId = customer.id;
+          try {
+            const customer = await stripe.customers.create({
+              email: user.email,
+              metadata: {
+                supabase_id: user.id,
+              },
+            });
+            customerId = customer.id;
+            console.log(`Created new customer: ${customerId}`);
+          } catch (error) {
+            console.error("Error creating customer:", error);
+            return new Response(JSON.stringify({ error: `Error creating Stripe customer: ${error.message}` }), {
+              status: 500,
+              headers: { ...corsHeaders, "Content-Type": "application/json" },
+            });
+          }
         }
         
         // Create checkout session
-        const session = await stripe.checkout.sessions.create({
-          customer: customerId,
-          line_items: [
-            {
-              price: actualPriceId,
-              quantity: 1,
+        try {
+          const session = await stripe.checkout.sessions.create({
+            customer: customerId,
+            line_items: [
+              {
+                price: priceId,
+                quantity: 1,
+              },
+            ],
+            mode: "subscription",
+            success_url: successUrl,
+            cancel_url: cancelUrl,
+            metadata: {
+              user_id: user.id,
             },
-          ],
-          mode: "subscription",
-          success_url: successUrl,
-          cancel_url: cancelUrl,
-          metadata: {
-            user_id: user.id,
-          },
-        });
-        
-        result = { sessionId: session.id, url: session.url };
+          });
+          
+          result = { sessionId: session.id, url: session.url };
+          console.log(`Created checkout session: ${session.id}`);
+        } catch (error) {
+          console.error("Error creating checkout session:", error);
+          return new Response(JSON.stringify({ error: `Error creating checkout session: ${error.message}` }), {
+            status: 500,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          });
+        }
         break;
         
       case "get-subscription":
@@ -114,7 +158,11 @@ serve(async (req) => {
           .maybeSingle();
           
         if (fetchError) {
-          throw new Error(fetchError.message);
+          console.error("Error fetching subscription:", fetchError);
+          return new Response(JSON.stringify({ error: `Error fetching subscription: ${fetchError.message}` }), {
+            status: 500,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          });
         }
         
         result = { subscription: userSubscription };
@@ -122,6 +170,13 @@ serve(async (req) => {
         
       case "cancel-subscription":
         const { subscriptionId } = data;
+        
+        if (!subscriptionId) {
+          return new Response(JSON.stringify({ error: "Missing subscription ID" }), {
+            status: 400,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          });
+        }
         
         // Verify the subscription belongs to the user
         const { data: subData, error: verifyError } = await supabase
@@ -131,24 +186,46 @@ serve(async (req) => {
           .eq("stripe_subscription_id", subscriptionId)
           .maybeSingle();
           
-        if (verifyError || !subData) {
-          throw new Error("Subscription not found or doesn't belong to user");
+        if (verifyError) {
+          console.error("Error verifying subscription:", verifyError);
+          return new Response(JSON.stringify({ error: `Error verifying subscription: ${verifyError.message}` }), {
+            status: 500,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          });
+        }
+        
+        if (!subData) {
+          return new Response(JSON.stringify({ error: "Subscription not found or doesn't belong to user" }), {
+            status: 404,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          });
         }
         
         // Cancel the subscription in Stripe
-        await stripe.subscriptions.cancel(subscriptionId);
-        
-        // Update the subscription status in the database
-        await supabase
-          .from("subscriptions")
-          .update({ status: "canceled" })
-          .eq("stripe_subscription_id", subscriptionId);
+        try {
+          await stripe.subscriptions.cancel(subscriptionId);
           
-        result = { success: true };
+          // Update the subscription status in the database
+          await supabase
+            .from("subscriptions")
+            .update({ status: "canceled" })
+            .eq("stripe_subscription_id", subscriptionId);
+            
+          result = { success: true };
+        } catch (error) {
+          console.error("Error canceling subscription:", error);
+          return new Response(JSON.stringify({ error: `Error canceling subscription: ${error.message}` }), {
+            status: 500,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          });
+        }
         break;
         
       default:
-        throw new Error(`Unsupported action: ${action}`);
+        return new Response(JSON.stringify({ error: `Unsupported action: ${action}` }), {
+          status: 400,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
     }
 
     return new Response(JSON.stringify(result), {
@@ -157,7 +234,7 @@ serve(async (req) => {
   } catch (error) {
     console.error("Error in stripe function:", error);
     return new Response(JSON.stringify({ error: error.message }), {
-      status: 400,
+      status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }

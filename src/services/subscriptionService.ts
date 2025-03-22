@@ -21,31 +21,31 @@ export const PLANS = {
     name: "Plano Básico",
     price: "R$ 89,90",
     features: ["Consultoria inicial", "Acesso ao material básico", "Suporte por email"],
-    stripe_price_id: "price_1R5XpZP90koqLuyYBKb2OTOg", // Replace with your actual Stripe price ID
+    stripe_price_id: "price_1R5XpZP90koqLuyYBKb2OTOg", 
   },
   PRO: {
     id: "pro_plan",
     name: "Plano Profissional",
     price: "R$ 299,90",
     features: ["Tudo do Plano Básico", "Mentoria mensal", "Acesso à comunidade", "Suporte prioritário"],
-    stripe_price_id: "price_1R5Xq2P90koqLuyYgTcwJz7Y", // Replace with your actual Stripe price ID
+    stripe_price_id: "price_1R5Xq2P90koqLuyYgTcwJz7Y", 
   },
   ENTERPRISE: {
     id: "enterprise_plan",
     name: "Plano Empresarial",
     price: "R$ 799,90",
     features: ["Tudo do Plano Profissional", "Consultoria personalizada", "Mentoria semanal", "Acesso a conteúdo exclusivo"],
-    stripe_price_id: "price_1R5XqQP90koqLuyYmIG7S5sz", // Replace with your actual Stripe price ID
+    stripe_price_id: "price_1R5XqQP90koqLuyYmIG7S5sz", 
   },
 };
 
 export const subscriptionService = {
-  async createCheckoutSession(priceId: string, successUrl: string, cancelUrl: string) {
+  async createCheckoutSession(planId: string, successUrl: string, cancelUrl: string) {
     // Find the plan with the matching ID
-    const plan = Object.values(PLANS).find(plan => plan.id === priceId);
+    const plan = Object.values(PLANS).find(plan => plan.id === planId);
     
     if (!plan) {
-      throw new Error(`Plan with ID ${priceId} not found`);
+      throw new Error(`Plan with ID ${planId} not found`);
     }
     
     // Use the stripe_price_id for the Stripe checkout
@@ -61,26 +61,36 @@ export const subscriptionService = {
     });
 
     if (error) {
+      console.error("Error invoking Stripe function:", error);
       throw new Error(`Error creating checkout session: ${error.message}`);
+    }
+
+    if (!sessionData) {
+      throw new Error("No data returned from checkout session creation");
     }
 
     return sessionData;
   },
 
   async getCurrentSubscription(): Promise<Subscription | null> {
-    const { data, error } = await supabase.functions.invoke("stripe", {
-      body: {
-        action: "get-subscription",
-        data: {},
-      },
-    });
+    try {
+      const { data, error } = await supabase.functions.invoke("stripe", {
+        body: {
+          action: "get-subscription",
+          data: {},
+        },
+      });
 
-    if (error) {
-      console.error("Error fetching subscription:", error);
+      if (error) {
+        console.error("Error fetching subscription:", error);
+        return null;
+      }
+
+      return data.subscription;
+    } catch (error) {
+      console.error("Error in getCurrentSubscription:", error);
       return null;
     }
-
-    return data.subscription;
   },
 
   async cancelSubscription(subscriptionId: string) {
@@ -102,7 +112,12 @@ export const subscriptionService = {
 
   // Helper function to check if user has an active subscription
   async hasActiveSubscription(): Promise<boolean> {
-    const subscription = await this.getCurrentSubscription();
-    return subscription !== null && ["active", "trialing"].includes(subscription.status);
+    try {
+      const subscription = await this.getCurrentSubscription();
+      return subscription !== null && ["active", "trialing"].includes(subscription.status);
+    } catch (error) {
+      console.error("Error checking subscription status:", error);
+      return false;
+    }
   },
 };

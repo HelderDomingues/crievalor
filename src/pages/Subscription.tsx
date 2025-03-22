@@ -1,6 +1,5 @@
-
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -8,13 +7,14 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { CheckCircle, AlertCircle, Loader2 } from "lucide-react";
+import { CheckCircle, AlertCircle, Loader2, Info } from "lucide-react";
 import { subscriptionService, PLANS, Subscription } from "@/services/subscriptionService";
 import { useToast } from "@/hooks/use-toast";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 
 const SubscriptionPage = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { user } = useAuth();
   const { toast } = useToast();
   const [subscription, setSubscription] = useState<Subscription | null>(null);
@@ -22,6 +22,25 @@ const SubscriptionPage = () => {
   const [isCheckingOut, setIsCheckingOut] = useState(false);
   const [isCanceling, setIsCanceling] = useState(false);
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
+
+  const success = searchParams.get("success");
+  const canceled = searchParams.get("canceled");
+
+  useEffect(() => {
+    if (success === "true") {
+      toast({
+        title: "Assinatura realizada com sucesso!",
+        description: "Bem-vindo ao seu novo plano.",
+        variant: "default",
+      });
+    } else if (canceled === "true") {
+      toast({
+        title: "Assinatura cancelada",
+        description: "O processo de assinatura foi cancelado.",
+        variant: "destructive",
+      });
+    }
+  }, [success, canceled, toast]);
 
   useEffect(() => {
     if (!user) {
@@ -58,22 +77,31 @@ const SubscriptionPage = () => {
     setCheckoutError(null);
     
     try {
+      console.log(`Starting checkout for plan: ${planId}`);
+      
       const { url } = await subscriptionService.createCheckoutSession(
         planId,
         `${window.location.origin}/subscription?success=true`,
         `${window.location.origin}/subscription?canceled=true`
       );
       
+      if (!url) {
+        throw new Error("No checkout URL returned from Stripe");
+      }
+      
       // Redirect to Stripe Checkout
       window.location.href = url;
     } catch (error) {
       console.error("Error creating checkout session:", error);
-      setCheckoutError("Não foi possível iniciar o processo de assinatura.");
+      setCheckoutError(
+        error.message || "Não foi possível iniciar o processo de assinatura."
+      );
       toast({
         title: "Erro ao iniciar checkout",
-        description: "Não foi possível iniciar o processo de assinatura.",
+        description: "Não foi possível iniciar o processo de assinatura. Por favor, tente novamente mais tarde.",
         variant: "destructive",
       });
+    } finally {
       setIsCheckingOut(false);
     }
   };
@@ -226,7 +254,7 @@ const SubscriptionPage = () => {
                     onClick={() => handleSubscribe(plan.id)}
                     disabled={
                       isCheckingOut || 
-                      (subscription?.status === "active" && subscription?.plan_id === plan.id)
+                      (subscription?.status === "active" && subscription?.plan_id === plan.stripe_price_id)
                     }
                   >
                     {isCheckingOut ? (
@@ -234,7 +262,7 @@ const SubscriptionPage = () => {
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                         Processando...
                       </>
-                    ) : subscription?.status === "active" && subscription?.plan_id === plan.id ? (
+                    ) : subscription?.status === "active" && subscription?.plan_id === plan.stripe_price_id ? (
                       "Plano Atual"
                     ) : (
                       "Assinar"
