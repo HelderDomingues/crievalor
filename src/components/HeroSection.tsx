@@ -3,6 +3,7 @@ import React, { useEffect, useRef } from "react";
 import { ArrowRight, Brain, Zap, BarChart3 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import MaritimeWaves from "./MaritimeWaves";
+import EditableText from "./EditableText";
 
 interface HeroSectionProps {
   title: string;
@@ -236,16 +237,22 @@ const HeroSection = ({
           )}
           
           <div className="bg-primary/10 text-primary rounded-full px-4 py-2 inline-block mb-4 animate-fade-in">
-            {subtitle}
+            <EditableText initialText={subtitle} as="span" />
           </div>
           
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-6 animate-fade-in" style={{ animationDelay: "0.2s" }}>
-            {title}
-          </h1>
+          <EditableText 
+            initialText={title}
+            as="h1"
+            className="text-4xl sm:text-5xl md:text-6xl font-bold mb-6 animate-fade-in" 
+            style={{ animationDelay: "0.2s" }}
+          />
           
-          <p className="text-lg md:text-xl text-muted-foreground mb-8 animate-fade-in" style={{ animationDelay: "0.4s" }}>
-            {description}
-          </p>
+          <EditableText 
+            initialText={description}
+            as="p"
+            className="text-lg md:text-xl text-muted-foreground mb-8 animate-fade-in" 
+            style={{ animationDelay: "0.4s" }}
+          />
           
           <div className="flex flex-col sm:flex-row justify-center gap-4 animate-fade-in" style={{ animationDelay: "0.6s" }}>
             <Button
@@ -254,7 +261,7 @@ const HeroSection = ({
               asChild
             >
               <a href={ctaUrl}>
-                {ctaText} <ArrowRight className="ml-2 h-4 w-4" />
+                <EditableText initialText={ctaText} as="span" /> <ArrowRight className="ml-2 h-4 w-4" />
               </a>
             </Button>
             
@@ -265,7 +272,9 @@ const HeroSection = ({
                 className="border-primary text-primary hover:bg-primary/10"
                 asChild
               >
-                <a href={secondaryCtaUrl}>{secondaryCtaText}</a>
+                <a href={secondaryCtaUrl}>
+                  <EditableText initialText={secondaryCtaText} as="span" />
+                </a>
               </Button>
             )}
           </div>
