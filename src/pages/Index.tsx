@@ -1,3 +1,4 @@
+
 import React from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -6,7 +7,6 @@ import FeatureCard from "@/components/FeatureCard";
 import TestimonialCarousel from "@/components/TestimonialCarousel";
 import PricingSection from "@/components/PricingSection";
 import ContactSection from "@/components/ContactSection";
-import EditableText from "@/components/EditableText";
 import { Link } from "react-router-dom";
 import { Brain, Target, Zap, Lightbulb, TrendingUp, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -51,7 +51,7 @@ const Index = () => {
       
       <main className="flex-grow">
         <HeroSection
-          title="Transforme com estratégias personalizadas"
+          title="Transforme sua empresa com estratégias baseadas em IA"
           subtitle="Crie Valor"
           description="Somos especialistas em desenvolver estratégias de alto impacto que combinam o poder da inteligência artificial com a experiência humana."
           ctaText="Conheça o MAR"
@@ -70,16 +70,13 @@ const Index = () => {
           
           <div className="container mx-auto px-4 relative z-10">
             <div className="max-w-3xl mx-auto text-center mb-16">
-              <EditableText 
-                initialText="Desenvolvemos estratégias que geram resultados"
-                as="h2"
-                className="text-3xl md:text-4xl font-bold mb-4"
-              />
-              <EditableText 
-                initialText="Nossa abordagem combina tecnologia de ponta com expertise de mercado para criar estratégias que realmente funcionam."
-                as="p"
-                className="text-lg text-muted-foreground"
-              />
+              <h2 className="text-3xl md:text-4xl font-bold mb-4">
+                Desenvolvemos estratégias que geram resultados
+              </h2>
+              <p className="text-lg text-muted-foreground">
+                Nossa abordagem combina tecnologia de ponta com expertise de mercado para
+                criar estratégias que realmente funcionam.
+              </p>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-12">
@@ -106,26 +103,24 @@ const Index = () => {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
               <div>
                 <div className="bg-primary/10 text-primary rounded-full px-4 py-2 inline-block mb-4">
-                  <EditableText initialText="Nosso Produto Principal" as="span" />
+                  Nosso Produto Principal
                 </div>
-                <EditableText 
-                  initialText="MAR - Mapa para Alto Rendimento"
-                  as="h2"
-                  className="text-3xl md:text-4xl font-bold mb-4"
-                />
-                <EditableText 
-                  initialText="Um método híbrido revolucionário que combina o poder da inteligência artificial com o conhecimento de consultores humanos para gerar planos estratégicos com análises aprofundadas."
-                  as="p"
-                  className="text-lg text-muted-foreground mb-6"
-                />
-                <EditableText 
-                  initialText="Essa abordagem disruptiva não apenas acelera o processo, como também barateia e democratiza o desenvolvimento de planejamentos estratégicos de alto nível."
-                  as="p"
-                  className="text-lg text-muted-foreground mb-8"
-                />
+                <h2 className="text-3xl md:text-4xl font-bold mb-4">
+                  MAR - Mapa para Alto Rendimento
+                </h2>
+                <p className="text-lg text-muted-foreground mb-6">
+                  Um método híbrido revolucionário que combina o poder da inteligência 
+                  artificial com o conhecimento de consultores humanos para gerar planos 
+                  estratégicos com análises aprofundadas.
+                </p>
+                <p className="text-lg text-muted-foreground mb-8">
+                  Essa abordagem disruptiva não apenas acelera o processo, como também
+                  barateia e democratiza o desenvolvimento de planejamentos estratégicos
+                  de alto nível.
+                </p>
                 <Button size="lg" asChild>
                   <Link to="/mar">
-                    <EditableText initialText="Saiba mais sobre o MAR" as="span" />
+                    Saiba mais sobre o MAR
                   </Link>
                 </Button>
               </div>
@@ -185,16 +180,13 @@ const Index = () => {
         <section className="py-16 md:py-24 bg-secondary/30">
           <div className="container mx-auto px-4">
             <div className="max-w-3xl mx-auto text-center mb-12">
-              <EditableText 
-                initialText="O que nossos clientes dizem"
-                as="h2"
-                className="text-3xl md:text-4xl font-bold mb-4"
-              />
-              <EditableText 
-                initialText="Transformamos a estratégia de negócios de diversas empresas. Veja o que elas têm a dizer."
-                as="p"
-                className="text-lg text-muted-foreground"
-              />
+              <h2 className="text-3xl md:text-4xl font-bold mb-4">
+                O que nossos clientes dizem
+              </h2>
+              <p className="text-lg text-muted-foreground">
+                Transformamos a estratégia de negócios de diversas empresas. 
+                Veja o que elas têm a dizer.
+              </p>
             </div>
             
             <TestimonialCarousel />
@@ -210,25 +202,22 @@ const Index = () => {
           
           <div className="container mx-auto px-4 relative z-10">
             <div className="bg-card border border-border rounded-xl overflow-hidden shadow-xl p-8 md:p-12 max-w-4xl mx-auto text-center glow-border">
-              <EditableText 
-                initialText="Pronto para transformar sua estratégia?"
-                as="h2"
-                className="text-3xl md:text-4xl font-bold mb-4"
-              />
-              <EditableText 
-                initialText="Descubra como o MAR - Mapa para Alto Rendimento pode impulsionar os resultados da sua empresa com estratégias personalizadas."
-                as="p"
-                className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto"
-              />
+              <h2 className="text-3xl md:text-4xl font-bold mb-4">
+                Pronto para transformar sua estratégia?
+              </h2>
+              <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
+                Descubra como o MAR - Mapa para Alto Rendimento pode impulsionar os resultados 
+                da sua empresa com estratégias personalizadas.
+              </p>
               <div className="flex flex-col sm:flex-row justify-center gap-4">
                 <Button size="lg" asChild>
                   <Link to="/mar">
-                    <EditableText initialText="Conheça o MAR" as="span" />
+                    Conheça o MAR
                   </Link>
                 </Button>
                 <Button variant="outline" size="lg" asChild>
                   <a href="#contato">
-                    <EditableText initialText="Fale Conosco" as="span" />
+                    Fale Conosco
                   </a>
                 </Button>
               </div>

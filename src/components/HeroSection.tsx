@@ -3,7 +3,6 @@ import React, { useEffect, useRef } from "react";
 import { ArrowRight, Brain, Zap, BarChart3 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import MaritimeWaves from "./MaritimeWaves";
-import EditableText from "./EditableText";
 
 interface HeroSectionProps {
   title: string;
@@ -237,24 +236,16 @@ const HeroSection = ({
           )}
           
           <div className="bg-primary/10 text-primary rounded-full px-4 py-2 inline-block mb-4 animate-fade-in">
-            <EditableText initialText={subtitle} as="span" />
+            {subtitle}
           </div>
           
-          <div className="animate-fade-in" style={{ animationDelay: "0.2s" }}>
-            <EditableText 
-              initialText={title}
-              as="h1"
-              className="text-4xl sm:text-5xl md:text-6xl font-bold mb-6"
-            />
-          </div>
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-6 animate-fade-in" style={{ animationDelay: "0.2s" }}>
+            {title}
+          </h1>
           
-          <div className="animate-fade-in" style={{ animationDelay: "0.4s" }}>
-            <EditableText 
-              initialText={description}
-              as="p"
-              className="text-lg md:text-xl text-muted-foreground mb-8"
-            />
-          </div>
+          <p className="text-lg md:text-xl text-muted-foreground mb-8 animate-fade-in" style={{ animationDelay: "0.4s" }}>
+            {description}
+          </p>
           
           <div className="flex flex-col sm:flex-row justify-center gap-4 animate-fade-in" style={{ animationDelay: "0.6s" }}>
             <Button
@@ -263,7 +254,7 @@ const HeroSection = ({
               asChild
             >
               <a href={ctaUrl}>
-                <EditableText initialText={ctaText} as="span" /> <ArrowRight className="ml-2 h-4 w-4" />
+                {ctaText} <ArrowRight className="ml-2 h-4 w-4" />
               </a>
             </Button>
             
@@ -274,9 +265,7 @@ const HeroSection = ({
                 className="border-primary text-primary hover:bg-primary/10"
                 asChild
               >
-                <a href={secondaryCtaUrl}>
-                  <EditableText initialText={secondaryCtaText} as="span" />
-                </a>
+                <a href={secondaryCtaUrl}>{secondaryCtaText}</a>
               </Button>
             )}
           </div>

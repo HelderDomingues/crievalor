@@ -1,7 +1,6 @@
 
 import React from "react";
 import { LucideIcon } from "lucide-react";
-import EditableText from "./EditableText";
 
 interface FeatureCardProps {
   icon: LucideIcon;
@@ -11,26 +10,19 @@ interface FeatureCardProps {
 }
 
 const FeatureCard = ({ icon: Icon, title, description, index }: FeatureCardProps) => {
+  // Calculation for staggered animation
+  const delay = (index * 0.1) + 0.3;
+  
   return (
     <div 
-      className="bg-card rounded-xl p-6 border border-border hover:shadow-lg hover:shadow-primary/5 transition-all hover:border-primary/20 h-full"
-      style={{ animationDelay: `${index * 0.1}s` }}
+      className="bg-card rounded-xl p-6 glass-card hover:glow-border transition-all duration-300 transform hover:-translate-y-1"
+      style={{ animationDelay: `${delay}s` }}
     >
-      <div className="bg-primary/10 p-3 rounded-full w-12 h-12 flex items-center justify-center mb-4">
+      <div className="rounded-full bg-primary/10 p-3 w-12 h-12 flex items-center justify-center mb-4">
         <Icon className="text-primary h-6 w-6" />
       </div>
-      
-      <EditableText 
-        initialText={title}
-        as="h3"
-        className="text-xl font-semibold mb-3"
-      />
-      
-      <EditableText 
-        initialText={description}
-        as="p"
-        className="text-muted-foreground"
-      />
+      <h3 className="text-xl font-medium mb-2">{title}</h3>
+      <p className="text-muted-foreground">{description}</p>
     </div>
   );
 };
