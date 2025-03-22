@@ -17,25 +17,25 @@ export interface Subscription {
 // Pricing plans
 export const PLANS = {
   BASIC: {
-    id: "basic_plan", // Changed from "price_basic" to a generic ID
+    id: "basic_plan",
     name: "Plano Básico",
     price: "R$ 89,90",
     features: ["Consultoria inicial", "Acesso ao material básico", "Suporte por email"],
-    stripe_price_id: "price_basic", // Added separate property for the Stripe price ID
+    stripe_price_id: "price_basic", // Replace with your actual Stripe price ID
   },
   PRO: {
-    id: "pro_plan", // Changed from "price_pro" to a generic ID
+    id: "pro_plan",
     name: "Plano Profissional",
     price: "R$ 299,90",
     features: ["Tudo do Plano Básico", "Mentoria mensal", "Acesso à comunidade", "Suporte prioritário"],
-    stripe_price_id: "price_pro", // Added separate property for the Stripe price ID
+    stripe_price_id: "price_pro", // Replace with your actual Stripe price ID
   },
   ENTERPRISE: {
-    id: "enterprise_plan", // Changed from "price_enterprise" to a generic ID
+    id: "enterprise_plan",
     name: "Plano Empresarial",
     price: "R$ 799,90",
     features: ["Tudo do Plano Profissional", "Consultoria personalizada", "Mentoria semanal", "Acesso a conteúdo exclusivo"],
-    stripe_price_id: "price_enterprise", // Added separate property for the Stripe price ID
+    stripe_price_id: "price_enterprise", // Replace with your actual Stripe price ID
   },
 };
 
