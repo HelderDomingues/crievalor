@@ -39,6 +39,7 @@ const documentTypes: Record<string, DocumentType> = {
 // Dados dos planos
 export const plans: PricingPlan[] = [
   {
+    id: "basic_plan",
     name: "Básico",
     monthlyPrice: "R$ 89,90",
     annualPrice: "R$ 899,00",
@@ -59,6 +60,7 @@ export const plans: PricingPlan[] = [
     ctaUrl: "/subscription?plan=basic_plan",
   },
   {
+    id: "pro_plan",
     name: "Profissional",
     monthlyPrice: "R$ 299,90",
     annualPrice: "R$ 2.999,00",
@@ -82,6 +84,7 @@ export const plans: PricingPlan[] = [
     popular: true
   },
   {
+    id: "enterprise_plan",
     name: "Empresarial",
     monthlyPrice: "R$ 799,90",
     annualPrice: "R$ 7.999,00",
@@ -106,6 +109,7 @@ export const plans: PricingPlan[] = [
     ctaUrl: "/subscription?plan=enterprise_plan",
   },
   {
+    id: "corporate_plan",
     name: "Corporativo",
     description: "Solução personalizada para grandes corporações com necessidades específicas",
     features: [
