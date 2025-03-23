@@ -4,14 +4,12 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
-import { CheckCircle, AlertCircle, Loader2, Info } from "lucide-react";
-import { subscriptionService, PLANS, Subscription } from "@/services/subscriptionService";
+import { subscriptionService, Subscription } from "@/services/subscriptionService";
 import { useToast } from "@/hooks/use-toast";
-import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
+import SubscriptionLoading from "@/components/subscription/SubscriptionLoading";
+import CurrentSubscription from "@/components/subscription/CurrentSubscription";
+import SubscriptionPlans from "@/components/subscription/SubscriptionPlans";
+import CheckoutError from "@/components/subscription/CheckoutError";
 
 const SubscriptionPage = () => {
   const navigate = useNavigate();
@@ -96,7 +94,7 @@ const SubscriptionPage = () => {
       
       // Redirect to Stripe Checkout
       window.location.href = url;
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error creating checkout session:", error);
       setCheckoutError(
         error.message || "Não foi possível iniciar o processo de assinatura."
@@ -136,30 +134,6 @@ const SubscriptionPage = () => {
     }
   };
 
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case "active":
-        return <Badge className="bg-green-500">Ativa</Badge>;
-      case "trialing":
-        return <Badge className="bg-blue-500">Período de teste</Badge>;
-      case "canceled":
-        return <Badge variant="destructive">Cancelada</Badge>;
-      case "past_due":
-        return <Badge variant="destructive">Pagamento pendente</Badge>;
-      default:
-        return <Badge variant="outline">{status}</Badge>;
-    }
-  };
-
-  const formatDate = (dateString: string | null) => {
-    if (!dateString) return "N/A";
-    return new Date(dateString).toLocaleDateString("pt-BR", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-    });
-  };
-
   // Find the plan name from the stored plan_id (which is actually a Stripe Price ID)
   const getCurrentPlanName = () => {
     if (!subscription?.plan_id) return "N/A";
@@ -172,7 +146,7 @@ const SubscriptionPage = () => {
   const isPlanCurrent = (planId: string) => {
     if (!subscription || !subscription.plan_id) return false;
     
-    const plan = Object.values(PLANS).find(p => p.id === planId);
+    const plan = Object.values(subscriptionService.PLANS).find(p => p.id === planId);
     return plan?.stripe_price_id === subscription.plan_id;
   };
 
@@ -180,11 +154,8 @@ const SubscriptionPage = () => {
     return (
       <div className="min-h-screen flex flex-col">
         <Header />
-        <main className="flex-grow py-16 flex items-center justify-center">
-          <div className="flex flex-col items-center gap-4">
-            <Loader2 className="h-12 w-12 animate-spin text-primary" />
-            <p className="text-lg">Carregando dados da assinatura...</p>
-          </div>
+        <main>
+          <SubscriptionLoading />
         </main>
         <Footer />
       </div>
@@ -199,100 +170,22 @@ const SubscriptionPage = () => {
         <div className="container mx-auto px-4">
           <h1 className="text-3xl font-bold mb-8">Planos e Assinaturas</h1>
           
-          {checkoutError && (
-            <Alert variant="destructive" className="mb-6">
-              <AlertCircle className="h-4 w-4" />
-              <AlertTitle>Erro ao iniciar checkout</AlertTitle>
-              <AlertDescription>
-                {checkoutError}
-              </AlertDescription>
-            </Alert>
-          )}
+          <CheckoutError error={checkoutError || ""} />
           
           {subscription && ["active", "trialing"].includes(subscription.status) && (
-            <div className="mb-12">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center justify-between">
-                    Sua Assinatura {getStatusBadge(subscription.status)}
-                  </CardTitle>
-                  <CardDescription>
-                    Gerencie sua assinatura atual
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div>
-                    <p className="text-sm font-medium">Plano:</p>
-                    <p>{getCurrentPlanName()}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium">Válida até:</p>
-                    <p>{formatDate(subscription.current_period_end)}</p>
-                  </div>
-                </CardContent>
-                <CardFooter>
-                  <Button 
-                    variant="destructive" 
-                    disabled={isCanceling || subscription.status === "canceled"}
-                    onClick={handleCancelSubscription}
-                  >
-                    {isCanceling ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Cancelando...
-                      </>
-                    ) : (
-                      "Cancelar Assinatura"
-                    )}
-                  </Button>
-                </CardFooter>
-              </Card>
-            </div>
+            <CurrentSubscription
+              subscription={subscription}
+              isCanceling={isCanceling}
+              onCancelSubscription={handleCancelSubscription}
+              getCurrentPlanName={getCurrentPlanName}
+            />
           )}
           
-          <div className="grid md:grid-cols-3 gap-8">
-            {Object.values(PLANS).map((plan) => (
-              <Card key={plan.id} className="flex flex-col">
-                <CardHeader>
-                  <CardTitle>{plan.name}</CardTitle>
-                  <CardDescription>
-                    <span className="text-2xl font-bold">{plan.price}</span> /mês
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="flex-grow">
-                  <ul className="space-y-2">
-                    {plan.features.map((feature, index) => (
-                      <li key={index} className="flex items-start gap-2">
-                        <CheckCircle className="h-5 w-5 text-green-500 shrink-0 mt-0.5" />
-                        <span>{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </CardContent>
-                <CardFooter>
-                  <Button 
-                    className="w-full" 
-                    onClick={() => handleSubscribe(plan.id)}
-                    disabled={
-                      isCheckingOut || 
-                      (subscription?.status === "active" && isPlanCurrent(plan.id))
-                    }
-                  >
-                    {isCheckingOut ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Processando...
-                      </>
-                    ) : isPlanCurrent(plan.id) ? (
-                      "Plano Atual"
-                    ) : (
-                      "Assinar"
-                    )}
-                  </Button>
-                </CardFooter>
-              </Card>
-            ))}
-          </div>
+          <SubscriptionPlans
+            isCheckingOut={isCheckingOut}
+            isPlanCurrent={isPlanCurrent}
+            onSubscribe={handleSubscribe}
+          />
         </div>
       </main>
       
