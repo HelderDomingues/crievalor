@@ -1,6 +1,6 @@
 
 import React from "react";
-import { Check, Compass, FileText, Calendar, CreditCard, BadgePercent } from "lucide-react";
+import { Check, Compass, FileText, Calendar, CreditCard, BadgePercent, FolderArchive, Files, FileCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
@@ -10,6 +10,11 @@ interface PricingPlan {
   annualPrice?: string;
   description: string;
   features: string[];
+  documents?: {
+    icon: React.ElementType;
+    name: string;
+    included: boolean;
+  }[];
   cta: string;
   ctaUrl: string;
   popular?: boolean;
@@ -36,13 +41,36 @@ const plans: PricingPlan[] = [
     name: "Essencial",
     monthlyPrice: "R$ 333,08",
     annualPrice: "R$ 3.597",
-    description: "Plano ideal para pequenas empresas que buscam um direcionamento estratégico inicial.",
+    description: "Plano ideal para pequenas empresas que buscam um direcionamento estratégico inicial e foco em resultados práticos.",
     features: [
       "Análise estratégica básica",
       "Criado pela IA com revisão humana",
-      "Relatório estratégico simplificado",
+      "Relatório com recomendações práticas",
       "1 sessão de consultoria (1h)",
-      "Plano de ação para 3 meses"
+      "Plano de ação para 3 meses",
+      "Foco em ações imediatas para melhorar vendas"
+    ],
+    documents: [
+      {
+        icon: FileText,
+        name: "Relatório de Recomendações",
+        included: true
+      },
+      {
+        icon: FileCheck,
+        name: "Plano de Ação Simplificado",
+        included: true
+      },
+      {
+        icon: Files,
+        name: "Análises Detalhadas",
+        included: false
+      },
+      {
+        icon: FolderArchive,
+        name: "Acesso à Pasta Compartilhada",
+        included: false
+      }
     ],
     cta: "Escolher plano",
     ctaUrl: "#contato"
@@ -51,7 +79,7 @@ const plans: PricingPlan[] = [
     name: "Profissional",
     monthlyPrice: "R$ 583,08",
     annualPrice: "R$ 6.297",
-    description: "Nossa solução mais completa para empresas que buscam um plano estratégico detalhado.",
+    description: "Nossa solução mais completa para empresas que buscam um plano estratégico detalhado e acesso a todas as análises.",
     features: [
       "Análise estratégica avançada",
       "Relatório estratégico completo",
@@ -59,7 +87,29 @@ const plans: PricingPlan[] = [
       "2 sessões de consultoria",
       "Plano de ação para 6 meses",
       "Indicadores de desempenho (KPIs)",
-      "Armazenamento em pasta compartilhada"
+      "Pasta compartilhada com todos os arquivos"
+    ],
+    documents: [
+      {
+        icon: FileText,
+        name: "Relatório Estratégico Completo",
+        included: true
+      },
+      {
+        icon: FileCheck,
+        name: "Plano de Ação Detalhado",
+        included: true
+      },
+      {
+        icon: Files,
+        name: "Análises de Mercado e Competitivas",
+        included: true
+      },
+      {
+        icon: FolderArchive,
+        name: "Acesso Total à Pasta Compartilhada",
+        included: true
+      }
     ],
     cta: "Selecionar plano",
     ctaUrl: "#contato",
@@ -188,6 +238,25 @@ const PricingSection = () => {
                   ))}
                 </ul>
                 
+                {/* Document access section */}
+                {plan.documents && (
+                  <div className="mb-8">
+                    <h4 className="text-sm font-medium mb-3 border-b border-border pb-2">Documentos Incluídos</h4>
+                    <ul className="space-y-3">
+                      {plan.documents.map((doc, i) => (
+                        <li key={i} className="flex items-start">
+                          <div className={`shrink-0 mr-2 h-5 w-5 mt-0.5 ${doc.included ? 'text-green-500' : 'text-muted-foreground opacity-50'}`}>
+                            <doc.icon className="h-5 w-5" />
+                          </div>
+                          <span className={`text-sm ${doc.included ? '' : 'text-muted-foreground line-through opacity-50'}`}>
+                            {doc.name}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                
                 <Button 
                   className={`w-full ${
                     plan.popular 
@@ -221,9 +290,24 @@ const PricingSection = () => {
               <p className="text-sm text-muted-foreground mb-3">
                 Ganhe 10% de desconto pagando o valor integral em uma única parcela.
               </p>
-              <div className="flex items-center text-sm text-muted-foreground">
-                <CreditCard className="h-4 w-4 mr-1" />
-                <span>Cartão de crédito, boleto ou PIX</span>
+              <div className="flex flex-col space-y-2 text-sm text-muted-foreground">
+                <div className="flex items-center">
+                  <CreditCard className="h-4 w-4 mr-1" />
+                  <span>Cartão de crédito</span>
+                </div>
+                <div className="flex items-center">
+                  <svg className="h-4 w-4 mr-1" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M3 14.25h18M3 18.75h13.5M3 9.75h18M7.5 5.25h9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                  <span>Boleto bancário</span>
+                </div>
+                <div className="flex items-center">
+                  <svg className="h-4 w-4 mr-1" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2L4 10l8 3 8-3-8-8z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M4 22l8-4 8 4M4 16l8-4 8 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                  <span>PIX</span>
+                </div>
               </div>
             </div>
             
@@ -235,9 +319,27 @@ const PricingSection = () => {
               <p className="text-sm text-muted-foreground mb-3">
                 Divida o valor em até 12x mensais no cartão de crédito.
               </p>
-              <div className="flex items-center text-sm text-muted-foreground">
-                <CreditCard className="h-4 w-4 mr-1" />
-                <span>Aceito em todos os cartões</span>
+              <div className="flex flex-col space-y-2 text-sm text-muted-foreground">
+                <div className="flex items-center">
+                  <CreditCard className="h-4 w-4 mr-1" />
+                  <span>Visa, Mastercard, Elo, Amex</span>
+                </div>
+                <div className="flex items-center">
+                  <svg className="h-4 w-4 mr-1" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor" strokeWidth="1.5"/>
+                    <path d="M3 10h18" stroke="currentColor" strokeWidth="1.5"/>
+                    <path d="M7 15h2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+                    <path d="M15 15h2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+                  </svg>
+                  <span>Sem juros em até 12x</span>
+                </div>
+                <div className="flex items-center">
+                  <svg className="h-4 w-4 mr-1" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M9 12l2 2 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z" stroke="currentColor" strokeWidth="1.5"/>
+                  </svg>
+                  <span>Aprovação instantânea</span>
+                </div>
               </div>
             </div>
           </div>
