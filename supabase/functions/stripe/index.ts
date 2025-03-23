@@ -227,6 +227,139 @@ serve(async (req) => {
         }
         break;
         
+      case "get-invoices":
+        try {
+          // Get the customer ID from the subscriptions table
+          const { data: subscription, error: subError } = await supabase
+            .from("subscriptions")
+            .select("stripe_customer_id")
+            .eq("user_id", user.id)
+            .maybeSingle();
+            
+          if (subError) {
+            console.error("Error fetching subscription for invoices:", subError);
+            return new Response(JSON.stringify({ error: `Error fetching subscription: ${subError.message}` }), {
+              status: 500,
+              headers: { ...corsHeaders, "Content-Type": "application/json" },
+            });
+          }
+          
+          if (!subscription || !subscription.stripe_customer_id) {
+            console.log("No subscription or customer ID found for user");
+            return new Response(JSON.stringify({ invoices: [] }), {
+              headers: { ...corsHeaders, "Content-Type": "application/json" },
+            });
+          }
+          
+          console.log(`Fetching invoices for customer: ${subscription.stripe_customer_id}`);
+          
+          // Get invoices from Stripe
+          const invoices = await stripe.invoices.list({
+            customer: subscription.stripe_customer_id,
+            limit: 10, // Limit to the 10 most recent invoices
+          });
+          
+          console.log(`Retrieved ${invoices.data.length} invoices`);
+          
+          result = { invoices: invoices.data };
+        } catch (error) {
+          console.error("Error getting invoices:", error);
+          return new Response(JSON.stringify({ error: `Error getting invoices: ${error.message}` }), {
+            status: 500,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          });
+        }
+        break;
+        
+      case "get-invoice":
+        try {
+          const { invoiceId } = data;
+          
+          if (!invoiceId) {
+            return new Response(JSON.stringify({ error: "Missing invoice ID" }), {
+              status: 400,
+              headers: { ...corsHeaders, "Content-Type": "application/json" },
+            });
+          }
+          
+          console.log(`Fetching invoice: ${invoiceId}`);
+          
+          // Get invoice from Stripe
+          const invoice = await stripe.invoices.retrieve(invoiceId);
+          
+          // Verify this invoice belongs to the current user
+          const { data: subscription, error: subError } = await supabase
+            .from("subscriptions")
+            .select("stripe_customer_id")
+            .eq("user_id", user.id)
+            .maybeSingle();
+            
+          if (subError) {
+            console.error("Error verifying customer:", subError);
+            return new Response(JSON.stringify({ error: `Error verifying customer: ${subError.message}` }), {
+              status: 500,
+              headers: { ...corsHeaders, "Content-Type": "application/json" },
+            });
+          }
+          
+          if (!subscription || subscription.stripe_customer_id !== invoice.customer) {
+            return new Response(JSON.stringify({ error: "Invoice does not belong to user" }), {
+              status: 403,
+              headers: { ...corsHeaders, "Content-Type": "application/json" },
+            });
+          }
+          
+          result = { invoice };
+        } catch (error) {
+          console.error("Error getting invoice:", error);
+          return new Response(JSON.stringify({ error: `Error getting invoice: ${error.message}` }), {
+            status: 500,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          });
+        }
+        break;
+        
+      case "update-contract-acceptance":
+        try {
+          const { accepted, acceptedAt } = data;
+          
+          console.log(`Updating contract acceptance for user ${user.id}: ${accepted}`);
+          
+          // Update the subscription record with contract acceptance
+          const { data: updateData, error: updateError } = await supabase
+            .from("subscriptions")
+            .update({
+              contract_accepted: accepted,
+              contract_accepted_at: acceptedAt,
+            })
+            .eq("user_id", user.id)
+            .select()
+            .maybeSingle();
+            
+          if (updateError) {
+            console.error("Error updating contract acceptance:", updateError);
+            return new Response(JSON.stringify({ error: `Error updating contract acceptance: ${updateError.message}` }), {
+              status: 500,
+              headers: { ...corsHeaders, "Content-Type": "application/json" },
+            });
+          }
+          
+          result = { success: true, data: updateData };
+        } catch (error) {
+          console.error("Error updating contract acceptance:", error);
+          return new Response(JSON.stringify({ error: `Error updating contract acceptance: ${error.message}` }), {
+            status: 500,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          });
+        }
+        break;
+        
+      case "request-receipt":
+        // In a real implementation, this would generate a receipt PDF
+        // and either email it to the user or return a download URL
+        result = { success: true, message: "Receipt request processed" };
+        break;
+        
       default:
         return new Response(JSON.stringify({ error: `Unsupported action: ${action}` }), {
           status: 400,

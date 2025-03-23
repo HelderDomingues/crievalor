@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
@@ -8,7 +7,7 @@ import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { AlertCircle, User, Briefcase, Phone, Globe, FileText } from "lucide-react";
+import { AlertCircle, User, Briefcase, Phone, Globe, FileText, CreditCard } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Separator } from "@/components/ui/separator";
 import { Card, CardHeader, CardContent, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
@@ -21,6 +20,8 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
+import SubscriptionDetails from "@/components/profile/SubscriptionDetails";
+import { subscriptionService, Subscription } from "@/services/subscriptionService";
 
 const ProfileSchema = z.object({
   username: z.string().min(3, "Nome de usuário deve ter pelo menos 3 caracteres"),
@@ -48,6 +49,10 @@ const Profile = () => {
   
   const [activeTab, setActiveTab] = useState("personal");
   const [isUpdating, setIsUpdating] = useState(false);
+  const [subscription, setSubscription] = useState<Subscription | null>(null);
+  const [subscriptionLoading, setSubscriptionLoading] = useState(true);
+  const [invoices, setInvoices] = useState<any[] | null>(null);
+  const [invoicesLoading, setInvoicesLoading] = useState(true);
   
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(ProfileSchema),
@@ -68,7 +73,36 @@ const Profile = () => {
     }
   });
   
-  // Update form values when profile loads
+  useEffect(() => {
+    if (!user) return;
+    
+    async function loadSubscriptionData() {
+      try {
+        setSubscriptionLoading(true);
+        const sub = await subscriptionService.getCurrentSubscription();
+        setSubscription(sub);
+        
+        if (sub && sub.stripe_subscription_id) {
+          setInvoicesLoading(true);
+          const invoicesData = await subscriptionService.getInvoices();
+          setInvoices(invoicesData);
+        }
+      } catch (error) {
+        console.error("Error loading subscription or invoices:", error);
+        toast({
+          variant: "destructive",
+          title: "Erro ao carregar dados da assinatura",
+          description: "Não foi possível carregar as informações da sua assinatura."
+        });
+      } finally {
+        setSubscriptionLoading(false);
+        setInvoicesLoading(false);
+      }
+    }
+    
+    loadSubscriptionData();
+  }, [user, toast]);
+  
   useEffect(() => {
     if (profile) {
       form.reset({
@@ -89,7 +123,6 @@ const Profile = () => {
     }
   }, [profile, form]);
   
-  // Redirect if not authenticated
   useEffect(() => {
     if (!user && !loading) {
       navigate("/auth");
@@ -150,7 +183,6 @@ const Profile = () => {
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
             
-            {/* Sidebar */}
             <div className="lg:col-span-1">
               <Card>
                 <CardContent className="pt-6">
@@ -202,6 +234,14 @@ const Profile = () => {
                       <Globe className="mr-2 h-4 w-4" />
                       Redes Sociais
                     </Button>
+                    <Button 
+                      variant={activeTab === "subscription" ? "default" : "ghost"} 
+                      className="justify-start" 
+                      onClick={() => setActiveTab("subscription")}
+                    >
+                      <CreditCard className="mr-2 h-4 w-4" />
+                      Assinatura
+                    </Button>
                   </nav>
 
                   <Separator className="my-4" />
@@ -217,208 +257,231 @@ const Profile = () => {
               </Card>
             </div>
             
-            {/* Main Content */}
             <div className="lg:col-span-3">
               <Card>
                 <CardHeader>
-                  <CardTitle>Meu Perfil</CardTitle>
+                  <CardTitle>
+                    {activeTab === "personal" && "Dados Pessoais"}
+                    {activeTab === "company" && "Dados da Empresa"}
+                    {activeTab === "social" && "Redes Sociais"}
+                    {activeTab === "subscription" && "Assinatura e Financeiro"}
+                  </CardTitle>
                   <CardDescription>
-                    Gerencie suas informações pessoais e de empresa
+                    {activeTab === "personal" && "Gerencie suas informações pessoais"}
+                    {activeTab === "company" && "Gerencie as informações da sua empresa"}
+                    {activeTab === "social" && "Gerencie suas redes sociais"}
+                    {activeTab === "subscription" && "Gerencie sua assinatura e dados financeiros"}
                   </CardDescription>
                 </CardHeader>
                 
                 <CardContent>
-                  <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                      {activeTab === "personal" && (
-                        <div className="space-y-4">
-                          <h3 className="text-lg font-medium">Dados Pessoais</h3>
-                          
-                          <FormField
-                            control={form.control}
-                            name="username"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>Nome de Usuário</FormLabel>
-                                <FormControl>
-                                  <Input {...field} placeholder="Seu nome de usuário" />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                          
-                          <FormField
-                            control={form.control}
-                            name="full_name"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>Nome Completo</FormLabel>
-                                <FormControl>
-                                  <Input {...field} placeholder="Seu nome completo" />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                          
-                          <FormField
-                            control={form.control}
-                            name="phone"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>Telefone</FormLabel>
-                                <FormControl>
-                                  <Input {...field} placeholder="(00) 00000-0000" />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
+                  {activeTab === "subscription" ? (
+                    subscriptionLoading || invoicesLoading ? (
+                      <div className="flex items-center justify-center py-10">
+                        <div className="flex flex-col items-center">
+                          <div className="h-10 w-10 border-4 border-primary border-t-transparent rounded-full animate-spin mb-4"></div>
+                          <p className="text-muted-foreground">Carregando dados da assinatura...</p>
                         </div>
-                      )}
-                      
-                      {activeTab === "company" && (
-                        <div className="space-y-4">
-                          <h3 className="text-lg font-medium">Dados da Empresa</h3>
-                          
-                          <FormField
-                            control={form.control}
-                            name="company_name"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>Nome da Empresa</FormLabel>
-                                <FormControl>
-                                  <Input {...field} placeholder="Nome da sua empresa" />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                          
-                          <FormField
-                            control={form.control}
-                            name="company_address"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>Endereço da Empresa</FormLabel>
-                                <FormControl>
-                                  <Textarea 
-                                    {...field} 
-                                    placeholder="Endereço completo da empresa" 
-                                    className="resize-none" 
-                                    rows={3}
-                                  />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                          
-                          <FormField
-                            control={form.control}
-                            name="website"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>Website</FormLabel>
-                                <FormControl>
-                                  <Input {...field} placeholder="https://www.seusite.com.br" />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                          
-                          <FormField
-                            control={form.control}
-                            name="cnpj"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>CNPJ</FormLabel>
-                                <FormControl>
-                                  <Input {...field} placeholder="00.000.000/0000-00" />
-                                </FormControl>
-                                <FormDescription>
-                                  Opcional, mas recomendado
-                                </FormDescription>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                        </div>
-                      )}
-                      
-                      {activeTab === "social" && (
-                        <div className="space-y-4">
-                          <h3 className="text-lg font-medium">Redes Sociais</h3>
-                          
-                          <FormField
-                            control={form.control}
-                            name="social_media.linkedin"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>LinkedIn</FormLabel>
-                                <FormControl>
-                                  <Input {...field} placeholder="https://linkedin.com/in/seuperfil" />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                          
-                          <FormField
-                            control={form.control}
-                            name="social_media.instagram"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>Instagram</FormLabel>
-                                <FormControl>
-                                  <Input {...field} placeholder="https://instagram.com/seuperfil" />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                          
-                          <FormField
-                            control={form.control}
-                            name="social_media.facebook"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>Facebook</FormLabel>
-                                <FormControl>
-                                  <Input {...field} placeholder="https://facebook.com/seuperfil" />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                          
-                          <FormField
-                            control={form.control}
-                            name="social_media.twitter"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>Twitter</FormLabel>
-                                <FormControl>
-                                  <Input {...field} placeholder="https://twitter.com/seuperfil" />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                        </div>
-                      )}
-                      
-                      <Button 
-                        type="submit" 
-                        className="w-full mt-6" 
-                        disabled={isUpdating}
-                      >
-                        {isUpdating ? "Salvando..." : "Salvar Alterações"}
-                      </Button>
-                    </form>
-                  </Form>
+                      </div>
+                    ) : (
+                      <SubscriptionDetails 
+                        subscription={subscription} 
+                        invoices={invoices}
+                      />
+                    )
+                  ) : (
+                    <Form {...form}>
+                      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                        {activeTab === "personal" && (
+                          <div className="space-y-4">
+                            <h3 className="text-lg font-medium">Dados Pessoais</h3>
+                            
+                            <FormField
+                              control={form.control}
+                              name="username"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Nome de Usuário</FormLabel>
+                                  <FormControl>
+                                    <Input {...field} placeholder="Seu nome de usuário" />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                            
+                            <FormField
+                              control={form.control}
+                              name="full_name"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Nome Completo</FormLabel>
+                                  <FormControl>
+                                    <Input {...field} placeholder="Seu nome completo" />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                            
+                            <FormField
+                              control={form.control}
+                              name="phone"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Telefone</FormLabel>
+                                  <FormControl>
+                                    <Input {...field} placeholder="(00) 00000-0000" />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                          </div>
+                        )}
+                        
+                        {activeTab === "company" && (
+                          <div className="space-y-4">
+                            <h3 className="text-lg font-medium">Dados da Empresa</h3>
+                            
+                            <FormField
+                              control={form.control}
+                              name="company_name"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Nome da Empresa</FormLabel>
+                                  <FormControl>
+                                    <Input {...field} placeholder="Nome da sua empresa" />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                            
+                            <FormField
+                              control={form.control}
+                              name="company_address"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Endereço da Empresa</FormLabel>
+                                  <FormControl>
+                                    <Textarea 
+                                      {...field} 
+                                      placeholder="Endereço completo da empresa" 
+                                      className="resize-none" 
+                                      rows={3}
+                                    />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                            
+                            <FormField
+                              control={form.control}
+                              name="website"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Website</FormLabel>
+                                  <FormControl>
+                                    <Input {...field} placeholder="https://www.seusite.com.br" />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                            
+                            <FormField
+                              control={form.control}
+                              name="cnpj"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>CNPJ</FormLabel>
+                                  <FormControl>
+                                    <Input {...field} placeholder="00.000.000/0000-00" />
+                                  </FormControl>
+                                  <FormDescription>
+                                    Opcional, mas recomendado
+                                  </FormDescription>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                          </div>
+                        )}
+                        
+                        {activeTab === "social" && (
+                          <div className="space-y-4">
+                            <h3 className="text-lg font-medium">Redes Sociais</h3>
+                            
+                            <FormField
+                              control={form.control}
+                              name="social_media.linkedin"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>LinkedIn</FormLabel>
+                                  <FormControl>
+                                    <Input {...field} placeholder="https://linkedin.com/in/seuperfil" />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                            
+                            <FormField
+                              control={form.control}
+                              name="social_media.instagram"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Instagram</FormLabel>
+                                  <FormControl>
+                                    <Input {...field} placeholder="https://instagram.com/seuperfil" />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                            
+                            <FormField
+                              control={form.control}
+                              name="social_media.facebook"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Facebook</FormLabel>
+                                  <FormControl>
+                                    <Input {...field} placeholder="https://facebook.com/seuperfil" />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                            
+                            <FormField
+                              control={form.control}
+                              name="social_media.twitter"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Twitter</FormLabel>
+                                  <FormControl>
+                                    <Input {...field} placeholder="https://twitter.com/seuperfil" />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                          </div>
+                        )}
+                        
+                        <Button 
+                          type="submit" 
+                          className="w-full mt-6" 
+                          disabled={isUpdating}
+                        >
+                          {isUpdating ? "Salvando..." : "Salvar Alterações"}
+                        </Button>
+                      </form>
+                    </Form>
+                  )}
                 </CardContent>
               </Card>
             </div>

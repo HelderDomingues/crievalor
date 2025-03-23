@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 
 // Define subscription types
@@ -12,6 +11,8 @@ export interface Subscription {
   current_period_end: string | null;
   created_at: string;
   updated_at: string;
+  contract_accepted?: boolean;
+  contract_accepted_at?: string | null;
 }
 
 // Pricing plans
@@ -149,9 +150,106 @@ export const subscriptionService = {
       return false;
     }
   },
-  
+
   // Helper function to get plan information from Stripe price ID
   getPlanFromPriceId(priceId: string) {
     return Object.values(PLANS).find(plan => plan.stripe_price_id === priceId);
+  },
+
+  async getInvoices() {
+    try {
+      console.log("Fetching invoices...");
+      const response = await supabase.functions.invoke("stripe", {
+        body: {
+          action: "get-invoices",
+          data: {},
+        },
+      });
+
+      if (response.error) {
+        console.error("Error fetching invoices:", response.error);
+        return null;
+      }
+
+      const data = response.data;
+      console.log("Invoices data received:", data);
+      return data?.invoices || [];
+    } catch (error) {
+      console.error("Error in getInvoices:", error);
+      return [];
+    }
+  },
+
+  async getInvoice(invoiceId: string) {
+    try {
+      console.log(`Fetching invoice: ${invoiceId}`);
+      const response = await supabase.functions.invoke("stripe", {
+        body: {
+          action: "get-invoice",
+          data: {
+            invoiceId,
+          },
+        },
+      });
+
+      if (response.error) {
+        console.error("Error fetching invoice:", response.error);
+        return null;
+      }
+
+      return response.data?.invoice || null;
+    } catch (error) {
+      console.error("Error in getInvoice:", error);
+      return null;
+    }
+  },
+
+  async updateContractAcceptance(accepted: boolean) {
+    try {
+      console.log(`Updating contract acceptance: ${accepted}`);
+      const response = await supabase.functions.invoke("stripe", {
+        body: {
+          action: "update-contract-acceptance",
+          data: {
+            accepted,
+            acceptedAt: new Date().toISOString(),
+          },
+        },
+      });
+
+      if (response.error) {
+        console.error("Error updating contract acceptance:", response.error);
+        return { success: false, error: response.error };
+      }
+
+      return { success: true, data: response.data };
+    } catch (error: any) {
+      console.error("Error in updateContractAcceptance:", error);
+      return { success: false, error: error.message };
+    }
+  },
+
+  async requestReceipt(invoiceId: string) {
+    try {
+      console.log(`Requesting receipt for invoice: ${invoiceId}`);
+      const response = await supabase.functions.invoke("stripe", {
+        body: {
+          action: "request-receipt",
+          data: {
+            invoiceId,
+          },
+        },
+      });
+
+      if (response.error) {
+        console.error("Error requesting receipt:", response.error);
+        return { success: false, error: response.error };
+      }
+
+      return { success: true, data: response.data };
+    } catch (error: any) {
+      console.error("Error in requestReceipt:", error);
+      return { success: false, error: error.message };
+    }
   }
 };
