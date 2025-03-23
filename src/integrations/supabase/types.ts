@@ -53,6 +53,8 @@ export type Database = {
       }
       subscriptions: {
         Row: {
+          contract_accepted: boolean | null
+          contract_accepted_at: string | null
           created_at: string
           current_period_end: string | null
           id: string
@@ -64,6 +66,8 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          contract_accepted?: boolean | null
+          contract_accepted_at?: string | null
           created_at?: string
           current_period_end?: string | null
           id?: string
@@ -75,6 +79,8 @@ export type Database = {
           user_id: string
         }
         Update: {
+          contract_accepted?: boolean | null
+          contract_accepted_at?: string | null
           created_at?: string
           current_period_end?: string | null
           id?: string
