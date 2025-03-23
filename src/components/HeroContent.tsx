@@ -32,7 +32,8 @@ const HeroContent: React.FC<HeroContentProps> = ({
             <img src="/lovable-uploads/91e6888f-e3da-40dc-8c55-5718c15ada21.png" alt="MAR - Mapa para Alto Rendimento" className="h-24 mx-auto" />
           </div>
         ) : (
-          <div className="mb-5 animate-fade-in"></div> {/* Reduced from mb-6 (by approximately 20%) */}
+          // Reduced from mb-6 (by approximately 20%)
+          <div className="mb-5 animate-fade-in"></div>
         )}
         
         <div className="bg-primary/10 text-primary rounded-full px-4 py-2 inline-block mb-3 animate-fade-in">
