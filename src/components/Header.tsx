@@ -66,7 +66,7 @@ const Header = () => {
               <img 
                 src="/lovable-uploads/fc868084-d22b-4877-907b-fe02e64fc501.png" 
                 alt="Crie Valor Logo" 
-                className="h-8 mr-2"
+                className="h-6 mr-2"  /* Reduced from h-8 (25% smaller) */
               />
             </Link>
           </div>

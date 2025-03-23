@@ -32,22 +32,22 @@ const HeroContent: React.FC<HeroContentProps> = ({
             <img src="/lovable-uploads/91e6888f-e3da-40dc-8c55-5718c15ada21.png" alt="MAR - Mapa para Alto Rendimento" className="h-24 mx-auto" />
           </div>
         ) : (
-          <div className="mb-6 animate-fade-in"></div>
+          <div className="mb-5 animate-fade-in"></div> {/* Reduced from mb-6 (by approximately 20%) */}
         )}
         
-        <div className="bg-primary/10 text-primary rounded-full px-4 py-2 inline-block mb-4 animate-fade-in">
+        <div className="bg-primary/10 text-primary rounded-full px-4 py-2 inline-block mb-3 animate-fade-in">
           {subtitle}
         </div>
         
         <h1 
           style={{ animationDelay: "0.2s" }} 
-          className="sm:text-5xl font-bold mb-6 animate-fade-in text-3xl md:text-5xl"
+          className="sm:text-5xl font-bold mb-5 animate-fade-in text-3xl md:text-5xl"
         >
           {title}
         </h1>
         
         <p 
-          className="text-lg md:text-xl text-muted-foreground mb-8 animate-fade-in" 
+          className="text-lg md:text-xl text-muted-foreground mb-6 animate-fade-in" 
           style={{ animationDelay: "0.4s" }}
         >
           {description}
