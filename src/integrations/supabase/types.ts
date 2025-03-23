@@ -12,21 +12,42 @@ export type Database = {
       profiles: {
         Row: {
           avatar_url: string | null
+          cnpj: string | null
+          company_address: string | null
+          company_name: string | null
+          full_name: string | null
           id: string
+          phone: string | null
+          social_media: Json | null
           updated_at: string | null
           username: string | null
+          website: string | null
         }
         Insert: {
           avatar_url?: string | null
+          cnpj?: string | null
+          company_address?: string | null
+          company_name?: string | null
+          full_name?: string | null
           id: string
+          phone?: string | null
+          social_media?: Json | null
           updated_at?: string | null
           username?: string | null
+          website?: string | null
         }
         Update: {
           avatar_url?: string | null
+          cnpj?: string | null
+          company_address?: string | null
+          company_name?: string | null
+          full_name?: string | null
           id?: string
+          phone?: string | null
+          social_media?: Json | null
           updated_at?: string | null
           username?: string | null
+          website?: string | null
         }
         Relationships: []
       }

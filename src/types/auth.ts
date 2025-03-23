@@ -24,4 +24,16 @@ export interface UserProfile {
   username: string | null;
   avatar_url: string | null;
   updated_at: string;
+  full_name: string | null;
+  phone: string | null;
+  company_name: string | null;
+  company_address: string | null;
+  website: string | null;
+  social_media: {
+    linkedin?: string;
+    twitter?: string;
+    instagram?: string;
+    facebook?: string;
+  } | null;
+  cnpj: string | null;
 }
