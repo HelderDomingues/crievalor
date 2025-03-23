@@ -1,114 +1,131 @@
 
-import { PricingPlan } from "./types";
-import { FileText, FileCheck, Files, FolderArchive } from "lucide-react";
+import { File, FileText, FileCheck, Users, Presentation, BarChart } from "lucide-react";
+import { DocumentType, PricingPlan } from "./types";
 
+// Tipos de documentos disponíveis
+const documentTypes: Record<string, DocumentType> = {
+  diagnostico: {
+    icon: File,
+    name: "Diagnóstico Inicial",
+    included: true
+  },
+  planoEstrategico: {
+    icon: FileText,
+    name: "Plano Estratégico",
+    included: true
+  },
+  mapaCrescimento: {
+    icon: BarChart,
+    name: "Mapa de Crescimento",
+    included: true
+  },
+  relatorioCompleto: {
+    icon: FileCheck,
+    name: "Relatório Completo",
+    included: true
+  },
+  workshop: {
+    icon: Users,
+    name: "Workshop de Implementação",
+    included: true
+  },
+  apresentacao: {
+    icon: Presentation,
+    name: "Apresentação Executiva",
+    included: true
+  }
+};
+
+// Dados dos planos
 export const plans: PricingPlan[] = [
   {
-    name: "Self Service",
-    monthlyPrice: "Em breve",
-    description: "Uma ferramenta self-service para empresas que querem criar seu próprio plano estratégico com auxílio de IA.",
+    name: "Básico",
+    monthlyPrice: "R$ 89,90",
+    annualPrice: "R$ 899,00",
+    description: "Ideal para pequenas empresas que estão iniciando sua jornada estratégica",
     features: [
-      "Criação autoguiada",
-      "Assistência de IA em etapas-chave",
-      "Modelo de relatório básico",
-      "Autonomia na criação de estratégias",
-      "Acesso à ferramenta por 30 dias"
-    ],
-    cta: "Em desenvolvimento",
-    ctaUrl: "#",
-    comingSoon: true
-  },
-  {
-    name: "Essencial",
-    monthlyPrice: "R$ 333,08",
-    annualPrice: "R$ 3.597",
-    description: "Plano ideal para pequenas empresas que buscam um direcionamento estratégico inicial e foco em resultados práticos.",
-    features: [
-      "Análise estratégica básica",
-      "Criado pela IA com revisão humana",
-      "Relatório com recomendações práticas",
-      "1 sessão de consultoria (1h)",
-      "Plano de ação para 3 meses",
-      "Foco em ações imediatas para melhorar vendas"
+      "Diagnóstico inicial do negócio",
+      "Análise SWOT básica",
+      "Recomendações iniciais",
+      "Email de suporte"
     ],
     documents: [
-      {
-        icon: FileText,
-        name: "Relatório de Recomendações",
-        included: true
-      },
-      {
-        icon: FileCheck,
-        name: "Plano de Ação Simplificado",
-        included: true
-      },
-      {
-        icon: Files,
-        name: "Análises Detalhadas",
-        included: false
-      },
-      {
-        icon: FolderArchive,
-        name: "Acesso à Pasta Compartilhada",
-        included: false
-      }
+      documentTypes.diagnostico,
+      {...documentTypes.planoEstrategico, included: false},
+      {...documentTypes.mapaCrescimento, included: false},
+      {...documentTypes.relatorioCompleto, included: false}
     ],
-    cta: "Escolher plano",
-    ctaUrl: "#contato"
+    cta: "Começar agora",
+    ctaUrl: "/subscription?plan=basic_plan",
   },
   {
     name: "Profissional",
-    monthlyPrice: "R$ 583,08",
-    annualPrice: "R$ 6.297",
-    description: "Nossa solução mais completa para empresas que buscam um plano estratégico detalhado e acesso a todas as análises.",
+    monthlyPrice: "R$ 299,90",
+    annualPrice: "R$ 2.999,00",
+    description: "Para empresas em crescimento que precisam de estratégias mais estruturadas",
     features: [
-      "Análise estratégica avançada",
-      "Relatório estratégico completo",
-      "Acesso a todas análises detalhadas",
-      "2 sessões de consultoria",
-      "Plano de ação para 6 meses",
-      "Indicadores de desempenho (KPIs)",
-      "Pasta compartilhada com todos os arquivos"
+      "Tudo do plano Básico",
+      "Plano estratégico detalhado",
+      "Mapa de crescimento personalizado",
+      "2 sessões de mentoria",
+      "Suporte prioritário"
     ],
     documents: [
-      {
-        icon: FileText,
-        name: "Relatório Estratégico Completo",
-        included: true
-      },
-      {
-        icon: FileCheck,
-        name: "Plano de Ação Detalhado",
-        included: true
-      },
-      {
-        icon: Files,
-        name: "Análises de Mercado e Competitivas",
-        included: true
-      },
-      {
-        icon: FolderArchive,
-        name: "Acesso Total à Pasta Compartilhada",
-        included: true
-      }
+      documentTypes.diagnostico,
+      documentTypes.planoEstrategico,
+      documentTypes.mapaCrescimento,
+      {...documentTypes.relatorioCompleto, included: false},
+      {...documentTypes.workshop, included: false}
     ],
-    cta: "Selecionar plano",
-    ctaUrl: "#contato",
+    cta: "Escolher Profissional",
+    ctaUrl: "/subscription?plan=pro_plan",
     popular: true
   },
   {
-    name: "Personalizado",
-    description: "Solução customizada para empresas com necessidades específicas e maior interação humana.",
+    name: "Empresarial",
+    monthlyPrice: "R$ 799,90",
+    annualPrice: "R$ 7.999,00",
+    description: "Solução completa para empresas que buscam excelência estratégica",
     features: [
-      "Consultoria estratégica aprofundada",
-      "Suporte personalizado",
-      "Quantidade de reuniões flexível",
-      "Plano de ação adaptado à sua realidade",
-      "Relatórios e análises sob medida",
-      "Acompanhamento personalizado",
-      "Implementação assistida"
+      "Tudo do plano Profissional",
+      "Relatório completo com KPIs",
+      "Workshop de implementação",
+      "4 sessões de mentoria avançada",
+      "Acesso VIP a eventos exclusivos",
+      "Consultoria especializada"
     ],
-    cta: "Solicitar proposta",
-    ctaUrl: "#contato"
+    documents: [
+      documentTypes.diagnostico,
+      documentTypes.planoEstrategico,
+      documentTypes.mapaCrescimento,
+      documentTypes.relatorioCompleto,
+      documentTypes.workshop,
+      documentTypes.apresentacao
+    ],
+    cta: "Falar com Consultor",
+    ctaUrl: "/subscription?plan=enterprise_plan",
+  },
+  {
+    name: "Corporativo",
+    description: "Solução personalizada para grandes corporações com necessidades específicas",
+    features: [
+      "Estratégia completamente personalizada",
+      "Equipe dedicada de consultores",
+      "Implementação assistida",
+      "Workshops para equipe de liderança",
+      "Acompanhamento contínuo",
+      "Relatórios trimestrais de progresso"
+    ],
+    documents: [
+      documentTypes.diagnostico,
+      documentTypes.planoEstrategico,
+      documentTypes.mapaCrescimento,
+      documentTypes.relatorioCompleto,
+      documentTypes.workshop,
+      documentTypes.apresentacao
+    ],
+    cta: "Solicitar Proposta",
+    ctaUrl: "/contato?assunto=plano-corporativo",
+    comingSoon: true
   }
 ];

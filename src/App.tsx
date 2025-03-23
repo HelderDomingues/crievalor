@@ -1,9 +1,8 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/context/AuthContext";
 import Index from "./pages/Index";
 import Mar from "./pages/Mar";
@@ -24,6 +23,8 @@ import Auth from "./pages/Auth";
 import Profile from "./pages/Profile";
 import Subscription from "./pages/Subscription";
 import { useState } from "react";
+import CheckoutSuccess from "./pages/CheckoutSuccess";
+import CheckoutCanceled from "./pages/CheckoutCanceled";
 
 const App = () => {
   const [queryClient] = useState(() => new QueryClient());
@@ -34,29 +35,32 @@ const App = () => {
         <Toaster />
         <Sonner />
         <AuthProvider>
-          <BrowserRouter>
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/mar" element={<Mar />} />
-              <Route path="/sobre" element={<Sobre />} />
-              <Route path="/contato" element={<Contato />} />
-              <Route path="/mentorias" element={<Mentorias />} />
-              <Route path="/consultoria" element={<Consultoria />} />
-              <Route path="/escola-de-gestao" element={<EscolaGestao />} />
-              <Route path="/identidade-visual" element={<IdentidadeVisual />} />
-              <Route path="/projetos" element={<Projetos />} />
-              <Route path="/portfolio-admin" element={<PortfolioAdmin />} />
-              <Route path="/auth" element={<Auth />} />
-              <Route path="/profile" element={<Profile />} />
-              <Route path="/subscription" element={<Subscription />} />
-              <Route path="/politica-de-privacidade" element={<PrivacyPolicy />} />
-              <Route path="/politica-de-reembolso" element={<RefundPolicy />} />
-              <Route path="/termos-de-servico" element={<TermsOfService />} />
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-            <Chatbot />
-          </BrowserRouter>
+          <Router>
+            <div className="app">
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/sobre" element={<Sobre />} />
+                <Route path="/consultoria" element={<Consultoria />} />
+                <Route path="/mentorias" element={<Mentorias />} />
+                <Route path="/escola-gestao" element={<EscolaGestao />} />
+                <Route path="/contato" element={<Contato />} />
+                <Route path="/mar" element={<Mar />} />
+                <Route path="/identidade-visual" element={<IdentidadeVisual />} />
+                <Route path="/auth" element={<Auth />} />
+                <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+                <Route path="/refund-policy" element={<RefundPolicy />} />
+                <Route path="/terms-of-service" element={<TermsOfService />} />
+                <Route path="/profile" element={<Profile />} />
+                <Route path="/projetos" element={<Projetos />} />
+                <Route path="/subscription" element={<Subscription />} />
+                <Route path="/checkout/success" element={<CheckoutSuccess />} />
+                <Route path="/checkout/canceled" element={<CheckoutCanceled />} />
+                <Route path="/portfolio-admin" element={<PortfolioAdmin />} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+              <Chatbot />
+            </div>
+          </Router>
         </AuthProvider>
       </TooltipProvider>
     </QueryClientProvider>

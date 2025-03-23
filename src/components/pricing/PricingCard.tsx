@@ -1,122 +1,107 @@
 
 import React from "react";
-import { Check, Calendar, CreditCard, BadgePercent } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import PlanDocuments from "./PlanDocuments";
 import { PricingPlan } from "./types";
+import PlanDocuments from "./PlanDocuments";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/context/AuthContext";
+import { Loader2 } from "lucide-react";
 
 interface PricingCardProps {
   plan: PricingPlan;
+  isCheckingOut?: boolean;
 }
 
-const PricingCard = ({ plan }: PricingCardProps) => {
+const PricingCard = ({ plan, isCheckingOut = false }: PricingCardProps) => {
+  const navigate = useNavigate();
+  const { user } = useAuth();
+
+  const handleSubscribe = () => {
+    if (!user) {
+      // Redirecionar para página de autenticação, passando o plano como parâmetro
+      navigate(`/auth?redirect=subscription&plan=${plan.name}`);
+      return;
+    }
+    
+    // Se o usuário estiver logado, redirecionar para a página de assinatura
+    navigate(`/subscription?plan=${plan.name}`);
+  };
+
   return (
-    <div 
-      className={`rounded-xl overflow-hidden transition-all ${
-        plan.popular 
-          ? "border-primary shadow-lg shadow-primary/20 relative md:scale-105 z-10" 
-          : plan.comingSoon
-            ? "border-border opacity-75"
-            : "border-border"
-      } border bg-card hover:shadow-lg hover:shadow-primary/10`}
-    >
-      {plan.popular && (
-        <div className="absolute top-0 right-0">
-          <div className="bg-primary text-primary-foreground text-xs px-3 py-1 rounded-bl-lg font-medium">
-            Recomendado
-          </div>
-        </div>
-      )}
-      
-      {plan.comingSoon && (
-        <div className="absolute top-0 right-0">
-          <div className="bg-secondary text-secondary-foreground text-xs px-3 py-1 rounded-bl-lg font-medium">
-            Em breve
-          </div>
-        </div>
-      )}
-      
-      <div className="p-6 md:p-8">
-        <h3 className="text-xl font-semibold mb-2">{plan.name}</h3>
-        
-        {/* Pricing display */}
-        {plan.comingSoon ? (
-          <div className="flex items-baseline mb-4">
-            <span className="text-3xl md:text-4xl font-bold">{plan.monthlyPrice}</span>
-          </div>
-        ) : plan.name === "Personalizado" ? (
-          <div className="flex items-baseline mb-4">
-            <span className="text-3xl md:text-4xl font-bold">Sob consulta</span>
-          </div>
-        ) : (
-          <div className="mb-6">
-            <div className="flex items-baseline mb-1">
-              <Calendar className="h-5 w-5 text-primary mr-2" />
-              <span className="text-2xl md:text-3xl font-bold">{plan.monthlyPrice}</span>
-              <span className="text-muted-foreground ml-2 text-sm">
-                /mês
-              </span>
-            </div>
-            <div className="text-sm text-muted-foreground ml-7">
-              em 12x no cartão de crédito
-            </div>
-            
-            <div className="flex items-baseline mt-3 pt-3 border-t border-border">
-              <BadgePercent className="h-5 w-5 text-green-500 mr-2" />
-              <div>
-                <div className="flex items-center">
-                  <span className="font-medium text-green-500">Economia de 10%</span>
-                  <Badge variant="outline" className="ml-2 bg-green-500/10 text-green-500 border-green-500/20">
-                    À vista
-                  </Badge>
-                </div>
-                <div className="flex items-baseline">
-                  <span className="text-base font-bold">{plan.annualPrice}</span>
-                  <span className="text-muted-foreground ml-1 text-xs">
-                    pagamento único
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
+    <Card className={`flex flex-col h-full ${plan.popular ? "border-primary shadow-lg" : ""}`}>
+      <CardHeader className="pb-4">
+        {plan.popular && (
+          <Badge className="mb-2 self-start">Mais Popular</Badge>
+        )}
+        {plan.comingSoon && (
+          <Badge variant="outline" className="mb-2 self-start">Em Breve</Badge>
         )}
         
-        <p className="text-muted-foreground text-sm mb-6">
-          {plan.description}
-        </p>
+        <h3 className="text-xl font-bold">{plan.name}</h3>
         
-        <ul className="space-y-3 mb-8">
-          {plan.features.map((feature, i) => (
-            <li key={i} className="flex items-start">
-              <Check className="text-primary shrink-0 mr-2 h-5 w-5 mt-0.5" />
-              <span className="text-sm">{feature}</span>
-            </li>
-          ))}
-        </ul>
+        <div className="mt-2">
+          {plan.monthlyPrice && (
+            <div className="flex items-baseline">
+              <span className="text-3xl font-bold">{plan.monthlyPrice}</span>
+              <span className="text-sm text-muted-foreground ml-1">/mês</span>
+            </div>
+          )}
+          
+          {plan.annualPrice && (
+            <div className="text-sm text-muted-foreground mt-1">
+              ou {plan.annualPrice}/ano
+            </div>
+          )}
+          
+          {!plan.monthlyPrice && !plan.annualPrice && (
+            <div className="text-lg font-medium">Consulte-nos</div>
+          )}
+        </div>
         
-        {/* Document access section */}
-        {plan.documents && <PlanDocuments documents={plan.documents} />}
-        
+        <p className="text-muted-foreground text-sm mt-2">{plan.description}</p>
+      </CardHeader>
+      
+      <CardContent className="flex-grow">
+        <div className="space-y-4">
+          {plan.documents && plan.documents.length > 0 && (
+            <PlanDocuments documents={plan.documents} />
+          )}
+          
+          <div>
+            <h4 className="text-sm font-medium mb-3 border-b border-border pb-2">Incluído neste plano</h4>
+            <ul className="space-y-3">
+              {plan.features.map((feature, index) => (
+                <li key={index} className="text-sm flex items-start">
+                  <span className="text-green-500 mr-2">✓</span>
+                  {feature}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </CardContent>
+      
+      <CardFooter>
         <Button 
-          className={`w-full ${
-            plan.popular 
-              ? "bg-primary hover:bg-primary/90 text-primary-foreground" 
-              : plan.comingSoon
-                ? "bg-secondary/50 text-foreground/50 hover:bg-secondary/50 cursor-not-allowed"
-                : "bg-secondary text-foreground hover:bg-secondary/80"
-          }`}
-          disabled={plan.comingSoon}
-          asChild={!plan.comingSoon}
+          className="w-full" 
+          onClick={handleSubscribe}
+          disabled={plan.comingSoon || isCheckingOut}
         >
-          {plan.comingSoon ? (
-            <span>{plan.cta}</span>
+          {isCheckingOut ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Processando...
+            </>
+          ) : plan.comingSoon ? (
+            "Em Breve"
           ) : (
-            <a href={plan.ctaUrl}>{plan.cta}</a>
+            plan.cta
           )}
         </Button>
-      </div>
-    </div>
+      </CardFooter>
+    </Card>
   );
 };
 

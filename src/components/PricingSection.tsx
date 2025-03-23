@@ -1,10 +1,12 @@
 
-import React from "react";
+import React, { useState } from "react";
 import PricingGrid from "./pricing/PricingGrid";
 import PaymentOptions from "./pricing/PaymentOptions";
 import { plans } from "./pricing/pricingData";
 
 const PricingSection = () => {
+  const [isCheckingOut, setIsCheckingOut] = useState(false);
+
   return (
     <section id="pricing" className="py-16 md:py-24 relative">
       {/* Background elements */}
@@ -24,7 +26,7 @@ const PricingSection = () => {
           </p>
         </div>
         
-        <PricingGrid plans={plans} />
+        <PricingGrid plans={plans} isCheckingOut={isCheckingOut} />
         
         <PaymentOptions />
       </div>
