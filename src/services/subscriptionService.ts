@@ -48,38 +48,43 @@ const PLAN_TO_PRICE_ID_MAP = {
 
 export const subscriptionService = {
   async createCheckoutSession(planId: string, successUrl: string, cancelUrl: string) {
-    // Find the plan with the matching ID
-    const plan = Object.values(PLANS).find(plan => plan.id === planId);
-    
-    if (!plan) {
-      throw new Error(`Plan with ID ${planId} not found`);
-    }
-    
-    console.log(`Creating checkout for plan: ${planId}, with price ID: ${plan.stripe_price_id}`);
-    
-    // Use the stripe_price_id for the Stripe checkout
-    const { data: sessionData, error } = await supabase.functions.invoke("stripe", {
-      body: {
-        action: "create-checkout-session",
-        data: {
-          priceId: plan.stripe_price_id,
-          successUrl,
-          cancelUrl,
+    try {
+      // Find the plan with the matching ID
+      const plan = Object.values(PLANS).find(plan => plan.id === planId);
+      
+      if (!plan) {
+        throw new Error(`Plan with ID ${planId} not found`);
+      }
+      
+      console.log(`Creating checkout for plan: ${planId}, with price ID: ${plan.stripe_price_id}`);
+      
+      // Use the stripe_price_id for the Stripe checkout
+      const { data: sessionData, error } = await supabase.functions.invoke("stripe", {
+        body: {
+          action: "create-checkout-session",
+          data: {
+            priceId: plan.stripe_price_id,
+            successUrl,
+            cancelUrl,
+          },
         },
-      },
-    });
+      });
 
-    if (error) {
-      console.error("Error invoking Stripe function:", error);
-      throw new Error(`Error creating checkout session: ${error.message}`);
+      if (error) {
+        console.error("Error invoking Stripe function:", error);
+        throw new Error(`Error creating checkout session: ${error.message}`);
+      }
+
+      if (!sessionData) {
+        throw new Error("No data returned from checkout session creation");
+      }
+
+      console.log("Checkout session created successfully:", sessionData);
+      return sessionData;
+    } catch (error) {
+      console.error("Error in createCheckoutSession:", error);
+      throw error;
     }
-
-    if (!sessionData) {
-      throw new Error("No data returned from checkout session creation");
-    }
-
-    console.log("Checkout session created successfully:", sessionData);
-    return sessionData;
   },
 
   async getCurrentSubscription(): Promise<Subscription | null> {
@@ -106,23 +111,28 @@ export const subscriptionService = {
   },
 
   async cancelSubscription(subscriptionId: string) {
-    console.log(`Attempting to cancel subscription: ${subscriptionId}`);
-    const { data, error } = await supabase.functions.invoke("stripe", {
-      body: {
-        action: "cancel-subscription",
-        data: {
-          subscriptionId,
+    try {
+      console.log(`Attempting to cancel subscription: ${subscriptionId}`);
+      const { data, error } = await supabase.functions.invoke("stripe", {
+        body: {
+          action: "cancel-subscription",
+          data: {
+            subscriptionId,
+          },
         },
-      },
-    });
+      });
 
-    if (error) {
-      console.error("Error canceling subscription:", error);
-      throw new Error(`Error canceling subscription: ${error.message}`);
+      if (error) {
+        console.error("Error canceling subscription:", error);
+        throw new Error(`Error canceling subscription: ${error.message}`);
+      }
+
+      console.log("Subscription canceled successfully:", data);
+      return data;
+    } catch (error) {
+      console.error("Error in cancelSubscription:", error);
+      throw error;
     }
-
-    console.log("Subscription canceled successfully:", data);
-    return data;
   },
 
   // Helper function to check if user has an active subscription
