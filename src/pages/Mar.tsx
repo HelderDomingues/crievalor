@@ -18,10 +18,10 @@ const Mar = () => {
           title="MAR - Mapa para Alto Rendimento"
           subtitle="Estratégias que Funcionam"
           description="Uma abordagem inovadora que combina expertise humana com inteligência artificial para desenvolver estratégias de negócios eficazes."
-          ctaText="Conheça o MAR"
+          ctaText="Quero clareza na minha rota"
           ctaUrl="#mar-explanation"
-          secondaryCtaText="Solicitar Proposta"
-          secondaryCtaUrl="#contato"
+          secondaryCtaText="Descubra o MAR ideal para você"
+          secondaryCtaUrl="#pricing"
           isMarHero={true}
         />
         

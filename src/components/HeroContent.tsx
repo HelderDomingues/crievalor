@@ -1,6 +1,6 @@
 
 import React from "react";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Route, Compass } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface HeroContentProps {
@@ -60,7 +60,15 @@ const HeroContent: React.FC<HeroContentProps> = ({
         >
           <Button size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground font-medium" asChild>
             <a href={ctaUrl}>
-              {ctaText} <ArrowRight className="ml-2 h-4 w-4" />
+              {isMarHero ? (
+                <>
+                  {ctaText} <Compass className="ml-2 h-4 w-4" />
+                </>
+              ) : (
+                <>
+                  {ctaText} <ArrowRight className="ml-2 h-4 w-4" />
+                </>
+              )}
             </a>
           </Button>
           
