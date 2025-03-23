@@ -1,12 +1,13 @@
 
 import React from "react";
-import { Check, Compass, FileText, Calendar, Users } from "lucide-react";
+import { Check, Compass, FileText, Calendar, CreditCard, BadgePercent } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
 interface PricingPlan {
   name: string;
-  price: string;
+  monthlyPrice?: string;
+  annualPrice?: string;
   description: string;
   features: string[];
   cta: string;
@@ -18,7 +19,7 @@ interface PricingPlan {
 const plans: PricingPlan[] = [
   {
     name: "Self Service",
-    price: "Em breve",
+    monthlyPrice: "Em breve",
     description: "Uma ferramenta self-service para empresas que querem criar seu próprio plano estratégico com auxílio de IA.",
     features: [
       "Criação autoguiada",
@@ -33,7 +34,8 @@ const plans: PricingPlan[] = [
   },
   {
     name: "Essencial",
-    price: "R$ 3.997",
+    monthlyPrice: "R$ 333,08",
+    annualPrice: "R$ 3.597",
     description: "Plano ideal para pequenas empresas que buscam um direcionamento estratégico inicial.",
     features: [
       "Análise estratégica básica",
@@ -47,7 +49,8 @@ const plans: PricingPlan[] = [
   },
   {
     name: "Profissional",
-    price: "R$ 6.997",
+    monthlyPrice: "R$ 583,08",
+    annualPrice: "R$ 6.297",
     description: "Nossa solução mais completa para empresas que buscam um plano estratégico detalhado.",
     features: [
       "Análise estratégica avançada",
@@ -64,7 +67,6 @@ const plans: PricingPlan[] = [
   },
   {
     name: "Personalizado",
-    price: "Sob consulta",
     description: "Solução customizada para empresas com necessidades específicas e maior interação humana.",
     features: [
       "Consultoria estratégica aprofundada",
@@ -130,14 +132,49 @@ const PricingSection = () => {
               
               <div className="p-6 md:p-8">
                 <h3 className="text-xl font-semibold mb-2">{plan.name}</h3>
-                <div className="flex items-baseline mb-4">
-                  <span className="text-3xl md:text-4xl font-bold">{plan.price}</span>
-                  {!plan.comingSoon && plan.name !== "Personalizado" && (
-                    <span className="text-muted-foreground ml-2 text-sm">
-                      à vista ou em até 12x
-                    </span>
-                  )}
-                </div>
+                
+                {/* Updated pricing display */}
+                {plan.comingSoon ? (
+                  <div className="flex items-baseline mb-4">
+                    <span className="text-3xl md:text-4xl font-bold">{plan.monthlyPrice}</span>
+                  </div>
+                ) : plan.name === "Personalizado" ? (
+                  <div className="flex items-baseline mb-4">
+                    <span className="text-3xl md:text-4xl font-bold">Sob consulta</span>
+                  </div>
+                ) : (
+                  <div className="mb-6">
+                    <div className="flex items-baseline mb-1">
+                      <Calendar className="h-5 w-5 text-primary mr-2" />
+                      <span className="text-2xl md:text-3xl font-bold">{plan.monthlyPrice}</span>
+                      <span className="text-muted-foreground ml-2 text-sm">
+                        /mês
+                      </span>
+                    </div>
+                    <div className="text-sm text-muted-foreground ml-7">
+                      em 12x no cartão de crédito
+                    </div>
+                    
+                    <div className="flex items-baseline mt-3 pt-3 border-t border-border">
+                      <BadgePercent className="h-5 w-5 text-green-500 mr-2" />
+                      <div>
+                        <div className="flex items-center">
+                          <span className="font-medium text-green-500">Economia de 10%</span>
+                          <Badge variant="outline" className="ml-2 bg-green-500/10 text-green-500 border-green-500/20">
+                            À vista
+                          </Badge>
+                        </div>
+                        <div className="flex items-baseline">
+                          <span className="text-base font-bold">{plan.annualPrice}</span>
+                          <span className="text-muted-foreground ml-1 text-xs">
+                            pagamento único
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+                
                 <p className="text-muted-foreground text-sm mb-6">
                   {plan.description}
                 </p>
@@ -175,22 +212,36 @@ const PricingSection = () => {
         
         <div className="mt-12 bg-card border border-border rounded-xl p-6 md:p-8 max-w-3xl mx-auto">
           <h3 className="text-xl font-semibold mb-4 text-center">Opções de Pagamento</h3>
-          <ul className="space-y-4">
-            <li className="flex items-start">
-              <Check className="text-primary shrink-0 mr-2 h-5 w-5 mt-0.5" />
-              <div>
-                <span className="font-medium">Pagamento à vista</span>
-                <p className="text-sm text-muted-foreground">Ganhe 10% de desconto ao pagar o valor integral em uma única parcela.</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="bg-secondary/10 p-4 rounded-lg">
+              <div className="flex items-center mb-3">
+                <BadgePercent className="text-green-500 h-6 w-6 mr-2" />
+                <h4 className="font-semibold">Pagamento à vista</h4>
               </div>
-            </li>
-            <li className="flex items-start">
-              <Check className="text-primary shrink-0 mr-2 h-5 w-5 mt-0.5" />
-              <div>
-                <span className="font-medium">Parcelamento</span>
-                <p className="text-sm text-muted-foreground">Divida o valor em até 12x com parcelas mensais sem desconto.</p>
+              <p className="text-sm text-muted-foreground mb-3">
+                Ganhe 10% de desconto pagando o valor integral em uma única parcela.
+              </p>
+              <div className="flex items-center text-sm text-muted-foreground">
+                <CreditCard className="h-4 w-4 mr-1" />
+                <span>Cartão de crédito, boleto ou PIX</span>
               </div>
-            </li>
-          </ul>
+            </div>
+            
+            <div className="bg-secondary/10 p-4 rounded-lg">
+              <div className="flex items-center mb-3">
+                <Calendar className="text-primary h-6 w-6 mr-2" />
+                <h4 className="font-semibold">Parcelamento</h4>
+              </div>
+              <p className="text-sm text-muted-foreground mb-3">
+                Divida o valor em até 12x mensais no cartão de crédito.
+              </p>
+              <div className="flex items-center text-sm text-muted-foreground">
+                <CreditCard className="h-4 w-4 mr-1" />
+                <span>Aceito em todos os cartões</span>
+              </div>
+            </div>
+          </div>
+          
           <div className="text-center mt-6">
             <p className="text-sm text-muted-foreground">
               Tem perguntas sobre os planos ou formas de pagamento?
