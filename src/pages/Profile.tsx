@@ -21,7 +21,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import SubscriptionDetails from "@/components/profile/SubscriptionDetails";
-import { subscriptionService, Subscription } from "@/services/subscriptionService";
+import { subscriptionService } from "@/services/subscriptionService";
 
 const ProfileSchema = z.object({
   username: z.string().min(3, "Nome de usuário deve ter pelo menos 3 caracteres"),
@@ -49,10 +49,6 @@ const Profile = () => {
   
   const [activeTab, setActiveTab] = useState("personal");
   const [isUpdating, setIsUpdating] = useState(false);
-  const [subscription, setSubscription] = useState<Subscription | null>(null);
-  const [subscriptionLoading, setSubscriptionLoading] = useState(true);
-  const [invoices, setInvoices] = useState<any[] | null>(null);
-  const [invoicesLoading, setInvoicesLoading] = useState(true);
   
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(ProfileSchema),
@@ -72,36 +68,6 @@ const Profile = () => {
       cnpj: ""
     }
   });
-  
-  useEffect(() => {
-    if (!user) return;
-    
-    async function loadSubscriptionData() {
-      try {
-        setSubscriptionLoading(true);
-        const sub = await subscriptionService.getCurrentSubscription();
-        setSubscription(sub);
-        
-        if (sub && sub.stripe_subscription_id) {
-          setInvoicesLoading(true);
-          const invoicesData = await subscriptionService.getInvoices();
-          setInvoices(invoicesData);
-        }
-      } catch (error) {
-        console.error("Error loading subscription or invoices:", error);
-        toast({
-          variant: "destructive",
-          title: "Erro ao carregar dados da assinatura",
-          description: "Não foi possível carregar as informações da sua assinatura."
-        });
-      } finally {
-        setSubscriptionLoading(false);
-        setInvoicesLoading(false);
-      }
-    }
-    
-    loadSubscriptionData();
-  }, [user, toast]);
   
   useEffect(() => {
     if (profile) {
@@ -276,19 +242,7 @@ const Profile = () => {
                 
                 <CardContent>
                   {activeTab === "subscription" ? (
-                    subscriptionLoading || invoicesLoading ? (
-                      <div className="flex items-center justify-center py-10">
-                        <div className="flex flex-col items-center">
-                          <div className="h-10 w-10 border-4 border-primary border-t-transparent rounded-full animate-spin mb-4"></div>
-                          <p className="text-muted-foreground">Carregando dados da assinatura...</p>
-                        </div>
-                      </div>
-                    ) : (
-                      <SubscriptionDetails 
-                        subscription={subscription} 
-                        invoices={invoices}
-                      />
-                    )
+                    <SubscriptionDetails />
                   ) : (
                     <Form {...form}>
                       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">

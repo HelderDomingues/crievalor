@@ -133,7 +133,7 @@ export const SubscriptionDetails = () => {
 
   const getPlanDetails = (planId: string) => {
     const plan = Object.values(PLANS).find(p => p.id === planId);
-    return plan || { name: "Plano não identificado", price: "N/A" };
+    return plan || { name: "Plano não identificado", price: "N/A", features: [] };
   };
 
   if (isLoading) {
@@ -244,7 +244,7 @@ export const SubscriptionDetails = () => {
                           </Badge>
                         </div>
                         <p className="text-sm text-muted-foreground">
-                          {formatDate(invoice.created * 1000)} • {(invoice.amount_paid / 100).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                          {formatDate(String(invoice.created * 1000))} • {(invoice.amount_paid / 100).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                         </p>
                       </div>
                       <div className="flex gap-2 self-end md:self-auto">
