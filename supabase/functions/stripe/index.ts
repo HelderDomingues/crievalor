@@ -1,4 +1,3 @@
-
 import { serve } from "https://deno.land/std@0.208.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.38.4";
 import Stripe from 'https://esm.sh/stripe@12.18.0';
@@ -82,33 +81,33 @@ serve(async (req) => {
     
     switch (action) {
       case "create-checkout-session":
-        const { priceId, successUrl, cancelUrl } = data;
-        
-        if (!priceId || !successUrl || !cancelUrl) {
-          return new Response(JSON.stringify({ error: "Missing required parameters for checkout" }), {
-            status: 400,
-            headers: { ...corsHeaders, "Content-Type": "application/json" },
-          });
-        }
-        
-        console.log(`Creating checkout session for price ID: ${priceId}`);
-        
-        // Get or create Stripe customer for the user
-        const { data: subscriptions, error: subError } = await supabase
-          .from("subscriptions")
-          .select("stripe_customer_id")
-          .eq("user_id", user.id)
-          .maybeSingle();
-        
-        if (subError) {
-          console.error("Error fetching subscription:", subError);
-        }
-        
-        let customerId = subscriptions?.stripe_customer_id;
-        
-        if (!customerId) {
-          // Create a new customer
-          try {
+        try {
+          const { priceId, successUrl, cancelUrl } = data;
+          
+          if (!priceId || !successUrl || !cancelUrl) {
+            return new Response(JSON.stringify({ error: "Missing required parameters for checkout" }), {
+              status: 400,
+              headers: { ...corsHeaders, "Content-Type": "application/json" },
+            });
+          }
+          
+          console.log(`Creating checkout session for price ID: ${priceId}`);
+          
+          // Get or create Stripe customer for the user
+          const { data: subscriptions, error: subError } = await supabase
+            .from("subscriptions")
+            .select("stripe_customer_id")
+            .eq("user_id", user.id)
+            .maybeSingle();
+          
+          if (subError) {
+            console.error("Error fetching subscription:", subError);
+          }
+          
+          let customerId = subscriptions?.stripe_customer_id;
+          
+          if (!customerId) {
+            // Create a new customer
             console.log("Creating new Stripe customer");
             const customer = await stripe.customers.create({
               email: user.email,
@@ -118,19 +117,11 @@ serve(async (req) => {
             });
             customerId = customer.id;
             console.log(`Created new customer: ${customerId}`);
-          } catch (error) {
-            console.error("Error creating customer:", error);
-            return new Response(JSON.stringify({ error: `Error creating Stripe customer: ${error.message}` }), {
-              status: 500,
-              headers: { ...corsHeaders, "Content-Type": "application/json" },
-            });
+          } else {
+            console.log(`Using existing customer: ${customerId}`);
           }
-        } else {
-          console.log(`Using existing customer: ${customerId}`);
-        }
-        
-        // Create checkout session
-        try {
+          
+          // Create checkout session
           console.log("Creating Stripe checkout session");
           const session = await stripe.checkout.sessions.create({
             customer: customerId,
@@ -148,8 +139,8 @@ serve(async (req) => {
             },
           });
           
+          console.log(`Created checkout session: ${session.id}, URL: ${session.url}`);
           result = { sessionId: session.id, url: session.url };
-          console.log(`Created checkout session: ${session.id}`);
         } catch (error) {
           console.error("Error creating checkout session:", error);
           return new Response(JSON.stringify({ error: `Error creating checkout session: ${error.message}` }), {

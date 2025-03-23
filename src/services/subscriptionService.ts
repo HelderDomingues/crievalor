@@ -59,7 +59,7 @@ export const subscriptionService = {
       console.log(`Creating checkout for plan: ${planId}, with price ID: ${plan.stripe_price_id}`);
       
       // Use the stripe_price_id for the Stripe checkout
-      const { data: sessionData, error } = await supabase.functions.invoke("stripe", {
+      const response = await supabase.functions.invoke("stripe", {
         body: {
           action: "create-checkout-session",
           data: {
@@ -70,18 +70,19 @@ export const subscriptionService = {
         },
       });
 
-      if (error) {
-        console.error("Error invoking Stripe function:", error);
-        throw new Error(`Error creating checkout session: ${error.message}`);
+      if (response.error) {
+        console.error("Error invoking Stripe function:", response.error);
+        throw new Error(`Error creating checkout session: ${response.error.message}`);
       }
 
-      if (!sessionData) {
-        throw new Error("No data returned from checkout session creation");
+      const sessionData = response.data;
+      if (!sessionData || !sessionData.url) {
+        throw new Error("No valid data returned from checkout session creation");
       }
 
       console.log("Checkout session created successfully:", sessionData);
       return sessionData;
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error in createCheckoutSession:", error);
       throw error;
     }
@@ -90,20 +91,21 @@ export const subscriptionService = {
   async getCurrentSubscription(): Promise<Subscription | null> {
     try {
       console.log("Fetching current subscription...");
-      const { data, error } = await supabase.functions.invoke("stripe", {
+      const response = await supabase.functions.invoke("stripe", {
         body: {
           action: "get-subscription",
           data: {},
         },
       });
 
-      if (error) {
-        console.error("Error fetching subscription:", error);
+      if (response.error) {
+        console.error("Error fetching subscription:", response.error);
         return null;
       }
 
+      const data = response.data;
       console.log("Subscription data received:", data);
-      return data.subscription;
+      return data?.subscription || null;
     } catch (error) {
       console.error("Error in getCurrentSubscription:", error);
       return null;
@@ -113,7 +115,7 @@ export const subscriptionService = {
   async cancelSubscription(subscriptionId: string) {
     try {
       console.log(`Attempting to cancel subscription: ${subscriptionId}`);
-      const { data, error } = await supabase.functions.invoke("stripe", {
+      const response = await supabase.functions.invoke("stripe", {
         body: {
           action: "cancel-subscription",
           data: {
@@ -122,14 +124,14 @@ export const subscriptionService = {
         },
       });
 
-      if (error) {
-        console.error("Error canceling subscription:", error);
-        throw new Error(`Error canceling subscription: ${error.message}`);
+      if (response.error) {
+        console.error("Error canceling subscription:", response.error);
+        throw new Error(`Error canceling subscription: ${response.error.message}`);
       }
 
-      console.log("Subscription canceled successfully:", data);
-      return data;
-    } catch (error) {
+      console.log("Subscription canceled successfully:", response.data);
+      return response.data;
+    } catch (error: any) {
       console.error("Error in cancelSubscription:", error);
       throw error;
     }
