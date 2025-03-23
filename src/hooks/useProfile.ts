@@ -32,7 +32,18 @@ export function useProfile() {
           throw error;
         }
 
-        setProfile(data);
+        // Garantir que social_media seja um objeto adequado
+        const formattedData = data ? {
+          ...data,
+          social_media: data.social_media ? data.social_media : {
+            linkedin: "",
+            twitter: "",
+            instagram: "",
+            facebook: ""
+          }
+        } : null;
+
+        setProfile(formattedData as UserProfile | null);
       } catch (err) {
         console.error("Error fetching profile:", err);
         setError(err as Error);
@@ -59,8 +70,19 @@ export function useProfile() {
         throw error;
       }
 
-      setProfile(data);
-      return { data, error: null };
+      // Garantir que social_media seja um objeto adequado
+      const formattedData = data ? {
+        ...data,
+        social_media: data.social_media ? data.social_media : {
+          linkedin: "",
+          twitter: "",
+          instagram: "",
+          facebook: ""
+        }
+      } : null;
+
+      setProfile(formattedData as UserProfile | null);
+      return { data: formattedData, error: null };
     } catch (error) {
       console.error("Error updating profile:", error);
       return { data: null, error: error as Error };
