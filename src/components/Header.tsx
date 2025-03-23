@@ -57,7 +57,7 @@ const Header = () => {
       }`}
     >
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16 md:h-20">
+        <div className="flex items-center justify-between h-14 md:h-16">
           <div className="flex items-center">
             <Link
               to="/"
@@ -66,7 +66,7 @@ const Header = () => {
               <img 
                 src="/lovable-uploads/fc868084-d22b-4877-907b-fe02e64fc501.png" 
                 alt="Crie Valor Logo" 
-                className="h-6 mr-2"  /* Reduced from h-8 (25% smaller) */
+                className="h-6 mr-2"
               />
             </Link>
           </div>
@@ -122,7 +122,7 @@ const Header = () => {
         className={`fixed inset-0 bg-background z-40 transition-transform duration-300 md:hidden ${
           isMenuOpen ? "translate-x-0" : "translate-x-full"
         }`}
-        style={{ top: "64px" }}
+        style={{ top: "56px" }}
       >
         <nav className="flex flex-col p-8 space-y-6">
           {menuItems.map((item) => (

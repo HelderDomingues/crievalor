@@ -27,13 +27,13 @@ const HeroContent: React.FC<HeroContentProps> = ({
   return (
     <div className="container mx-auto px-4 relative z-30">
       <div className="max-w-3xl mx-auto text-center">
+        {/* Comment: Reduced from mb-6 (by approximately 20%) */}
         {isMarHero ? (
-          <div className="mb-6 animate-fade-in">
+          <div className="mb-5 animate-fade-in">
             <img src="/lovable-uploads/91e6888f-e3da-40dc-8c55-5718c15ada21.png" alt="MAR - Mapa para Alto Rendimento" className="h-24 mx-auto" />
           </div>
         ) : (
-          // Reduced from mb-6 (by approximately 20%)
-          <div className="mb-5 animate-fade-in"></div>
+          <div className="mb-4 animate-fade-in"></div>
         )}
         
         <div className="bg-primary/10 text-primary rounded-full px-4 py-2 inline-block mb-3 animate-fade-in">
@@ -42,13 +42,13 @@ const HeroContent: React.FC<HeroContentProps> = ({
         
         <h1 
           style={{ animationDelay: "0.2s" }} 
-          className="sm:text-5xl font-bold mb-5 animate-fade-in text-3xl md:text-5xl"
+          className="sm:text-5xl font-bold mb-4 animate-fade-in text-3xl md:text-5xl"
         >
           {title}
         </h1>
         
         <p 
-          className="text-lg md:text-xl text-muted-foreground mb-6 animate-fade-in" 
+          className="text-lg md:text-xl text-muted-foreground mb-5 animate-fade-in" 
           style={{ animationDelay: "0.4s" }}
         >
           {description}

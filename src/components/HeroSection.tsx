@@ -26,7 +26,7 @@ interface HeroSectionProps {
 const HeroSection: React.FC<HeroSectionProps> = (props) => {
   if (props.backgroundImages && props.backgroundImages.length > 0) {
     return (
-      <section className="relative min-h-screen flex items-center overflow-hidden pt-16">
+      <section className="relative min-h-screen flex items-center overflow-hidden pt-12">
         <div className="absolute inset-0 z-0 h-full">
           <HeroCarousel images={props.backgroundImages}>
             <HeroContent {...props} />
@@ -38,7 +38,7 @@ const HeroSection: React.FC<HeroSectionProps> = (props) => {
   }
 
   return (
-    <section className="relative min-h-screen flex items-center overflow-hidden pt-16">
+    <section className="relative min-h-screen flex items-center overflow-hidden pt-12">
       {props.backgroundVideo ? (
         <div className="absolute inset-0 z-0">
           <div className="absolute inset-0 bg-black/60 z-10"></div>
