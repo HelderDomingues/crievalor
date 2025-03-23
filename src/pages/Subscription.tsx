@@ -10,6 +10,8 @@ import SubscriptionLoading from "@/components/subscription/SubscriptionLoading";
 import CurrentSubscription from "@/components/subscription/CurrentSubscription";
 import SubscriptionPlans from "@/components/subscription/SubscriptionPlans";
 import CheckoutError from "@/components/subscription/CheckoutError";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import SubscriptionDetails from "@/components/profile/SubscriptionDetails";
 
 const SubscriptionPage = () => {
   const navigate = useNavigate();
@@ -24,6 +26,8 @@ const SubscriptionPage = () => {
 
   const success = searchParams.get("success");
   const canceled = searchParams.get("canceled");
+  const selectedTab = searchParams.get("tab") || "overview";
+  const selectedPlan = searchParams.get("plan");
 
   useEffect(() => {
     if (success === "true") {
@@ -43,7 +47,7 @@ const SubscriptionPage = () => {
 
   useEffect(() => {
     if (!user) {
-      navigate("/auth");
+      navigate("/auth", { state: { returnUrl: "/subscription" } });
       return;
     }
 
@@ -53,6 +57,11 @@ const SubscriptionPage = () => {
         const sub = await subscriptionService.getCurrentSubscription();
         console.log("Subscription loaded:", sub);
         setSubscription(sub);
+        
+        // Se um plano foi selecionado e não há assinatura ativa, iniciar checkout
+        if (selectedPlan && (!sub || (sub.status !== "active" && sub.status !== "trialing"))) {
+          handleSubscribe(selectedPlan);
+        }
       } catch (error) {
         console.error("Error loading subscription:", error);
         toast({
@@ -66,11 +75,11 @@ const SubscriptionPage = () => {
     }
 
     loadSubscription();
-  }, [user, navigate, toast]);
+  }, [user, navigate, toast, selectedPlan]);
 
   const handleSubscribe = async (planId: string) => {
     if (!user) {
-      navigate("/auth");
+      navigate("/auth", { state: { returnUrl: "/subscription" } });
       return;
     }
 
@@ -168,24 +177,87 @@ const SubscriptionPage = () => {
       
       <main className="flex-grow py-16">
         <div className="container mx-auto px-4">
-          <h1 className="text-3xl font-bold mb-8">Planos e Assinaturas</h1>
+          <h1 className="text-3xl font-bold mb-8">Dashboard de Assinatura</h1>
           
           <CheckoutError error={checkoutError || ""} />
           
-          {subscription && ["active", "trialing"].includes(subscription.status) && (
-            <CurrentSubscription
-              subscription={subscription}
-              isCanceling={isCanceling}
-              onCancelSubscription={handleCancelSubscription}
-              getCurrentPlanName={getCurrentPlanName}
-            />
-          )}
-          
-          <SubscriptionPlans
-            isCheckingOut={isCheckingOut}
-            isPlanCurrent={isPlanCurrent}
-            onSubscribe={handleSubscribe}
-          />
+          <Tabs defaultValue={selectedTab} className="space-y-8">
+            <TabsList>
+              <TabsTrigger value="overview">Visão Geral</TabsTrigger>
+              <TabsTrigger value="plans">Planos</TabsTrigger>
+              <TabsTrigger value="details">Detalhes da Assinatura</TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="overview">
+              {subscription && ["active", "trialing"].includes(subscription.status) && (
+                <CurrentSubscription
+                  subscription={subscription}
+                  isCanceling={isCanceling}
+                  onCancelSubscription={handleCancelSubscription}
+                  getCurrentPlanName={getCurrentPlanName}
+                />
+              )}
+              
+              <div className="mb-8">
+                <h2 className="text-2xl font-semibold mb-4">Acesso aos Recursos</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Material Exclusivo</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-muted-foreground mb-4">
+                        Acesse conteúdos exclusivos do seu plano.
+                      </p>
+                      <Button asChild>
+                        <a href="#materiais">Acessar Materiais</a>
+                      </Button>
+                    </CardContent>
+                  </Card>
+                  
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Mentorias</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-muted-foreground mb-4">
+                        Agende suas sessões de mentoria incluídas no plano.
+                      </p>
+                      <Button asChild>
+                        <a href="#mentorias">Agendar Mentoria</a>
+                      </Button>
+                    </CardContent>
+                  </Card>
+                  
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Comunidade</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-muted-foreground mb-4">
+                        Participe da nossa comunidade exclusiva.
+                      </p>
+                      <Button asChild>
+                        <a href="#comunidade">Acessar Comunidade</a>
+                      </Button>
+                    </CardContent>
+                  </Card>
+                </div>
+              </div>
+            </TabsContent>
+            
+            <TabsContent value="plans">
+              <SubscriptionPlans
+                isCheckingOut={isCheckingOut}
+                isPlanCurrent={isPlanCurrent}
+                onSubscribe={handleSubscribe}
+              />
+            </TabsContent>
+            
+            <TabsContent value="details">
+              <SubscriptionDetails />
+            </TabsContent>
+          </Tabs>
         </div>
       </main>
       

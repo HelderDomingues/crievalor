@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
-import { AlertCircle, ArrowLeft } from "lucide-react";
+import { AlertCircle, ArrowLeft, CreditCard } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 const CheckoutCanceled = () => {
@@ -21,7 +21,7 @@ const CheckoutCanceled = () => {
   }, [toast]);
 
   const handleTryAgain = () => {
-    navigate("/mar#pricing");
+    navigate("/subscription?tab=plans");
   };
 
   return (
@@ -42,14 +42,26 @@ const CheckoutCanceled = () => {
               ou tem dúvidas, entre em contato com nossa equipe de suporte.
             </p>
             
-            <Button 
-              size="lg" 
-              onClick={handleTryAgain}
-              className="gap-2"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              Voltar para planos
-            </Button>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button 
+                size="lg" 
+                onClick={handleTryAgain}
+                className="gap-2"
+              >
+                <CreditCard className="h-4 w-4" />
+                Tentar novamente
+              </Button>
+              
+              <Button 
+                variant="outline"
+                size="lg" 
+                onClick={() => navigate("/mar#pricing")}
+                className="gap-2"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                Voltar para planos
+              </Button>
+            </div>
           </div>
         </div>
       </main>

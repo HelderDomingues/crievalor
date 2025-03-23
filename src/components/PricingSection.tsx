@@ -1,11 +1,32 @@
 
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/context/AuthContext";
 import PricingGrid from "./pricing/PricingGrid";
 import PaymentOptions from "./pricing/PaymentOptions";
 import { plans } from "./pricing/pricingData";
+import { useToast } from "@/hooks/use-toast";
 
 const PricingSection = () => {
+  const navigate = useNavigate();
+  const { user } = useAuth();
+  const { toast } = useToast();
   const [isCheckingOut, setIsCheckingOut] = useState(false);
+
+  const handleSubscribe = (planId: string) => {
+    if (!user) {
+      // Redirecionar para a página de login com return URL
+      toast({
+        title: "Autenticação necessária",
+        description: "Faça login para assinar um plano",
+      });
+      navigate("/auth", { state: { returnUrl: "/subscription" } });
+      return;
+    }
+    
+    // Redirecionar para a página de assinatura com o plano selecionado
+    navigate(`/subscription?plan=${planId}`);
+  };
 
   return (
     <section id="pricing" className="py-16 md:py-24 relative">
@@ -26,7 +47,11 @@ const PricingSection = () => {
           </p>
         </div>
         
-        <PricingGrid plans={plans} isCheckingOut={isCheckingOut} />
+        <PricingGrid 
+          plans={plans} 
+          isCheckingOut={isCheckingOut}
+          onSubscribe={handleSubscribe} 
+        />
         
         <PaymentOptions />
       </div>
