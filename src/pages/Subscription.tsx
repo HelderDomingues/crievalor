@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
@@ -12,6 +11,8 @@ import SubscriptionPlans from "@/components/subscription/SubscriptionPlans";
 import CheckoutError from "@/components/subscription/CheckoutError";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import SubscriptionDetails from "@/components/profile/SubscriptionDetails";
+import { Card, CardHeader, CardContent, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
 const SubscriptionPage = () => {
   const navigate = useNavigate();
@@ -58,7 +59,6 @@ const SubscriptionPage = () => {
         console.log("Subscription loaded:", sub);
         setSubscription(sub);
         
-        // Se um plano foi selecionado e não há assinatura ativa, iniciar checkout
         if (selectedPlan && (!sub || (sub.status !== "active" && sub.status !== "trialing"))) {
           handleSubscribe(selectedPlan);
         }
@@ -101,7 +101,6 @@ const SubscriptionPage = () => {
       
       console.log("Redirecting to Stripe checkout:", url);
       
-      // Redirect to Stripe Checkout
       window.location.href = url;
     } catch (error: any) {
       console.error("Error creating checkout session:", error);
@@ -128,7 +127,6 @@ const SubscriptionPage = () => {
         title: "Assinatura cancelada",
         description: "Sua assinatura foi cancelada com sucesso.",
       });
-      // Reload subscription data
       const sub = await subscriptionService.getCurrentSubscription();
       setSubscription(sub);
     } catch (error) {
@@ -143,7 +141,6 @@ const SubscriptionPage = () => {
     }
   };
 
-  // Find the plan name from the stored plan_id (which is actually a Stripe Price ID)
   const getCurrentPlanName = () => {
     if (!subscription?.plan_id) return "N/A";
     
@@ -151,7 +148,6 @@ const SubscriptionPage = () => {
     return plan ? plan.name : subscription.plan_id;
   };
 
-  // Check if the current subscription matches a specific plan
   const isPlanCurrent = (planId: string) => {
     if (!subscription || !subscription.plan_id) return false;
     

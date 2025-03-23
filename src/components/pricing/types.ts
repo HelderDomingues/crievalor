@@ -8,6 +8,7 @@ export interface DocumentType {
 }
 
 export interface PricingPlan {
+  id: string;
   name: string;
   monthlyPrice?: string;
   annualPrice?: string;

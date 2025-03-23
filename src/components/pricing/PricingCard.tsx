@@ -12,13 +12,25 @@ import { Loader2 } from "lucide-react";
 interface PricingCardProps {
   plan: PricingPlan;
   isCheckingOut?: boolean;
+  isCurrent?: boolean;
+  onSubscribe?: () => void;
 }
 
-const PricingCard = ({ plan, isCheckingOut = false }: PricingCardProps) => {
+const PricingCard = ({ 
+  plan, 
+  isCheckingOut = false, 
+  isCurrent = false,
+  onSubscribe 
+}: PricingCardProps) => {
   const navigate = useNavigate();
   const { user } = useAuth();
 
   const handleSubscribe = () => {
+    if (onSubscribe) {
+      onSubscribe();
+      return;
+    }
+
     if (!user) {
       // Redirecionar para página de autenticação, passando o plano como parâmetro
       navigate(`/auth?redirect=subscription&plan=${plan.name}`);
@@ -37,6 +49,9 @@ const PricingCard = ({ plan, isCheckingOut = false }: PricingCardProps) => {
         )}
         {plan.comingSoon && (
           <Badge variant="outline" className="mb-2 self-start">Em Breve</Badge>
+        )}
+        {isCurrent && (
+          <Badge variant="secondary" className="mb-2 self-start">Plano Atual</Badge>
         )}
         
         <h3 className="text-xl font-bold">{plan.name}</h3>
@@ -87,13 +102,15 @@ const PricingCard = ({ plan, isCheckingOut = false }: PricingCardProps) => {
         <Button 
           className="w-full" 
           onClick={handleSubscribe}
-          disabled={plan.comingSoon || isCheckingOut}
+          disabled={plan.comingSoon || isCheckingOut || isCurrent}
         >
           {isCheckingOut ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               Processando...
             </>
+          ) : isCurrent ? (
+            "Plano Atual"
           ) : plan.comingSoon ? (
             "Em Breve"
           ) : (
