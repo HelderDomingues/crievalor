@@ -17,7 +17,7 @@ const Mar = () => {
         <HeroSection
           title="MAR - Mapa para Alto Rendimento"
           subtitle="Estratégias que Funcionam"
-          description="Uma abordagem inovadora que combina inteligência artificial com consultoria humana para desenvolver estratégias de negócios eficazes."
+          description="Uma abordagem inovadora que combina expertise humana com inteligência artificial para desenvolver estratégias de negócios eficazes."
           ctaText="Conheça o MAR"
           ctaUrl="#mar-explanation"
           secondaryCtaText="Solicitar Proposta"
