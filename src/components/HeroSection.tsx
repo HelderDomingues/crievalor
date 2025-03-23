@@ -7,6 +7,7 @@ import HeroContent from "./HeroContent";
 import HeroIcons from "./HeroIcons";
 import ScrollIndicator from "./ScrollIndicator";
 import HeroCarousel from "./HeroCarousel";
+import ParticleWaveBackground from "./ParticleWaveBackground";
 
 interface HeroSectionProps {
   title: string;
@@ -19,6 +20,7 @@ interface HeroSectionProps {
   isMarHero?: boolean;
   backgroundVideo?: string;
   backgroundImages?: string[];
+  useParticleWaves?: boolean;
 }
 
 const HeroSection: React.FC<HeroSectionProps> = (props) => {
@@ -56,6 +58,11 @@ const HeroSection: React.FC<HeroSectionProps> = (props) => {
             Seu navegador não suporta vídeos.
           </video>
         </div>
+      ) : props.useParticleWaves ? (
+        <>
+          <ParticleWaveBackground className="z-0" />
+          <div className="absolute inset-0 bg-black/30 z-5"></div>
+        </>
       ) : (
         <>
           <HeroNetworkAnimation />
