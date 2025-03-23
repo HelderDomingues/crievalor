@@ -4,7 +4,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { subscriptionService, Subscription } from "@/services/subscriptionService";
+import { subscriptionService, Subscription, PLANS } from "@/services/subscriptionService";
 import { useToast } from "@/hooks/use-toast";
 import SubscriptionLoading from "@/components/subscription/SubscriptionLoading";
 import CurrentSubscription from "@/components/subscription/CurrentSubscription";
@@ -146,7 +146,7 @@ const SubscriptionPage = () => {
   const isPlanCurrent = (planId: string) => {
     if (!subscription || !subscription.plan_id) return false;
     
-    const plan = Object.values(subscriptionService.PLANS).find(p => p.id === planId);
+    const plan = Object.values(PLANS).find(p => p.id === planId);
     return plan?.stripe_price_id === subscription.plan_id;
   };
 
