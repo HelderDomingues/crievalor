@@ -92,6 +92,22 @@ export const subscriptionService = {
   async getCurrentSubscription(): Promise<Subscription | null> {
     try {
       console.log("Fetching current subscription...");
+      
+      // First, get the subscription from the database directly
+      const { data: subscriptionData, error: subscriptionError } = await supabase
+        .from('subscriptions')
+        .select('*')
+        .eq('user_id', (await supabase.auth.getUser()).data.user?.id || '')
+        .single();
+        
+      // If subscription is found in database, return it
+      if (subscriptionData && !subscriptionError) {
+        console.log("Subscription found in database:", subscriptionData);
+        return subscriptionData;
+      }
+      
+      // If not found in database, try the functions API as fallback
+      console.log("No subscription found in database, trying functions API...");
       const response = await supabase.functions.invoke("stripe", {
         body: {
           action: "get-subscription",
@@ -100,12 +116,12 @@ export const subscriptionService = {
       });
 
       if (response.error) {
-        console.error("Error fetching subscription:", response.error);
+        console.error("Error fetching subscription from API:", response.error);
         return null;
       }
 
       const data = response.data;
-      console.log("Subscription data received:", data);
+      console.log("Subscription data received from API:", data);
       return data?.subscription || null;
     } catch (error) {
       console.error("Error in getCurrentSubscription:", error);

@@ -65,7 +65,7 @@ serve(async (req) => {
         // Extract the customer and subscription IDs
         const customerId = session.customer;
         const subscriptionId = session.subscription;
-        const userId = session.metadata.user_id;
+        const userId = session.metadata?.user_id;
         
         if (!userId) {
           throw new Error("User ID missing in session metadata");
@@ -91,6 +91,8 @@ serve(async (req) => {
             plan_id: priceId,
             status: subscription.status,
             current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString()
           }, {
             onConflict: 'user_id'
           });
