@@ -42,7 +42,7 @@ serve(async (req) => {
       action = body.action;
       data = body.data;
       
-      console.log(`Processing action: ${action}`);
+      console.log(`Processing action: ${action}`, data);
       
       if (!action) {
         throw new Error("Missing action parameter");
@@ -82,7 +82,7 @@ serve(async (req) => {
     switch (action) {
       case "create-checkout-session":
         try {
-          const { priceId, successUrl, cancelUrl } = data;
+          const { priceId, successUrl, cancelUrl, userId } = data;
           
           if (!priceId || !successUrl || !cancelUrl) {
             return new Response(JSON.stringify({ error: "Missing required parameters for checkout" }), {
@@ -91,13 +91,15 @@ serve(async (req) => {
             });
           }
           
-          console.log(`Creating checkout session for price ID: ${priceId}`);
+          // Use the provided userId if available, otherwise use the authenticated user's id
+          const effectiveUserId = userId || user.id;
+          console.log(`Creating checkout session for price ID: ${priceId} and user ID: ${effectiveUserId}`);
           
           // Get or create Stripe customer for the user
           const { data: subscriptions, error: subError } = await supabase
             .from("subscriptions")
             .select("stripe_customer_id")
-            .eq("user_id", user.id)
+            .eq("user_id", effectiveUserId)
             .maybeSingle();
           
           if (subError) {
@@ -112,7 +114,7 @@ serve(async (req) => {
             const customer = await stripe.customers.create({
               email: user.email,
               metadata: {
-                supabase_id: user.id,
+                supabase_id: effectiveUserId,
               },
             });
             customerId = customer.id;
@@ -135,7 +137,7 @@ serve(async (req) => {
             success_url: successUrl,
             cancel_url: cancelUrl,
             metadata: {
-              user_id: user.id,
+              user_id: effectiveUserId,
             },
           });
           
@@ -151,23 +153,89 @@ serve(async (req) => {
         break;
         
       case "get-subscription":
-        console.log(`Fetching subscription for user: ${user.id}`);
-        const { data: userSubscription, error: fetchError } = await supabase
-          .from("subscriptions")
-          .select("*")
-          .eq("user_id", user.id)
-          .maybeSingle();
+        try {
+          // Use the provided userId if available, otherwise use the authenticated user's id
+          const effectiveUserId = data?.userId || user.id;
+          console.log(`Fetching subscription for user: ${effectiveUserId}`);
           
-        if (fetchError) {
-          console.error("Error fetching subscription:", fetchError);
-          return new Response(JSON.stringify({ error: `Error fetching subscription: ${fetchError.message}` }), {
+          const { data: userSubscription, error: fetchError } = await supabase
+            .from("subscriptions")
+            .select("*")
+            .eq("user_id", effectiveUserId)
+            .maybeSingle();
+            
+          if (fetchError) {
+            console.error("Error fetching subscription:", fetchError);
+            return new Response(JSON.stringify({ error: `Error fetching subscription: ${fetchError.message}` }), {
+              status: 500,
+              headers: { ...corsHeaders, "Content-Type": "application/json" },
+            });
+          }
+          
+          console.log("Subscription data:", userSubscription);
+          
+          if (!userSubscription && effectiveUserId) {
+            // If no subscription is found in the database, try to find one in Stripe
+            console.log("No subscription found in database, checking Stripe directly");
+            
+            // First, check if the user has a customer record in any existing subscription
+            const { data: customerData } = await supabase
+              .from("subscriptions")
+              .select("stripe_customer_id")
+              .eq("user_id", effectiveUserId)
+              .maybeSingle();
+              
+            if (customerData?.stripe_customer_id) {
+              console.log(`Found customer ID: ${customerData.stripe_customer_id}, checking subscriptions in Stripe`);
+              
+              const subscriptions = await stripe.subscriptions.list({
+                customer: customerData.stripe_customer_id,
+                status: 'active',
+                limit: 1,
+              });
+              
+              if (subscriptions.data.length > 0) {
+                const stripeSubscription = subscriptions.data[0];
+                console.log("Found active subscription in Stripe:", stripeSubscription.id);
+                
+                // Save this subscription to the database
+                const priceId = stripeSubscription.items.data[0].price.id;
+                
+                const newSubscription = {
+                  user_id: effectiveUserId,
+                  stripe_customer_id: customerData.stripe_customer_id,
+                  stripe_subscription_id: stripeSubscription.id,
+                  plan_id: priceId,
+                  status: stripeSubscription.status,
+                  current_period_end: new Date(stripeSubscription.current_period_end * 1000).toISOString(),
+                  created_at: new Date().toISOString(),
+                  updated_at: new Date().toISOString()
+                };
+                
+                const { data: savedSub, error: saveError } = await supabase
+                  .from("subscriptions")
+                  .upsert(newSubscription, { onConflict: 'user_id', returning: 'representation' });
+                  
+                if (saveError) {
+                  console.error("Error saving subscription from Stripe:", saveError);
+                } else {
+                  console.log("Saved subscription from Stripe to database:", savedSub);
+                  return new Response(JSON.stringify({ subscription: savedSub[0] }), {
+                    headers: { ...corsHeaders, "Content-Type": "application/json" },
+                  });
+                }
+              }
+            }
+          }
+          
+          result = { subscription: userSubscription };
+        } catch (error) {
+          console.error("Error in get-subscription:", error);
+          return new Response(JSON.stringify({ error: `Error getting subscription: ${error.message}` }), {
             status: 500,
             headers: { ...corsHeaders, "Content-Type": "application/json" },
           });
         }
-        
-        console.log("Subscription data:", userSubscription);
-        result = { subscription: userSubscription };
         break;
         
       case "cancel-subscription":

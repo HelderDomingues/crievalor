@@ -1,4 +1,3 @@
-
 import { serve } from "https://deno.land/std@0.208.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.38.4";
 import Stripe from 'https://esm.sh/stripe@12.18.0';
@@ -65,13 +64,15 @@ serve(async (req) => {
         // Extract the customer and subscription IDs
         const customerId = session.customer;
         const subscriptionId = session.subscription;
-        const userId = session.metadata?.user_id;
         
-        if (!userId) {
+        // Check for user_id in metadata - this is critical
+        if (!session.metadata || !session.metadata.user_id) {
+          console.error("CRITICAL ERROR: No user_id found in session metadata:", JSON.stringify(session.metadata));
           throw new Error("User ID missing in session metadata");
         }
         
-        console.log(`Session completed for user: ${userId}, subscription: ${subscriptionId}`);
+        const userId = session.metadata.user_id;
+        console.log(`Session completed for user: ${userId}, subscription: ${subscriptionId}, customer: ${customerId}`);
         
         // Get subscription details from Stripe
         console.log("Retrieving subscription details from Stripe");
@@ -80,9 +81,23 @@ serve(async (req) => {
         
         console.log(`Subscription price ID: ${priceId}`);
         
-        // Insert or update subscription record
-        console.log("Updating subscription record in database");
-        const { error } = await supabase
+        // Check if user exists in auth.users
+        const { data: authUserData, error: authUserError } = await supabase
+          .from('profiles')
+          .select('id')
+          .eq('id', userId)
+          .single();
+          
+        if (authUserError) {
+          console.error(`Error checking user existence: ${authUserError.message}`);
+          console.log(`Will attempt to create subscription for user ${userId} anyway`);
+        } else {
+          console.log(`User ${userId} exists in profiles table`);
+        }
+        
+        // Insert or update subscription record with more data validation
+        console.log(`Upserting subscription record for user: ${userId}`);
+        const { data: upsertData, error: upsertError } = await supabase
           .from("subscriptions")
           .upsert({
             user_id: userId,
@@ -94,15 +109,30 @@ serve(async (req) => {
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString()
           }, {
-            onConflict: 'user_id'
+            onConflict: 'user_id',
+            returning: 'representation'
           });
           
-        if (error) {
-          console.error(`Error updating subscription: ${error.message}`);
-          throw new Error(`Error updating subscription: ${error.message}`);
+        if (upsertError) {
+          console.error(`Error updating subscription: ${upsertError.message}`);
+          throw new Error(`Error updating subscription: ${upsertError.message}`);
         }
         
-        console.log("Subscription record updated successfully");
+        console.log("Subscription record updated successfully:", upsertData);
+        
+        // Verify subscription was saved successfully
+        const { data: verifyData, error: verifyError } = await supabase
+          .from("subscriptions")
+          .select("*")
+          .eq("user_id", userId)
+          .single();
+          
+        if (verifyError) {
+          console.error(`Error verifying subscription save: ${verifyError.message}`);
+        } else {
+          console.log("Verified subscription saved successfully:", verifyData);
+        }
+        
         break;
       }
       

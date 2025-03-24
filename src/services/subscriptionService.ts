@@ -1,3 +1,4 @@
+
 import { supabase } from "@/integrations/supabase/client";
 
 // Define subscription types
@@ -59,6 +60,12 @@ export const subscriptionService = {
       
       console.log(`Creating checkout for plan: ${planId}, with price ID: ${plan.stripe_price_id}`);
       
+      // Get the current user
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        throw new Error("No authenticated user found");
+      }
+      
       // Use the stripe_price_id for the Stripe checkout
       const response = await supabase.functions.invoke("stripe", {
         body: {
@@ -67,6 +74,7 @@ export const subscriptionService = {
             priceId: plan.stripe_price_id,
             successUrl,
             cancelUrl,
+            userId: user.id  // Explicitly pass the user ID for checkout
           },
         },
       });
@@ -93,25 +101,38 @@ export const subscriptionService = {
     try {
       console.log("Fetching current subscription...");
       
-      // First, get the subscription from the database directly
+      // Get current user
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        console.log("No authenticated user found");
+        return null;
+      }
+      
+      const userId = user.id;
+      console.log(`Looking up subscription for user: ${userId}`);
+      
+      // First approach: Get the subscription from the database directly with detailed query
       const { data: subscriptionData, error: subscriptionError } = await supabase
         .from('subscriptions')
         .select('*')
-        .eq('user_id', (await supabase.auth.getUser()).data.user?.id || '')
-        .single();
-        
-      // If subscription is found in database, return it
-      if (subscriptionData && !subscriptionError) {
+        .eq('user_id', userId)
+        .maybeSingle();
+      
+      if (subscriptionError) {
+        console.error("Error fetching subscription from database:", subscriptionError);
+      } else if (subscriptionData) {
         console.log("Subscription found in database:", subscriptionData);
         return subscriptionData;
+      } else {
+        console.log("No subscription found in database");
       }
       
-      // If not found in database, try the functions API as fallback
-      console.log("No subscription found in database, trying functions API...");
+      // Second approach: Try the functions API as fallback
+      console.log("Trying functions API to get subscription...");
       const response = await supabase.functions.invoke("stripe", {
         body: {
           action: "get-subscription",
-          data: {},
+          data: { userId },
         },
       });
 
@@ -159,7 +180,7 @@ export const subscriptionService = {
     try {
       const subscription = await this.getCurrentSubscription();
       const isActive = subscription !== null && ["active", "trialing"].includes(subscription.status);
-      console.log(`Active subscription check: ${isActive}`);
+      console.log(`Active subscription check: ${isActive}`, subscription);
       return isActive;
     } catch (error) {
       console.error("Error checking subscription status:", error);
