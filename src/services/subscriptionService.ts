@@ -21,7 +21,7 @@ export const PLANS = {
   ESSENCIAL: {
     id: "plano_essencial_mensal",
     name: "Plano Essencial",
-    price: "R$ 49,90",
+    price: "R$ 179,90",
     features: ["Atendimento online", "Acesso ao material básico", "Suporte por email"],
     stripe_price_id: "price_1R6IkIP90koqLuyYam1lsLkJ", 
   },

@@ -35,7 +35,7 @@ export const plans: PricingPlan[] = [
   {
     id: "plano_essencial_mensal",
     name: "Essencial",
-    monthlyPrice: "R$ 49,90",
+    monthlyPrice: "R$ 179,90",
     description: "Solução self-service com assistência de IA para empreendedores que querem autonomia",
     features: [
       "Plano Estratégico guiado por IA",
