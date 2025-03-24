@@ -14,11 +14,6 @@ const documentTypes: Record<string, DocumentType> = {
     name: "Plano Estratégico",
     included: true
   },
-  mapaCrescimento: {
-    icon: BarChart,
-    name: "Mapa de Crescimento",
-    included: true
-  },
   relatorioCompleto: {
     icon: FileCheck,
     name: "Relatório Completo",
@@ -39,21 +34,41 @@ const documentTypes: Record<string, DocumentType> = {
 // Dados dos planos
 export const plans: PricingPlan[] = [
   {
+    id: "essencial_plan",
+    name: "Essencial (SaaS)",
+    monthlyPrice: "R$ 49,90",
+    annualPrice: "R$ 499,00",
+    description: "Solução self-service com assistência de IA para empreendedores que querem autonomia",
+    features: [
+      "Acesso à plataforma de autoatendimento",
+      "Assistência de IA para diagnóstico",
+      "Templates estratégicos",
+      "Suporte por email"
+    ],
+    documents: [
+      {...documentTypes.diagnostico, included: true},
+      {...documentTypes.planoEstrategico, included: false},
+      {...documentTypes.relatorioCompleto, included: false}
+    ],
+    cta: "Em Breve",
+    ctaUrl: "#",
+    comingSoon: true
+  },
+  {
     id: "basic_plan",
     name: "Básico",
-    monthlyPrice: "R$ 89,90",
-    annualPrice: "R$ 899,00",
-    description: "Ideal para pequenas empresas que estão iniciando sua jornada estratégica",
+    monthlyPrice: "R$ 179,90",
+    annualPrice: "R$ 1.799,00",
+    description: "Combinação ideal de IA e expertise humana para empreendedores iniciando sua jornada estratégica",
     features: [
       "Diagnóstico inicial do negócio",
-      "Análise SWOT básica",
-      "Recomendações iniciais",
-      "Email de suporte"
+      "Análise SWOT assistida por IA",
+      "Recomendações personalizadas",
+      "Email de suporte prioritário"
     ],
     documents: [
       documentTypes.diagnostico,
       {...documentTypes.planoEstrategico, included: false},
-      {...documentTypes.mapaCrescimento, included: false},
       {...documentTypes.relatorioCompleto, included: false}
     ],
     cta: "Começar agora",
@@ -64,18 +79,17 @@ export const plans: PricingPlan[] = [
     name: "Profissional",
     monthlyPrice: "R$ 299,90",
     annualPrice: "R$ 2.999,00",
-    description: "Para empresas em crescimento que precisam de estratégias mais estruturadas",
+    description: "Para empreendedores em crescimento que precisam de estratégias mais estruturadas e acompanhamento",
     features: [
       "Tudo do plano Básico",
       "Plano estratégico detalhado",
-      "Mapa de crescimento personalizado",
-      "2 sessões de mentoria",
-      "Suporte prioritário"
+      "2 sessões de mentoria especializada",
+      "Suporte prioritário com especialistas",
+      "Acesso à comunidade exclusiva"
     ],
     documents: [
       documentTypes.diagnostico,
       documentTypes.planoEstrategico,
-      documentTypes.mapaCrescimento,
       {...documentTypes.relatorioCompleto, included: false},
       {...documentTypes.workshop, included: false}
     ],
@@ -88,7 +102,7 @@ export const plans: PricingPlan[] = [
     name: "Empresarial",
     monthlyPrice: "R$ 799,90",
     annualPrice: "R$ 7.999,00",
-    description: "Solução completa para empresas que buscam excelência estratégica",
+    description: "Solução completa para empresas que buscam excelência estratégica e implementação assistida",
     features: [
       "Tudo do plano Profissional",
       "Relatório completo com KPIs",
@@ -100,7 +114,6 @@ export const plans: PricingPlan[] = [
     documents: [
       documentTypes.diagnostico,
       documentTypes.planoEstrategico,
-      documentTypes.mapaCrescimento,
       documentTypes.relatorioCompleto,
       documentTypes.workshop,
       documentTypes.apresentacao
@@ -111,7 +124,7 @@ export const plans: PricingPlan[] = [
   {
     id: "corporate_plan",
     name: "Corporativo",
-    description: "Solução personalizada para grandes corporações com necessidades específicas",
+    description: "Solução totalmente personalizada para grandes corporações com necessidades específicas",
     features: [
       "Estratégia completamente personalizada",
       "Equipe dedicada de consultores",
@@ -123,13 +136,11 @@ export const plans: PricingPlan[] = [
     documents: [
       documentTypes.diagnostico,
       documentTypes.planoEstrategico,
-      documentTypes.mapaCrescimento,
       documentTypes.relatorioCompleto,
       documentTypes.workshop,
       documentTypes.apresentacao
     ],
     cta: "Solicitar Proposta",
     ctaUrl: "/contato?assunto=plano-corporativo",
-    comingSoon: true
   }
 ];

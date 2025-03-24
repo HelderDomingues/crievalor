@@ -71,7 +71,7 @@ const PricingCard = ({
           )}
           
           {!plan.monthlyPrice && !plan.annualPrice && (
-            <div className="text-lg font-medium">Consulte-nos</div>
+            <div className="text-lg font-medium">Sob Consulta</div>
           )}
         </div>
         
