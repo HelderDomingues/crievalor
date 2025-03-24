@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
@@ -69,8 +70,19 @@ const Profile = () => {
     }
   });
   
+  // Update the form when profile data is loaded
   useEffect(() => {
     if (profile) {
+      console.log("Setting form values from profile:", profile);
+      
+      // Ensure social_media is properly structured before setting form values
+      const socialMedia = profile.social_media || {
+        linkedin: "",
+        twitter: "",
+        instagram: "",
+        facebook: ""
+      };
+      
       form.reset({
         username: profile.username || "",
         full_name: profile.full_name || "",
@@ -78,12 +90,7 @@ const Profile = () => {
         company_name: profile.company_name || "",
         company_address: profile.company_address || "",
         website: profile.website || "",
-        social_media: profile.social_media || {
-          linkedin: "",
-          twitter: "",
-          instagram: "",
-          facebook: ""
-        },
+        social_media: socialMedia,
         cnpj: profile.cnpj || ""
       });
     }
@@ -97,8 +104,20 @@ const Profile = () => {
 
   const onSubmit = async (values: ProfileFormValues) => {
     setIsUpdating(true);
+    console.log("Submitting form values:", values);
     
-    const { error } = await updateProfile(values as Partial<UserProfile>);
+    // Ensure social_media is included as an object, not null
+    const updatedValues = {
+      ...values,
+      social_media: values.social_media || {
+        linkedin: "",
+        twitter: "",
+        instagram: "",
+        facebook: ""
+      }
+    };
+    
+    const { error } = await updateProfile(updatedValues as Partial<UserProfile>);
     
     if (error) {
       toast({

@@ -32,10 +32,10 @@ export function useProfile() {
           throw error;
         }
 
-        // Garantir que social_media seja um objeto adequado
+        // Ensure social_media is properly structured
         const formattedData = data ? {
           ...data,
-          social_media: data.social_media ? data.social_media : {
+          social_media: data.social_media || {
             linkedin: "",
             twitter: "",
             instagram: "",
@@ -59,9 +59,23 @@ export function useProfile() {
     if (!user) return { error: new Error("No user logged in") };
 
     try {
+      // Ensure we're not sending null for social_media
+      const updatesToSend = { 
+        ...updates,
+        // If social_media is provided in updates but is null, use an empty object
+        social_media: updates.social_media || profile?.social_media || {
+          linkedin: "",
+          twitter: "",
+          instagram: "",
+          facebook: ""
+        }
+      };
+
+      console.log("Updating profile with:", updatesToSend);
+
       const { data, error } = await supabase
         .from("profiles")
-        .update(updates)
+        .update(updatesToSend)
         .eq("id", user.id)
         .select()
         .maybeSingle();
@@ -70,10 +84,10 @@ export function useProfile() {
         throw error;
       }
 
-      // Garantir que social_media seja um objeto adequado
+      // Process the response data to ensure social_media is properly structured
       const formattedData = data ? {
         ...data,
-        social_media: data.social_media ? data.social_media : {
+        social_media: data.social_media || {
           linkedin: "",
           twitter: "",
           instagram: "",

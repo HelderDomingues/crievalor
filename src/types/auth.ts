@@ -30,10 +30,10 @@ export interface UserProfile {
   company_address: string | null;
   website: string | null;
   social_media: {
-    linkedin?: string;
-    twitter?: string;
-    instagram?: string;
-    facebook?: string;
-  } | null;
+    linkedin: string;
+    twitter: string;
+    instagram: string;
+    facebook: string;
+  };
   cnpj: string | null;
 }
