@@ -19,6 +19,7 @@ const Auth = () => {
   const [username, setUsername] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState("login");
   
   useEffect(() => {
     if (user) {
@@ -57,6 +58,11 @@ const Auth = () => {
     setIsLoading(false);
   };
 
+  const switchTab = (tab: string) => {
+    setActiveTab(tab);
+    setError(null);
+  };
+
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
@@ -67,13 +73,19 @@ const Auth = () => {
             Acesso à Plataforma
           </h1>
 
-          <Tabs defaultValue="login" className="w-full">
+          <Tabs defaultValue="login" className="w-full" value={activeTab} onValueChange={switchTab}>
             <TabsList className="grid w-full grid-cols-2 mb-8">
               <TabsTrigger value="login">Login</TabsTrigger>
               <TabsTrigger value="register">Cadastro</TabsTrigger>
             </TabsList>
             
             <TabsContent value="login">
+              <div className="bg-purple-50 border border-purple-200 rounded-lg p-4 mb-6 shadow-sm">
+                <p className="text-center text-lg font-medium text-purple-700">
+                  Não tem uma conta ainda? <Button variant="link" className="font-semibold text-purple-900 p-0 h-auto" onClick={() => switchTab("register")}>Comece pelo cadastro</Button>
+                </p>
+              </div>
+              
               <form onSubmit={handleSignIn} className="space-y-6">
                 <div className="space-y-2">
                   <Label htmlFor="email">Email</Label>
