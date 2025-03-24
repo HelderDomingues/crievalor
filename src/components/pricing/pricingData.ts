@@ -39,13 +39,14 @@ export const plans: PricingPlan[] = [
     description: "Solução self-service com assistência de IA para empreendedores que querem autonomia",
     features: [
       "Acesso à plataforma de autoatendimento",
+      "Plano Estratégico guiado por IA",
       "Assistência de IA para diagnóstico",
       "Templates estratégicos",
       "Suporte por email"
     ],
     documents: [
       {...documentTypes.diagnostico, included: true},
-      {...documentTypes.planoEstrategico, included: false},
+      {...documentTypes.planoEstrategico, included: true},
       {...documentTypes.relatorioCompleto, included: false}
     ],
     cta: "Começar agora",
@@ -59,6 +60,7 @@ export const plans: PricingPlan[] = [
     annualPrice: "R$ 1.799,00",
     description: "Combinação ideal de IA e expertise humana para empreendedores iniciando sua jornada estratégica",
     features: [
+      "Plano Estratégico assistido por especialistas",
       "Diagnóstico inicial do negócio",
       "Análise SWOT assistida por IA",
       "Recomendações personalizadas",
@@ -66,7 +68,7 @@ export const plans: PricingPlan[] = [
     ],
     documents: [
       documentTypes.diagnostico,
-      {...documentTypes.planoEstrategico, included: false},
+      documentTypes.planoEstrategico,
       {...documentTypes.relatorioCompleto, included: false}
     ],
     cta: "Começar agora",
@@ -79,8 +81,8 @@ export const plans: PricingPlan[] = [
     annualPrice: "R$ 2.999,00",
     description: "Para empreendedores em crescimento que precisam de estratégias mais estruturadas e acompanhamento",
     features: [
+      "Plano Estratégico detalhado e personalizado",
       "Tudo do plano Básico",
-      "Plano estratégico detalhado",
       "2 sessões de mentoria especializada",
       "Suporte prioritário com especialistas",
       "Acesso à comunidade exclusiva"
@@ -102,6 +104,7 @@ export const plans: PricingPlan[] = [
     annualPrice: "R$ 7.999,00",
     description: "Solução completa para empresas que buscam excelência estratégica e implementação assistida",
     features: [
+      "Plano Estratégico completo com KPIs e métricas",
       "Tudo do plano Profissional",
       "Relatório completo com KPIs",
       "Workshop de implementação",
@@ -124,6 +127,7 @@ export const plans: PricingPlan[] = [
     name: "Corporativo",
     description: "Solução totalmente personalizada para grandes corporações com necessidades específicas",
     features: [
+      "Plano Estratégico corporativo personalizado",
       "Estratégia completamente personalizada",
       "Equipe dedicada de consultores",
       "Implementação assistida",
