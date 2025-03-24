@@ -8,7 +8,7 @@ import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { AlertCircle, User, Briefcase, Phone, Globe, FileText, CreditCard } from "lucide-react";
+import { AlertCircle, User, Briefcase, Phone, Globe, FileText, CreditCard, Save, Edit, Trash2 } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Separator } from "@/components/ui/separator";
 import { Card, CardHeader, CardContent, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
@@ -42,59 +42,217 @@ const ProfileSchema = z.object({
 
 type ProfileFormValues = z.infer<typeof ProfileSchema>;
 
+// Component for editable field
+const EditableField = ({ 
+  label, 
+  value, 
+  fieldName, 
+  onSave,
+  loading,
+  isTextarea = false
+}: { 
+  label: string; 
+  value: string; 
+  fieldName: string; 
+  onSave: (field: string, value: string) => Promise<void>;
+  loading: boolean;
+  isTextarea?: boolean;
+}) => {
+  const [isEditing, setIsEditing] = useState(false);
+  const [fieldValue, setFieldValue] = useState(value || "");
+  const [isSaving, setIsSaving] = useState(false);
+  const { toast } = useToast();
+
+  useEffect(() => {
+    setFieldValue(value || "");
+  }, [value]);
+
+  const handleSave = async () => {
+    setIsSaving(true);
+    try {
+      await onSave(fieldName, fieldValue);
+      setIsEditing(false);
+      toast({
+        title: "Campo atualizado",
+        description: `${label} foi atualizado com sucesso.`
+      });
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Erro ao atualizar",
+        description: "Não foi possível salvar as alterações."
+      });
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleClear = () => {
+    setFieldValue("");
+  };
+
+  return (
+    <div className="space-y-2 mb-4">
+      <div className="flex justify-between items-center">
+        <Label htmlFor={fieldName}>{label}</Label>
+        <div className="flex gap-2">
+          {!isEditing ? (
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={() => setIsEditing(true)}
+              disabled={loading}
+            >
+              <Edit className="h-4 w-4 mr-1" /> Editar
+            </Button>
+          ) : (
+            <>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={handleClear}
+                disabled={isSaving}
+              >
+                <Trash2 className="h-4 w-4 mr-1" /> Limpar
+              </Button>
+              <Button 
+                variant="default" 
+                size="sm" 
+                onClick={handleSave}
+                disabled={isSaving}
+              >
+                <Save className="h-4 w-4 mr-1" /> {isSaving ? "Salvando..." : "Salvar"}
+              </Button>
+            </>
+          )}
+        </div>
+      </div>
+      
+      {isTextarea ? (
+        <Textarea
+          id={fieldName}
+          value={fieldValue}
+          onChange={(e) => setFieldValue(e.target.value)}
+          disabled={!isEditing || isSaving || loading}
+          className="w-full"
+          rows={3}
+        />
+      ) : (
+        <Input
+          id={fieldName}
+          value={fieldValue}
+          onChange={(e) => setFieldValue(e.target.value)}
+          disabled={!isEditing || isSaving || loading}
+          className="w-full"
+        />
+      )}
+    </div>
+  );
+};
+
+// Component for social media field
+const SocialMediaField = ({ 
+  label, 
+  value, 
+  platform, 
+  onSave,
+  loading
+}: { 
+  label: string; 
+  value: string; 
+  platform: string; 
+  onSave: (field: string, value: string) => Promise<void>;
+  loading: boolean;
+}) => {
+  const [isEditing, setIsEditing] = useState(false);
+  const [fieldValue, setFieldValue] = useState(value || "");
+  const [isSaving, setIsSaving] = useState(false);
+  const { toast } = useToast();
+
+  useEffect(() => {
+    setFieldValue(value || "");
+  }, [value]);
+
+  const handleSave = async () => {
+    setIsSaving(true);
+    try {
+      await onSave(`social_media.${platform}`, fieldValue);
+      setIsEditing(false);
+      toast({
+        title: "Rede social atualizada",
+        description: `${label} foi atualizado com sucesso.`
+      });
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Erro ao atualizar",
+        description: "Não foi possível salvar as alterações."
+      });
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleClear = () => {
+    setFieldValue("");
+  };
+
+  return (
+    <div className="space-y-2 mb-4">
+      <div className="flex justify-between items-center">
+        <Label htmlFor={`social-${platform}`}>{label}</Label>
+        <div className="flex gap-2">
+          {!isEditing ? (
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={() => setIsEditing(true)}
+              disabled={loading}
+            >
+              <Edit className="h-4 w-4 mr-1" /> Editar
+            </Button>
+          ) : (
+            <>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={handleClear}
+                disabled={isSaving}
+              >
+                <Trash2 className="h-4 w-4 mr-1" /> Limpar
+              </Button>
+              <Button 
+                variant="default" 
+                size="sm" 
+                onClick={handleSave}
+                disabled={isSaving}
+              >
+                <Save className="h-4 w-4 mr-1" /> {isSaving ? "Salvando..." : "Salvar"}
+              </Button>
+            </>
+          )}
+        </div>
+      </div>
+      
+      <Input
+        id={`social-${platform}`}
+        value={fieldValue}
+        onChange={(e) => setFieldValue(e.target.value)}
+        disabled={!isEditing || isSaving || loading}
+        className="w-full"
+        placeholder={`https://${platform}.com/seuperfil`}
+      />
+    </div>
+  );
+};
+
 const Profile = () => {
   const navigate = useNavigate();
   const { user, signOut } = useAuth();
-  const { profile, loading, updateProfile } = useProfile();
+  const { profile, loading, updateProfileField } = useProfile();
   const { toast } = useToast();
   
   const [activeTab, setActiveTab] = useState("personal");
-  const [isUpdating, setIsUpdating] = useState(false);
-  
-  const form = useForm<ProfileFormValues>({
-    resolver: zodResolver(ProfileSchema),
-    defaultValues: {
-      username: "",
-      full_name: "",
-      phone: "",
-      company_name: "",
-      company_address: "",
-      website: "",
-      social_media: {
-        linkedin: "",
-        twitter: "",
-        instagram: "",
-        facebook: ""
-      },
-      cnpj: ""
-    }
-  });
-  
-  // Update the form when profile data is loaded
-  useEffect(() => {
-    if (profile) {
-      console.log("Setting form values from profile:", profile);
-      
-      // Ensure social_media is properly structured before setting form values
-      const socialMedia = profile.social_media || {
-        linkedin: "",
-        twitter: "",
-        instagram: "",
-        facebook: ""
-      };
-      
-      form.reset({
-        username: profile.username || "",
-        full_name: profile.full_name || "",
-        phone: profile.phone || "",
-        company_name: profile.company_name || "",
-        company_address: profile.company_address || "",
-        website: profile.website || "",
-        social_media: socialMedia,
-        cnpj: profile.cnpj || ""
-      });
-    }
-  }, [profile, form]);
   
   useEffect(() => {
     if (!user && !loading) {
@@ -102,37 +260,20 @@ const Profile = () => {
     }
   }, [user, loading, navigate]);
 
-  const onSubmit = async (values: ProfileFormValues) => {
-    setIsUpdating(true);
-    console.log("Submitting form values:", values);
-    
-    // Ensure social_media is included as an object, not null
-    const updatedValues = {
-      ...values,
-      social_media: values.social_media || {
-        linkedin: "",
-        twitter: "",
-        instagram: "",
-        facebook: ""
-      }
-    };
-    
-    const { error } = await updateProfile(updatedValues as Partial<UserProfile>);
+  const handleSaveField = async (field: string, value: string) => {
+    console.log(`Saving field ${field} with value:`, value);
+    const { error } = await updateProfileField(field, value);
     
     if (error) {
       toast({
         variant: "destructive",
-        title: "Erro ao atualizar perfil",
+        title: "Erro ao atualizar campo",
         description: error.message
       });
-    } else {
-      toast({
-        title: "Perfil atualizado",
-        description: "Suas informações foram atualizadas com sucesso."
-      });
+      return Promise.reject(error);
     }
     
-    setIsUpdating(false);
+    return Promise.resolve();
   };
 
   const handleSignOut = async () => {
@@ -263,197 +404,114 @@ const Profile = () => {
                   {activeTab === "subscription" ? (
                     <SubscriptionDetails />
                   ) : (
-                    <Form {...form}>
-                      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                        {activeTab === "personal" && (
-                          <div className="space-y-4">
-                            <h3 className="text-lg font-medium">Dados Pessoais</h3>
-                            
-                            <FormField
-                              control={form.control}
-                              name="username"
-                              render={({ field }) => (
-                                <FormItem>
-                                  <FormLabel>Nome de Usuário</FormLabel>
-                                  <FormControl>
-                                    <Input {...field} placeholder="Seu nome de usuário" />
-                                  </FormControl>
-                                  <FormMessage />
-                                </FormItem>
-                              )}
-                            />
-                            
-                            <FormField
-                              control={form.control}
-                              name="full_name"
-                              render={({ field }) => (
-                                <FormItem>
-                                  <FormLabel>Nome Completo</FormLabel>
-                                  <FormControl>
-                                    <Input {...field} placeholder="Seu nome completo" />
-                                  </FormControl>
-                                  <FormMessage />
-                                </FormItem>
-                              )}
-                            />
-                            
-                            <FormField
-                              control={form.control}
-                              name="phone"
-                              render={({ field }) => (
-                                <FormItem>
-                                  <FormLabel>Telefone</FormLabel>
-                                  <FormControl>
-                                    <Input {...field} placeholder="(00) 00000-0000" />
-                                  </FormControl>
-                                  <FormMessage />
-                                </FormItem>
-                              )}
-                            />
-                          </div>
-                        )}
-                        
-                        {activeTab === "company" && (
-                          <div className="space-y-4">
-                            <h3 className="text-lg font-medium">Dados da Empresa</h3>
-                            
-                            <FormField
-                              control={form.control}
-                              name="company_name"
-                              render={({ field }) => (
-                                <FormItem>
-                                  <FormLabel>Nome da Empresa</FormLabel>
-                                  <FormControl>
-                                    <Input {...field} placeholder="Nome da sua empresa" />
-                                  </FormControl>
-                                  <FormMessage />
-                                </FormItem>
-                              )}
-                            />
-                            
-                            <FormField
-                              control={form.control}
-                              name="company_address"
-                              render={({ field }) => (
-                                <FormItem>
-                                  <FormLabel>Endereço da Empresa</FormLabel>
-                                  <FormControl>
-                                    <Textarea 
-                                      {...field} 
-                                      placeholder="Endereço completo da empresa" 
-                                      className="resize-none" 
-                                      rows={3}
-                                    />
-                                  </FormControl>
-                                  <FormMessage />
-                                </FormItem>
-                              )}
-                            />
-                            
-                            <FormField
-                              control={form.control}
-                              name="website"
-                              render={({ field }) => (
-                                <FormItem>
-                                  <FormLabel>Website</FormLabel>
-                                  <FormControl>
-                                    <Input {...field} placeholder="https://www.seusite.com.br" />
-                                  </FormControl>
-                                  <FormMessage />
-                                </FormItem>
-                              )}
-                            />
-                            
-                            <FormField
-                              control={form.control}
-                              name="cnpj"
-                              render={({ field }) => (
-                                <FormItem>
-                                  <FormLabel>CNPJ</FormLabel>
-                                  <FormControl>
-                                    <Input {...field} placeholder="00.000.000/0000-00" />
-                                  </FormControl>
-                                  <FormDescription>
-                                    Opcional, mas recomendado
-                                  </FormDescription>
-                                  <FormMessage />
-                                </FormItem>
-                              )}
-                            />
-                          </div>
-                        )}
-                        
-                        {activeTab === "social" && (
-                          <div className="space-y-4">
-                            <h3 className="text-lg font-medium">Redes Sociais</h3>
-                            
-                            <FormField
-                              control={form.control}
-                              name="social_media.linkedin"
-                              render={({ field }) => (
-                                <FormItem>
-                                  <FormLabel>LinkedIn</FormLabel>
-                                  <FormControl>
-                                    <Input {...field} placeholder="https://linkedin.com/in/seuperfil" />
-                                  </FormControl>
-                                  <FormMessage />
-                                </FormItem>
-                              )}
-                            />
-                            
-                            <FormField
-                              control={form.control}
-                              name="social_media.instagram"
-                              render={({ field }) => (
-                                <FormItem>
-                                  <FormLabel>Instagram</FormLabel>
-                                  <FormControl>
-                                    <Input {...field} placeholder="https://instagram.com/seuperfil" />
-                                  </FormControl>
-                                  <FormMessage />
-                                </FormItem>
-                              )}
-                            />
-                            
-                            <FormField
-                              control={form.control}
-                              name="social_media.facebook"
-                              render={({ field }) => (
-                                <FormItem>
-                                  <FormLabel>Facebook</FormLabel>
-                                  <FormControl>
-                                    <Input {...field} placeholder="https://facebook.com/seuperfil" />
-                                  </FormControl>
-                                  <FormMessage />
-                                </FormItem>
-                              )}
-                            />
-                            
-                            <FormField
-                              control={form.control}
-                              name="social_media.twitter"
-                              render={({ field }) => (
-                                <FormItem>
-                                  <FormLabel>Twitter</FormLabel>
-                                  <FormControl>
-                                    <Input {...field} placeholder="https://twitter.com/seuperfil" />
-                                  </FormControl>
-                                  <FormMessage />
-                                </FormItem>
-                              )}
-                            />
-                          </div>
-                        )}
-                        
-                        <Button 
-                          type="submit" 
-                          className="w-full mt-6" 
-                          disabled={isUpdating}
-                        >
-                          {isUpdating ? "Salvando..." : "Salvar Alterações"}
-                        </Button>
-                      </form>
-                    </Form>
+                    <>
+                      {activeTab === "personal" && (
+                        <div className="space-y-4">
+                          <h3 className="text-lg font-medium">Dados Pessoais</h3>
+                          
+                          <EditableField
+                            label="Nome de Usuário"
+                            value={profile?.username || ""}
+                            fieldName="username"
+                            onSave={handleSaveField}
+                            loading={loading}
+                          />
+                          
+                          <EditableField
+                            label="Nome Completo"
+                            value={profile?.full_name || ""}
+                            fieldName="full_name"
+                            onSave={handleSaveField}
+                            loading={loading}
+                          />
+                          
+                          <EditableField
+                            label="Telefone"
+                            value={profile?.phone || ""}
+                            fieldName="phone"
+                            onSave={handleSaveField}
+                            loading={loading}
+                          />
+                        </div>
+                      )}
+                      
+                      {activeTab === "company" && (
+                        <div className="space-y-4">
+                          <h3 className="text-lg font-medium">Dados da Empresa</h3>
+                          
+                          <EditableField
+                            label="Nome da Empresa"
+                            value={profile?.company_name || ""}
+                            fieldName="company_name"
+                            onSave={handleSaveField}
+                            loading={loading}
+                          />
+                          
+                          <EditableField
+                            label="Endereço da Empresa"
+                            value={profile?.company_address || ""}
+                            fieldName="company_address"
+                            onSave={handleSaveField}
+                            loading={loading}
+                            isTextarea={true}
+                          />
+                          
+                          <EditableField
+                            label="Website"
+                            value={profile?.website || ""}
+                            fieldName="website"
+                            onSave={handleSaveField}
+                            loading={loading}
+                          />
+                          
+                          <EditableField
+                            label="CNPJ"
+                            value={profile?.cnpj || ""}
+                            fieldName="cnpj"
+                            onSave={handleSaveField}
+                            loading={loading}
+                          />
+                        </div>
+                      )}
+                      
+                      {activeTab === "social" && (
+                        <div className="space-y-4">
+                          <h3 className="text-lg font-medium">Redes Sociais</h3>
+                          
+                          <SocialMediaField
+                            label="LinkedIn"
+                            value={profile?.social_media?.linkedin || ""}
+                            platform="linkedin"
+                            onSave={handleSaveField}
+                            loading={loading}
+                          />
+                          
+                          <SocialMediaField
+                            label="Instagram"
+                            value={profile?.social_media?.instagram || ""}
+                            platform="instagram"
+                            onSave={handleSaveField}
+                            loading={loading}
+                          />
+                          
+                          <SocialMediaField
+                            label="Facebook"
+                            value={profile?.social_media?.facebook || ""}
+                            platform="facebook"
+                            onSave={handleSaveField}
+                            loading={loading}
+                          />
+                          
+                          <SocialMediaField
+                            label="Twitter"
+                            value={profile?.social_media?.twitter || ""}
+                            platform="twitter"
+                            onSave={handleSaveField}
+                            loading={loading}
+                          />
+                        </div>
+                      )}
+                    </>
                   )}
                 </CardContent>
               </Card>

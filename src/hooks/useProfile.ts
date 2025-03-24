@@ -32,15 +32,17 @@ export function useProfile() {
           throw error;
         }
 
-        // Ensure social_media is properly structured
+        // Ensure social_media is properly structured as an object, never null
+        const social_media = data?.social_media || {
+          linkedin: "",
+          twitter: "",
+          instagram: "",
+          facebook: ""
+        };
+
         const formattedData = data ? {
           ...data,
-          social_media: data.social_media || {
-            linkedin: "",
-            twitter: "",
-            instagram: "",
-            facebook: ""
-          }
+          social_media: social_media
         } : null;
 
         setProfile(formattedData as UserProfile | null);
@@ -59,19 +61,22 @@ export function useProfile() {
     if (!user) return { error: new Error("No user logged in") };
 
     try {
-      // Ensure we're not sending null for social_media
-      const updatesToSend = { 
-        ...updates,
-        // If social_media is provided in updates but is null, use an empty object
-        social_media: updates.social_media || profile?.social_media || {
-          linkedin: "",
-          twitter: "",
-          instagram: "",
-          facebook: ""
-        }
-      };
-
-      console.log("Updating profile with:", updatesToSend);
+      console.log("Original updates:", updates);
+      
+      // Make sure social_media is always an object
+      let updatesToSend = { ...updates };
+      
+      // If we're updating social_media, ensure it's complete
+      if ('social_media' in updates) {
+        updatesToSend.social_media = {
+          linkedin: updates.social_media?.linkedin || profile?.social_media?.linkedin || "",
+          twitter: updates.social_media?.twitter || profile?.social_media?.twitter || "",
+          instagram: updates.social_media?.instagram || profile?.social_media?.instagram || "",
+          facebook: updates.social_media?.facebook || profile?.social_media?.facebook || ""
+        };
+      }
+      
+      console.log("Sending updates to Supabase:", updatesToSend);
 
       const { data, error } = await supabase
         .from("profiles")
@@ -85,20 +90,54 @@ export function useProfile() {
       }
 
       // Process the response data to ensure social_media is properly structured
+      const social_media = data?.social_media || {
+        linkedin: "",
+        twitter: "",
+        instagram: "",
+        facebook: ""
+      };
+
       const formattedData = data ? {
         ...data,
-        social_media: data.social_media || {
-          linkedin: "",
-          twitter: "",
-          instagram: "",
-          facebook: ""
-        }
+        social_media: social_media
       } : null;
 
       setProfile(formattedData as UserProfile | null);
       return { data: formattedData, error: null };
     } catch (error) {
       console.error("Error updating profile:", error);
+      return { data: null, error: error as Error };
+    }
+  }
+
+  // Update a single field
+  async function updateProfileField(field: string, value: any) {
+    if (!user) return { error: new Error("No user logged in") };
+    
+    try {
+      // Handle nested social_media fields
+      if (field.startsWith('social_media.')) {
+        const socialField = field.split('.')[1];
+        
+        // Create an updated social_media object
+        const updatedSocialMedia = {
+          ...(profile?.social_media || {
+            linkedin: "",
+            twitter: "",
+            instagram: "",
+            facebook: ""
+          }),
+          [socialField]: value
+        };
+        
+        return updateProfile({ social_media: updatedSocialMedia });
+      }
+      
+      // For other fields, create a simple update object
+      const updates = { [field]: value };
+      return updateProfile(updates);
+    } catch (error) {
+      console.error(`Error updating ${field}:`, error);
       return { data: null, error: error as Error };
     }
   }
@@ -170,6 +209,7 @@ export function useProfile() {
     loading,
     error,
     updateProfile,
+    updateProfileField,
     uploadAvatar,
     avatarUploading
   };
