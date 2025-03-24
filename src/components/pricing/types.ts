@@ -12,6 +12,7 @@ export interface PricingPlan {
   name: string;
   monthlyPrice?: string;
   annualPrice?: string;
+  annualDiscount?: boolean;
   description: string;
   features: string[];
   documents?: DocumentType[];

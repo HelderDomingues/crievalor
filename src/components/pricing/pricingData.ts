@@ -38,7 +38,6 @@ export const plans: PricingPlan[] = [
     name: "Essencial",
     description: "Solução self-service com assistência de IA para empreendedores que querem autonomia",
     features: [
-      "Acesso à plataforma de autoatendimento",
       "Plano Estratégico guiado por IA",
       "Assistência de IA para diagnóstico",
       "Templates estratégicos",
@@ -58,6 +57,7 @@ export const plans: PricingPlan[] = [
     name: "Básico",
     monthlyPrice: "R$ 179,90",
     annualPrice: "R$ 1.799,00",
+    annualDiscount: true,
     description: "Combinação ideal de IA e expertise humana para empreendedores iniciando sua jornada estratégica",
     features: [
       "Plano Estratégico assistido por especialistas",
@@ -79,6 +79,7 @@ export const plans: PricingPlan[] = [
     name: "Profissional",
     monthlyPrice: "R$ 299,90",
     annualPrice: "R$ 2.999,00",
+    annualDiscount: true,
     description: "Para empreendedores em crescimento que precisam de estratégias mais estruturadas e acompanhamento",
     features: [
       "Plano Estratégico detalhado e personalizado",
@@ -102,6 +103,7 @@ export const plans: PricingPlan[] = [
     name: "Empresarial",
     monthlyPrice: "R$ 799,90",
     annualPrice: "R$ 7.999,00",
+    annualDiscount: true,
     description: "Solução completa para empresas que buscam excelência estratégica e implementação assistida",
     features: [
       "Plano Estratégico completo com KPIs e métricas",

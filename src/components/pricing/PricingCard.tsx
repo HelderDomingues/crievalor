@@ -7,7 +7,7 @@ import { PricingPlan } from "./types";
 import PlanDocuments from "./PlanDocuments";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
-import { Loader2 } from "lucide-react";
+import { Loader2, BadgePercent } from "lucide-react";
 
 interface PricingCardProps {
   plan: PricingPlan;
@@ -66,7 +66,7 @@ const PricingCard = ({
   const renderPriceInfo = () => {
     if (plan.comingSoon) {
       return (
-        <div className="text-lg font-medium">Em Breve</div>
+        <div className="text-lg font-medium text-muted-foreground">Em Breve</div>
       );
     } else if (plan.customPrice) {
       return (
@@ -78,13 +78,28 @@ const PricingCard = ({
           {plan.monthlyPrice && (
             <div className="flex items-baseline">
               <span className="text-3xl font-bold">{plan.monthlyPrice}</span>
-              <span className="text-sm text-muted-foreground ml-1">/mês</span>
+              <span className="ml-1 text-sm text-muted-foreground">/mês</span>
             </div>
           )}
           
           {plan.annualPrice && (
-            <div className="text-sm text-muted-foreground mt-1">
-              ou {plan.annualPrice}/ano
+            <div className="mt-1 space-y-1">
+              <div className="text-sm text-muted-foreground flex items-center">
+                <span>ou</span>
+                <span className="font-medium ml-1">{plan.annualPrice}</span>
+                <span className="ml-1">à vista</span>
+                {plan.annualDiscount && (
+                  <Badge variant="outline" className="ml-2 flex items-center text-green-600">
+                    <BadgePercent className="h-3 w-3 mr-1" />
+                    10% off
+                  </Badge>
+                )}
+              </div>
+              {plan.annualDiscount && (
+                <div className="text-xs text-muted-foreground">
+                  Desconto aplicado em pagamento único
+                </div>
+              )}
             </div>
           )}
         </>
@@ -95,39 +110,41 @@ const PricingCard = ({
   };
 
   return (
-    <Card className={`flex flex-col h-full ${plan.popular ? "border-primary shadow-lg" : ""}`}>
+    <Card className={`flex h-full flex-col transition-all duration-300 hover:shadow-md ${plan.popular ? "border-primary shadow-lg" : ""}`}>
       <CardHeader className="pb-4">
-        {plan.popular && (
-          <Badge className="mb-2 self-start">Mais Popular</Badge>
-        )}
-        {plan.comingSoon && (
-          <Badge variant="outline" className="mb-2 self-start">Em Breve</Badge>
-        )}
-        {isCurrent && (
-          <Badge variant="secondary" className="mb-2 self-start">Plano Atual</Badge>
-        )}
+        <div className="flex flex-wrap gap-2">
+          {plan.popular && (
+            <Badge variant="default" className="self-start">Mais Popular</Badge>
+          )}
+          {plan.comingSoon && (
+            <Badge variant="outline" className="self-start">Em Breve</Badge>
+          )}
+          {isCurrent && (
+            <Badge variant="secondary" className="self-start">Plano Atual</Badge>
+          )}
+        </div>
         
-        <h3 className="text-xl font-bold">{plan.name}</h3>
+        <h3 className="mt-2 text-xl font-bold">{plan.name}</h3>
         
         <div className="mt-2">
           {renderPriceInfo()}
         </div>
         
-        <p className="text-muted-foreground text-sm mt-2">{plan.description}</p>
+        <p className="mt-2 text-sm text-muted-foreground">{plan.description}</p>
       </CardHeader>
       
       <CardContent className="flex-grow">
-        <div className="space-y-4">
+        <div className="space-y-6">
           {plan.documents && plan.documents.length > 0 && (
             <PlanDocuments documents={plan.documents} />
           )}
           
           <div>
-            <h4 className="text-sm font-medium mb-3 border-b border-border pb-2">Incluído neste plano</h4>
+            <h4 className="mb-3 border-b border-border pb-2 text-sm font-medium">Incluído neste plano</h4>
             <ul className="space-y-3">
               {plan.features.map((feature, index) => (
-                <li key={index} className="text-sm flex items-start">
-                  <span className="text-green-500 mr-2">✓</span>
+                <li key={index} className="flex items-start text-sm">
+                  <span className="mr-2 text-green-500">✓</span>
                   {feature}
                 </li>
               ))}
