@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -25,6 +26,8 @@ import Subscription from "./pages/Subscription";
 import { useState } from "react";
 import CheckoutSuccess from "./pages/CheckoutSuccess";
 import CheckoutCanceled from "./pages/CheckoutCanceled";
+import MaterialExclusivo from "./pages/MaterialExclusivo";
+import AdminMaterials from "./pages/AdminMaterials";
 
 const App = () => {
   const [queryClient] = useState(() => new QueryClient());
@@ -56,6 +59,9 @@ const App = () => {
                 <Route path="/checkout/success" element={<CheckoutSuccess />} />
                 <Route path="/checkout/canceled" element={<CheckoutCanceled />} />
                 <Route path="/portfolio-admin" element={<PortfolioAdmin />} />
+                {/* New Routes */}
+                <Route path="/material-exclusivo" element={<MaterialExclusivo />} />
+                <Route path="/admin-materials" element={<AdminMaterials />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
               <Chatbot />

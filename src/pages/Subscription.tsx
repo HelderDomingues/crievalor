@@ -206,7 +206,7 @@ const SubscriptionPage = () => {
                         Acesse conteúdos exclusivos do seu plano.
                       </p>
                       <Button asChild>
-                        <a href="#materiais">Acessar Materiais</a>
+                        <a href="/material-exclusivo">Acessar Materiais</a>
                       </Button>
                     </CardContent>
                   </Card>
