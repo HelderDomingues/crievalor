@@ -24,10 +24,22 @@ const HeroContent: React.FC<HeroContentProps> = ({
   secondaryCtaUrl,
   isMarHero = false
 }) => {
+  const handleButtonClick = (url: string) => {
+    // Se a URL começa com #, é um link de âncora
+    if (url.startsWith('#')) {
+      const element = document.getElementById(url.substring(1));
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
+    } else {
+      // Caso contrário, navegar para a URL
+      window.location.href = url;
+    }
+  };
+
   return (
     <div className="container mx-auto px-4 relative z-30">
       <div className="max-w-3xl mx-auto text-center">
-        {/* Comment: Reduced from mb-6 (by approximately 20%) */}
         {isMarHero ? (
           <div className="mb-5 animate-fade-in">
             <img src="/lovable-uploads/91e6888f-e3da-40dc-8c55-5718c15ada21.png" alt="MAR - Mapa para Alto Rendimento" className="h-24 mx-auto" />
@@ -58,23 +70,30 @@ const HeroContent: React.FC<HeroContentProps> = ({
           className="flex flex-col sm:flex-row justify-center gap-4 animate-fade-in" 
           style={{ animationDelay: "0.6s" }}
         >
-          <Button size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground font-medium" asChild>
-            <a href={ctaUrl}>
-              {isMarHero ? (
-                <>
-                  {ctaText} <Compass className="ml-2 h-4 w-4" />
-                </>
-              ) : (
-                <>
-                  {ctaText} <ArrowRight className="ml-2 h-4 w-4" />
-                </>
-              )}
-            </a>
+          <Button 
+            size="lg" 
+            className="bg-primary hover:bg-primary/90 text-primary-foreground font-medium"
+            onClick={() => handleButtonClick(ctaUrl)}
+          >
+            {isMarHero ? (
+              <>
+                {ctaText} <Compass className="ml-2 h-4 w-4" />
+              </>
+            ) : (
+              <>
+                {ctaText} <ArrowRight className="ml-2 h-4 w-4" />
+              </>
+            )}
           </Button>
           
           {secondaryCtaText && secondaryCtaUrl && (
-            <Button size="lg" variant="outline" className="border-primary text-primary hover:bg-primary/10" asChild>
-              <a href={secondaryCtaUrl}>{secondaryCtaText}</a>
+            <Button 
+              size="lg" 
+              variant="outline" 
+              className="border-primary text-primary hover:bg-primary/10"
+              onClick={() => handleButtonClick(secondaryCtaUrl)}
+            >
+              {secondaryCtaText}
             </Button>
           )}
         </div>

@@ -90,7 +90,7 @@ const Mar = () => {
         </ErrorBoundary>
         
         <ErrorBoundary>
-          <div className="relative">
+          <div id="mar-explanation" className="relative">
             <MarExplanation />
             {/* Background effect */}
             <div className="absolute top-1/4 right-0 w-96 h-96 bg-primary/5 rounded-full blur-3xl translate-x-1/2 -z-10"></div>
@@ -98,7 +98,7 @@ const Mar = () => {
         </ErrorBoundary>
         
         <ErrorBoundary>
-          <div className="relative overflow-hidden">
+          <div id="pricing" className="relative overflow-hidden">
             <PricingSection />
             {/* Visual enhancements for pricing section */}
             <div className="absolute bottom-0 left-0 w-full h-1/2 bg-gradient-to-t from-secondary/20 to-transparent -z-10"></div>
