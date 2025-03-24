@@ -62,12 +62,10 @@ const PricingCard = ({
     }
   };
 
-  // Display price information
+  // Display price information - ensuring no pricing for comingSoon plans
   const renderPriceInfo = () => {
     if (plan.comingSoon) {
-      return (
-        <div className="text-lg font-medium text-muted-foreground">Em Breve</div>
-      );
+      return null; // Don't display any pricing for coming soon plans
     } else if (plan.customPrice) {
       return (
         <div className="text-lg font-medium">Sob Consulta</div>
@@ -113,13 +111,13 @@ const PricingCard = ({
     <Card className={`flex h-full flex-col transition-all duration-300 hover:shadow-md ${plan.popular ? "border-primary shadow-lg" : ""}`}>
       <CardHeader className="pb-4">
         <div className="flex flex-wrap gap-2">
-          {plan.popular && (
+          {plan.popular && !plan.comingSoon && (
             <Badge variant="default" className="self-start">Mais Popular</Badge>
           )}
           {plan.comingSoon && (
             <Badge variant="outline" className="self-start">Em Breve</Badge>
           )}
-          {isCurrent && (
+          {isCurrent && !plan.comingSoon && (
             <Badge variant="secondary" className="self-start">Plano Atual</Badge>
           )}
         </div>
@@ -128,6 +126,9 @@ const PricingCard = ({
         
         <div className="mt-2">
           {renderPriceInfo()}
+          {plan.comingSoon && (
+            <div className="text-lg font-medium text-muted-foreground">Em Breve</div>
+          )}
         </div>
         
         <p className="mt-2 text-sm text-muted-foreground">{plan.description}</p>
