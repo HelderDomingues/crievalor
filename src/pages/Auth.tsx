@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
@@ -51,7 +50,6 @@ const Auth = () => {
     if (error) {
       setError(error.message);
     } else {
-      // Show success message about email verification if needed
       setError("Cadastro realizado com sucesso! Você pode fazer login agora.");
     }
     
@@ -80,9 +78,15 @@ const Auth = () => {
             </TabsList>
             
             <TabsContent value="login">
-              <div className="bg-purple-50 border border-purple-200 rounded-lg p-4 mb-6 shadow-sm">
-                <p className="text-center text-lg font-medium text-purple-700">
-                  Não tem uma conta ainda? <Button variant="link" className="font-semibold text-purple-900 p-0 h-auto" onClick={() => switchTab("register")}>Comece pelo cadastro</Button>
+              <div className="bg-gradient-to-r from-purple-100 to-indigo-100 border-l-4 border-primary rounded-lg p-6 mb-8 shadow-md">
+                <p className="text-center font-medium text-gray-800">
+                  <span className="block text-lg mb-2">Não tem uma conta ainda?</span>
+                  <Button 
+                    onClick={() => switchTab("register")} 
+                    className="mt-2 font-semibold bg-primary hover:bg-primary/90 text-white"
+                  >
+                    Comece pelo cadastro
+                  </Button>
                 </p>
               </div>
               
