@@ -141,6 +141,6 @@ export const plans: PricingPlan[] = [
       documentTypes.apresentacao
     ],
     cta: "Solicitar Proposta",
-    ctaUrl: "/contato?assunto=plano-corporativo",
+    ctaUrl: "/contato?assunto=plano-corporativo"
   }
 ];

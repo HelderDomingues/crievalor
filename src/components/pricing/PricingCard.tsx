@@ -32,12 +32,12 @@ const PricingCard = ({
     }
 
     if (!user) {
-      // Redirecionar para página de autenticação, passando o plano como parâmetro
+      // Redirect to auth page with plan parameter
       navigate(`/auth?redirect=subscription&plan=${plan.name}`);
       return;
     }
     
-    // Se o usuário estiver logado, redirecionar para a página de assinatura
+    // If user is logged in, redirect to subscription page
     navigate(`/subscription?plan=${plan.name}`);
   };
 
