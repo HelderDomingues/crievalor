@@ -1,4 +1,3 @@
-
 import { File, FileText, FileCheck, Users, Presentation, BarChart } from "lucide-react";
 import { DocumentType, PricingPlan } from "./types";
 
@@ -34,8 +33,9 @@ const documentTypes: Record<string, DocumentType> = {
 // Dados dos planos
 export const plans: PricingPlan[] = [
   {
-    id: "essencial_plan",
+    id: "plano_essencial_mensal",
     name: "Essencial",
+    monthlyPrice: "R$ 49,90",
     description: "Solução self-service com assistência de IA para empreendedores que querem autonomia",
     features: [
       "Plano Estratégico guiado por IA",
@@ -49,8 +49,7 @@ export const plans: PricingPlan[] = [
       {...documentTypes.relatorioCompleto, included: false}
     ],
     cta: "Começar agora",
-    ctaUrl: "/subscription?plan=essencial_plan",
-    comingSoon: true
+    ctaUrl: "/subscription?plan=plano_essencial_mensal"
   },
   {
     id: "basic_plan",

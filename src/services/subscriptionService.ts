@@ -18,6 +18,13 @@ export interface Subscription {
 
 // Pricing plans
 export const PLANS = {
+  ESSENCIAL: {
+    id: "plano_essencial_mensal",
+    name: "Plano Essencial",
+    price: "R$ 49,90",
+    features: ["Atendimento online", "Acesso ao material básico", "Suporte por email"],
+    stripe_price_id: "price_1R6IkIP90koqLuyYam1lsLkJ", 
+  },
   BASIC: {
     id: "basic_plan",
     name: "Plano Básico",
@@ -43,6 +50,7 @@ export const PLANS = {
 
 // Map plan IDs to Stripe price IDs for easy lookup
 const PLAN_TO_PRICE_ID_MAP = {
+  plano_essencial_mensal: "price_1R6IkIP90koqLuyYam1lsLkJ",
   basic_plan: "price_1R5XpZP90koqLuyYBKb2OTOg",
   pro_plan: "price_1R5Xq2P90koqLuyYgTcwJz7Y",
   enterprise_plan: "price_1R5XqQP90koqLuyYmIG7S5sz",

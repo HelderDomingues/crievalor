@@ -1,3 +1,4 @@
+
 import { serve } from "https://deno.land/std@0.208.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.38.4";
 import Stripe from 'https://esm.sh/stripe@12.18.0';
@@ -80,6 +81,23 @@ serve(async (req) => {
         const priceId = subscription.items.data[0].price.id;
         
         console.log(`Subscription price ID: ${priceId}`);
+        
+        // Added detailed logging for investigating subscription plan matching
+        console.log(`Checking if price ID ${priceId} matches a known plan`);
+        
+        // Define our known plans for validation
+        const knownPriceIds = [
+          "price_1R6IkIP90koqLuyYam1lsLkJ", // Plano Essencial
+          "price_1R5XpZP90koqLuyYBKb2OTOg", // Plano Básico
+          "price_1R5Xq2P90koqLuyYgTcwJz7Y", // Plano Profissional
+          "price_1R5XqQP90koqLuyYmIG7S5sz"  // Plano Empresarial
+        ];
+        
+        if (!knownPriceIds.includes(priceId)) {
+          console.warn(`Warning: Price ID ${priceId} doesn't match any known plan. Will process anyway.`);
+        } else {
+          console.log(`Price ID ${priceId} validated successfully.`);
+        }
         
         // Check if user exists in auth.users
         const { data: authUserData, error: authUserError } = await supabase

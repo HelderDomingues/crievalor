@@ -15,7 +15,7 @@ const SubscriptionPlans = ({
   onSubscribe,
 }: SubscriptionPlansProps) => {
   return (
-    <div className="grid md:grid-cols-3 gap-8">
+    <div className="grid md:grid-cols-4 gap-6">
       {Object.values(PLANS).map((plan) => (
         <SubscriptionPlan
           key={plan.id}
