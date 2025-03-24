@@ -9,6 +9,74 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      material_accesses: {
+        Row: {
+          accessed_at: string | null
+          id: string
+          material_id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          accessed_at?: string | null
+          id?: string
+          material_id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          accessed_at?: string | null
+          id?: string
+          material_id?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "material_accesses_material_id_fkey"
+            columns: ["material_id"]
+            isOneToOne: false
+            referencedRelation: "materials"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      materials: {
+        Row: {
+          access_count: number | null
+          category: string
+          created_at: string | null
+          description: string
+          file_url: string
+          id: string
+          plan_level: string
+          thumbnail_url: string | null
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          access_count?: number | null
+          category: string
+          created_at?: string | null
+          description: string
+          file_url: string
+          id?: string
+          plan_level: string
+          thumbnail_url?: string | null
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          access_count?: number | null
+          category?: string
+          created_at?: string | null
+          description?: string
+          file_url?: string
+          id?: string
+          plan_level?: string
+          thumbnail_url?: string | null
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -93,12 +161,38 @@ export type Database = {
         }
         Relationships: []
       }
+      user_roles: {
+        Row: {
+          created_at: string | null
+          id: string
+          role: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          role: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          role?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      increment_material_access_count: {
+        Args: {
+          material_id: string
+        }
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never

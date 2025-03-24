@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { supabase } from "@/integrations/supabase/client";
+import { supabaseExtended } from "@/integrations/supabase/extendedClient";
 import { v4 as uuidv4 } from "uuid";
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -12,7 +12,7 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { FileUpload, UploadCloud, Loader2 } from "lucide-react";
+import { File, UploadCloud, Loader2 } from "lucide-react";
 import { PLANS } from "@/services/subscriptionService";
 
 interface MaterialFormProps {
@@ -79,7 +79,7 @@ const MaterialForm: React.FC<MaterialFormProps> = ({ onMaterialAdded }) => {
       const fileName = `${uuidv4()}.${fileExt}`;
       const filePath = `materials/${fileName}`;
 
-      const { error: uploadError } = await supabase.storage
+      const { error: uploadError } = await supabaseExtended.storage
         .from('materials')
         .upload(filePath, values.file);
 
@@ -88,7 +88,7 @@ const MaterialForm: React.FC<MaterialFormProps> = ({ onMaterialAdded }) => {
       }
 
       // Get the public URL
-      const { data: fileData } = supabase.storage
+      const { data: fileData } = supabaseExtended.storage
         .from('materials')
         .getPublicUrl(filePath);
 
@@ -100,7 +100,7 @@ const MaterialForm: React.FC<MaterialFormProps> = ({ onMaterialAdded }) => {
         const thumbName = `${uuidv4()}.${thumbExt}`;
         const thumbPath = `thumbnails/${thumbName}`;
 
-        const { error: thumbUploadError } = await supabase.storage
+        const { error: thumbUploadError } = await supabaseExtended.storage
           .from('materials')
           .upload(thumbPath, values.thumbnail);
 
@@ -108,7 +108,7 @@ const MaterialForm: React.FC<MaterialFormProps> = ({ onMaterialAdded }) => {
           throw thumbUploadError;
         }
 
-        const { data: thumbData } = supabase.storage
+        const { data: thumbData } = supabaseExtended.storage
           .from('materials')
           .getPublicUrl(thumbPath);
 
@@ -116,7 +116,7 @@ const MaterialForm: React.FC<MaterialFormProps> = ({ onMaterialAdded }) => {
       }
 
       // Insert material record
-      const { error: insertError } = await supabase
+      const { error: insertError } = await supabaseExtended
         .from('materials')
         .insert([
           {
@@ -261,7 +261,7 @@ const MaterialForm: React.FC<MaterialFormProps> = ({ onMaterialAdded }) => {
                   <FormLabel>Arquivo</FormLabel>
                   <FormControl>
                     <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 flex flex-col items-center justify-center">
-                      <FileUpload className="h-10 w-10 text-gray-400 mb-2" />
+                      <File className="h-10 w-10 text-gray-400 mb-2" />
                       <p className="text-sm text-muted-foreground mb-2">
                         Arraste um arquivo ou clique para selecionar
                       </p>

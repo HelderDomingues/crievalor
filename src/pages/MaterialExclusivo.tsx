@@ -5,7 +5,7 @@ import { useAuth } from "@/context/AuthContext";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { subscriptionService } from "@/services/subscriptionService";
-import { supabase } from "@/integrations/supabase/client";
+import { supabaseExtended } from "@/integrations/supabase/extendedClient";
 import { useToast } from "@/hooks/use-toast";
 import MaterialCard from "@/components/materials/MaterialCard";
 import MaterialFilters from "@/components/materials/MaterialFilters";
@@ -69,7 +69,7 @@ const MaterialExclusivoPage: React.FC = () => {
     try {
       setIsLoading(true);
       
-      let query = supabase
+      let query = supabaseExtended
         .from('materials')
         .select('*')
         .order('created_at', { ascending: false });
@@ -105,18 +105,18 @@ const MaterialExclusivoPage: React.FC = () => {
   const handleAccessMaterial = async (materialId: string) => {
     try {
       // Record the access
-      await supabase
+      await supabaseExtended
         .from('material_accesses')
         .insert([
           { material_id: materialId, user_id: user?.id }
         ]);
         
       // Update the material's access count
-      await supabase
+      await supabaseExtended
         .rpc('increment_material_access_count', { material_id: materialId });
         
       // Get the material details
-      const { data } = await supabase
+      const { data } = await supabaseExtended
         .from('materials')
         .select('file_url')
         .eq('id', materialId)

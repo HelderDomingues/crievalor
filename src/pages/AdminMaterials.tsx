@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { supabase } from "@/integrations/supabase/client";
+import { supabaseExtended } from "@/integrations/supabase/extendedClient";
 import { useToast } from "@/hooks/use-toast";
 import MaterialForm from "@/components/admin/MaterialForm";
 import MaterialsList from "@/components/admin/MaterialsList";
@@ -30,7 +30,7 @@ const AdminMaterialsPage: React.FC = () => {
 
       try {
         // Check if user has admin role
-        const { data, error } = await supabase
+        const { data, error } = await supabaseExtended
           .from('user_roles')
           .select('*')
           .eq('user_id', user.id)
@@ -67,7 +67,7 @@ const AdminMaterialsPage: React.FC = () => {
   const fetchMaterials = async () => {
     try {
       setIsLoading(true);
-      const { data, error } = await supabase
+      const { data, error } = await supabaseExtended
         .from('materials')
         .select('*')
         .order('created_at', { ascending: false });
@@ -99,7 +99,7 @@ const AdminMaterialsPage: React.FC = () => {
 
   const handleMaterialDeleted = async (id: string) => {
     try {
-      const { error } = await supabase
+      const { error } = await supabaseExtended
         .from('materials')
         .delete()
         .eq('id', id);
