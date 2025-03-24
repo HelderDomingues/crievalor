@@ -19,4 +19,5 @@ export interface PricingPlan {
   ctaUrl: string;
   popular?: boolean;
   comingSoon?: boolean;
+  customPrice?: boolean;
 }

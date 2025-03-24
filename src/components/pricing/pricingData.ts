@@ -35,9 +35,7 @@ const documentTypes: Record<string, DocumentType> = {
 export const plans: PricingPlan[] = [
   {
     id: "essencial_plan",
-    name: "Essencial (SaaS)",
-    monthlyPrice: "R$ 49,90",
-    annualPrice: "R$ 499,00",
+    name: "Essencial",
     description: "Solução self-service com assistência de IA para empreendedores que querem autonomia",
     features: [
       "Acesso à plataforma de autoatendimento",
@@ -141,6 +139,7 @@ export const plans: PricingPlan[] = [
       documentTypes.apresentacao
     ],
     cta: "Solicitar Proposta",
-    ctaUrl: "/contato?assunto=plano-corporativo"
+    ctaUrl: "/contato?assunto=plano-corporativo",
+    customPrice: true
   }
 ];

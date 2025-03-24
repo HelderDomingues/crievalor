@@ -62,6 +62,38 @@ const PricingCard = ({
     }
   };
 
+  // Display price information
+  const renderPriceInfo = () => {
+    if (plan.comingSoon) {
+      return (
+        <div className="text-lg font-medium">Em Breve</div>
+      );
+    } else if (plan.customPrice) {
+      return (
+        <div className="text-lg font-medium">Sob Consulta</div>
+      );
+    } else if (plan.monthlyPrice || plan.annualPrice) {
+      return (
+        <>
+          {plan.monthlyPrice && (
+            <div className="flex items-baseline">
+              <span className="text-3xl font-bold">{plan.monthlyPrice}</span>
+              <span className="text-sm text-muted-foreground ml-1">/mês</span>
+            </div>
+          )}
+          
+          {plan.annualPrice && (
+            <div className="text-sm text-muted-foreground mt-1">
+              ou {plan.annualPrice}/ano
+            </div>
+          )}
+        </>
+      );
+    }
+    
+    return null;
+  };
+
   return (
     <Card className={`flex flex-col h-full ${plan.popular ? "border-primary shadow-lg" : ""}`}>
       <CardHeader className="pb-4">
@@ -78,22 +110,7 @@ const PricingCard = ({
         <h3 className="text-xl font-bold">{plan.name}</h3>
         
         <div className="mt-2">
-          {plan.monthlyPrice && (
-            <div className="flex items-baseline">
-              <span className="text-3xl font-bold">{plan.monthlyPrice}</span>
-              <span className="text-sm text-muted-foreground ml-1">/mês</span>
-            </div>
-          )}
-          
-          {plan.annualPrice && (
-            <div className="text-sm text-muted-foreground mt-1">
-              ou {plan.annualPrice}/ano
-            </div>
-          )}
-          
-          {!plan.monthlyPrice && !plan.annualPrice && (
-            <div className="text-lg font-medium">Sob Consulta</div>
-          )}
+          {renderPriceInfo()}
         </div>
         
         <p className="text-muted-foreground text-sm mt-2">{plan.description}</p>
@@ -124,6 +141,7 @@ const PricingCard = ({
           className="w-full" 
           onClick={handleSubscribe}
           disabled={isButtonDisabled}
+          variant={plan.comingSoon ? "outline" : "default"}
         >
           {getButtonText()}
         </Button>

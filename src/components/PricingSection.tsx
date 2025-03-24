@@ -5,7 +5,7 @@ import PricingGrid from "./pricing/PricingGrid";
 
 const PricingSection = () => {
   return (
-    <section id="pricing" className="py-20 bg-muted/50">
+    <section id="pricing" className="py-20 bg-gradient-to-b from-muted/30 to-background">
       <div className="container mx-auto px-4">
         <div className="max-w-3xl mx-auto text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
@@ -18,6 +18,13 @@ const PricingSection = () => {
         </div>
         
         <PricingGrid plans={plans} />
+
+        <div className="mt-12 text-center">
+          <p className="text-muted-foreground text-sm max-w-2xl mx-auto">
+            Todos os planos incluem suporte ao cliente, atualizações e melhorias contínuas. 
+            Para necessidades específicas, entre em contato para uma proposta personalizada.
+          </p>
+        </div>
       </div>
     </section>
   );
