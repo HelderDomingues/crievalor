@@ -73,7 +73,7 @@ const Auth = () => {
             </TabsList>
             
             <TabsContent value="login">
-              <div className="bg-gradient-to-r from-purple-100 to-indigo-100 border-l-4 border-primary rounded-lg p-6 mb-8 shadow-md bg-zinc-800">
+              <div className="bg-gradient-to-r from-purple-100 to-indigo-100 border-l-4 border-primary p-6 mb-8 shadow-md rounded-2xl bg-gray-800">
                 <p className="text-center font-medium text-zinc-500">
                   <span className="block text-lg mb-2 text-slate-50">Primeira vez aqui?</span>
                   <Button onClick={() => switchTab("register")} className="mt-2 font-semibold bg-primary hover:bg-primary/90 text-white">
