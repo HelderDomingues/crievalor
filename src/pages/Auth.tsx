@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { AlertCircle } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
 const Auth = () => {
   const navigate = useNavigate();
   const {
@@ -22,11 +23,13 @@ const Auth = () => {
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [activeTab, setActiveTab] = useState("login");
+
   useEffect(() => {
     if (user) {
       navigate("/");
     }
   }, [user, navigate]);
+
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -39,6 +42,7 @@ const Auth = () => {
     }
     setIsLoading(false);
   };
+
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -53,10 +57,12 @@ const Auth = () => {
     }
     setIsLoading(false);
   };
+
   const switchTab = (tab: string) => {
     setActiveTab(tab);
     setError(null);
   };
+
   return <div className="min-h-screen flex flex-col">
       <Header />
       
@@ -73,9 +79,9 @@ const Auth = () => {
             </TabsList>
             
             <TabsContent value="login">
-              <div className="bg-gradient-to-r from-purple-100 to-indigo-100 border-l-4 border-primary p-6 mb-8 shadow-md rounded-2xl bg-gray-800">
-                <p className="text-center font-medium text-zinc-500">
-                  <span className="block text-lg mb-2 text-slate-50">Primeira vez aqui?</span>
+              <div className="bg-[#1a2e4c] border-l-4 border-primary p-6 mb-8 shadow-md rounded-2xl">
+                <p className="text-center">
+                  <span className="block text-lg mb-2 font-medium text-white">Não tem uma conta ainda?</span>
                   <Button onClick={() => switchTab("register")} className="mt-2 font-semibold bg-primary hover:bg-primary/90 text-white">
                     Comece pelo cadastro
                   </Button>
@@ -138,4 +144,5 @@ const Auth = () => {
       <Footer />
     </div>;
 };
+
 export default Auth;
