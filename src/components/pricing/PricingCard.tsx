@@ -33,12 +33,33 @@ const PricingCard = ({
 
     if (!user) {
       // Redirect to auth page with plan parameter
-      navigate(`/auth?redirect=subscription&plan=${plan.name}`);
+      navigate(`/auth?redirect=subscription&plan=${plan.id}`);
       return;
     }
     
     // If user is logged in, redirect to subscription page
-    navigate(`/subscription?plan=${plan.name}`);
+    navigate(`/subscription?plan=${plan.id}`);
+  };
+
+  // Determine if button should be disabled
+  const isButtonDisabled = plan.comingSoon || isCheckingOut || isCurrent;
+
+  // Determine button text
+  const getButtonText = () => {
+    if (isCheckingOut) {
+      return (
+        <>
+          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+          Processando...
+        </>
+      );
+    } else if (isCurrent) {
+      return "Plano Atual";
+    } else if (plan.comingSoon) {
+      return "Em Breve";
+    } else {
+      return plan.cta;
+    }
   };
 
   return (
@@ -102,20 +123,9 @@ const PricingCard = ({
         <Button 
           className="w-full" 
           onClick={handleSubscribe}
-          disabled={plan.comingSoon || isCheckingOut || isCurrent}
+          disabled={isButtonDisabled}
         >
-          {isCheckingOut ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Processando...
-            </>
-          ) : isCurrent ? (
-            "Plano Atual"
-          ) : plan.comingSoon ? (
-            "Em Breve"
-          ) : (
-            plan.cta
-          )}
+          {getButtonText()}
         </Button>
       </CardFooter>
     </Card>

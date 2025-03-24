@@ -18,9 +18,9 @@ const PricingGrid = ({
 }: PricingGridProps) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8">
-      {plans.map((plan, index) => (
+      {plans.map((plan) => (
         <PricingCard 
-          key={index} 
+          key={plan.id} 
           plan={plan} 
           isCheckingOut={isCheckingOut}
           isCurrent={plan.id === currentPlanId}

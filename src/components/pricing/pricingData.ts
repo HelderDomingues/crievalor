@@ -50,8 +50,8 @@ export const plans: PricingPlan[] = [
       {...documentTypes.planoEstrategico, included: false},
       {...documentTypes.relatorioCompleto, included: false}
     ],
-    cta: "Em Breve",
-    ctaUrl: "#",
+    cta: "Começar agora",
+    ctaUrl: "/subscription?plan=essencial_plan",
     comingSoon: true
   },
   {
@@ -72,7 +72,7 @@ export const plans: PricingPlan[] = [
       {...documentTypes.relatorioCompleto, included: false}
     ],
     cta: "Começar agora",
-    ctaUrl: "/subscription?plan=basic_plan",
+    ctaUrl: "/subscription?plan=basic_plan"
   },
   {
     id: "pro_plan",
@@ -119,7 +119,7 @@ export const plans: PricingPlan[] = [
       documentTypes.apresentacao
     ],
     cta: "Falar com Consultor",
-    ctaUrl: "/subscription?plan=enterprise_plan",
+    ctaUrl: "/subscription?plan=enterprise_plan"
   },
   {
     id: "corporate_plan",
