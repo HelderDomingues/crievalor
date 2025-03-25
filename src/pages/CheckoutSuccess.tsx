@@ -11,7 +11,6 @@ const CheckoutSuccess = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { toast } = useToast();
-  const sessionId = searchParams.get("session_id");
 
   useEffect(() => {
     // Mostrar toast de confirmação

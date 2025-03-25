@@ -1,10 +1,11 @@
+
 import { supabase } from "@/integrations/supabase/client";
 
 // Define subscription types
 export interface Subscription {
   id: string;
   user_id: string;
-  stripe_customer_id: string | null; // Customer ID (will be used for Asaas)
+  asaas_customer_id: string | null;
   asaas_subscription_id: string | null;
   asaas_payment_link: string | null;
   plan_id: string;
@@ -45,6 +46,15 @@ export const PLANS = {
     totalPrice: 9598.80, // 12 * 799.90
     cashPrice: 8638.92, // 10% discount on total
     features: ["Plano Estratégico completo", "Relatórios completos", "Mentoria estratégica", "Acesso VIP a conteúdos exclusivos", "Suporte prioritário"],
+  },
+  CORPORATE: {
+    id: "corporate_plan",
+    name: "Plano Corporativo",
+    price: 1499.90,
+    priceLabel: "12x de R$ 1499,90",
+    totalPrice: 17998.80, // 12 * 1499.90
+    cashPrice: 16198.92, // 10% discount on total
+    features: ["Plano Estratégico personalizado", "Consultoria dedicada", "Mentoria para equipe completa", "Acesso prioritário ao CEO", "Implementação assistida"],
   }
 };
 
@@ -95,7 +105,7 @@ export const subscriptionService = {
         throw new Error(`Plan with ID ${planId} not found`);
       }
       
-      console.log(`Creating checkout for plan: ${planId}, installments: ${installments}`);
+      console.log(`Creating checkout for plan: ${planId} with ${installments} installments`);
       
       // Get the current user
       const { data: { user } } = await supabase.auth.getUser();
@@ -113,16 +123,16 @@ export const subscriptionService = {
       // Check if user already has an Asaas customer ID
       const { data: existingSub, error: subError } = await supabase
         .from("subscriptions")
-        .select("stripe_customer_id") // This field is being used for Asaas customer ID
+        .select("asaas_customer_id")
         .eq("user_id", user.id)
         .maybeSingle();
       
       // Initialize customerId as null
       let customerId = null;
       
-      // Only try to access stripe_customer_id if there's no error and data exists
+      // Only try to access asaas_customer_id if there's no error and data exists
       if (!subError && existingSub) {
-        customerId = existingSub.stripe_customer_id;
+        customerId = existingSub.asaas_customer_id;
       }
       
       // If no customer ID exists, create a new customer
@@ -252,7 +262,7 @@ export const subscriptionService = {
     return Object.values(PLANS).find(plan => plan.id === planId);
   },
 
-  // Add a function to get payments that will replace getInvoices
+  // Add a function to get payments
   async getPayments() {
     try {
       console.log("Fetching payments...");
