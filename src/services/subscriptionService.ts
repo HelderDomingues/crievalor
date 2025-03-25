@@ -115,16 +115,16 @@ export const subscriptionService = {
       // We need to handle the error case properly here
       const { data: existingSub, error: subError } = await supabase
         .from("subscriptions")
-        .select("asaas_customer_id")
+        .select("stripe_customer_id")
         .eq("user_id", user.id)
         .maybeSingle();
       
       // Initialize customerId as null
       let customerId = null;
       
-      // Only try to access asaas_customer_id if there's no error and data exists
+      // Only try to access stripe_customer_id if there's no error and data exists
       if (!subError && existingSub) {
-        customerId = existingSub.asaas_customer_id;
+        customerId = existingSub.stripe_customer_id;
       }
       
       // If no customer ID exists, create a new customer
