@@ -50,20 +50,27 @@ export const subscriptionService = {
         throw new Error("User profile not found");
       }
       
-      // Ensure social_media is properly structured
-      const social_media = profileData.social_media 
-        ? {
-            linkedin: (profileData.social_media.linkedin as string) || "",
-            twitter: (profileData.social_media.twitter as string) || "",
-            instagram: (profileData.social_media.instagram as string) || "",
-            facebook: (profileData.social_media.facebook as string) || ""
-          }
-        : {
-            linkedin: "",
-            twitter: "",
-            instagram: "",
-            facebook: ""
-          };
+      // Properly handle the social_media object which might be a Json type
+      // First check if it exists and is an object
+      const socialMediaObj = typeof profileData.social_media === 'object' && profileData.social_media !== null
+        ? profileData.social_media
+        : {};
+        
+      // Create a properly structured social_media object with defaults
+      const social_media = {
+        linkedin: typeof socialMediaObj === 'object' && socialMediaObj !== null && 'linkedin' in socialMediaObj 
+          ? String(socialMediaObj.linkedin || '') 
+          : '',
+        twitter: typeof socialMediaObj === 'object' && socialMediaObj !== null && 'twitter' in socialMediaObj 
+          ? String(socialMediaObj.twitter || '') 
+          : '',
+        instagram: typeof socialMediaObj === 'object' && socialMediaObj !== null && 'instagram' in socialMediaObj 
+          ? String(socialMediaObj.instagram || '') 
+          : '',
+        facebook: typeof socialMediaObj === 'object' && socialMediaObj !== null && 'facebook' in socialMediaObj 
+          ? String(socialMediaObj.facebook || '') 
+          : ''
+      };
       
       // Add email to the profile for customer creation
       const profileWithEmail = {
