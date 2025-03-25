@@ -27,14 +27,21 @@ const SubscriptionPlans = ({
         if ('customPrice' in plan && plan.customPrice) {
           priceLabel = "Sob Consulta";
         } else if ('priceLabel' in plan) {
-          priceLabel = plan.priceLabel;
+          priceLabel = selectedInstallments === 1 ? 
+            `À vista: R$ ${(plan.cashPrice).toFixed(2).replace('.', ',')}` : 
+            `${selectedInstallments}x de R$ ${(plan.totalPrice / selectedInstallments).toFixed(2).replace('.', ',')}`;
         }
         
         // Determine base price for calculations
         let basePrice: number | undefined = undefined;
         if ('price' in plan) {
-          basePrice = plan.price;
+          basePrice = selectedInstallments === 1 ? plan.cashPrice : plan.price;
         }
+        
+        // Corporate plan needs special handling for the button label
+        const buttonLabel = ('customPrice' in plan && plan.customPrice) ? 
+          "Consultar" : 
+          "Assinar";
         
         return (
           <SubscriptionPlan
@@ -48,6 +55,7 @@ const SubscriptionPlans = ({
             isCheckingOut={isCheckingOut}
             onSubscribe={onSubscribe}
             installments={selectedInstallments}
+            buttonLabel={buttonLabel}
           />
         );
       })}

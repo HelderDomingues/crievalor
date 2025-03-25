@@ -1,23 +1,22 @@
 
 import React from "react";
-import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
+import { Check, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Check, Loader2 } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
 
 interface SubscriptionPlanProps {
   id: string;
   name: string;
-  price: string | undefined;
+  price?: string;
   basePrice?: number;
   features: string[];
   isCurrentPlan: boolean;
   isCheckingOut: boolean;
   onSubscribe: (planId: string) => Promise<void>;
   installments?: number;
+  buttonLabel?: string;
 }
 
-const SubscriptionPlan: React.FC<SubscriptionPlanProps> = ({
+const SubscriptionPlan = ({
   id,
   name,
   price,
@@ -27,74 +26,62 @@ const SubscriptionPlan: React.FC<SubscriptionPlanProps> = ({
   isCheckingOut,
   onSubscribe,
   installments = 1,
-}) => {
-  // Plano corporativo "sob consulta"
-  const isCorporate = id === "corporate_plan";
-  
-  // Button states
-  const buttonDisabled = isCurrentPlan || isCheckingOut;
-  
-  const handleSubscribe = () => {
-    if (isCorporate) {
-      // Redirecionar para página de contato
-      window.location.href = "/contato?assunto=plano-corporativo";
-      return;
-    }
-    
-    onSubscribe(id);
-  };
-  
+  buttonLabel = "Assinar"
+}: SubscriptionPlanProps) => {
   return (
-    <Card className="flex flex-col h-full">
-      <CardHeader>
-        <CardTitle className="flex flex-col gap-2">
-          <span>{name}</span>
-          {isCurrentPlan && (
-            <Badge variant="outline" className="self-start">Plano Atual</Badge>
-          )}
-        </CardTitle>
-        
-        <div className="text-2xl font-bold mt-2">
-          {isCorporate ? (
-            <span>Sob Consulta</span>
-          ) : (
-            <span>{price}</span>
+    <div 
+      className={`bg-card border rounded-xl p-6 flex flex-col transition-all h-full
+        ${isCurrentPlan ? "border-primary/50 shadow-md shadow-primary/10" : "border-border hover:border-primary/30 hover:shadow-sm"}`}
+    >
+      <div className="mb-4">
+        {isCurrentPlan && (
+          <span className="inline-block bg-primary/10 text-primary text-xs px-2 py-1 rounded-full mb-2">
+            Seu plano atual
+          </span>
+        )}
+        <h3 className="text-xl font-semibold mb-1">{name}</h3>
+        <div className="flex items-baseline mb-4">
+          {price && (
+            <>
+              {price === "Sob Consulta" ? (
+                <span className="text-2xl font-bold">{price}</span>
+              ) : (
+                <>
+                  <span className="text-2xl font-bold">{price}</span>
+                </>
+              )}
+            </>
           )}
         </div>
-      </CardHeader>
+      </div>
       
-      <CardContent className="flex-grow">
-        <ul className="space-y-2">
+      <div className="flex-grow">
+        <ul className="space-y-3 mb-6">
           {features.map((feature, index) => (
             <li key={index} className="flex items-start">
-              <Check className="h-5 w-5 text-green-500 mr-2 flex-shrink-0" />
+              <Check className="h-4 w-4 text-primary mr-2 mt-1 flex-shrink-0" />
               <span className="text-sm">{feature}</span>
             </li>
           ))}
         </ul>
-      </CardContent>
+      </div>
       
-      <CardFooter>
-        <Button
-          className="w-full"
-          onClick={handleSubscribe}
-          disabled={buttonDisabled}
-        >
-          {isCurrentPlan ? (
-            "Plano Atual"
-          ) : isCheckingOut ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Processando...
-            </>
-          ) : isCorporate ? (
-            "Falar com Consultor"
-          ) : (
-            "Assinar"
-          )}
-        </Button>
-      </CardFooter>
-    </Card>
+      <div>
+        {isCurrentPlan ? (
+          <Button variant="outline" disabled className="w-full">
+            Plano Atual
+          </Button>
+        ) : (
+          <Button
+            onClick={() => onSubscribe(id)}
+            disabled={isCheckingOut}
+            className="w-full"
+          >
+            {isCheckingOut ? "Processando..." : buttonLabel}
+          </Button>
+        )}
+      </div>
+    </div>
   );
 };
 

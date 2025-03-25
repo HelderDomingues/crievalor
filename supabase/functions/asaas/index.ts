@@ -86,11 +86,13 @@ serve(async (req) => {
         const data = await response.json();
         
         console.log(`Asaas API response status: ${response.status}`);
-        console.log(`Asaas API response body:`, data);
         
-        if (!response.ok) {
-          console.error("Asaas API error:", data);
-          throw new Error(`Asaas API error: ${data.errors?.[0]?.description || JSON.stringify(data) || "Unknown error"}`);
+        // More detailed logging of the response body
+        if (response.ok) {
+          console.log(`Asaas API response data:`, data);
+        } else {
+          console.error("Asaas API error details:", data);
+          throw new Error(`Asaas API error: ${JSON.stringify(data.errors || data)}`);
         }
         
         return data;
@@ -106,163 +108,195 @@ serve(async (req) => {
         
         console.log("Creating customer with data:", { name, email, phone, cpfCnpj });
         
-        // Create customer in Asaas
-        const customer = await asaasRequest("/customers", "POST", {
-          name,
-          email,
-          phone,
-          cpfCnpj,
-          notificationDisabled: false
-        });
-        
-        result = { customer };
+        try {
+          // Create customer in Asaas
+          const customer = await asaasRequest("/customers", "POST", {
+            name: name || "Cliente",
+            email: email || "",
+            phone: phone || "",
+            cpfCnpj: cpfCnpj || "",
+            notificationDisabled: false
+          });
+          
+          result = { customer };
+        } catch (error) {
+          console.error("Error creating customer:", error);
+          return new Response(JSON.stringify({ error: `Failed to create customer: ${error.message}` }), {
+            status: 500,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          });
+        }
         break;
       }
         
       case "create-payment": {
-        const { customerId, value, description, installments = 1, dueDate, planId, successUrl, cancelUrl, generateLink = false, nextDueDate } = data;
-        
-        // Create payment in Asaas
-        const paymentData: any = {
-          customer: customerId,
-          billingType: installments > 1 ? "CREDIT_CARD" : "UNDEFINED",
-          value,
-          description,
-          dueDate: dueDate || new Date(Date.now() + 3600 * 1000 * 24).toISOString().split('T')[0], // Default to tomorrow
-        };
-        
-        if (installments > 1) {
-          paymentData.installmentCount = installments;
-          paymentData.installmentValue = (value / installments).toFixed(2);
-        }
-        
-        console.log("Creating payment with data:", paymentData);
-        
-        // Create payment in Asaas
-        const payment = await asaasRequest("/payments", "POST", paymentData);
-        
-        // Generate payment link
-        let paymentLink = null;
-        if (generateLink) {
-          console.log("Generating payment link for payment:", payment.id);
+        try {
+          const { customerId, value, description, installments = 1, dueDate, planId, successUrl, cancelUrl, generateLink = false, nextDueDate } = data;
           
-          // Define data for payment link
-          const linkData = {
-            name: description || "Compra de Plano",
-            description: `Pagamento ${description}`,
-            endDate: new Date(Date.now() + 3600 * 1000 * 24 * 7).toISOString().split('T')[0], // 7 days from now
-            value,
+          if (!customerId) {
+            throw new Error("Missing customerId parameter");
+          }
+          
+          if (!value && value !== 0) {
+            throw new Error("Missing value parameter");
+          }
+          
+          // Create payment in Asaas
+          const paymentData: any = {
+            customer: customerId,
             billingType: installments > 1 ? "CREDIT_CARD" : "UNDEFINED",
-            chargeType: "DETACHED",
-            installmentSettings: installments > 1 ? {
-              installmentCount: installments,
-              installmentValue: (value / installments).toFixed(2)
-            } : undefined,
-            externalReference: payment.id,
-            callback: {
-              autoRedirect: true,
-              successUrl: successUrl || "",
-              autoRedirectDelay: 5
-            }
+            value,
+            description: description || "Compra de Plano",
+            dueDate: dueDate || new Date(Date.now() + 3600 * 1000 * 24).toISOString().split('T')[0], // Default to tomorrow
           };
           
-          console.log("Creating payment link with data:", linkData);
+          if (installments > 1) {
+            paymentData.installmentCount = installments;
+            paymentData.installmentValue = (value / installments).toFixed(2);
+          }
           
-          const linkResponse = await asaasRequest(`/paymentLinks`, "POST", linkData);
-          console.log("Payment link created:", linkResponse);
+          console.log("Creating payment with data:", paymentData);
           
-          paymentLink = linkResponse.url;
+          // Create payment in Asaas
+          const payment = await asaasRequest("/payments", "POST", paymentData);
+          
+          // Generate payment link
+          let paymentLink = null;
+          if (generateLink) {
+            console.log("Generating payment link for payment:", payment.id);
+            
+            // Define data for payment link
+            const linkData = {
+              name: description || "Compra de Plano",
+              description: `Pagamento ${description || ""}`.trim(),
+              endDate: new Date(Date.now() + 3600 * 1000 * 24 * 7).toISOString().split('T')[0], // 7 days from now
+              value,
+              billingType: installments > 1 ? "CREDIT_CARD" : "UNDEFINED",
+              chargeType: "DETACHED",
+              installmentSettings: installments > 1 ? {
+                installmentCount: installments,
+                installmentValue: (value / installments).toFixed(2)
+              } : undefined,
+              externalReference: payment.id,
+              callback: {
+                autoRedirect: true,
+                successUrl: successUrl || "",
+                autoRedirectDelay: 5
+              }
+            };
+            
+            console.log("Creating payment link with data:", linkData);
+            
+            const linkResponse = await asaasRequest(`/paymentLinks`, "POST", linkData);
+            console.log("Payment link created:", linkResponse);
+            
+            paymentLink = linkResponse.url;
+          }
+          
+          // Save subscription data in database
+          const { data: subscriptionData, error: subError } = await supabase
+            .from("subscriptions")
+            .upsert({
+              user_id: user.id,
+              asaas_customer_id: customerId,
+              asaas_subscription_id: payment.id,
+              asaas_payment_link: paymentLink,
+              plan_id: planId,
+              status: payment.status || "pending",
+              installments,
+              current_period_end: null, // Since it's a one-time payment
+              created_at: new Date().toISOString(),
+              updated_at: new Date().toISOString()
+            }, { onConflict: 'user_id', returning: 'representation' });
+            
+          if (subError) {
+            console.error("Error saving payment data to database:", subError);
+            throw new Error(`Error saving payment data: ${subError.message}`);
+          }
+          
+          result = { 
+            payment, 
+            paymentLink,
+            dbSubscription: subscriptionData?.[0] 
+          };
+        } catch (error) {
+          console.error("Error creating payment:", error);
+          return new Response(JSON.stringify({ error: `Failed to create payment: ${error.message}` }), {
+            status: 500,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          });
         }
-        
-        // Save subscription data in database - using renamed columns
-        const { data: subscriptionData, error: subError } = await supabase
-          .from("subscriptions")
-          .upsert({
-            user_id: user.id,
-            asaas_customer_id: customerId,
-            asaas_subscription_id: payment.id,
-            asaas_payment_link: paymentLink,
-            plan_id: planId,
-            status: payment.status || "pending",
-            installments,
-            current_period_end: null, // Since it's a one-time payment
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString()
-          }, { onConflict: 'user_id', returning: 'representation' });
-          
-        if (subError) {
-          console.error("Error saving payment data to database:", subError);
-          throw new Error(`Error saving payment data: ${subError.message}`);
-        }
-        
-        result = { 
-          payment, 
-          paymentLink,
-          dbSubscription: subscriptionData?.[0] 
-        };
         break;
       }
         
       case "create-subscription": {
-        const { customerId, planId, value, description, billingType = "CREDIT_CARD", installments = 1, nextDueDate } = data;
-        
-        // Create subscription in Asaas
-        const subscription = await asaasRequest("/subscriptions", "POST", {
-          customer: customerId,
-          billingType,
-          value,
-          nextDueDate: nextDueDate || new Date(Date.now() + 3600 * 1000 * 24).toISOString().split('T')[0], // Default to tomorrow
-          description,
-          cycle: "MONTHLY",
-          installments: installments > 1 ? installments : undefined,
-        });
-        
-        // Get the payment link for this subscription
-        const paymentLink = await asaasRequest(`/paymentLinks`, "POST", {
-          name: description || "Assinatura de Plano",
-          description: `Pagamento da assinatura: ${description}`,
-          endDate: new Date(Date.now() + 3600 * 1000 * 24 * 7).toISOString().split('T')[0], // 7 days from now
-          value,
-          billingType: "CREDIT_CARD",
-          chargeType: "SUBSCRIPTION",
-          subscriptionId: subscription.id,
-          installmentSettings: installments > 1 ? {
-            installmentCount: installments,
-            installmentValue: (value / installments).toFixed(2)
-          } : undefined,
-          callback: {
-            autoRedirect: true,
-            successUrl: `${data.successUrl || ""}`,
-            autoRedirectDelay: 5
-          }
-        });
-        
-        // Save subscription in database with renamed columns
-        const { data: subscriptionData, error: subError } = await supabase
-          .from("subscriptions")
-          .upsert({
-            user_id: user.id,
-            asaas_customer_id: customerId,
-            asaas_subscription_id: subscription.id,
-            asaas_payment_link: paymentLink.url,
-            plan_id: planId,
-            status: "pending",
-            installments,
-            current_period_end: new Date(subscription.nextDueDate).toISOString(),
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString()
-          }, { onConflict: 'user_id', returning: 'representation' });
+        try {
+          const { customerId, planId, value, description, billingType = "CREDIT_CARD", installments = 1, nextDueDate } = data;
           
-        if (subError) {
-          console.error("Error saving subscription to database:", subError);
-          throw new Error(`Error saving subscription: ${subError.message}`);
+          // Create subscription in Asaas
+          const subscription = await asaasRequest("/subscriptions", "POST", {
+            customer: customerId,
+            billingType,
+            value,
+            nextDueDate: nextDueDate || new Date(Date.now() + 3600 * 1000 * 24).toISOString().split('T')[0], // Default to tomorrow
+            description,
+            cycle: "MONTHLY",
+            installments: installments > 1 ? installments : undefined,
+          });
+          
+          // Get the payment link for this subscription
+          const paymentLink = await asaasRequest(`/paymentLinks`, "POST", {
+            name: description || "Assinatura de Plano",
+            description: `Pagamento da assinatura: ${description || ""}`.trim(),
+            endDate: new Date(Date.now() + 3600 * 1000 * 24 * 7).toISOString().split('T')[0], // 7 days from now
+            value,
+            billingType: "CREDIT_CARD",
+            chargeType: "SUBSCRIPTION",
+            subscriptionId: subscription.id,
+            installmentSettings: installments > 1 ? {
+              installmentCount: installments,
+              installmentValue: (value / installments).toFixed(2)
+            } : undefined,
+            callback: {
+              autoRedirect: true,
+              successUrl: `${data.successUrl || ""}`,
+              autoRedirectDelay: 5
+            }
+          });
+          
+          // Save subscription in database
+          const { data: subscriptionData, error: subError } = await supabase
+            .from("subscriptions")
+            .upsert({
+              user_id: user.id,
+              asaas_customer_id: customerId,
+              asaas_subscription_id: subscription.id,
+              asaas_payment_link: paymentLink.url,
+              plan_id: planId,
+              status: "pending",
+              installments,
+              current_period_end: new Date(subscription.nextDueDate).toISOString(),
+              created_at: new Date().toISOString(),
+              updated_at: new Date().toISOString()
+            }, { onConflict: 'user_id', returning: 'representation' });
+            
+          if (subError) {
+            console.error("Error saving subscription to database:", subError);
+            throw new Error(`Error saving subscription: ${subError.message}`);
+          }
+          
+          result = { 
+            subscription, 
+            paymentLink: paymentLink.url,
+            dbSubscription: subscriptionData?.[0] 
+          };
+        } catch (error) {
+          console.error("Error creating subscription:", error);
+          return new Response(JSON.stringify({ error: `Failed to create subscription: ${error.message}` }), {
+            status: 500,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          });
         }
-        
-        result = { 
-          subscription, 
-          paymentLink: paymentLink.url,
-          dbSubscription: subscriptionData?.[0] 
-        };
         break;
       }
         
@@ -323,89 +357,110 @@ serve(async (req) => {
       }
         
       case "cancel-subscription": {
-        const { subscriptionId } = data;
-        
-        if (!subscriptionId) {
-          return new Response(JSON.stringify({ error: "Missing subscription ID" }), {
-            status: 400,
-            headers: { ...corsHeaders, "Content-Type": "application/json" },
-          });
-        }
-        
-        // Verify the subscription belongs to the user
-        const { data: subData, error: verifyError } = await supabase
-          .from("subscriptions")
-          .select("*")
-          .eq("user_id", user.id)
-          .eq("asaas_subscription_id", subscriptionId)
-          .maybeSingle();
+        try {
+          const { subscriptionId } = data;
           
-        if (verifyError) {
-          console.error("Error verifying subscription:", verifyError);
-          return new Response(JSON.stringify({ error: `Error verifying subscription: ${verifyError.message}` }), {
+          if (!subscriptionId) {
+            return new Response(JSON.stringify({ error: "Missing subscription ID" }), {
+              status: 400,
+              headers: { ...corsHeaders, "Content-Type": "application/json" },
+            });
+          }
+          
+          // Verify the subscription belongs to the user
+          const { data: subData, error: verifyError } = await supabase
+            .from("subscriptions")
+            .select("*")
+            .eq("user_id", user.id)
+            .eq("asaas_subscription_id", subscriptionId)
+            .maybeSingle();
+            
+          if (verifyError) {
+            console.error("Error verifying subscription:", verifyError);
+            throw new Error(`Error verifying subscription: ${verifyError.message}`);
+          }
+          
+          if (!subData) {
+            return new Response(JSON.stringify({ error: "Subscription not found or doesn't belong to user" }), {
+              status: 404,
+              headers: { ...corsHeaders, "Content-Type": "application/json" },
+            });
+          }
+          
+          // Cancel the subscription in Asaas
+          await asaasRequest(`/subscriptions/${subscriptionId}/cancel`, "POST");
+          
+          // Update the subscription status in database
+          await supabase
+            .from("subscriptions")
+            .update({ 
+              status: "canceled",
+              updated_at: new Date().toISOString()
+            })
+            .eq("asaas_subscription_id", subscriptionId);
+            
+          result = { success: true };
+        } catch (error) {
+          console.error("Error canceling subscription:", error);
+          return new Response(JSON.stringify({ error: `Failed to cancel subscription: ${error.message}` }), {
             status: 500,
             headers: { ...corsHeaders, "Content-Type": "application/json" },
           });
         }
-        
-        if (!subData) {
-          return new Response(JSON.stringify({ error: "Subscription not found or doesn't belong to user" }), {
-            status: 404,
-            headers: { ...corsHeaders, "Content-Type": "application/json" },
-          });
-        }
-        
-        // Cancel the subscription in Asaas
-        await asaasRequest(`/subscriptions/${subscriptionId}/cancel`, "POST");
-        
-        // Update the subscription status in database
-        await supabase
-          .from("subscriptions")
-          .update({ 
-            status: "canceled",
-            updated_at: new Date().toISOString()
-          })
-          .eq("asaas_subscription_id", subscriptionId);
-          
-        result = { success: true };
         break;
       }
         
       case "get-payments": {
-        // Get payments for the customer from Asaas using the renamed column
-        const { data: subscription } = await supabase
-          .from("subscriptions")
-          .select("asaas_customer_id")
-          .eq("user_id", user.id)
-          .maybeSingle();
+        try {
+          // Get payments for the customer from Asaas
+          const { data: subscription } = await supabase
+            .from("subscriptions")
+            .select("asaas_customer_id")
+            .eq("user_id", user.id)
+            .maybeSingle();
+            
+          if (!subscription?.asaas_customer_id) {
+            return new Response(JSON.stringify({ payments: [] }), {
+              headers: { ...corsHeaders, "Content-Type": "application/json" },
+            });
+          }
           
-        if (!subscription?.asaas_customer_id) {
-          return new Response(JSON.stringify({ payments: [] }), {
+          // Get payments from Asaas
+          const payments = await asaasRequest(`/payments?customer=${subscription.asaas_customer_id}`);
+          
+          result = { payments: payments.data };
+        } catch (error) {
+          console.error("Error getting payments:", error);
+          return new Response(JSON.stringify({ error: `Failed to get payments: ${error.message}` }), {
+            status: 500,
             headers: { ...corsHeaders, "Content-Type": "application/json" },
           });
         }
-        
-        // Get payments from Asaas
-        const payments = await asaasRequest(`/payments?customer=${subscription.asaas_customer_id}`);
-        
-        result = { payments: payments.data };
         break;
       }
       
       case "get-payment": {
-        const { paymentId } = data;
-        
-        if (!paymentId) {
-          return new Response(JSON.stringify({ error: "Missing payment ID" }), {
-            status: 400,
+        try {
+          const { paymentId } = data;
+          
+          if (!paymentId) {
+            return new Response(JSON.stringify({ error: "Missing payment ID" }), {
+              status: 400,
+              headers: { ...corsHeaders, "Content-Type": "application/json" },
+            });
+          }
+          
+          // Get payment details from Asaas
+          const payment = await asaasRequest(`/payments/${paymentId}`);
+          
+          result = { payment };
+        } catch (error) {
+          console.error("Error getting payment:", error);
+          return new Response(JSON.stringify({ error: `Failed to get payment: ${error.message}` }), {
+            status: 500,
             headers: { ...corsHeaders, "Content-Type": "application/json" },
           });
         }
-        
-        // Get payment details from Asaas
-        const payment = await asaasRequest(`/payments/${paymentId}`);
-        
-        result = { payment };
         break;
       }
         
@@ -421,7 +476,7 @@ serve(async (req) => {
     });
   } catch (error) {
     console.error("Error in asaas function:", error);
-    return new Response(JSON.stringify({ error: error.message }), {
+    return new Response(JSON.stringify({ error: error.message || "An unknown error occurred" }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });

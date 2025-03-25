@@ -36,7 +36,7 @@ interface CustomPricePlan {
   features: string[];
 }
 
-type Plan = RegularPlan | CustomPricePlan;
+export type Plan = RegularPlan | CustomPricePlan;
 
 // Pricing plans
 export const PLANS: Record<string, Plan> = {
@@ -123,7 +123,11 @@ export const subscriptionService = {
       }
       
       if ('customPrice' in plan && plan.customPrice) {
-        throw new Error("Este plano requer uma consulta personalizada");
+        // For custom price plans, redirect to contact page
+        return {
+          url: "/contato?subject=Plano Corporativo",
+          isCustomPlan: true
+        };
       }
       
       // Now we can safely cast plan to RegularPlan since we've checked customPrice above
@@ -174,7 +178,7 @@ export const subscriptionService = {
       }
       
       // Calculate the payment value based on installments
-      const paymentValue = installments === 1 ? regularPlan.cashPrice : regularPlan.price;
+      const paymentValue = installments === 1 ? regularPlan.cashPrice : regularPlan.totalPrice;
       
       // Create payment in Asaas for one-time purchase with installments
       const response = await supabase.functions.invoke("asaas", {
@@ -183,7 +187,7 @@ export const subscriptionService = {
           data: {
             customerId,
             planId,
-            value: installments === 1 ? regularPlan.cashPrice : regularPlan.totalPrice,
+            value: paymentValue,
             description: `Compra: ${regularPlan.name}`,
             successUrl,
             cancelUrl,

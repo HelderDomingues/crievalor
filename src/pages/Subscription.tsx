@@ -92,20 +92,26 @@ const SubscriptionPage = () => {
     try {
       console.log(`Starting checkout for plan: ${planId} with ${selectedInstallments} installments`);
       
-      const { url } = await subscriptionService.createCheckoutSession({
+      const result = await subscriptionService.createCheckoutSession({
         planId,
         successUrl: `${window.location.origin}/subscription?success=true`,
         cancelUrl: `${window.location.origin}/subscription?canceled=true`,
         installments: selectedInstallments
       });
       
-      if (!url) {
+      // If it's a custom price plan, redirect to contact page
+      if (result.isCustomPlan) {
+        navigate(result.url);
+        return;
+      }
+      
+      if (!result.url) {
         throw new Error("No checkout URL returned from Asaas");
       }
       
-      console.log("Redirecting to Asaas checkout:", url);
+      console.log("Redirecting to Asaas checkout:", result.url);
       
-      window.location.href = url;
+      window.location.href = result.url;
     } catch (error: any) {
       console.error("Error creating checkout session:", error);
       setCheckoutError(
