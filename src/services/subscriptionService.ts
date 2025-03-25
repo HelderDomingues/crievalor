@@ -40,20 +40,36 @@ export const subscriptionService = {
       }
       
       // Get user profile to create or retrieve customer
-      const { data: profile } = await supabase
+      const { data: profileData } = await supabase
         .from("profiles")
         .select("*")
         .eq("id", user.id)
         .maybeSingle();
         
-      if (!profile) {
+      if (!profileData) {
         throw new Error("User profile not found");
       }
       
+      // Ensure social_media is properly structured
+      const social_media = profileData.social_media 
+        ? {
+            linkedin: (profileData.social_media.linkedin as string) || "",
+            twitter: (profileData.social_media.twitter as string) || "",
+            instagram: (profileData.social_media.instagram as string) || "",
+            facebook: (profileData.social_media.facebook as string) || ""
+          }
+        : {
+            linkedin: "",
+            twitter: "",
+            instagram: "",
+            facebook: ""
+          };
+      
       // Add email to the profile for customer creation
       const profileWithEmail = {
-        ...profile,
-        email: user.email
+        ...profileData,
+        email: user.email,
+        social_media: social_media // Replace Json with properly structured object
       };
       
       // Validate required fields based on Asaas documentation
