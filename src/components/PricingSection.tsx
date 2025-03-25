@@ -21,8 +21,8 @@ const PricingSection = () => {
 
         <div className="mt-12 text-center">
           <p className="text-muted-foreground text-sm max-w-2xl mx-auto">
-            Todos os planos incluem suporte ao cliente, atualizações e melhorias contínuas. 
-            Para necessidades específicas, entre em contato para uma proposta personalizada.
+            Todos os planos são pagos uma única vez e incluem todo o suporte descrito. 
+            Opções de parcelamento em até 12x no cartão de crédito ou pagamento à vista com 10% de desconto.
           </p>
         </div>
       </div>

@@ -1,10 +1,11 @@
+
 import { supabase } from "@/integrations/supabase/client";
 
 // Define subscription types
 export interface Subscription {
   id: string;
   user_id: string;
-  asaas_customer_id: string | null;
+  stripe_customer_id: string | null;
   asaas_subscription_id: string | null;
   asaas_payment_link: string | null;
   plan_id: string;
@@ -24,6 +25,7 @@ export const PLANS = {
     name: "Plano Essencial",
     price: 179.90,
     priceLabel: "12x de R$ 179,90",
+    totalPrice: 1942.92,
     features: ["Plano Estratégico simplificado", "Workshop de implantação", "Suporte por e-mail", "Acesso à comunidade"],
   },
   PRO: {
@@ -31,6 +33,7 @@ export const PLANS = {
     name: "Plano Profissional",
     price: 299.90,
     priceLabel: "12x de R$ 299,90",
+    totalPrice: 3238.92,
     features: ["Plano Estratégico detalhado", "Relatórios completos", "Workshop de implantação", "Sessão estratégica exclusiva", "Suporte via Whatsapp"],
   },
   ENTERPRISE: {
@@ -38,6 +41,7 @@ export const PLANS = {
     name: "Plano Empresarial",
     price: 799.90,
     priceLabel: "12x de R$ 799,90",
+    totalPrice: 8638.92,
     features: ["Plano Estratégico completo", "Relatórios completos", "Mentoria estratégica", "Acesso VIP a conteúdos exclusivos", "Suporte prioritário"],
   },
   CORPORATE: {
@@ -45,6 +49,7 @@ export const PLANS = {
     name: "Plano Corporativo",
     price: 0,
     priceLabel: "Sob consulta",
+    totalPrice: 0,
     features: ["Plano Estratégico personalizado", "Equipe de consultores", "Implementação assistida", "Workshops para equipe de liderança"],
   }
 };

@@ -17,16 +17,18 @@ const PricingGrid = ({
   onSubscribe 
 }: PricingGridProps) => {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
-      {plans.map((plan) => (
-        <PricingCard 
-          key={plan.id} 
-          plan={plan} 
-          isCheckingOut={isCheckingOut}
-          isCurrent={plan.id === currentPlanId}
-          onSubscribe={onSubscribe ? () => onSubscribe(plan.id) : undefined}
-        />
-      ))}
+    <div className="flex justify-center w-full">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 max-w-7xl">
+        {plans.map((plan) => (
+          <PricingCard 
+            key={plan.id} 
+            plan={plan} 
+            isCheckingOut={isCheckingOut}
+            isCurrent={plan.id === currentPlanId}
+            onSubscribe={onSubscribe ? () => onSubscribe(plan.id) : undefined}
+          />
+        ))}
+      </div>
     </div>
   );
 };
