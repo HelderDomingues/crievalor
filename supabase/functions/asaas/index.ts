@@ -159,13 +159,16 @@ serve(async (req) => {
             throw new Error("Missing value parameter");
           }
           
+          // Calcular data de vencimento (1 dia útil após a data atual)
+          const paymentDueDate = dueDate || new Date(Date.now() + 3600 * 1000 * 24).toISOString().split('T')[0]; // Default to tomorrow
+          
           // Create payment in Asaas
           const paymentData: any = {
             customer: customerId,
             billingType: installments > 1 ? "CREDIT_CARD" : "UNDEFINED",
             value,
             description: description || "Compra de Plano",
-            dueDate: dueDate || new Date(Date.now() + 3600 * 1000 * 24).toISOString().split('T')[0], // Default to tomorrow
+            dueDate: paymentDueDate,
           };
           
           if (installments > 1) {
@@ -191,6 +194,7 @@ serve(async (req) => {
               value,
               billingType: installments > 1 ? "CREDIT_CARD" : "UNDEFINED",
               chargeType: "DETACHED",
+              dueDateLimitDays: 1, // Importante! Adiciona o número de dias úteis para vencimento
               installmentSettings: installments > 1 ? {
                 installmentCount: installments,
                 installmentValue: (value / installments).toFixed(2)
@@ -270,6 +274,7 @@ serve(async (req) => {
             value,
             billingType: "CREDIT_CARD",
             chargeType: "SUBSCRIPTION",
+            dueDateLimitDays: 1, // Importante! Adiciona o número de dias úteis para vencimento
             subscriptionId: subscription.id,
             installmentSettings: installments > 1 ? {
               installmentCount: installments,
