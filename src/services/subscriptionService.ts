@@ -18,8 +18,28 @@ export interface Subscription {
   contract_accepted_at?: string | null;
 }
 
+// Define plan types more explicitly
+interface RegularPlan {
+  id: string;
+  name: string;
+  price: number;
+  priceLabel: string;
+  totalPrice: number;
+  cashPrice: number;
+  features: string[];
+}
+
+interface CustomPricePlan {
+  id: string;
+  name: string;
+  customPrice: boolean;
+  features: string[];
+}
+
+type Plan = RegularPlan | CustomPricePlan;
+
 // Pricing plans
-export const PLANS = {
+export const PLANS: Record<string, Plan> = {
   BASIC: {
     id: "basic_plan",
     name: "Plano Essencial",
@@ -102,9 +122,12 @@ export const subscriptionService = {
         throw new Error(`Plan with ID ${planId} not found`);
       }
       
-      if (plan.customPrice) {
+      if ('customPrice' in plan && plan.customPrice) {
         throw new Error("Este plano requer uma consulta personalizada");
       }
+      
+      // Now we can safely cast plan to RegularPlan since we've checked customPrice above
+      const regularPlan = plan as RegularPlan;
       
       console.log(`Creating checkout for plan: ${planId} with ${installments} installments`);
       
@@ -151,7 +174,7 @@ export const subscriptionService = {
       }
       
       // Calculate the payment value based on installments
-      const paymentValue = installments === 1 ? plan.cashPrice : plan.price;
+      const paymentValue = installments === 1 ? regularPlan.cashPrice : regularPlan.price;
       
       // Create payment in Asaas for one-time purchase with installments
       const response = await supabase.functions.invoke("asaas", {
@@ -160,8 +183,8 @@ export const subscriptionService = {
           data: {
             customerId,
             planId,
-            value: installments === 1 ? plan.cashPrice : plan.totalPrice,
-            description: `Compra: ${plan.name}`,
+            value: installments === 1 ? regularPlan.cashPrice : regularPlan.totalPrice,
+            description: `Compra: ${regularPlan.name}`,
             successUrl,
             cancelUrl,
             installments,
@@ -259,7 +282,7 @@ export const subscriptionService = {
   },
 
   // Helper function to get plan information from plan ID
-  getPlanFromId(planId: string) {
+  getPlanFromId(planId: string): Plan | undefined {
     return Object.values(PLANS).find(plan => plan.id === planId);
   },
 

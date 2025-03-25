@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Subscription, PLANS, subscriptionService } from "@/services/subscriptionService";
 import { formatDate } from "@/lib/utils";
@@ -30,7 +29,6 @@ export const SubscriptionDetails = () => {
           setSubscription(subscriptionData);
           setContractAccepted(subscriptionData.contract_accepted || false);
           
-          // Fetch payments instead of invoices
           const paymentsData = await subscriptionService.getPayments();
           setInvoices(paymentsData || []);
         }
@@ -133,7 +131,30 @@ export const SubscriptionDetails = () => {
 
   const getPlanDetails = (planId: string) => {
     const plan = Object.values(PLANS).find(p => p.id === planId);
-    return plan || { name: "Plano não identificado", price: "N/A", features: [] };
+    
+    if (!plan) {
+      return { name: "Plano não identificado", features: [] };
+    }
+    
+    if ('customPrice' in plan && plan.customPrice) {
+      return {
+        name: plan.name,
+        price: "Sob Consulta",
+        features: plan.features
+      };
+    } else if ('price' in plan) {
+      return {
+        name: plan.name,
+        price: plan.priceLabel,
+        features: plan.features
+      };
+    }
+    
+    return {
+      name: plan.name,
+      price: "N/A",
+      features: plan.features
+    };
   };
 
   if (isLoading) {
