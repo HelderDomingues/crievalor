@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 
 // Define subscription types
@@ -20,34 +19,34 @@ export interface Subscription {
 
 // Pricing plans
 export const PLANS = {
-  ESSENCIAL: {
-    id: "plano_essencial_mensal",
+  BASIC: {
+    id: "basic_plan",
     name: "Plano Essencial",
     price: 179.90,
     priceLabel: "R$ 179,90",
-    features: ["Atendimento online", "Acesso ao material básico", "Suporte por email"],
-  },
-  BASIC: {
-    id: "basic_plan",
-    name: "Plano Básico",
-    price: 179.90,
-    priceLabel: "R$ 179,90",
-    features: ["Consultoria inicial", "Acesso ao material básico", "Suporte por email"],
+    features: ["Plano Estratégico simplificado", "Workshop de implantação", "Suporte por e-mail", "Acesso à comunidade"],
   },
   PRO: {
     id: "pro_plan",
     name: "Plano Profissional",
     price: 299.90,
     priceLabel: "R$ 299,90",
-    features: ["Tudo do Plano Básico", "Mentoria mensal", "Acesso à comunidade", "Suporte prioritário"],
+    features: ["Plano Estratégico detalhado", "Relatórios completos", "Workshop de implantação", "Sessão estratégica exclusiva", "Suporte via Whatsapp"],
   },
   ENTERPRISE: {
     id: "enterprise_plan",
     name: "Plano Empresarial",
     price: 799.90,
     priceLabel: "R$ 799,90",
-    features: ["Tudo do Plano Profissional", "Consultoria personalizada", "Mentoria semanal", "Acesso a conteúdo exclusivo"],
+    features: ["Plano Estratégico completo", "Relatórios completos", "Mentoria estratégica", "Acesso VIP a conteúdos exclusivos", "Suporte prioritário"],
   },
+  CORPORATE: {
+    id: "corporate_plan",
+    name: "Plano Corporativo",
+    price: 0,
+    priceLabel: "Sob consulta",
+    features: ["Plano Estratégico personalizado", "Equipe de consultores", "Implementação assistida", "Workshops para equipe de liderança"],
+  }
 };
 
 export interface CreateCheckoutOptions {

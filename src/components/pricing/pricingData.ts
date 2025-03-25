@@ -1,4 +1,5 @@
-import { File, FileText, FileCheck, Users, Presentation, BarChart } from "lucide-react";
+
+import { FileText, FileCheck, Users, Presentation, BarChart, Award, BookOpen, ClipboardCheck } from "lucide-react";
 import { DocumentType, PricingPlan } from "./types";
 
 // Tipos de documentos disponíveis
@@ -19,17 +20,17 @@ const documentTypes: Record<string, DocumentType> = {
     included: true
   },
   vip: {
-    icon: VIP,
-    name: "Conteúdos esclusivos",
+    icon: Award,
+    name: "Conteúdos exclusivos",
     included: true
   },
   mentoria: {
-    icon: Roadmap,
+    icon: BookOpen,
     name: "Mentoria Especializada",
     included: true
   },
   revisao: {
-    icon: Review,
+    icon: ClipboardCheck,
     name: "Revisão do MAR",
     included: true 
   }
@@ -45,10 +46,10 @@ export const plans: PricingPlan[] = [
     annualDiscount: true,
     description: "Combinação ideal de expertise humana e IA para empreendedores iniciando sua jornada estratégica",
     features: [
-      "Plano Estratégico simplificado: 
-        "• Estratégias de Negócios e Comerciais",
-        "• Estratégias de Marketing",
-        "• Planos de Ação prontos para executar",
+      "Plano Estratégico simplificado:",
+      "• Estratégias de Negócios e Comerciais",
+      "• Estratégias de Marketing",
+      "• Planos de Ação prontos para executar",
       "Recomendações 100% personalizadas",
       "Workshop de implantação",
       "Suporte por e-mail",
@@ -58,9 +59,9 @@ export const plans: PricingPlan[] = [
     ],
     documents: [
       documentTypes.planoEstrategico,
-      documentTypes.revisao
+      documentTypes.revisao,
       {...documentTypes.relatorioCompleto, included: false},
-      {...documenteTypes.mentoria, included: false}
+      {...documentTypes.mentoria, included: false}
     ],
     cta: "Quero este plano",
     ctaUrl: "/subscription?plan=basic_plan"
@@ -74,22 +75,22 @@ export const plans: PricingPlan[] = [
     description: "Para empreendedores em crescimento que precisam de estratégias mais estruturadas e detalhamento técnico",
     features: [
       "Plano Estratégico detalhado e personalizado",
-      "Relatórios completos de todo o processo",
-        "• Análise de Segmento",
-        "• Análise de presença digital"
-        "• Análise da concorrência",
-        "• Relatório de Inteligência Competitiva",
-        "• Posicionamento Estratégico",
-        "• Branding e Identidade da Marca",
-        "• Estratégias de Negócios e Comercial",
-        "• Estratégias de Marketing",
-        "• Planos de Ação prontos para executar",
+      "Relatórios completos de todo o processo:",
+      "• Análise de Segmento",
+      "• Análise de presença digital",
+      "• Análise da concorrência",
+      "• Relatório de Inteligência Competitiva",
+      "• Posicionamento Estratégico",
+      "• Branding e Identidade da Marca",
+      "• Estratégias de Negócios e Comercial",
+      "• Estratégias de Marketing",
+      "• Planos de Ação prontos para executar",
       "Recomendações 100% personalizadas",
-      "Revisão por especialistas";
-      "Workshop de implantacão",
+      "Revisão por especialistas",
+      "Workshop de implantação",
       "Sessão estratégica exclusiva",
-      "Suporte via Whatsapp por 30 dias"
-      "Acesso à comunidade"
+      "Suporte via Whatsapp por 30 dias",
+      "Acesso à comunidade",
       "Até 3 usuários",
       "2 revisões gerais do MAR"
     ],
@@ -97,8 +98,8 @@ export const plans: PricingPlan[] = [
       documentTypes.planoEstrategico,
       {...documentTypes.relatorioCompleto, included: true},
       {...documentTypes.workshop, included: true},
-      {...documentTypes.mentoria: true},
-      {...documentTypes.revisao: true}
+      {...documentTypes.mentoria, included: true},
+      {...documentTypes.revisao, included: true}
     ],
     cta: "Quero este plano",
     ctaUrl: "/subscription?plan=pro_plan",
@@ -107,31 +108,31 @@ export const plans: PricingPlan[] = [
   {
     id: "enterprise_plan",
     name: "Empresarial",
-    monthlyPrice: "R$ 799,90",
+    monthlyPrice: "12 x de R$ 799,90",
     annualPrice: "R$ 7.999,00",
     annualDiscount: true,
     description: "Solução completa para empresas que buscam excelência estratégica e implementação assistida",
     features: [
       "Plano Estratégico completo",
-       "Relatórios completos de todo o processo",
-        "• Análise de Segmento",
-        "• Análise de presença digital"
-        "• Análise da concorrência",
-        "• Relatório de Inteligência Competitiva",
-        "• Posicionamento Estratégico",
-        "• Branding e Identidade da Marca",
-        "• Estratégias de Negócios e Comercial",
-        "• Estratégias de Marketing",
-        "• Planos de Ação prontos para executar",
+      "Relatórios completos de todo o processo:",
+      "• Análise de Segmento",
+      "• Análise de presença digital",
+      "• Análise da concorrência",
+      "• Relatório de Inteligência Competitiva",
+      "• Posicionamento Estratégico",
+      "• Branding e Identidade da Marca",
+      "• Estratégias de Negócios e Comercial",
+      "• Estratégias de Marketing",
+      "• Planos de Ação prontos para executar",
       "Recomendações 100% personalizadas",
-      "Revisão por especialistas";
-      "Workshop de implantacão",
-      "Suporte via Whatsapp por 30 dias"
-      "Acesso à comunidade"
+      "Revisão por especialistas",
+      "Workshop de implantação",
+      "Suporte via Whatsapp por 30 dias",
+      "Acesso à comunidade",
       "4 sessões de mentoria estratégica",
       "Acesso VIP a conteúdos exclusivos",
-      "Traga sua equipe para construir junto"
-        "• Até 5 usuários",
+      "Traga sua equipe para construir junto",
+      "• Até 5 usuários",
       "até 3 revisões gerais do MAR"
     ],
     documents: [
@@ -155,15 +156,14 @@ export const plans: PricingPlan[] = [
       "Implementação assistida",
       "Workshops para equipe de liderança",
       "Acompanhamento contínuo por 30 dias",
-      "Acesso à comunidade"
-      "sessões de mentoria estratégica",
+      "Acesso à comunidade",
+      "Sessões de mentoria estratégica",
       "Acesso VIP a conteúdos exclusivos",
-      "Traga sua equipe para construir junto"
-        "• Até 5 usuários",
-      "até 3 revisões gerais do MAR"
+      "Traga sua equipe para construir junto",
+      "• Até 5 usuários",
+      "Até 3 revisões gerais do MAR"
     ],
     documents: [
-      documentTypes.diagnostico,
       documentTypes.planoEstrategico,
       documentTypes.relatorioCompleto,
       documentTypes.workshop,
