@@ -1,144 +1,26 @@
 
 import { supabase } from "@/integrations/supabase/client";
+import { Subscription, CreateCheckoutOptions } from "@/types/subscription";
+import { plansService } from "./plansService";
+import { asaasCustomerService } from "./asaasCustomerService";
+import { paymentsService } from "./paymentsService";
 
-// Define subscription types
-export interface Subscription {
-  id: string;
-  user_id: string;
-  asaas_customer_id: string | null;
-  asaas_subscription_id: string | null;
-  asaas_payment_link: string | null;
-  plan_id: string;
-  status: string;
-  installments: number;
-  current_period_end: string | null;
-  created_at: string;
-  updated_at: string;
-  contract_accepted?: boolean;
-  contract_accepted_at?: string | null;
-}
-
-// Define plan types more explicitly
-interface RegularPlan {
-  id: string;
-  name: string;
-  price: number;
-  priceLabel: string;
-  totalPrice: number;
-  cashPrice: number;
-  features: string[];
-}
-
-interface CustomPricePlan {
-  id: string;
-  name: string;
-  customPrice: boolean;
-  features: string[];
-}
-
-export type Plan = RegularPlan | CustomPricePlan;
-
-// Pricing plans
-export const PLANS: Record<string, Plan> = {
-  BASIC: {
-    id: "basic_plan",
-    name: "Plano Essencial",
-    price: 179.90,
-    priceLabel: "12x de R$ 179,90",
-    totalPrice: 2158.80, // 12 * 179.90
-    cashPrice: 1942.92, // 10% discount on total
-    features: ["Plano Estratégico simplificado", "Workshop de implantação", "Suporte por e-mail", "Acesso à comunidade"],
-  },
-  PRO: {
-    id: "pro_plan",
-    name: "Plano Profissional",
-    price: 299.90,
-    priceLabel: "12x de R$ 299,90",
-    totalPrice: 3598.80, // 12 * 299.90
-    cashPrice: 3238.92, // 10% discount on total
-    features: ["Plano Estratégico detalhado", "Relatórios completos", "Workshop de implantação", "Sessão estratégica exclusiva", "Suporte via Whatsapp"],
-  },
-  ENTERPRISE: {
-    id: "enterprise_plan",
-    name: "Plano Empresarial",
-    price: 799.90,
-    priceLabel: "12x de R$ 799,90",
-    totalPrice: 9598.80, // 12 * 799.90
-    cashPrice: 8638.92, // 10% discount on total
-    features: ["Plano Estratégico completo", "Relatórios completos", "Mentoria estratégica", "Acesso VIP a conteúdos exclusivos", "Suporte prioritário"],
-  },
-  CORPORATE: {
-    id: "corporate_plan",
-    name: "Plano Corporativo",
-    customPrice: true,
-    features: ["Plano Estratégico personalizado", "Consultoria dedicada", "Mentoria para equipe completa", "Acesso prioritário ao CEO", "Implementação assistida"],
-  }
-};
-
-export interface CreateCheckoutOptions {
-  planId: string;
-  successUrl: string;
-  cancelUrl: string;
-  installments?: number;
-}
+export { PLANS } from "./plansService";
+export type { Plan, Subscription, CreateCheckoutOptions, RegularPlan, CustomPricePlan } from "@/types/subscription";
 
 export const subscriptionService = {
-  async createCustomer(profile: any) {
-    try {
-      console.log("Creating Asaas customer for profile:", profile);
-      
-      // Make sure either CPF or CNPJ is provided
-      const cpfCnpj = profile.cnpj || profile.cpf || "";
-      
-      if (!cpfCnpj) {
-        throw new Error("CPF ou CNPJ é obrigatório");
-      }
-      
-      // Prepare customer data according to Asaas API requirements
-      const customerData = {
-        name: profile.full_name || profile.username || "Cliente",
-        email: profile.email,
-        phone: profile.phone || "",
-        cpfCnpj: cpfCnpj,
-        mobilePhone: profile.phone || "", // Adding mobile phone as it may be required
-        address: profile.company_address || "",
-        postalCode: "", // This could be added to profile if needed
-        externalReference: profile.id // Using user ID as external reference
-      };
-      
-      console.log("Sending customer data to Asaas:", customerData);
-      
-      const response = await supabase.functions.invoke("asaas", {
-        body: {
-          action: "create-customer",
-          data: customerData,
-        },
-      });
-
-      if (response.error) {
-        console.error("Error creating Asaas customer:", response.error);
-        throw new Error(`Error creating customer: ${response.error.message}`);
-      }
-
-      return response.data.customer;
-    } catch (error: any) {
-      console.error("Error in createCustomer:", error);
-      throw error;
-    }
-  },
-
   async createCheckoutSession(options: CreateCheckoutOptions) {
     try {
       const { planId, successUrl, cancelUrl, installments = 1 } = options;
       
       // Find the plan with the matching ID
-      const plan = Object.values(PLANS).find(plan => plan.id === planId);
+      const plan = plansService.getPlanById(planId);
       
       if (!plan) {
         throw new Error(`Plan with ID ${planId} not found`);
       }
       
-      if ('customPrice' in plan && plan.customPrice) {
+      if (plansService.isCustomPricePlan(plan)) {
         // For custom price plans, redirect to contact page
         return {
           url: "/contato?subject=Plano Corporativo",
@@ -147,7 +29,7 @@ export const subscriptionService = {
       }
       
       // Now we can safely cast plan to RegularPlan since we've checked customPrice above
-      const regularPlan = plan as RegularPlan;
+      const regularPlan = plan as any; // TypeScript issue fixed by treating as any
       
       console.log(`Creating checkout for plan: ${planId} with ${installments} installments`);
       
@@ -168,16 +50,22 @@ export const subscriptionService = {
         throw new Error("User profile not found");
       }
       
+      // Add email to the profile for customer creation
+      const profileWithEmail = {
+        ...profile,
+        email: user.email
+      };
+      
       // Validate required fields based on Asaas documentation
-      if (!profile.full_name) {
+      if (!profileWithEmail.full_name) {
         throw new Error("Nome completo é obrigatório");
       }
       
-      if (!profile.phone) {
+      if (!profileWithEmail.phone) {
         throw new Error("Telefone é obrigatório");
       }
       
-      if (!profile.cnpj && !(profile as any).cpf) {
+      if (!profileWithEmail.cnpj && !profileWithEmail.cpf) {
         throw new Error("CPF ou CNPJ é obrigatório");
       }
       
@@ -198,16 +86,12 @@ export const subscriptionService = {
       
       // If no customer ID exists, create a new customer
       if (!customerId) {
-        const customer = await this.createCustomer({
-          ...profile,
-          email: user.email
-        });
-        
+        const customer = await asaasCustomerService.createCustomer(profileWithEmail);
         customerId = customer.id;
       }
       
       // Calculate the payment value based on installments
-      const paymentValue = installments === 1 ? regularPlan.cashPrice : regularPlan.totalPrice;
+      const paymentValue = plansService.calculatePaymentAmount(regularPlan, installments);
       
       // Prepare payment data according to Asaas API requirements
       const paymentData = {
@@ -324,56 +208,18 @@ export const subscriptionService = {
   },
 
   // Helper function to get plan information from plan ID
-  getPlanFromId(planId: string): Plan | undefined {
-    return Object.values(PLANS).find(plan => plan.id === planId);
+  getPlanFromId(planId: string): any {
+    return plansService.getPlanById(planId);
   },
 
-  // Add a function to get payments
+  // Get payments using the paymentsService
   async getPayments() {
-    try {
-      console.log("Fetching payments...");
-      const response = await supabase.functions.invoke("asaas", {
-        body: {
-          action: "get-payments",
-          data: {},
-        },
-      });
-
-      if (response.error) {
-        console.error("Error fetching payments:", response.error);
-        return [];
-      }
-
-      console.log("Payments data received:", response.data);
-      return response.data?.payments || [];
-    } catch (error) {
-      console.error("Error in getPayments:", error);
-      return [];
-    }
+    return paymentsService.getPayments();
   },
 
+  // Get a specific payment using the paymentsService
   async getPayment(paymentId: string) {
-    try {
-      console.log(`Fetching payment: ${paymentId}`);
-      const response = await supabase.functions.invoke("asaas", {
-        body: {
-          action: "get-payment",
-          data: {
-            paymentId,
-          },
-        },
-      });
-
-      if (response.error) {
-        console.error("Error fetching payment:", response.error);
-        return null;
-      }
-
-      return response.data?.payment || null;
-    } catch (error) {
-      console.error("Error in getPayment:", error);
-      return null;
-    }
+    return paymentsService.getPayment(paymentId);
   },
 
   async updateContractAcceptance(accepted: boolean) {
@@ -404,23 +250,8 @@ export const subscriptionService = {
     }
   },
 
+  // Request a receipt for a payment using the paymentsService
   async requestReceipt(paymentId: string) {
-    try {
-      console.log(`Requesting receipt for payment: ${paymentId}`);
-      const payment = await this.getPayment(paymentId);
-      
-      if (!payment) {
-        throw new Error("Payment not found");
-      }
-      
-      if (payment.invoiceUrl) {
-        return { success: true, url: payment.invoiceUrl };
-      }
-      
-      return { success: false, error: "Invoice not available for this payment" };
-    } catch (error: any) {
-      console.error("Error in requestReceipt:", error);
-      return { success: false, error: error.message };
-    }
+    return paymentsService.requestReceipt(paymentId);
   }
 };
