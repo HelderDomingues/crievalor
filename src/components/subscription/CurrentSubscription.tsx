@@ -20,9 +20,13 @@ const CurrentSubscription = ({
   getCurrentPlanName,
 }: CurrentSubscriptionProps) => {
   const getStatusBadge = (status: string) => {
-    switch (status) {
+    const statusLowerCase = status.toLowerCase();
+    
+    switch (statusLowerCase) {
       case "active":
         return <Badge className="bg-green-500">Ativa</Badge>;
+      case "pending":
+        return <Badge className="bg-yellow-500">Pendente</Badge>;
       case "trialing":
         return <Badge className="bg-blue-500">Período de teste</Badge>;
       case "canceled":
@@ -43,6 +47,11 @@ const CurrentSubscription = ({
     });
   };
 
+  const isActive = subscription.status.toLowerCase() === "active";
+  const installmentsText = subscription.installments > 1 
+    ? `em ${subscription.installments}x` 
+    : "à vista";
+
   return (
     <div className="mb-12">
       <Card>
@@ -57,17 +66,27 @@ const CurrentSubscription = ({
         <CardContent className="space-y-4">
           <div>
             <p className="text-sm font-medium">Plano:</p>
-            <p>{getCurrentPlanName()}</p>
+            <p>{getCurrentPlanName()} {installmentsText}</p>
           </div>
           <div>
             <p className="text-sm font-medium">Válida até:</p>
             <p>{formatDate(subscription.current_period_end)}</p>
           </div>
+          {subscription.asaas_payment_link && !isActive && (
+            <div>
+              <p className="text-sm font-medium text-primary mb-1">Link de pagamento:</p>
+              <Button variant="outline" asChild className="h-8 px-2 py-0 text-xs">
+                <a href={subscription.asaas_payment_link} target="_blank" rel="noopener noreferrer">
+                  Abrir link de pagamento
+                </a>
+              </Button>
+            </div>
+          )}
         </CardContent>
         <CardFooter>
           <Button 
             variant="destructive" 
-            disabled={isCanceling || subscription.status === "canceled"}
+            disabled={isCanceling || subscription.status.toLowerCase() === "canceled"}
             onClick={onCancelSubscription}
           >
             {isCanceling ? (

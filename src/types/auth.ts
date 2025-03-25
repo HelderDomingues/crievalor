@@ -36,4 +36,6 @@ export interface UserProfile {
     facebook: string;
   };
   cnpj: string | null;
+  cpf: string | null;
+  email?: string | null;
 }

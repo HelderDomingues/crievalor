@@ -5,10 +5,12 @@ import { supabase } from "@/integrations/supabase/client";
 export interface Subscription {
   id: string;
   user_id: string;
-  stripe_customer_id: string | null;
-  stripe_subscription_id: string | null;
+  asaas_customer_id: string | null;
+  asaas_subscription_id: string | null;
+  asaas_payment_link: string | null;
   plan_id: string;
   status: string;
+  installments: number;
   current_period_end: string | null;
   created_at: string;
   updated_at: string;
@@ -21,44 +23,73 @@ export const PLANS = {
   ESSENCIAL: {
     id: "plano_essencial_mensal",
     name: "Plano Essencial",
-    price: "R$ 179,90",
+    price: 179.90,
+    priceLabel: "R$ 179,90",
     features: ["Atendimento online", "Acesso ao material básico", "Suporte por email"],
-    stripe_price_id: "price_1R6IkIP90koqLuyYam1lsLkJ", 
   },
   BASIC: {
     id: "basic_plan",
     name: "Plano Básico",
-    price: "R$ 89,90",
+    price: 89.90,
+    priceLabel: "R$ 89,90",
     features: ["Consultoria inicial", "Acesso ao material básico", "Suporte por email"],
-    stripe_price_id: "price_1R5XpZP90koqLuyYBKb2OTOg", 
   },
   PRO: {
     id: "pro_plan",
     name: "Plano Profissional",
-    price: "R$ 299,90",
+    price: 299.90,
+    priceLabel: "R$ 299,90",
     features: ["Tudo do Plano Básico", "Mentoria mensal", "Acesso à comunidade", "Suporte prioritário"],
-    stripe_price_id: "price_1R5Xq2P90koqLuyYgTcwJz7Y", 
   },
   ENTERPRISE: {
     id: "enterprise_plan",
     name: "Plano Empresarial",
-    price: "R$ 799,90",
+    price: 799.90,
+    priceLabel: "R$ 799,90",
     features: ["Tudo do Plano Profissional", "Consultoria personalizada", "Mentoria semanal", "Acesso a conteúdo exclusivo"],
-    stripe_price_id: "price_1R5XqQP90koqLuyYmIG7S5sz", 
   },
 };
 
-// Map plan IDs to Stripe price IDs for easy lookup
-const PLAN_TO_PRICE_ID_MAP = {
-  plano_essencial_mensal: "price_1R6IkIP90koqLuyYam1lsLkJ",
-  basic_plan: "price_1R5XpZP90koqLuyYBKb2OTOg",
-  pro_plan: "price_1R5Xq2P90koqLuyYgTcwJz7Y",
-  enterprise_plan: "price_1R5XqQP90koqLuyYmIG7S5sz",
-};
+export interface CreateCheckoutOptions {
+  planId: string;
+  successUrl: string;
+  cancelUrl: string;
+  installments?: number;
+}
 
 export const subscriptionService = {
-  async createCheckoutSession(planId: string, successUrl: string, cancelUrl: string) {
+  async createCustomer(profile: any) {
     try {
+      console.log("Creating Asaas customer for profile:", profile);
+      
+      const response = await supabase.functions.invoke("asaas", {
+        body: {
+          action: "create-customer",
+          data: {
+            name: profile.full_name || profile.username || "Cliente",
+            email: profile.email,
+            phone: profile.phone || "",
+            cpfCnpj: profile.cnpj || "",
+          },
+        },
+      });
+
+      if (response.error) {
+        console.error("Error creating Asaas customer:", response.error);
+        throw new Error(`Error creating customer: ${response.error.message}`);
+      }
+
+      return response.data.customer;
+    } catch (error: any) {
+      console.error("Error in createCustomer:", error);
+      throw error;
+    }
+  },
+
+  async createCheckoutSession(options: CreateCheckoutOptions) {
+    try {
+      const { planId, successUrl, cancelUrl, installments = 1 } = options;
+      
       // Find the plan with the matching ID
       const plan = Object.values(PLANS).find(plan => plan.id === planId);
       
@@ -66,7 +97,7 @@ export const subscriptionService = {
         throw new Error(`Plan with ID ${planId} not found`);
       }
       
-      console.log(`Creating checkout for plan: ${planId}, with price ID: ${plan.stripe_price_id}`);
+      console.log(`Creating checkout for plan: ${planId}, installments: ${installments}`);
       
       // Get the current user
       const { data: { user } } = await supabase.auth.getUser();
@@ -74,31 +105,63 @@ export const subscriptionService = {
         throw new Error("No authenticated user found");
       }
       
-      // Use the stripe_price_id for the Stripe checkout
-      const response = await supabase.functions.invoke("stripe", {
+      // Get user profile to create or retrieve customer
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", user.id)
+        .maybeSingle();
+        
+      // Check if user already has an Asaas customer ID
+      const { data: existingSub } = await supabase
+        .from("subscriptions")
+        .select("asaas_customer_id")
+        .eq("user_id", user.id)
+        .maybeSingle();
+      
+      let customerId = existingSub?.asaas_customer_id;
+      
+      // If no customer ID exists, create a new customer
+      if (!customerId) {
+        if (!profile) {
+          throw new Error("User profile not found");
+        }
+        
+        const customer = await this.createCustomer({
+          ...profile,
+          email: user.email
+        });
+        
+        customerId = customer.id;
+      }
+      
+      // Create subscription in Asaas
+      const response = await supabase.functions.invoke("asaas", {
         body: {
-          action: "create-checkout-session",
+          action: "create-subscription",
           data: {
-            priceId: plan.stripe_price_id,
+            customerId,
+            planId,
+            value: plan.price,
+            description: `Assinatura: ${plan.name}`,
             successUrl,
-            cancelUrl,
-            userId: user.id  // Explicitly pass the user ID for checkout
+            installments,
+            nextDueDate: new Date(Date.now() + 3600 * 1000 * 24).toISOString().split('T')[0], // tomorrow
           },
         },
       });
 
       if (response.error) {
-        console.error("Error invoking Stripe function:", response.error);
-        throw new Error(`Error creating checkout session: ${response.error.message}`);
+        console.error("Error creating Asaas subscription:", response.error);
+        throw new Error(`Error creating subscription: ${response.error.message}`);
       }
 
-      const sessionData = response.data;
-      if (!sessionData || !sessionData.url) {
-        throw new Error("No valid data returned from checkout session creation");
-      }
-
-      console.log("Checkout session created successfully:", sessionData);
-      return sessionData;
+      console.log("Asaas subscription created successfully:", response.data);
+      return {
+        url: response.data.paymentLink,
+        subscription: response.data.subscription,
+        dbSubscription: response.data.dbSubscription
+      };
     } catch (error: any) {
       console.error("Error in createCheckoutSession:", error);
       throw error;
@@ -116,42 +179,21 @@ export const subscriptionService = {
         return null;
       }
       
-      const userId = user.id;
-      console.log(`Looking up subscription for user: ${userId}`);
-      
-      // First approach: Get the subscription from the database directly with detailed query
-      const { data: subscriptionData, error: subscriptionError } = await supabase
-        .from('subscriptions')
-        .select('*')
-        .eq('user_id', userId)
-        .maybeSingle();
-      
-      if (subscriptionError) {
-        console.error("Error fetching subscription from database:", subscriptionError);
-      } else if (subscriptionData) {
-        console.log("Subscription found in database:", subscriptionData);
-        return subscriptionData;
-      } else {
-        console.log("No subscription found in database");
-      }
-      
-      // Second approach: Try the functions API as fallback
-      console.log("Trying functions API to get subscription...");
-      const response = await supabase.functions.invoke("stripe", {
+      const response = await supabase.functions.invoke("asaas", {
         body: {
           action: "get-subscription",
-          data: { userId },
+          data: {
+            userId: user.id,
+          },
         },
       });
 
       if (response.error) {
-        console.error("Error fetching subscription from API:", response.error);
+        console.error("Error fetching subscription:", response.error);
         return null;
       }
 
-      const data = response.data;
-      console.log("Subscription data received from API:", data);
-      return data?.subscription || null;
+      return response.data?.subscription || null;
     } catch (error) {
       console.error("Error in getCurrentSubscription:", error);
       return null;
@@ -161,7 +203,7 @@ export const subscriptionService = {
   async cancelSubscription(subscriptionId: string) {
     try {
       console.log(`Attempting to cancel subscription: ${subscriptionId}`);
-      const response = await supabase.functions.invoke("stripe", {
+      const response = await supabase.functions.invoke("asaas", {
         body: {
           action: "cancel-subscription",
           data: {
@@ -187,7 +229,7 @@ export const subscriptionService = {
   async hasActiveSubscription(): Promise<boolean> {
     try {
       const subscription = await this.getCurrentSubscription();
-      const isActive = subscription !== null && ["active", "trialing"].includes(subscription.status);
+      const isActive = subscription !== null && ["active", "ACTIVE"].includes(subscription.status);
       console.log(`Active subscription check: ${isActive}`, subscription);
       return isActive;
     } catch (error) {
@@ -196,55 +238,54 @@ export const subscriptionService = {
     }
   },
 
-  // Helper function to get plan information from Stripe price ID
-  getPlanFromPriceId(priceId: string) {
-    return Object.values(PLANS).find(plan => plan.stripe_price_id === priceId);
+  // Helper function to get plan information from plan ID
+  getPlanFromId(planId: string) {
+    return Object.values(PLANS).find(plan => plan.id === planId);
   },
 
-  async getInvoices() {
+  async getPayments() {
     try {
-      console.log("Fetching invoices...");
-      const response = await supabase.functions.invoke("stripe", {
+      console.log("Fetching payments...");
+      const response = await supabase.functions.invoke("asaas", {
         body: {
-          action: "get-invoices",
+          action: "get-payments",
           data: {},
         },
       });
 
       if (response.error) {
-        console.error("Error fetching invoices:", response.error);
-        return null;
+        console.error("Error fetching payments:", response.error);
+        return [];
       }
 
-      const data = response.data;
-      console.log("Invoices data received:", data);
-      return data?.invoices || [];
+      console.log("Payments data received:", response.data);
+      return response.data?.payments || [];
     } catch (error) {
-      console.error("Error in getInvoices:", error);
+      console.error("Error in getPayments:", error);
       return [];
     }
   },
 
-  async getInvoice(invoiceId: string) {
+  async getPayment(paymentId: string) {
     try {
-      console.log(`Fetching invoice: ${invoiceId}`);
-      const response = await supabase.functions.invoke("stripe", {
+      console.log(`Fetching payment: ${paymentId}`);
+      const response = await supabase.functions.invoke("asaas", {
         body: {
-          action: "get-invoice",
+          action: "get-payment",
           data: {
-            invoiceId,
+            paymentId,
           },
         },
       });
 
       if (response.error) {
-        console.error("Error fetching invoice:", response.error);
+        console.error("Error fetching payment:", response.error);
         return null;
       }
 
-      return response.data?.invoice || null;
+      return response.data?.payment || null;
     } catch (error) {
-      console.error("Error in getInvoice:", error);
+      console.error("Error in getPayment:", error);
       return null;
     }
   },
@@ -252,46 +293,45 @@ export const subscriptionService = {
   async updateContractAcceptance(accepted: boolean) {
     try {
       console.log(`Updating contract acceptance: ${accepted}`);
-      const response = await supabase.functions.invoke("stripe", {
-        body: {
-          action: "update-contract-acceptance",
-          data: {
-            accepted,
-            acceptedAt: new Date().toISOString(),
-          },
-        },
-      });
-
-      if (response.error) {
-        console.error("Error updating contract acceptance:", response.error);
-        return { success: false, error: response.error };
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        throw new Error("No authenticated user found");
+      }
+      
+      const { error } = await supabase
+        .from("subscriptions")
+        .update({
+          contract_accepted: accepted,
+          contract_accepted_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        })
+        .eq("user_id", user.id);
+        
+      if (error) {
+        throw error;
       }
 
-      return { success: true, data: response.data };
+      return { success: true };
     } catch (error: any) {
       console.error("Error in updateContractAcceptance:", error);
       return { success: false, error: error.message };
     }
   },
 
-  async requestReceipt(invoiceId: string) {
+  async requestReceipt(paymentId: string) {
     try {
-      console.log(`Requesting receipt for invoice: ${invoiceId}`);
-      const response = await supabase.functions.invoke("stripe", {
-        body: {
-          action: "request-receipt",
-          data: {
-            invoiceId,
-          },
-        },
-      });
-
-      if (response.error) {
-        console.error("Error requesting receipt:", response.error);
-        return { success: false, error: response.error };
+      console.log(`Requesting receipt for payment: ${paymentId}`);
+      const payment = await this.getPayment(paymentId);
+      
+      if (!payment) {
+        throw new Error("Payment not found");
       }
-
-      return { success: true, data: response.data };
+      
+      if (payment.invoiceUrl) {
+        return { success: true, url: payment.invoiceUrl };
+      }
+      
+      return { success: false, error: "Invoice not available for this payment" };
     } catch (error: any) {
       console.error("Error in requestReceipt:", error);
       return { success: false, error: error.message };

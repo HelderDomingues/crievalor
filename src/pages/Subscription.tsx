@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
@@ -13,6 +14,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import SubscriptionDetails from "@/components/profile/SubscriptionDetails";
 import { Card, CardHeader, CardContent, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import PaymentOptions from "@/components/pricing/PaymentOptions";
 
 const SubscriptionPage = () => {
   const navigate = useNavigate();
@@ -24,6 +26,7 @@ const SubscriptionPage = () => {
   const [isCheckingOut, setIsCheckingOut] = useState(false);
   const [isCanceling, setIsCanceling] = useState(false);
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
+  const [selectedInstallments, setSelectedInstallments] = useState(1);
 
   const success = searchParams.get("success");
   const canceled = searchParams.get("canceled");
@@ -59,7 +62,7 @@ const SubscriptionPage = () => {
         console.log("Subscription loaded:", sub);
         setSubscription(sub);
         
-        if (selectedPlan && (!sub || (sub.status !== "active" && sub.status !== "trialing"))) {
+        if (selectedPlan && (!sub || (sub.status !== "active" && sub.status !== "ACTIVE" && sub.status !== "trialing"))) {
           handleSubscribe(selectedPlan);
         }
       } catch (error) {
@@ -87,19 +90,20 @@ const SubscriptionPage = () => {
     setCheckoutError(null);
     
     try {
-      console.log(`Starting checkout for plan: ${planId}`);
+      console.log(`Starting checkout for plan: ${planId} with ${selectedInstallments} installments`);
       
-      const { url } = await subscriptionService.createCheckoutSession(
+      const { url } = await subscriptionService.createCheckoutSession({
         planId,
-        `${window.location.origin}/subscription?success=true`,
-        `${window.location.origin}/subscription?canceled=true`
-      );
+        successUrl: `${window.location.origin}/subscription?success=true`,
+        cancelUrl: `${window.location.origin}/subscription?canceled=true`,
+        installments: selectedInstallments
+      });
       
       if (!url) {
-        throw new Error("No checkout URL returned from Stripe");
+        throw new Error("No checkout URL returned from Asaas");
       }
       
-      console.log("Redirecting to Stripe checkout:", url);
+      console.log("Redirecting to Asaas checkout:", url);
       
       window.location.href = url;
     } catch (error: any) {
@@ -118,11 +122,11 @@ const SubscriptionPage = () => {
   };
 
   const handleCancelSubscription = async () => {
-    if (!subscription?.stripe_subscription_id) return;
+    if (!subscription?.asaas_subscription_id) return;
     
     setIsCanceling(true);
     try {
-      await subscriptionService.cancelSubscription(subscription.stripe_subscription_id);
+      await subscriptionService.cancelSubscription(subscription.asaas_subscription_id);
       toast({
         title: "Assinatura cancelada",
         description: "Sua assinatura foi cancelada com sucesso.",
@@ -144,15 +148,17 @@ const SubscriptionPage = () => {
   const getCurrentPlanName = () => {
     if (!subscription?.plan_id) return "N/A";
     
-    const plan = subscriptionService.getPlanFromPriceId(subscription.plan_id);
+    const plan = subscriptionService.getPlanFromId(subscription.plan_id);
     return plan ? plan.name : subscription.plan_id;
   };
 
   const isPlanCurrent = (planId: string) => {
     if (!subscription || !subscription.plan_id) return false;
-    
-    const plan = Object.values(PLANS).find(p => p.id === planId);
-    return plan?.stripe_price_id === subscription.plan_id;
+    return subscription.plan_id === planId;
+  };
+
+  const handleInstallmentsChange = (installments: number) => {
+    setSelectedInstallments(installments);
   };
 
   if (loading) {
@@ -185,7 +191,7 @@ const SubscriptionPage = () => {
             </TabsList>
             
             <TabsContent value="overview">
-              {subscription && ["active", "trialing"].includes(subscription.status) && (
+              {subscription && ["active", "ACTIVE", "trialing"].includes(subscription.status) && (
                 <CurrentSubscription
                   subscription={subscription}
                   isCanceling={isCanceling}
@@ -247,7 +253,16 @@ const SubscriptionPage = () => {
                 isCheckingOut={isCheckingOut}
                 isPlanCurrent={isPlanCurrent}
                 onSubscribe={handleSubscribe}
+                selectedInstallments={selectedInstallments}
+                onInstallmentsChange={handleInstallmentsChange}
               />
+              
+              <div className="mt-8">
+                <PaymentOptions 
+                  onInstallmentsChange={handleInstallmentsChange}
+                  selectedInstallments={selectedInstallments}
+                />
+              </div>
             </TabsContent>
             
             <TabsContent value="details">
