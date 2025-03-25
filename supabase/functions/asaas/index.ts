@@ -1,3 +1,4 @@
+
 import { serve } from "https://deno.land/std@0.208.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.38.4";
 
@@ -109,7 +110,7 @@ serve(async (req) => {
       }
         
       case "create-payment": {
-        const { customerId, value, description, installments = 1, dueDate, planId, successUrl, cancelUrl, generateLink = false } = data;
+        const { customerId, value, description, installments = 1, dueDate, planId, successUrl, cancelUrl, generateLink = false, nextDueDate } = data;
         
         // Create payment in Asaas
         const paymentData: any = {
@@ -139,7 +140,7 @@ serve(async (req) => {
             description: `Pagamento ${description}`,
             endDate: new Date(Date.now() + 3600 * 1000 * 24 * 7).toISOString().split('T')[0], // 7 days from now
             value,
-            billingType: "CREDIT_CARD",
+            billingType: installments > 1 ? "CREDIT_CARD" : "UNDEFINED",
             chargeType: "DETACHED",
             installmentSettings: installments > 1 ? {
               installmentCount: installments,
@@ -224,7 +225,7 @@ serve(async (req) => {
           .from("subscriptions")
           .upsert({
             user_id: user.id,
-            asaas_customer_id: customerId,
+            stripe_customer_id: customerId,
             asaas_subscription_id: subscription.id,
             asaas_payment_link: paymentLink.url,
             plan_id: planId,
@@ -357,18 +358,18 @@ serve(async (req) => {
         // Get payments for the customer from Asaas
         const { data: subscription } = await supabase
           .from("subscriptions")
-          .select("asaas_customer_id")
+          .select("stripe_customer_id") // This field is being used for Asaas customer ID
           .eq("user_id", user.id)
           .maybeSingle();
           
-        if (!subscription?.asaas_customer_id) {
+        if (!subscription?.stripe_customer_id) {
           return new Response(JSON.stringify({ payments: [] }), {
             headers: { ...corsHeaders, "Content-Type": "application/json" },
           });
         }
         
         // Get payments from Asaas
-        const payments = await asaasRequest(`/payments?customer=${subscription.asaas_customer_id}`);
+        const payments = await asaasRequest(`/payments?customer=${subscription.stripe_customer_id}`);
         
         result = { payments: payments.data };
         break;
