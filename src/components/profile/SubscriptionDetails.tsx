@@ -30,9 +30,9 @@ export const SubscriptionDetails = () => {
           setSubscription(subscriptionData);
           setContractAccepted(subscriptionData.contract_accepted || false);
           
-          // Fetch invoices if we have a subscription
-          const invoicesData = await subscriptionService.getInvoices();
-          setInvoices(invoicesData || []);
+          // Fetch payments instead of invoices
+          const paymentsData = await subscriptionService.getPayments();
+          setInvoices(paymentsData || []);
         }
       } catch (error) {
         console.error("Error fetching subscription data:", error);

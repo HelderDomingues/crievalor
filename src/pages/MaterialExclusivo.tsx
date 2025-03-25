@@ -51,7 +51,7 @@ const MaterialExclusivoPage: React.FC = () => {
         
         if (hasActive) {
           const subscription = await subscriptionService.getCurrentSubscription();
-          const plan = subscription ? subscriptionService.getPlanFromPriceId(subscription.plan_id) : null;
+          const plan = subscription ? subscriptionService.getPlanFromId(subscription.plan_id) : null;
           setCurrentPlan(plan?.id || null);
           fetchMaterials();
         }

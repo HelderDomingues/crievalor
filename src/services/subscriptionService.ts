@@ -243,6 +243,7 @@ export const subscriptionService = {
     return Object.values(PLANS).find(plan => plan.id === planId);
   },
 
+  // Add a function to get payments that will replace getInvoices
   async getPayments() {
     try {
       console.log("Fetching payments...");
