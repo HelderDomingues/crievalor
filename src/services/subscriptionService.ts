@@ -87,6 +87,13 @@ export const subscriptionService = {
     try {
       console.log("Creating Asaas customer for profile:", profile);
       
+      // Make sure either CPF or CNPJ is provided
+      const cpfCnpj = profile.cnpj || profile.cpf || "";
+      
+      if (!cpfCnpj) {
+        throw new Error("CPF ou CNPJ é obrigatório");
+      }
+      
       const response = await supabase.functions.invoke("asaas", {
         body: {
           action: "create-customer",
@@ -94,7 +101,7 @@ export const subscriptionService = {
             name: profile.full_name || profile.username || "Cliente",
             email: profile.email,
             phone: profile.phone || "",
-            cpfCnpj: profile.cnpj || "",
+            cpfCnpj: cpfCnpj,
           },
         },
       });
@@ -148,6 +155,23 @@ export const subscriptionService = {
         .eq("id", user.id)
         .maybeSingle();
         
+      if (!profile) {
+        throw new Error("User profile not found");
+      }
+      
+      // Validate required fields
+      if (!profile.full_name) {
+        throw new Error("Nome completo é obrigatório");
+      }
+      
+      if (!profile.phone) {
+        throw new Error("Telefone é obrigatório");
+      }
+      
+      if (!profile.cpf && !profile.cnpj) {
+        throw new Error("CPF ou CNPJ é obrigatório");
+      }
+      
       // Check if user already has an Asaas customer ID
       const { data: existingSub } = await supabase
         .from("subscriptions")
@@ -165,10 +189,6 @@ export const subscriptionService = {
       
       // If no customer ID exists, create a new customer
       if (!customerId) {
-        if (!profile) {
-          throw new Error("User profile not found");
-        }
-        
         const customer = await this.createCustomer({
           ...profile,
           email: user.email

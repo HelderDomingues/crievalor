@@ -69,6 +69,10 @@ serve(async (req) => {
       const url = `${ASAAS_API_BASE_URL}${endpoint}`;
       console.log(`Making ${method} request to Asaas API: ${url}`);
       
+      if (payload) {
+        console.log("Request payload:", JSON.stringify(payload, null, 2));
+      }
+      
       const options: RequestInit = {
         method,
         headers: {
@@ -108,13 +112,20 @@ serve(async (req) => {
         
         console.log("Creating customer with data:", { name, email, phone, cpfCnpj });
         
+        if (!cpfCnpj) {
+          return new Response(JSON.stringify({ error: "CPF ou CNPJ é obrigatório" }), {
+            status: 400,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          });
+        }
+        
         try {
           // Create customer in Asaas
           const customer = await asaasRequest("/customers", "POST", {
             name: name || "Cliente",
             email: email || "",
             phone: phone || "",
-            cpfCnpj: cpfCnpj || "",
+            cpfCnpj: cpfCnpj,
             notificationDisabled: false
           });
           

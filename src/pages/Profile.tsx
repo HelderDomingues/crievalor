@@ -27,7 +27,8 @@ const ProfileField = ({
   onSave,
   loading,
   isTextarea = false,
-  placeholder = ""
+  placeholder = "",
+  required = false
 }: { 
   label: string; 
   value: string | null | undefined; 
@@ -36,6 +37,7 @@ const ProfileField = ({
   loading: boolean;
   isTextarea?: boolean;
   placeholder?: string;
+  required?: boolean;
 }) => {
   const [isEditing, setIsEditing] = useState(!value);
   const [fieldValue, setFieldValue] = useState(value || "");
@@ -47,6 +49,15 @@ const ProfileField = ({
   }, [value]);
 
   const handleSave = async () => {
+    if (required && !fieldValue.trim()) {
+      toast({
+        variant: "destructive",
+        title: "Campo obrigatório",
+        description: `${label} é um campo obrigatório.`
+      });
+      return;
+    }
+    
     setIsSaving(true);
     try {
       await onSave(fieldName, fieldValue);
@@ -73,7 +84,12 @@ const ProfileField = ({
   return (
     <div className="space-y-2 mb-4">
       <div className="flex justify-between items-center">
-        <Label htmlFor={fieldName}>{label}</Label>
+        <div className="flex items-center">
+          <Label htmlFor={fieldName} className={required ? "after:content-['*'] after:ml-0.5 after:text-red-500" : ""}>{label}</Label>
+          {required && (
+            <span className="ml-2 text-xs text-muted-foreground">(Obrigatório)</span>
+          )}
+        </div>
         <div className="flex gap-2">
           {!isEditing ? (
             <Button 
@@ -264,6 +280,11 @@ const Profile = () => {
     navigate("/");
   };
 
+  const openWhatsApp = () => {
+    const message = encodeURIComponent("Olá, gostaria de obter mais informações sobre os planos para empresas sem CNPJ.");
+    window.open(`https://wa.me/5567996880616?text=${message}`, '_blank');
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex flex-col">
@@ -282,7 +303,8 @@ const Profile = () => {
   const isProfileComplete = 
     profile?.full_name && 
     profile?.company_name && 
-    profile?.company_address;
+    profile?.company_address && 
+    (profile?.cnpj || profile?.cpf);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -399,6 +421,7 @@ const Profile = () => {
                             onSave={handleSaveField}
                             loading={loading}
                             placeholder="Seu nome de usuário"
+                            required
                           />
                           
                           <ProfileField
@@ -408,6 +431,7 @@ const Profile = () => {
                             onSave={handleSaveField}
                             loading={loading}
                             placeholder="Seu nome completo"
+                            required
                           />
                           
                           <ProfileField
@@ -417,6 +441,17 @@ const Profile = () => {
                             onSave={handleSaveField}
                             loading={loading}
                             placeholder="Seu telefone com DDD"
+                            required
+                          />
+                          
+                          <ProfileField
+                            label="CPF"
+                            value={profile?.cpf || ""}
+                            fieldName="cpf"
+                            onSave={handleSaveField}
+                            loading={loading}
+                            placeholder="Seu CPF (apenas números)"
+                            required
                           />
                         </div>
                       )}
@@ -432,6 +467,7 @@ const Profile = () => {
                             onSave={handleSaveField}
                             loading={loading}
                             placeholder="Nome da sua empresa"
+                            required
                           />
                           
                           <ProfileField
@@ -442,6 +478,7 @@ const Profile = () => {
                             loading={loading}
                             isTextarea={true}
                             placeholder="Endereço completo da empresa"
+                            required
                           />
                           
                           <ProfileField
@@ -453,14 +490,35 @@ const Profile = () => {
                             placeholder="https://www.seusite.com.br"
                           />
                           
-                          <ProfileField
-                            label="CNPJ"
-                            value={profile?.cnpj || ""}
-                            fieldName="cnpj"
-                            onSave={handleSaveField}
-                            loading={loading}
-                            placeholder="00.000.000/0000-00"
-                          />
+                          <div className="mb-4">
+                            <div className="flex justify-between items-center mb-2">
+                              <Label htmlFor="cnpj" className="after:content-['*'] after:ml-0.5 after:text-red-500">CNPJ</Label>
+                              <span className="text-xs text-muted-foreground">(Obrigatório se possuir)</span>
+                            </div>
+                            
+                            <ProfileField
+                              label="CNPJ"
+                              value={profile?.cnpj || ""}
+                              fieldName="cnpj"
+                              onSave={handleSaveField}
+                              loading={loading}
+                              placeholder="00.000.000/0000-00"
+                            />
+                            
+                            {!profile?.cnpj && (
+                              <div className="mt-2 p-4 bg-muted rounded-md">
+                                <p className="text-sm mb-2">Não possui CNPJ? Entre em contato com nosso consultor para orientações.</p>
+                                <Button 
+                                  variant="default" 
+                                  size="sm" 
+                                  onClick={openWhatsApp}
+                                  className="w-full"
+                                >
+                                  <Phone className="h-4 w-4 mr-2" /> Falar com Consultor
+                                </Button>
+                              </div>
+                            )}
+                          </div>
                         </div>
                       )}
                       
