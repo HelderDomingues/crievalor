@@ -42,7 +42,7 @@ export const plans: PricingPlan[] = [
     id: "basic_plan",
     name: "Essencial",
     monthlyPrice: "12 x de R$ 179,90",
-    annualPrice: "R$ 1.799,00",
+    annualPrice: "R$ 1.942,92",
     annualDiscount: true,
     description: "Combinação ideal de expertise humana e IA para empreendedores iniciando sua jornada estratégica",
     features: [
@@ -70,7 +70,7 @@ export const plans: PricingPlan[] = [
     id: "pro_plan",
     name: "Profissional",
     monthlyPrice: "12 x de R$ 299,90",
-    annualPrice: "R$ 2.999,00",
+    annualPrice: "R$ 3.238,92",
     annualDiscount: true,
     description: "Para empreendedores em crescimento que precisam de estratégias mais estruturadas e detalhamento técnico",
     features: [
@@ -109,7 +109,7 @@ export const plans: PricingPlan[] = [
     id: "enterprise_plan",
     name: "Empresarial",
     monthlyPrice: "12 x de R$ 799,90",
-    annualPrice: "R$ 7.999,00",
+    annualPrice: "R$ 8.638,92",
     annualDiscount: true,
     description: "Solução completa para empresas que buscam excelência estratégica e implementação assistida",
     features: [
