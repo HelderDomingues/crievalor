@@ -30,8 +30,8 @@ export const PLANS = {
   BASIC: {
     id: "basic_plan",
     name: "Plano Básico",
-    price: 89.90,
-    priceLabel: "R$ 89,90",
+    price: 179.90,
+    priceLabel: "R$ 179,90",
     features: ["Consultoria inicial", "Acesso ao material básico", "Suporte por email"],
   },
   PRO: {

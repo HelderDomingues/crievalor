@@ -3,11 +3,6 @@ import { DocumentType, PricingPlan } from "./types";
 
 // Tipos de documentos disponíveis
 const documentTypes: Record<string, DocumentType> = {
-  diagnostico: {
-    icon: File,
-    name: "Diagnóstico Inicial",
-    included: true
-  },
   planoEstrategico: {
     icon: FileText,
     name: "Plano Estratégico",
@@ -15,7 +10,7 @@ const documentTypes: Record<string, DocumentType> = {
   },
   relatorioCompleto: {
     icon: FileCheck,
-    name: "Relatório Completo",
+    name: "Relatórios Completos",
     included: true
   },
   workshop: {
@@ -23,77 +18,89 @@ const documentTypes: Record<string, DocumentType> = {
     name: "Workshop de Implementação",
     included: true
   },
-  apresentacao: {
-    icon: Presentation,
-    name: "Apresentação Executiva",
+  vip: {
+    icon: VIP,
+    name: "Conteúdos esclusivos",
     included: true
+  },
+  mentoria: {
+    icon: Roadmap,
+    name: "Mentoria Especializada",
+    included: true
+  },
+  revisao: {
+    icon: Review,
+    name: "Revisão do MAR",
+    included: true 
   }
 };
 
 // Dados dos planos
 export const plans: PricingPlan[] = [
   {
-    id: "plano_essencial_mensal",
-    name: "Essencial",
-    monthlyPrice: "R$ 179,90",
-    description: "Solução self-service com assistência de IA para empreendedores que querem autonomia",
-    features: [
-      "Plano Estratégico guiado por IA",
-      "Assistência de IA para diagnóstico",
-      "Templates estratégicos",
-      "Suporte por email"
-    ],
-    documents: [
-      {...documentTypes.diagnostico, included: true},
-      {...documentTypes.planoEstrategico, included: true},
-      {...documentTypes.relatorioCompleto, included: false}
-    ],
-    cta: "Começar agora",
-    ctaUrl: "/subscription?plan=plano_essencial_mensal"
-  },
-  {
     id: "basic_plan",
-    name: "Básico",
-    monthlyPrice: "R$ 179,90",
+    name: "Essencial",
+    monthlyPrice: "12 x de R$ 179,90",
     annualPrice: "R$ 1.799,00",
     annualDiscount: true,
-    description: "Combinação ideal de IA e expertise humana para empreendedores iniciando sua jornada estratégica",
+    description: "Combinação ideal de expertise humana e IA para empreendedores iniciando sua jornada estratégica",
     features: [
-      "Plano Estratégico assistido por especialistas",
-      "Diagnóstico inicial do negócio",
-      "Análise SWOT assistida por IA",
-      "Recomendações personalizadas",
-      "Email de suporte prioritário"
+      "Plano Estratégico simplificado: 
+        "• Estratégias de Negócios e Comerciais",
+        "• Estratégias de Marketing",
+        "• Planos de Ação prontos para executar",
+      "Recomendações 100% personalizadas",
+      "Workshop de implantação",
+      "Suporte por e-mail",
+      "Acesso à comunidade",
+      "Apenas 1 usuário",
+      "1 revisão geral do MAR"
     ],
     documents: [
-      documentTypes.diagnostico,
       documentTypes.planoEstrategico,
-      {...documentTypes.relatorioCompleto, included: false}
+      documentTypes.revisao
+      {...documentTypes.relatorioCompleto, included: false},
+      {...documenteTypes.mentoria, included: false}
     ],
-    cta: "Começar agora",
+    cta: "Quero este plano",
     ctaUrl: "/subscription?plan=basic_plan"
   },
   {
     id: "pro_plan",
     name: "Profissional",
-    monthlyPrice: "R$ 299,90",
+    monthlyPrice: "12 x de R$ 299,90",
     annualPrice: "R$ 2.999,00",
     annualDiscount: true,
-    description: "Para empreendedores em crescimento que precisam de estratégias mais estruturadas e acompanhamento",
+    description: "Para empreendedores em crescimento que precisam de estratégias mais estruturadas e detalhamento técnico",
     features: [
       "Plano Estratégico detalhado e personalizado",
-      "Tudo do plano Básico",
-      "2 sessões de mentoria especializada",
-      "Suporte prioritário com especialistas",
-      "Acesso à comunidade exclusiva"
+      "Relatórios completos de todo o processo",
+        "• Análise de Segmento",
+        "• Análise de presença digital"
+        "• Análise da concorrência",
+        "• Relatório de Inteligência Competitiva",
+        "• Posicionamento Estratégico",
+        "• Branding e Identidade da Marca",
+        "• Estratégias de Negócios e Comercial",
+        "• Estratégias de Marketing",
+        "• Planos de Ação prontos para executar",
+      "Recomendações 100% personalizadas",
+      "Revisão por especialistas";
+      "Workshop de implantacão",
+      "Sessão estratégica exclusiva",
+      "Suporte via Whatsapp por 30 dias"
+      "Acesso à comunidade"
+      "Até 3 usuários",
+      "2 revisões gerais do MAR"
     ],
     documents: [
-      documentTypes.diagnostico,
       documentTypes.planoEstrategico,
-      {...documentTypes.relatorioCompleto, included: false},
-      {...documentTypes.workshop, included: false}
+      {...documentTypes.relatorioCompleto, included: true},
+      {...documentTypes.workshop, included: true},
+      {...documentTypes.mentoria: true},
+      {...documentTypes.revisao: true}
     ],
-    cta: "Escolher Profissional",
+    cta: "Quero este plano",
     ctaUrl: "/subscription?plan=pro_plan",
     popular: true
   },
@@ -105,22 +112,36 @@ export const plans: PricingPlan[] = [
     annualDiscount: true,
     description: "Solução completa para empresas que buscam excelência estratégica e implementação assistida",
     features: [
-      "Plano Estratégico completo com KPIs e métricas",
-      "Tudo do plano Profissional",
-      "Relatório completo com KPIs",
-      "Workshop de implementação",
-      "4 sessões de mentoria avançada",
-      "Acesso VIP a eventos exclusivos",
-      "Consultoria especializada"
+      "Plano Estratégico completo",
+       "Relatórios completos de todo o processo",
+        "• Análise de Segmento",
+        "• Análise de presença digital"
+        "• Análise da concorrência",
+        "• Relatório de Inteligência Competitiva",
+        "• Posicionamento Estratégico",
+        "• Branding e Identidade da Marca",
+        "• Estratégias de Negócios e Comercial",
+        "• Estratégias de Marketing",
+        "• Planos de Ação prontos para executar",
+      "Recomendações 100% personalizadas",
+      "Revisão por especialistas";
+      "Workshop de implantacão",
+      "Suporte via Whatsapp por 30 dias"
+      "Acesso à comunidade"
+      "4 sessões de mentoria estratégica",
+      "Acesso VIP a conteúdos exclusivos",
+      "Traga sua equipe para construir junto"
+        "• Até 5 usuários",
+      "até 3 revisões gerais do MAR"
     ],
     documents: [
-      documentTypes.diagnostico,
       documentTypes.planoEstrategico,
       documentTypes.relatorioCompleto,
       documentTypes.workshop,
-      documentTypes.apresentacao
+      documentTypes.vip,
+      documentTypes.revisao
     ],
-    cta: "Falar com Consultor",
+    cta: "Quero este plano",
     ctaUrl: "/subscription?plan=enterprise_plan"
   },
   {
@@ -130,20 +151,26 @@ export const plans: PricingPlan[] = [
     features: [
       "Plano Estratégico corporativo personalizado",
       "Estratégia completamente personalizada",
-      "Equipe dedicada de consultores",
+      "Equipe de consultores",
       "Implementação assistida",
       "Workshops para equipe de liderança",
-      "Acompanhamento contínuo",
-      "Relatórios trimestrais de progresso"
+      "Acompanhamento contínuo por 30 dias",
+      "Acesso à comunidade"
+      "sessões de mentoria estratégica",
+      "Acesso VIP a conteúdos exclusivos",
+      "Traga sua equipe para construir junto"
+        "• Até 5 usuários",
+      "até 3 revisões gerais do MAR"
     ],
     documents: [
       documentTypes.diagnostico,
       documentTypes.planoEstrategico,
       documentTypes.relatorioCompleto,
       documentTypes.workshop,
-      documentTypes.apresentacao
+      documentTypes.vip,
+      documentTypes.revisao
     ],
-    cta: "Solicitar Proposta",
+    cta: "Falar com consultor",
     ctaUrl: "/contato?assunto=plano-corporativo",
     customPrice: true
   }
