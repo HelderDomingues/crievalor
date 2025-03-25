@@ -121,41 +121,47 @@ export type Database = {
       }
       subscriptions: {
         Row: {
+          asaas_customer_id: string | null
+          asaas_payment_link: string | null
+          asaas_subscription_id: string | null
           contract_accepted: boolean | null
           contract_accepted_at: string | null
           created_at: string
           current_period_end: string | null
           id: string
+          installments: number | null
           plan_id: string
           status: string
-          stripe_customer_id: string | null
-          stripe_subscription_id: string | null
           updated_at: string
           user_id: string
         }
         Insert: {
+          asaas_customer_id?: string | null
+          asaas_payment_link?: string | null
+          asaas_subscription_id?: string | null
           contract_accepted?: boolean | null
           contract_accepted_at?: string | null
           created_at?: string
           current_period_end?: string | null
           id?: string
+          installments?: number | null
           plan_id: string
           status: string
-          stripe_customer_id?: string | null
-          stripe_subscription_id?: string | null
           updated_at?: string
           user_id: string
         }
         Update: {
+          asaas_customer_id?: string | null
+          asaas_payment_link?: string | null
+          asaas_subscription_id?: string | null
           contract_accepted?: boolean | null
           contract_accepted_at?: string | null
           created_at?: string
           current_period_end?: string | null
           id?: string
+          installments?: number | null
           plan_id?: string
           status?: string
-          stripe_customer_id?: string | null
-          stripe_subscription_id?: string | null
           updated_at?: string
           user_id?: string
         }
