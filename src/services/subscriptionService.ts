@@ -1,3 +1,4 @@
+
 import { supabase } from "@/integrations/supabase/client";
 
 // Define subscription types
@@ -93,15 +94,24 @@ export const subscriptionService = {
         throw new Error("CPF ou CNPJ é obrigatório");
       }
       
+      // Prepare customer data according to Asaas API requirements
+      const customerData = {
+        name: profile.full_name || profile.username || "Cliente",
+        email: profile.email,
+        phone: profile.phone || "",
+        cpfCnpj: cpfCnpj,
+        mobilePhone: profile.phone || "", // Adding mobile phone as it may be required
+        address: profile.company_address || "",
+        postalCode: "", // This could be added to profile if needed
+        externalReference: profile.id // Using user ID as external reference
+      };
+      
+      console.log("Sending customer data to Asaas:", customerData);
+      
       const response = await supabase.functions.invoke("asaas", {
         body: {
           action: "create-customer",
-          data: {
-            name: profile.full_name || profile.username || "Cliente",
-            email: profile.email,
-            phone: profile.phone || "",
-            cpfCnpj: cpfCnpj,
-          },
+          data: customerData,
         },
       });
 
@@ -158,7 +168,7 @@ export const subscriptionService = {
         throw new Error("User profile not found");
       }
       
-      // Validate required fields
+      // Validate required fields based on Asaas documentation
       if (!profile.full_name) {
         throw new Error("Nome completo é obrigatório");
       }
@@ -199,21 +209,30 @@ export const subscriptionService = {
       // Calculate the payment value based on installments
       const paymentValue = installments === 1 ? regularPlan.cashPrice : regularPlan.totalPrice;
       
+      // Prepare payment data according to Asaas API requirements
+      const paymentData = {
+        customerId,
+        planId,
+        value: paymentValue,
+        description: `Compra: ${regularPlan.name}`,
+        successUrl,
+        cancelUrl,
+        installments,
+        nextDueDate: new Date(Date.now() + 3600 * 1000 * 24).toISOString().split('T')[0], // tomorrow
+        generateLink: true,
+        billingType: installments > 1 ? "CREDIT_CARD" : "UNDEFINED",
+        dueDate: new Date(Date.now() + 3600 * 1000 * 24).toISOString().split('T')[0],
+        externalReference: user.id,
+        postalService: false
+      };
+      
+      console.log("Sending payment data to Asaas:", paymentData);
+      
       // Create payment in Asaas for one-time purchase with installments
       const response = await supabase.functions.invoke("asaas", {
         body: {
           action: "create-payment",
-          data: {
-            customerId,
-            planId,
-            value: paymentValue,
-            description: `Compra: ${regularPlan.name}`,
-            successUrl,
-            cancelUrl,
-            installments,
-            nextDueDate: new Date(Date.now() + 3600 * 1000 * 24).toISOString().split('T')[0], // tomorrow
-            generateLink: true
-          },
+          data: paymentData,
         },
       });
 

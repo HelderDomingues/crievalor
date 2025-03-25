@@ -108,7 +108,7 @@ serve(async (req) => {
 
     switch (action) {
       case "create-customer": {
-        const { name, email, phone, cpfCnpj } = data;
+        const { name, email, phone, cpfCnpj, mobilePhone, address, postalCode, externalReference } = data;
         
         console.log("Creating customer with data:", { name, email, phone, cpfCnpj });
         
@@ -120,14 +120,21 @@ serve(async (req) => {
         }
         
         try {
-          // Create customer in Asaas
-          const customer = await asaasRequest("/customers", "POST", {
+          // Create customer in Asaas with all available fields from the documentation
+          const customerData = {
             name: name || "Cliente",
             email: email || "",
             phone: phone || "",
+            mobilePhone: mobilePhone || phone || "",
             cpfCnpj: cpfCnpj,
+            address: address || "",
+            postalCode: postalCode || "",
+            externalReference: externalReference || "",
             notificationDisabled: false
-          });
+          };
+          
+          // Create customer in Asaas
+          const customer = await asaasRequest("/customers", "POST", customerData);
           
           result = { customer };
         } catch (error) {
