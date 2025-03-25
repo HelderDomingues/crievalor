@@ -1,11 +1,10 @@
-
 import { supabase } from "@/integrations/supabase/client";
 
 // Define subscription types
 export interface Subscription {
   id: string;
   user_id: string;
-  stripe_customer_id: string | null;
+  stripe_customer_id: string | null; // Customer ID (will be used for Asaas)
   asaas_subscription_id: string | null;
   asaas_payment_link: string | null;
   plan_id: string;
@@ -25,7 +24,8 @@ export const PLANS = {
     name: "Plano Essencial",
     price: 179.90,
     priceLabel: "12x de R$ 179,90",
-    totalPrice: 1942.92,
+    totalPrice: 2158.80, // 12 * 179.90
+    cashPrice: 1942.92, // 10% discount on total
     features: ["Plano Estratégico simplificado", "Workshop de implantação", "Suporte por e-mail", "Acesso à comunidade"],
   },
   PRO: {
@@ -33,7 +33,8 @@ export const PLANS = {
     name: "Plano Profissional",
     price: 299.90,
     priceLabel: "12x de R$ 299,90",
-    totalPrice: 3238.92,
+    totalPrice: 3598.80, // 12 * 299.90
+    cashPrice: 3238.92, // 10% discount on total
     features: ["Plano Estratégico detalhado", "Relatórios completos", "Workshop de implantação", "Sessão estratégica exclusiva", "Suporte via Whatsapp"],
   },
   ENTERPRISE: {
@@ -41,16 +42,9 @@ export const PLANS = {
     name: "Plano Empresarial",
     price: 799.90,
     priceLabel: "12x de R$ 799,90",
-    totalPrice: 8638.92,
+    totalPrice: 9598.80, // 12 * 799.90
+    cashPrice: 8638.92, // 10% discount on total
     features: ["Plano Estratégico completo", "Relatórios completos", "Mentoria estratégica", "Acesso VIP a conteúdos exclusivos", "Suporte prioritário"],
-  },
-  CORPORATE: {
-    id: "corporate_plan",
-    name: "Plano Corporativo",
-    price: 0,
-    priceLabel: "Sob consulta",
-    totalPrice: 0,
-    features: ["Plano Estratégico personalizado", "Equipe de consultores", "Implementação assistida", "Workshops para equipe de liderança"],
   }
 };
 
@@ -117,10 +111,9 @@ export const subscriptionService = {
         .maybeSingle();
         
       // Check if user already has an Asaas customer ID
-      // We need to handle the error case properly here
       const { data: existingSub, error: subError } = await supabase
         .from("subscriptions")
-        .select("stripe_customer_id")
+        .select("stripe_customer_id") // This field is being used for Asaas customer ID
         .eq("user_id", user.id)
         .maybeSingle();
       
@@ -146,31 +139,36 @@ export const subscriptionService = {
         customerId = customer.id;
       }
       
-      // Create subscription in Asaas
+      // Calculate the payment value based on installments
+      const paymentValue = installments === 1 ? plan.cashPrice : plan.price;
+      
+      // Create payment in Asaas for one-time purchase with installments
       const response = await supabase.functions.invoke("asaas", {
         body: {
-          action: "create-subscription",
+          action: "create-payment",
           data: {
             customerId,
             planId,
-            value: plan.price,
-            description: `Assinatura: ${plan.name}`,
+            value: installments === 1 ? plan.cashPrice : plan.totalPrice,
+            description: `Compra: ${plan.name}`,
             successUrl,
+            cancelUrl,
             installments,
             nextDueDate: new Date(Date.now() + 3600 * 1000 * 24).toISOString().split('T')[0], // tomorrow
+            generateLink: true
           },
         },
       });
 
       if (response.error) {
-        console.error("Error creating Asaas subscription:", response.error);
-        throw new Error(`Error creating subscription: ${response.error.message}`);
+        console.error("Error creating Asaas payment:", response.error);
+        throw new Error(`Error creating payment: ${response.error.message}`);
       }
 
-      console.log("Asaas subscription created successfully:", response.data);
+      console.log("Asaas payment created successfully:", response.data);
       return {
         url: response.data.paymentLink,
-        subscription: response.data.subscription,
+        payment: response.data.payment,
         dbSubscription: response.data.dbSubscription
       };
     } catch (error: any) {

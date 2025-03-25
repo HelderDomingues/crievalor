@@ -1,4 +1,3 @@
-
 import { serve } from "https://deno.land/std@0.208.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.38.4";
 
@@ -7,7 +6,7 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-const ASAAS_API_BASE_URL = "https://api.asaas.com/v3";
+const ASAAS_API_BASE_URL = "https://sandbox.asaas.com/api/v3";
 const ASAAS_API_KEY = Deno.env.get("ASAAS_API_KEY") || "";
 
 serve(async (req) => {
@@ -110,8 +109,9 @@ serve(async (req) => {
       }
         
       case "create-payment": {
-        const { customerId, value, description, installments = 1, dueDate } = data;
+        const { customerId, value, description, installments = 1, dueDate, planId, successUrl, cancelUrl, generateLink = false } = data;
         
+        // Create payment in Asaas
         const paymentData: any = {
           customer: customerId,
           billingType: installments > 1 ? "CREDIT_CARD" : "UNDEFINED",
@@ -125,14 +125,17 @@ serve(async (req) => {
           paymentData.installmentValue = (value / installments).toFixed(2);
         }
         
+        console.log("Creating payment with data:", paymentData);
+        
         // Create payment in Asaas
         const payment = await asaasRequest("/payments", "POST", paymentData);
         
-        // For credit card payments, we'll generate a payment link
+        // Generate payment link
         let paymentLink = null;
-        if (installments > 1 || data.generateLink) {
+        if (generateLink) {
+          console.log("Generating payment link for payment:", payment.id);
           const linkData = await asaasRequest(`/paymentLinks`, "POST", {
-            name: description || "Assinatura de Plano",
+            name: description || "Compra de Plano",
             description: `Pagamento ${description}`,
             endDate: new Date(Date.now() + 3600 * 1000 * 24 * 7).toISOString().split('T')[0], // 7 days from now
             value,
@@ -145,7 +148,7 @@ serve(async (req) => {
             externalReference: payment.id,
             callback: {
               autoRedirect: true,
-              successUrl: `${data.successUrl || ""}`,
+              successUrl: successUrl || "",
               autoRedirectDelay: 5
             }
           });
@@ -153,7 +156,32 @@ serve(async (req) => {
           paymentLink = linkData.url;
         }
         
-        result = { payment, paymentLink };
+        // Save subscription data in database - using existing subscriptions table
+        const { data: subscriptionData, error: subError } = await supabase
+          .from("subscriptions")
+          .upsert({
+            user_id: user.id,
+            stripe_customer_id: customerId, // Using this field for Asaas customer ID
+            asaas_subscription_id: payment.id, // Using this for payment ID
+            asaas_payment_link: paymentLink,
+            plan_id: planId,
+            status: payment.status || "pending",
+            installments,
+            current_period_end: null, // Since it's a one-time payment
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString()
+          }, { onConflict: 'user_id', returning: 'representation' });
+          
+        if (subError) {
+          console.error("Error saving payment data to database:", subError);
+          throw new Error(`Error saving payment data: ${subError.message}`);
+        }
+        
+        result = { 
+          payment, 
+          paymentLink,
+          dbSubscription: subscriptionData?.[0] 
+        };
         break;
       }
         
