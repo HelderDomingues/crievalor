@@ -1,15 +1,15 @@
 
 import React from "react";
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { CheckCircle, Loader2 } from "lucide-react";
+import { Check, Loader2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 interface SubscriptionPlanProps {
   id: string;
   name: string;
-  price: string;
-  basePrice: number;
+  price: string | undefined;
+  basePrice?: number;
   features: string[];
   isCurrentPlan: boolean;
   isCheckingOut: boolean;
@@ -17,7 +17,7 @@ interface SubscriptionPlanProps {
   installments?: number;
 }
 
-const SubscriptionPlan = ({
+const SubscriptionPlan: React.FC<SubscriptionPlanProps> = ({
   id,
   name,
   price,
@@ -27,56 +27,68 @@ const SubscriptionPlan = ({
   isCheckingOut,
   onSubscribe,
   installments = 1,
-}: SubscriptionPlanProps) => {
-  // Calculate installment price
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL',
-    }).format(value);
+}) => {
+  // Plano corporativo "sob consulta"
+  const isCorporate = id === "corporate_plan";
+  
+  // Button states
+  const buttonDisabled = isCurrentPlan || isCheckingOut;
+  
+  const handleSubscribe = () => {
+    if (isCorporate) {
+      // Redirecionar para página de contato
+      window.location.href = "/contato?assunto=plano-corporativo";
+      return;
+    }
+    
+    onSubscribe(id);
   };
-
-  const installmentPrice = basePrice / installments;
-  const formattedInstallmentPrice = formatCurrency(installmentPrice);
-
+  
   return (
-    <Card className="flex flex-col">
+    <Card className="flex flex-col h-full">
       <CardHeader>
-        <CardTitle>{name}</CardTitle>
-        <CardDescription className="flex flex-col mt-2">
-          <span className="text-2xl font-bold">{price}</span>
-          {installments > 1 && (
-            <div className="mt-1">
-              <Badge variant="outline" className="font-normal">
-                {installments}x de {formattedInstallmentPrice}
-              </Badge>
-            </div>
+        <CardTitle className="flex flex-col gap-2">
+          <span>{name}</span>
+          {isCurrentPlan && (
+            <Badge variant="outline" className="self-start">Plano Atual</Badge>
           )}
-        </CardDescription>
+        </CardTitle>
+        
+        <div className="text-2xl font-bold mt-2">
+          {isCorporate ? (
+            <span>Sob Consulta</span>
+          ) : (
+            <span>{price}</span>
+          )}
+        </div>
       </CardHeader>
+      
       <CardContent className="flex-grow">
         <ul className="space-y-2">
           {features.map((feature, index) => (
-            <li key={index} className="flex items-start gap-2">
-              <CheckCircle className="h-5 w-5 text-green-500 shrink-0 mt-0.5" />
-              <span>{feature}</span>
+            <li key={index} className="flex items-start">
+              <Check className="h-5 w-5 text-green-500 mr-2 flex-shrink-0" />
+              <span className="text-sm">{feature}</span>
             </li>
           ))}
         </ul>
       </CardContent>
+      
       <CardFooter>
-        <Button 
-          className="w-full" 
-          onClick={() => onSubscribe(id)}
-          disabled={isCheckingOut || isCurrentPlan}
+        <Button
+          className="w-full"
+          onClick={handleSubscribe}
+          disabled={buttonDisabled}
         >
-          {isCheckingOut ? (
+          {isCurrentPlan ? (
+            "Plano Atual"
+          ) : isCheckingOut ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               Processando...
             </>
-          ) : isCurrentPlan ? (
-            "Plano Atual"
+          ) : isCorporate ? (
+            "Falar com Consultor"
           ) : (
             "Assinar"
           )}

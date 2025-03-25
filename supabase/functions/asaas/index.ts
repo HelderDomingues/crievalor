@@ -1,3 +1,4 @@
+
 import { serve } from "https://deno.land/std@0.208.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.38.4";
 
@@ -80,20 +81,30 @@ serve(async (req) => {
         options.body = JSON.stringify(payload);
       }
       
-      const response = await fetch(url, options);
-      const data = await response.json();
-      
-      if (!response.ok) {
-        console.error("Asaas API error:", data);
-        throw new Error(`Asaas API error: ${data.errors?.[0]?.description || "Unknown error"}`);
+      try {
+        const response = await fetch(url, options);
+        const data = await response.json();
+        
+        console.log(`Asaas API response status: ${response.status}`);
+        console.log(`Asaas API response body:`, data);
+        
+        if (!response.ok) {
+          console.error("Asaas API error:", data);
+          throw new Error(`Asaas API error: ${data.errors?.[0]?.description || JSON.stringify(data) || "Unknown error"}`);
+        }
+        
+        return data;
+      } catch (error) {
+        console.error(`Error in Asaas request to ${url}:`, error);
+        throw error;
       }
-      
-      return data;
     }
 
     switch (action) {
       case "create-customer": {
         const { name, email, phone, cpfCnpj } = data;
+        
+        console.log("Creating customer with data:", { name, email, phone, cpfCnpj });
         
         // Create customer in Asaas
         const customer = await asaasRequest("/customers", "POST", {
@@ -134,7 +145,9 @@ serve(async (req) => {
         let paymentLink = null;
         if (generateLink) {
           console.log("Generating payment link for payment:", payment.id);
-          const linkData = await asaasRequest(`/paymentLinks`, "POST", {
+          
+          // Define data for payment link
+          const linkData = {
             name: description || "Compra de Plano",
             description: `Pagamento ${description}`,
             endDate: new Date(Date.now() + 3600 * 1000 * 24 * 7).toISOString().split('T')[0], // 7 days from now
@@ -151,9 +164,14 @@ serve(async (req) => {
               successUrl: successUrl || "",
               autoRedirectDelay: 5
             }
-          });
+          };
           
-          paymentLink = linkData.url;
+          console.log("Creating payment link with data:", linkData);
+          
+          const linkResponse = await asaasRequest(`/paymentLinks`, "POST", linkData);
+          console.log("Payment link created:", linkResponse);
+          
+          paymentLink = linkResponse.url;
         }
         
         // Save subscription data in database - using renamed columns

@@ -149,39 +149,54 @@ export function useProfile() {
       setAvatarUploading(true);
       
       // Check if the storage bucket exists, create if not
-      const { data: buckets } = await supabase.storage.listBuckets();
-      const avatarBucketExists = buckets?.some(bucket => bucket.name === 'avatars');
-      
-      if (!avatarBucketExists) {
-        const { error: createBucketError } = await supabase.storage.createBucket('avatars', {
-          public: true,
-        });
+      try {
+        const { data: buckets } = await supabase.storage.listBuckets();
+        const avatarBucketExists = buckets?.some(bucket => bucket.name === 'avatars');
         
-        if (createBucketError) {
-          throw createBucketError;
+        if (!avatarBucketExists) {
+          console.log("Creating avatars bucket");
+          const { error: createBucketError } = await supabase.storage.createBucket('avatars', {
+            public: true,
+          });
+          
+          if (createBucketError) {
+            console.error("Error creating avatars bucket:", createBucketError);
+          }
         }
+      } catch (bucketError) {
+        console.error("Error checking/creating avatars bucket:", bucketError);
+        // Continue with upload attempt even if bucket check/creation fails
       }
       
       // Create a unique file path for the avatar
       const fileExt = file.name.split('.').pop();
       const filePath = `${user.id}/${uuidv4()}.${fileExt}`;
       
+      console.log(`Uploading avatar to path: ${filePath}`);
+      
       // Upload the file
-      const { error: uploadError } = await supabase.storage
+      const { error: uploadError, data: uploadData } = await supabase.storage
         .from('avatars')
         .upload(filePath, file, {
           upsert: true,
+          cacheControl: '3600',
+          contentType: file.type
         });
         
       if (uploadError) {
+        console.error("Error uploading file:", uploadError);
         throw uploadError;
       }
+      
+      console.log("File uploaded successfully:", uploadData);
       
       // Get the public URL
       const { data: urlData } = supabase.storage
         .from('avatars')
         .getPublicUrl(filePath);
         
+      console.log("Public URL:", urlData.publicUrl);
+      
       // Update the user profile with the new avatar URL
       const { error: updateError } = await supabase
         .from('profiles')
@@ -189,6 +204,7 @@ export function useProfile() {
         .eq('id', user.id);
         
       if (updateError) {
+        console.error("Error updating profile with avatar URL:", updateError);
         throw updateError;
       }
       

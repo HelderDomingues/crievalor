@@ -17,48 +17,27 @@ import { Textarea } from "@/components/ui/textarea";
 import AvatarUpload from "@/components/AvatarUpload";
 import { UserProfile } from "@/types/auth";
 import { useToast } from "@/components/ui/use-toast";
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import * as z from "zod";
 import SubscriptionDetails from "@/components/profile/SubscriptionDetails";
-import { subscriptionService } from "@/services/subscriptionService";
-
-const ProfileSchema = z.object({
-  username: z.string().min(3, "Nome de usuário deve ter pelo menos 3 caracteres"),
-  full_name: z.string().min(3, "Nome completo é obrigatório"),
-  phone: z.string().min(10, "Telefone inválido").optional().or(z.literal("")),
-  company_name: z.string().min(2, "Nome da empresa é obrigatório"),
-  company_address: z.string().min(5, "Endereço da empresa é obrigatório"),
-  website: z.string().url("URL inválida").optional().or(z.literal("")),
-  social_media: z.object({
-    linkedin: z.string().url("URL inválida").optional().or(z.literal("")),
-    twitter: z.string().url("URL inválida").optional().or(z.literal("")),
-    instagram: z.string().url("URL inválida").optional().or(z.literal("")),
-    facebook: z.string().url("URL inválida").optional().or(z.literal(""))
-  }).optional(),
-  cnpj: z.string().optional().or(z.literal(""))
-});
-
-type ProfileFormValues = z.infer<typeof ProfileSchema>;
 
 // Component for editable field
-const EditableField = ({ 
+const ProfileField = ({ 
   label, 
   value, 
   fieldName, 
   onSave,
   loading,
-  isTextarea = false
+  isTextarea = false,
+  placeholder = ""
 }: { 
   label: string; 
-  value: string; 
+  value: string | null | undefined; 
   fieldName: string; 
   onSave: (field: string, value: string) => Promise<void>;
   loading: boolean;
   isTextarea?: boolean;
+  placeholder?: string;
 }) => {
-  const [isEditing, setIsEditing] = useState(false);
+  const [isEditing, setIsEditing] = useState(!value);
   const [fieldValue, setFieldValue] = useState(value || "");
   const [isSaving, setIsSaving] = useState(false);
   const { toast } = useToast();
@@ -135,6 +114,7 @@ const EditableField = ({
           onChange={(e) => setFieldValue(e.target.value)}
           disabled={!isEditing || isSaving || loading}
           className="w-full"
+          placeholder={placeholder}
           rows={3}
         />
       ) : (
@@ -144,6 +124,7 @@ const EditableField = ({
           onChange={(e) => setFieldValue(e.target.value)}
           disabled={!isEditing || isSaving || loading}
           className="w-full"
+          placeholder={placeholder}
         />
       )}
     </div>
@@ -156,15 +137,17 @@ const SocialMediaField = ({
   value, 
   platform, 
   onSave,
-  loading
+  loading,
+  placeholder
 }: { 
   label: string; 
-  value: string; 
+  value: string | undefined; 
   platform: string; 
   onSave: (field: string, value: string) => Promise<void>;
   loading: boolean;
+  placeholder: string;
 }) => {
-  const [isEditing, setIsEditing] = useState(false);
+  const [isEditing, setIsEditing] = useState(!value);
   const [fieldValue, setFieldValue] = useState(value || "");
   const [isSaving, setIsSaving] = useState(false);
   const { toast } = useToast();
@@ -240,7 +223,7 @@ const SocialMediaField = ({
         onChange={(e) => setFieldValue(e.target.value)}
         disabled={!isEditing || isSaving || loading}
         className="w-full"
-        placeholder={`https://${platform}.com/seuperfil`}
+        placeholder={placeholder}
       />
     </div>
   );
@@ -409,28 +392,31 @@ const Profile = () => {
                         <div className="space-y-4">
                           <h3 className="text-lg font-medium">Dados Pessoais</h3>
                           
-                          <EditableField
+                          <ProfileField
                             label="Nome de Usuário"
                             value={profile?.username || ""}
                             fieldName="username"
                             onSave={handleSaveField}
                             loading={loading}
+                            placeholder="Seu nome de usuário"
                           />
                           
-                          <EditableField
+                          <ProfileField
                             label="Nome Completo"
                             value={profile?.full_name || ""}
                             fieldName="full_name"
                             onSave={handleSaveField}
                             loading={loading}
+                            placeholder="Seu nome completo"
                           />
                           
-                          <EditableField
+                          <ProfileField
                             label="Telefone"
                             value={profile?.phone || ""}
                             fieldName="phone"
                             onSave={handleSaveField}
                             loading={loading}
+                            placeholder="Seu telefone com DDD"
                           />
                         </div>
                       )}
@@ -439,37 +425,41 @@ const Profile = () => {
                         <div className="space-y-4">
                           <h3 className="text-lg font-medium">Dados da Empresa</h3>
                           
-                          <EditableField
+                          <ProfileField
                             label="Nome da Empresa"
                             value={profile?.company_name || ""}
                             fieldName="company_name"
                             onSave={handleSaveField}
                             loading={loading}
+                            placeholder="Nome da sua empresa"
                           />
                           
-                          <EditableField
+                          <ProfileField
                             label="Endereço da Empresa"
                             value={profile?.company_address || ""}
                             fieldName="company_address"
                             onSave={handleSaveField}
                             loading={loading}
                             isTextarea={true}
+                            placeholder="Endereço completo da empresa"
                           />
                           
-                          <EditableField
+                          <ProfileField
                             label="Website"
                             value={profile?.website || ""}
                             fieldName="website"
                             onSave={handleSaveField}
                             loading={loading}
+                            placeholder="https://www.seusite.com.br"
                           />
                           
-                          <EditableField
+                          <ProfileField
                             label="CNPJ"
                             value={profile?.cnpj || ""}
                             fieldName="cnpj"
                             onSave={handleSaveField}
                             loading={loading}
+                            placeholder="00.000.000/0000-00"
                           />
                         </div>
                       )}
@@ -480,34 +470,38 @@ const Profile = () => {
                           
                           <SocialMediaField
                             label="LinkedIn"
-                            value={profile?.social_media?.linkedin || ""}
+                            value={profile?.social_media?.linkedin}
                             platform="linkedin"
                             onSave={handleSaveField}
                             loading={loading}
+                            placeholder="https://linkedin.com/in/seuperfil"
                           />
                           
                           <SocialMediaField
                             label="Instagram"
-                            value={profile?.social_media?.instagram || ""}
+                            value={profile?.social_media?.instagram}
                             platform="instagram"
                             onSave={handleSaveField}
                             loading={loading}
+                            placeholder="https://instagram.com/seuperfil"
                           />
                           
                           <SocialMediaField
                             label="Facebook"
-                            value={profile?.social_media?.facebook || ""}
+                            value={profile?.social_media?.facebook}
                             platform="facebook"
                             onSave={handleSaveField}
                             loading={loading}
+                            placeholder="https://facebook.com/seuperfil"
                           />
                           
                           <SocialMediaField
                             label="Twitter"
-                            value={profile?.social_media?.twitter || ""}
+                            value={profile?.social_media?.twitter}
                             platform="twitter"
                             onSave={handleSaveField}
                             loading={loading}
+                            placeholder="https://twitter.com/seuperfil"
                           />
                         </div>
                       )}

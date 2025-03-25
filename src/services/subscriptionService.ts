@@ -50,10 +50,7 @@ export const PLANS = {
   CORPORATE: {
     id: "corporate_plan",
     name: "Plano Corporativo",
-    price: 1499.90,
-    priceLabel: "12x de R$ 1499,90",
-    totalPrice: 17998.80, // 12 * 1499.90
-    cashPrice: 16198.92, // 10% discount on total
+    customPrice: true,
     features: ["Plano Estratégico personalizado", "Consultoria dedicada", "Mentoria para equipe completa", "Acesso prioritário ao CEO", "Implementação assistida"],
   }
 };
@@ -105,6 +102,10 @@ export const subscriptionService = {
         throw new Error(`Plan with ID ${planId} not found`);
       }
       
+      if (plan.customPrice) {
+        throw new Error("Este plano requer uma consulta personalizada");
+      }
+      
       console.log(`Creating checkout for plan: ${planId} with ${installments} installments`);
       
       // Get the current user
@@ -121,7 +122,7 @@ export const subscriptionService = {
         .maybeSingle();
         
       // Check if user already has an Asaas customer ID
-      const { data: existingSub, error: subError } = await supabase
+      const { data: existingSub } = await supabase
         .from("subscriptions")
         .select("asaas_customer_id")
         .eq("user_id", user.id)
@@ -130,8 +131,8 @@ export const subscriptionService = {
       // Initialize customerId as null
       let customerId = null;
       
-      // Only try to access asaas_customer_id if there's no error and data exists
-      if (!subError && existingSub) {
+      // Only try to access asaas_customer_id if data exists
+      if (existingSub?.asaas_customer_id) {
         customerId = existingSub.asaas_customer_id;
       }
       

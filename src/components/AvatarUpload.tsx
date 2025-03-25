@@ -55,25 +55,37 @@ const AvatarUpload: React.FC<AvatarUploadProps> = ({
     };
     reader.readAsDataURL(file);
 
-    // Upload to Supabase
-    const { error, url } = await uploadAvatar(file);
-    
-    if (error) {
+    try {
+      // Upload to Supabase
+      const { error, url } = await uploadAvatar(file);
+      
+      if (error) {
+        console.error("Error uploading avatar:", error);
+        toast({
+          variant: "destructive",
+          title: "Erro ao fazer upload",
+          description: error.message
+        });
+        // Revert preview
+        setPreviewUrl(avatarUrl);
+      } else if (url) {
+        toast({
+          title: "Avatar atualizado",
+          description: "Sua foto de perfil foi atualizada com sucesso."
+        });
+        if (onAvatarUploaded) {
+          onAvatarUploaded(url);
+        }
+      }
+    } catch (err) {
+      console.error("Unexpected error during avatar upload:", err);
       toast({
         variant: "destructive",
         title: "Erro ao fazer upload",
-        description: error.message
+        description: "Ocorreu um erro inesperado durante o upload."
       });
       // Revert preview
       setPreviewUrl(avatarUrl);
-    } else if (url) {
-      toast({
-        title: "Avatar atualizado",
-        description: "Sua foto de perfil foi atualizada com sucesso."
-      });
-      if (onAvatarUploaded) {
-        onAvatarUploaded(url);
-      }
     }
   };
 
