@@ -51,7 +51,6 @@ export const subscriptionService = {
       }
       
       // Properly handle the social_media object which might be a Json type
-      // First check if it exists and is an object
       const socialMediaObj = typeof profileData.social_media === 'object' && profileData.social_media !== null
         ? profileData.social_media
         : {};
@@ -76,7 +75,7 @@ export const subscriptionService = {
       const profileWithEmail = {
         ...profileData,
         email: user.email,
-        social_media: social_media // Replace Json with properly structured object
+        social_media: social_media
       };
       
       // Validate required fields based on Asaas documentation
@@ -116,6 +115,9 @@ export const subscriptionService = {
       // Calculate the payment value based on installments
       const paymentValue = plansService.calculatePaymentAmount(regularPlan, installments);
       
+      // Generate a unique reference ID to prevent duplicate payments
+      const uniqueReference = `pay_${user.id.substring(0, 8)}_${Date.now()}`;
+      
       // Prepare payment data according to Asaas API requirements
       const paymentData = {
         customerId,
@@ -129,7 +131,7 @@ export const subscriptionService = {
         generateLink: true,
         billingType: installments > 1 ? "CREDIT_CARD" : "UNDEFINED",
         dueDate: new Date(Date.now() + 3600 * 1000 * 24).toISOString().split('T')[0],
-        externalReference: user.id,
+        externalReference: uniqueReference,
         postalService: false
       };
       
@@ -149,11 +151,20 @@ export const subscriptionService = {
       }
 
       console.log("Asaas payment created successfully:", response.data);
-      return {
-        url: response.data.paymentLink,
-        payment: response.data.payment,
-        dbSubscription: response.data.dbSubscription
-      };
+      
+      // Important: Redirect directly to the payment link URL
+      if (response.data && response.data.paymentLink) {
+        // Add delay to ensure the Asaas payment link is ready
+        await new Promise(resolve => setTimeout(resolve, 500));
+        
+        return {
+          url: response.data.paymentLink,
+          payment: response.data.payment,
+          dbSubscription: response.data.dbSubscription
+        };
+      } else {
+        throw new Error("No payment link was returned from Asaas");
+      }
     } catch (error: any) {
       console.error("Error in createCheckoutSession:", error);
       throw error;

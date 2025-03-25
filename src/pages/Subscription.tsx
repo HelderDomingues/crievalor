@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
@@ -27,6 +26,7 @@ const SubscriptionPage = () => {
   const [isCanceling, setIsCanceling] = useState(false);
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
   const [selectedInstallments, setSelectedInstallments] = useState(1);
+  const [processingPayment, setProcessingPayment] = useState(false);
 
   const success = searchParams.get("success");
   const canceled = searchParams.get("canceled");
@@ -86,7 +86,13 @@ const SubscriptionPage = () => {
       return;
     }
 
+    if (processingPayment) {
+      console.log("Payment already processing, preventing duplicate submissions");
+      return;
+    }
+
     setIsCheckingOut(true);
+    setProcessingPayment(true);
     setCheckoutError(null);
     
     try {
@@ -94,8 +100,8 @@ const SubscriptionPage = () => {
       
       const result = await subscriptionService.createCheckoutSession({
         planId,
-        successUrl: `${window.location.origin}/subscription?success=true`,
-        cancelUrl: `${window.location.origin}/subscription?canceled=true`,
+        successUrl: `${window.location.origin}/checkout/success`,
+        cancelUrl: `${window.location.origin}/checkout/canceled`,
         installments: selectedInstallments
       });
       
@@ -111,6 +117,7 @@ const SubscriptionPage = () => {
       
       console.log("Redirecting to Asaas checkout:", result.url);
       
+      // Direct redirection to payment page
       window.location.href = result.url;
     } catch (error: any) {
       console.error("Error creating checkout session:", error);
@@ -122,8 +129,10 @@ const SubscriptionPage = () => {
         description: "Não foi possível iniciar o processo de assinatura. Por favor, tente novamente mais tarde.",
         variant: "destructive",
       });
+      setProcessingPayment(false);
     } finally {
       setIsCheckingOut(false);
+      // Note: we don't reset processingPayment here because we're redirecting
     }
   };
 
@@ -256,7 +265,7 @@ const SubscriptionPage = () => {
             
             <TabsContent value="plans">
               <SubscriptionPlans
-                isCheckingOut={isCheckingOut}
+                isCheckingOut={isCheckingOut || processingPayment}
                 isPlanCurrent={isPlanCurrent}
                 onSubscribe={handleSubscribe}
                 selectedInstallments={selectedInstallments}

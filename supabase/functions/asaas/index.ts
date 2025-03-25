@@ -1,4 +1,3 @@
-
 import { serve } from "https://deno.land/std@0.208.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.38.4";
 
@@ -106,6 +105,18 @@ serve(async (req) => {
       }
     }
 
+    // Check if payment exists with this external reference
+    async function checkExistingPayment(externalReference: string) {
+      try {
+        // Query payments filtering by external reference
+        const payments = await asaasRequest(`/payments?externalReference=${externalReference}`);
+        return payments?.data?.length > 0;
+      } catch (error) {
+        console.error("Error checking existing payment:", error);
+        return false;
+      }
+    }
+
     switch (action) {
       case "create-customer": {
         const { name, email, phone, cpfCnpj, mobilePhone, address, postalCode, externalReference } = data;
@@ -149,7 +160,7 @@ serve(async (req) => {
         
       case "create-payment": {
         try {
-          const { customerId, value, description, installments = 1, dueDate, planId, successUrl, cancelUrl, generateLink = false, nextDueDate } = data;
+          const { customerId, value, description, installments = 1, dueDate, planId, successUrl, cancelUrl, generateLink = false, nextDueDate, externalReference } = data;
           
           if (!customerId) {
             throw new Error("Missing customerId parameter");
@@ -159,7 +170,38 @@ serve(async (req) => {
             throw new Error("Missing value parameter");
           }
           
-          // Calcular data de vencimento (1 dia útil após a data atual)
+          if (!externalReference) {
+            throw new Error("Missing externalReference parameter");
+          }
+          
+          // Check for duplicate payment with same external reference
+          const paymentExists = await checkExistingPayment(externalReference);
+          if (paymentExists) {
+            console.log(`Payment with externalReference ${externalReference} already exists, returning existing payment`);
+            
+            // Get the existing payment link
+            const { data: existingLinks } = await asaasRequest(`/paymentLinks?externalReference=${externalReference}`);
+            
+            if (existingLinks && existingLinks.length > 0) {
+              // Find the subscription in database with the existing payment ID
+              const { data: subscriptionData } = await supabase
+                .from("subscriptions")
+                .select("*")
+                .eq("user_id", user.id)
+                .maybeSingle();
+              
+              return new Response(JSON.stringify({ 
+                payment: { id: externalReference, status: "PENDING" },
+                paymentLink: existingLinks[0].url,
+                dbSubscription: subscriptionData || null,
+                isExisting: true
+              }), {
+                headers: { ...corsHeaders, "Content-Type": "application/json" },
+              });
+            }
+          }
+          
+          // Calculate due date (1 business day after current date)
           const paymentDueDate = dueDate || new Date(Date.now() + 3600 * 1000 * 24).toISOString().split('T')[0]; // Default to tomorrow
           
           // Create payment in Asaas
@@ -169,6 +211,7 @@ serve(async (req) => {
             value,
             description: description || "Compra de Plano",
             dueDate: paymentDueDate,
+            externalReference: externalReference
           };
           
           if (installments > 1) {
@@ -194,12 +237,12 @@ serve(async (req) => {
               value,
               billingType: installments > 1 ? "CREDIT_CARD" : "UNDEFINED",
               chargeType: "DETACHED",
-              dueDateLimitDays: 1, // Importante! Adiciona o número de dias úteis para vencimento
+              dueDateLimitDays: 1, // Required parameter
               installmentSettings: installments > 1 ? {
                 installmentCount: installments,
                 installmentValue: (value / installments).toFixed(2)
               } : undefined,
-              externalReference: payment.id,
+              externalReference: externalReference,
               callback: {
                 autoRedirect: true,
                 successUrl: successUrl || "",
