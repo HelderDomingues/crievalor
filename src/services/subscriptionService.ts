@@ -4,6 +4,7 @@ import { Subscription, CreateCheckoutOptions } from "@/types/subscription";
 import { plansService } from "./plansService";
 import { asaasCustomerService } from "./asaasCustomerService";
 import { paymentsService } from "./paymentsService";
+import { v4 as uuidv4 } from 'uuid';
 
 export { PLANS } from "./plansService";
 export type { Plan, Subscription, CreateCheckoutOptions, RegularPlan, CustomPricePlan } from "@/types/subscription";
@@ -116,7 +117,7 @@ export const subscriptionService = {
       const paymentValue = plansService.calculatePaymentAmount(regularPlan, installments);
       
       // Generate a unique reference ID to prevent duplicate payments
-      const uniqueReference = `pay_${user.id.substring(0, 8)}_${Date.now()}`;
+      const uniqueReference = uuidv4();
       
       // Prepare payment data according to Asaas API requirements
       const paymentData = {
@@ -154,13 +155,13 @@ export const subscriptionService = {
       
       // Important: Redirect directly to the payment link URL
       if (response.data && response.data.paymentLink) {
-        // Add delay to ensure the Asaas payment link is ready
-        await new Promise(resolve => setTimeout(resolve, 500));
-        
+        // Use window.location.href for a hard redirect instead of returning a URL
+        // This ensures the user is taken directly to the Asaas payment page
         return {
           url: response.data.paymentLink,
           payment: response.data.payment,
-          dbSubscription: response.data.dbSubscription
+          dbSubscription: response.data.dbSubscription,
+          directRedirect: true
         };
       } else {
         throw new Error("No payment link was returned from Asaas");

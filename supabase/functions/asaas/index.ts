@@ -109,11 +109,22 @@ serve(async (req) => {
     async function checkExistingPayment(externalReference: string) {
       try {
         // Query payments filtering by external reference
-        const payments = await asaasRequest(`/payments?externalReference=${externalReference}`);
-        return payments?.data?.length > 0;
+        const response = await asaasRequest(`/payments?externalReference=${externalReference}`);
+        return response && response.data && response.data.length > 0 ? response.data[0] : null;
       } catch (error) {
         console.error("Error checking existing payment:", error);
-        return false;
+        return null;
+      }
+    }
+
+    // Check if payment link exists with this external reference
+    async function checkExistingPaymentLink(externalReference: string) {
+      try {
+        const response = await asaasRequest(`/paymentLinks?externalReference=${externalReference}`);
+        return response && response.data && response.data.length > 0 ? response.data[0] : null;
+      } catch (error) {
+        console.error("Error checking existing payment link:", error);
+        return null;
       }
     }
 
@@ -160,7 +171,7 @@ serve(async (req) => {
         
       case "create-payment": {
         try {
-          const { customerId, value, description, installments = 1, dueDate, planId, successUrl, cancelUrl, generateLink = false, nextDueDate, externalReference } = data;
+          const { customerId, value, description, installments = 1, dueDate, planId, successUrl, cancelUrl, generateLink = true, nextDueDate, externalReference } = data;
           
           if (!customerId) {
             throw new Error("Missing customerId parameter");
@@ -175,59 +186,63 @@ serve(async (req) => {
           }
           
           // Check for duplicate payment with same external reference
-          const paymentExists = await checkExistingPayment(externalReference);
-          if (paymentExists) {
-            console.log(`Payment with externalReference ${externalReference} already exists, returning existing payment`);
+          const existingPayment = await checkExistingPayment(externalReference);
+          const existingPaymentLink = await checkExistingPaymentLink(externalReference);
+          
+          if (existingPayment && existingPaymentLink) {
+            console.log(`Payment and link with externalReference ${externalReference} already exists, returning existing payment link`);
             
-            // Get the existing payment link
-            const { data: existingLinks } = await asaasRequest(`/paymentLinks?externalReference=${externalReference}`);
+            // Find the subscription in database with the existing payment ID
+            const { data: subscriptionData } = await supabase
+              .from("subscriptions")
+              .select("*")
+              .eq("user_id", user.id)
+              .maybeSingle();
             
-            if (existingLinks && existingLinks.length > 0) {
-              // Find the subscription in database with the existing payment ID
-              const { data: subscriptionData } = await supabase
-                .from("subscriptions")
-                .select("*")
-                .eq("user_id", user.id)
-                .maybeSingle();
-              
-              return new Response(JSON.stringify({ 
-                payment: { id: externalReference, status: "PENDING" },
-                paymentLink: existingLinks[0].url,
-                dbSubscription: subscriptionData || null,
-                isExisting: true
-              }), {
-                headers: { ...corsHeaders, "Content-Type": "application/json" },
-              });
-            }
+            return new Response(JSON.stringify({ 
+              payment: existingPayment,
+              paymentLink: existingPaymentLink.url,
+              dbSubscription: subscriptionData || null,
+              isExisting: true
+            }), {
+              headers: { ...corsHeaders, "Content-Type": "application/json" },
+            });
           }
           
           // Calculate due date (1 business day after current date)
           const paymentDueDate = dueDate || new Date(Date.now() + 3600 * 1000 * 24).toISOString().split('T')[0]; // Default to tomorrow
           
-          // Create payment in Asaas
-          const paymentData: any = {
-            customer: customerId,
-            billingType: installments > 1 ? "CREDIT_CARD" : "UNDEFINED",
-            value,
-            description: description || "Compra de Plano",
-            dueDate: paymentDueDate,
-            externalReference: externalReference
-          };
+          let payment;
+          let paymentLink = null;
           
-          if (installments > 1) {
-            paymentData.installmentCount = installments;
-            paymentData.installmentValue = (value / installments).toFixed(2);
+          // If payment doesn't exist, create it
+          if (!existingPayment) {
+            // Create payment in Asaas
+            const paymentData: any = {
+              customer: customerId,
+              billingType: installments > 1 ? "CREDIT_CARD" : "UNDEFINED",
+              value,
+              description: description || "Compra de Plano",
+              dueDate: paymentDueDate,
+              externalReference: externalReference
+            };
+            
+            if (installments > 1) {
+              paymentData.installmentCount = installments;
+              paymentData.installmentValue = (value / installments).toFixed(2);
+            }
+            
+            console.log("Creating payment with data:", paymentData);
+            
+            // Create payment in Asaas
+            payment = await asaasRequest("/payments", "POST", paymentData);
+          } else {
+            payment = existingPayment;
           }
           
-          console.log("Creating payment with data:", paymentData);
-          
-          // Create payment in Asaas
-          const payment = await asaasRequest("/payments", "POST", paymentData);
-          
-          // Generate payment link
-          let paymentLink = null;
-          if (generateLink) {
-            console.log("Generating payment link for payment:", payment.id);
+          // Generate payment link if it doesn't exist
+          if (!existingPaymentLink && generateLink) {
+            console.log("Generating payment link for payment");
             
             // Define data for payment link
             const linkData = {
@@ -256,34 +271,45 @@ serve(async (req) => {
             console.log("Payment link created:", linkResponse);
             
             paymentLink = linkResponse.url;
+          } else if (existingPaymentLink) {
+            paymentLink = existingPaymentLink.url;
           }
           
-          // Save subscription data in database
-          const { data: subscriptionData, error: subError } = await supabase
-            .from("subscriptions")
-            .upsert({
-              user_id: user.id,
-              asaas_customer_id: customerId,
-              asaas_subscription_id: payment.id,
-              asaas_payment_link: paymentLink,
-              plan_id: planId,
-              status: payment.status || "pending",
-              installments,
-              current_period_end: null, // Since it's a one-time payment
-              created_at: new Date().toISOString(),
-              updated_at: new Date().toISOString()
-            }, { onConflict: 'user_id', returning: 'representation' });
+          // Skip saving to database if we're returning an existing payment
+          if (!existingPayment || !existingPaymentLink) {
+            // Save subscription data in database
+            const { data: subscriptionData, error: subError } = await supabase
+              .from("subscriptions")
+              .upsert({
+                user_id: user.id,
+                asaas_customer_id: customerId,
+                asaas_subscription_id: payment.id,
+                asaas_payment_link: paymentLink,
+                plan_id: planId,
+                status: payment.status || "pending",
+                installments,
+                current_period_end: null, // Since it's a one-time payment
+                created_at: new Date().toISOString(),
+                updated_at: new Date().toISOString()
+              }, { onConflict: 'user_id', returning: 'representation' });
+              
+            if (subError) {
+              console.error("Error saving payment data to database:", subError);
+              throw new Error(`Error saving payment data: ${subError.message}`);
+            }
             
-          if (subError) {
-            console.error("Error saving payment data to database:", subError);
-            throw new Error(`Error saving payment data: ${subError.message}`);
+            result = { 
+              payment, 
+              paymentLink,
+              dbSubscription: subscriptionData?.[0] 
+            };
+          } else {
+            result = { 
+              payment, 
+              paymentLink,
+              isExisting: true
+            };
           }
-          
-          result = { 
-            payment, 
-            paymentLink,
-            dbSubscription: subscriptionData?.[0] 
-          };
         } catch (error) {
           console.error("Error creating payment:", error);
           return new Response(JSON.stringify({ error: `Failed to create payment: ${error.message}` }), {
