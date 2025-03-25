@@ -177,7 +177,7 @@ export const subscriptionService = {
         throw new Error("Telefone é obrigatório");
       }
       
-      if (!profile.cpf && !profile.cnpj) {
+      if (!profile.cnpj && !(profile as any).cpf) {
         throw new Error("CPF ou CNPJ é obrigatório");
       }
       
