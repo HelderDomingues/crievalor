@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { UserProfile } from "@/types/auth";
 import { v4 as uuidv4 } from "uuid";
@@ -309,6 +308,111 @@ export const asaasCustomerService = {
       }
     } catch (error) {
       console.error("Erro em updateProfileHasCustomerFlag:", error);
+    }
+  },
+  
+  async deleteCustomer(userId: string): Promise<{ success: boolean, message: string }> {
+    try {
+      console.log(`Iniciando processo de exclusão de cliente para o usuário: ${userId}`);
+      
+      // Verificar se o usuário tem um cliente Asaas
+      const customer = await this.findCustomerByUserId(userId);
+      
+      if (!customer) {
+        console.log("Nenhum cliente Asaas encontrado para este usuário");
+        return { 
+          success: false,
+          message: "Nenhum cliente encontrado para excluir" 
+        };
+      }
+      
+      console.log(`Cliente Asaas encontrado: ${customer.asaas_id}, iniciando exclusão`);
+      
+      // Chamar a edge function para excluir o cliente no Asaas
+      const response = await supabase.functions.invoke("asaas", {
+        body: {
+          action: "delete-customer",
+          data: {
+            customerId: customer.asaas_id,
+          },
+        },
+      });
+      
+      if (response.error) {
+        console.error("Erro ao excluir cliente no Asaas:", response.error);
+        throw new Error(`Erro ao excluir cliente: ${response.error.message}`);
+      }
+      
+      console.log("Resposta da exclusão de cliente:", response.data);
+      
+      return { 
+        success: true,
+        message: "Cliente excluído com sucesso" 
+      };
+    } catch (error: any) {
+      console.error("Erro em deleteCustomer:", error);
+      return { 
+        success: false,
+        message: error.message || "Erro ao excluir cliente" 
+      };
+    }
+  },
+  
+  async deleteAllCustomerData(): Promise<{ success: boolean, message: string }> {
+    try {
+      // Obter o usuário atual
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        throw new Error("Usuário não autenticado");
+      }
+      
+      console.log(`Iniciando limpeza completa de dados para o usuário: ${user.id}`);
+      
+      // 1. Excluir cliente Asaas
+      const deleteResult = await this.deleteCustomer(user.id);
+      
+      if (!deleteResult.success) {
+        console.log("Aviso: " + deleteResult.message);
+        // Continuamos mesmo que não tenha cliente Asaas
+      }
+      
+      // 2. Excluir assinaturas
+      const { error: subError } = await supabase
+        .from("subscriptions")
+        .delete()
+        .eq("user_id", user.id);
+      
+      if (subError) {
+        console.error("Erro ao excluir assinaturas:", subError);
+      } else {
+        console.log("Assinaturas excluídas com sucesso");
+      }
+      
+      // 3. Limpar flags no perfil
+      const { error: profileError } = await supabase
+        .from("profiles")
+        .update({ 
+          has_asaas_customer: false 
+        })
+        .eq("id", user.id);
+      
+      if (profileError) {
+        console.error("Erro ao atualizar perfil:", profileError);
+      } else {
+        console.log("Perfil atualizado com sucesso");
+      }
+      
+      return {
+        success: true,
+        message: "Todos os dados do cliente foram limpos com sucesso"
+      };
+    } catch (error: any) {
+      console.error("Erro em deleteAllCustomerData:", error);
+      return {
+        success: false,
+        message: error.message || "Erro ao limpar dados do cliente"
+      };
     }
   }
 };

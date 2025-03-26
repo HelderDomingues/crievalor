@@ -1,83 +1,81 @@
-
 import React from "react";
-import { Subscription } from "@/services/subscriptionService";
-import { formatDate } from "@/lib/utils";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Check } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { formatDate } from "@/lib/utils";
+import { PLANS } from "@/services/subscriptionService";
+import { ExternalLink } from "lucide-react";
+import DeleteCustomerData from "./DeleteCustomerData";
 
 interface SubscriptionOverviewProps {
-  subscription: Subscription;
-  planDetails: {
-    name: string;
-    price?: string;
-    features: string[];
-  };
-  getStatusColor: (status: string) => string;
-  getStatusText: (status: string) => string;
+  subscription: any;
+  onCancelSubscription: () => void;
 }
 
-const SubscriptionOverview = ({
-  subscription,
-  planDetails,
-  getStatusColor,
-  getStatusText
-}: SubscriptionOverviewProps) => {
+const statusMap: { [key: string]: { label: string; variant: "default" | "destructive" | "success" | "outline" } } = {
+  active: { label: "Ativa", variant: "success" },
+  pending: { label: "Pendente", variant: "default" },
+  canceled: { label: "Cancelada", variant: "destructive" },
+  past_due: { label: "Vencida", variant: "destructive" },
+  trialing: { label: "Em teste", variant: "default" },
+};
+
+const SubscriptionOverview = ({ subscription, onCancelSubscription }: SubscriptionOverviewProps) => {
+  const plan = PLANS.find((p) => p.id === subscription.plan_id);
+
+  if (!plan) {
+    return <p>Plano não encontrado.</p>;
+  }
+
+  const statusInfo = statusMap[subscription.status] || { label: "Desconhecido", variant: "default" };
+  const formattedCreatedAt = formatDate(subscription.created_at);
+
   return (
     <Card>
       <CardHeader>
         <CardTitle>Detalhes da Assinatura</CardTitle>
         <CardDescription>Informações sobre seu plano atual</CardDescription>
       </CardHeader>
-      <CardContent className="space-y-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <h3 className="font-medium text-sm text-muted-foreground">Plano</h3>
-            <p className="text-lg font-semibold">{planDetails.name}</p>
+      <CardContent>
+        <div className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <p className="text-sm font-medium">Plano:</p>
+              <p className="text-lg font-semibold">{plan.name}</p>
+            </div>
+            <div>
+              <p className="text-sm font-medium">Status:</p>
+              <Badge variant={statusInfo.variant}>{statusInfo.label}</Badge>
+            </div>
+            <div>
+              <p className="text-sm font-medium">Data de Início:</p>
+              <p>{formattedCreatedAt}</p>
+            </div>
+            <div>
+              <p className="text-sm font-medium">Valor:</p>
+              <p>{(plan.price).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</p>
+            </div>
           </div>
-          <div>
-            <h3 className="font-medium text-sm text-muted-foreground">Status</h3>
-            <Badge variant="outline" className={`${getStatusColor(subscription.status)} mt-1`}>
-              {getStatusText(subscription.status)}
-            </Badge>
-          </div>
-          <div>
-            <h3 className="font-medium text-sm text-muted-foreground">Valor</h3>
-            <p className="text-lg font-semibold">{planDetails.price}</p>
-          </div>
-          <div>
-            <h3 className="font-medium text-sm text-muted-foreground">Próxima cobrança</h3>
-            <p className="text-lg font-semibold">
-              {subscription.current_period_end 
-                ? formatDate(subscription.current_period_end)
-                : "N/A"}
-            </p>
+          
+          <div className="flex flex-col space-y-2 mt-6">
+            {subscription.status === "active" && (
+              <Button variant="outline" onClick={onCancelSubscription}>
+                Cancelar assinatura
+              </Button>
+            )}
+            
+            {subscription.asaas_payment_link && (
+              <Button variant="outline" asChild>
+                <a href={subscription.asaas_payment_link} target="_blank" rel="noopener noreferrer">
+                  <ExternalLink className="h-4 w-4 mr-2" />
+                  Acessar portal de pagamento
+                </a>
+              </Button>
+            )}
+            
+            <DeleteCustomerData />
           </div>
         </div>
-
-        <Separator />
-
-        <div>
-          <h3 className="font-medium mb-2">O que está incluído:</h3>
-          <ul className="space-y-2">
-            {planDetails.features?.map((feature, index) => (
-              <li key={index} className="flex items-start gap-2">
-                <Check className="h-5 w-5 text-green-500 mt-0.5" />
-                <span>{feature}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        {subscription.status === "active" && (
-          <div className="pt-2">
-            <Button variant="outline" color="destructive" asChild>
-              <a href="/subscription">Gerenciar Assinatura</a>
-            </Button>
-          </div>
-        )}
       </CardContent>
     </Card>
   );

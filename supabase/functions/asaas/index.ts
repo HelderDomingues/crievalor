@@ -1,4 +1,3 @@
-
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.38.4";
 
@@ -83,6 +82,9 @@ serve(async (req) => {
         
       case "cancel-subscription":
         return await cancelSubscription(req, data, user.id);
+      
+      case "delete-customer":
+        return await deleteCustomer(req, data, user.id, supabase);
         
       default:
         throw new Error(`Ação desconhecida: ${action}`);
@@ -661,4 +663,105 @@ async function generatePaymentLink(data: any) {
   }
   
   return paymentLink;
+}
+
+// Nova função para excluir cliente no Asaas
+async function deleteCustomer(req: Request, data: any, userId: string, supabase: any) {
+  try {
+    const { customerId } = data;
+    
+    if (!customerId) {
+      throw new Error("ID do cliente não fornecido");
+    }
+    
+    console.log(`Tentando excluir cliente Asaas: ${customerId}`);
+    
+    // Verificar se o cliente existe no Asaas
+    const { status: checkStatus, data: customer } = await asaasRequest(`/customers/${customerId}`, "GET");
+    
+    if (checkStatus !== 200 || !customer) {
+      throw new Error("Cliente não encontrado no Asaas");
+    }
+    
+    // Buscar as assinaturas e pagamentos do cliente para cancelar/excluir
+    const { status: paymentsStatus, data: paymentsResponse } = await asaasRequest(
+      `/payments?customer=${customerId}`,
+      "GET"
+    );
+    
+    // Cancelar/excluir todos os pagamentos pendentes
+    if (paymentsStatus === 200 && paymentsResponse.data && paymentsResponse.data.length > 0) {
+      console.log(`Encontrados ${paymentsResponse.data.length} pagamentos para excluir`);
+      
+      for (const payment of paymentsResponse.data) {
+        if (payment.status === "PENDING") {
+          const { status: deleteStatus } = await asaasRequest(`/payments/${payment.id}`, "DELETE");
+          console.log(`Pagamento ${payment.id} excluído, status: ${deleteStatus}`);
+        }
+      }
+    }
+    
+    // Excluir cliente no Asaas
+    const { status: deleteStatus, data: deleteResponse } = await asaasRequest(`/customers/${customerId}`, "DELETE");
+    
+    if (deleteStatus !== 200) {
+      throw new Error(`Erro ao excluir cliente: ${JSON.stringify(deleteResponse)}`);
+    }
+    
+    console.log("Cliente excluído do Asaas com sucesso");
+    
+    // Excluir registro local do cliente no banco de dados
+    const { error: deleteError } = await supabase
+      .from("asaas_customers")
+      .delete()
+      .eq("asaas_id", customerId);
+    
+    if (deleteError) {
+      console.error("Erro ao excluir registro local do cliente:", deleteError);
+      throw new Error(`Erro ao excluir registro local: ${deleteError.message}`);
+    }
+    
+    console.log("Registro local do cliente excluído com sucesso");
+    
+    // Excluir assinaturas associadas a este cliente
+    const { error: subDeleteError } = await supabase
+      .from("subscriptions")
+      .delete()
+      .eq("asaas_customer_id", customerId);
+    
+    if (subDeleteError) {
+      console.error("Erro ao excluir assinaturas associadas:", subDeleteError);
+    } else {
+      console.log("Assinaturas associadas excluídas com sucesso");
+    }
+    
+    // Atualizar flag no perfil do usuário
+    const { error: updateError } = await supabase
+      .from("profiles")
+      .update({ has_asaas_customer: false })
+      .eq("id", userId);
+    
+    if (updateError) {
+      console.error("Erro ao atualizar flag no perfil:", updateError);
+    } else {
+      console.log("Flag de cliente no perfil atualizada com sucesso");
+    }
+    
+    return new Response(
+      JSON.stringify({ success: true, message: "Cliente excluído com sucesso" }),
+      {
+        status: 200,
+        headers: { ...corsHeaders, "Content-Type": "application/json" }
+      }
+    );
+  } catch (error: any) {
+    console.error("Erro ao excluir cliente:", error);
+    return new Response(
+      JSON.stringify({ success: false, error: error.message }),
+      {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" }
+      }
+    );
+  }
 }
