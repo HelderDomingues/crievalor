@@ -50,7 +50,7 @@ serve(async (req) => {
     
     console.log("Usuário autenticado:", user.id);
     
-    // Verificar se o usuário é admin
+    // Verificar se o usuário é admin - correção na consulta para evitar ambiguidade
     const { data: isAdmin, error: adminCheckError } = await supabase.rpc(
       'check_if_user_is_admin',
       { user_id: user.id }

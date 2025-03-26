@@ -7,9 +7,13 @@ import { AlertCircle, Check, Loader2, ExternalLink, RotateCw, ShieldCheck, Alert
 import { toast } from "sonner";
 import { webhookService } from '@/services/webhookService';
 import { Badge } from "@/components/ui/badge";
-import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { useAuth } from "@/context/AuthContext";
+import { useProfile } from "@/hooks/useProfile";
 
 export const WebhookManager = () => {
+  const { user } = useAuth();
+  const { isAdmin } = useProfile();
   const [webhookUrl, setWebhookUrl] = useState(webhookService.getRecommendedWebhookUrl());
   const [webhookToken, setWebhookToken] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -33,6 +37,19 @@ export const WebhookManager = () => {
       
       if (!webhookUrl.trim()) {
         toast.error("URL do webhook é obrigatória");
+        return;
+      }
+      
+      // Check if user is authenticated and admin
+      if (!user) {
+        toast.error("Você precisa estar logado para testar o webhook");
+        setErrorDetails("Usuário não autenticado. Faça login antes de testar o webhook.");
+        return;
+      }
+      
+      if (!isAdmin) {
+        toast.error("Você precisa ser administrador para testar o webhook");
+        setErrorDetails("Usuário não possui permissões de administrador.");
         return;
       }
       
@@ -100,6 +117,26 @@ export const WebhookManager = () => {
           </p>
         </div>
         
+        {!user && (
+          <Alert variant="destructive">
+            <AlertCircle className="h-4 w-4" />
+            <AlertTitle>Autenticação necessária</AlertTitle>
+            <AlertDescription>
+              Você precisa estar logado como administrador para testar o webhook.
+            </AlertDescription>
+          </Alert>
+        )}
+        
+        {user && !isAdmin && (
+          <Alert variant="destructive">
+            <AlertCircle className="h-4 w-4" />
+            <AlertTitle>Permissão negada</AlertTitle>
+            <AlertDescription>
+              Você precisa ter privilégios de administrador para testar o webhook.
+            </AlertDescription>
+          </Alert>
+        )}
+        
         {errorDetails && (
           <Alert variant="destructive" className="mt-4">
             <AlertTriangle className="h-4 w-4" />
@@ -143,7 +180,7 @@ export const WebhookManager = () => {
         <Button
           variant="outline"
           onClick={handleTestWebhook}
-          disabled={isTestLoading}
+          disabled={isTestLoading || !user || !isAdmin}
           className="flex-1"
         >
           {isTestLoading ? (
