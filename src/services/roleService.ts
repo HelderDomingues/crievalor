@@ -44,17 +44,22 @@ export async function assignUserRole(userId: string, roleName: string) {
 
     // For admin role, first attempt to bootstrap if this is the first admin
     if (roleName === 'admin') {
-      const { data: bootstrapResult, error: bootstrapError } = await supabase.rpc(
-        'bootstrap_admin_role',
-        { admin_user_id: userId }
-      );
-      
-      if (bootstrapError) {
-        console.error("Bootstrap admin error:", bootstrapError);
+      try {
+        const { data: bootstrapResult, error: bootstrapError } = await supabase.rpc(
+          'bootstrap_admin_role',
+          { admin_user_id: userId }
+        );
+        
+        if (bootstrapError) {
+          console.error("Bootstrap admin error:", bootstrapError);
+          // Continue with normal insertion as fallback
+        } else if (bootstrapResult === true) {
+          // Bootstrap succeeded
+          return { success: true, error: null };
+        }
+      } catch (bootstrapError) {
+        console.error("Bootstrap admin exception:", bootstrapError);
         // Continue with normal insertion as fallback
-      } else if (bootstrapResult === true) {
-        // Bootstrap succeeded
-        return { success: true, error: null };
       }
       
       // If bootstrap reported false (already have admins), continue with normal insert

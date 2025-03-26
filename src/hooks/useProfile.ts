@@ -44,7 +44,6 @@ export function useProfile() {
     loadProfile();
   }, [user]);
 
-  // Fetch user roles
   useEffect(() => {
     async function loadUserRoles() {
       if (!user) {
@@ -80,10 +79,8 @@ export function useProfile() {
     try {
       console.log("Original updates:", updates);
       
-      // Garantir que social_media seja sempre um objeto
       let updatesToSend = { ...updates };
       
-      // Se estamos atualizando social_media, garantir que está completo
       if ('social_media' in updates) {
         updatesToSend.social_media = {
           linkedin: updates.social_media?.linkedin || profile?.social_media?.linkedin || "",
@@ -109,16 +106,13 @@ export function useProfile() {
     }
   }
 
-  // Atualiza um único campo
   async function updateProfileField(field: string, value: any) {
     if (!user) return { error: new Error("No user logged in") };
     
     try {
-      // Trata campos aninhados em social_media
       if (field.startsWith('social_media.')) {
         const socialField = field.split('.')[1];
         
-        // Cria um objeto social_media atualizado
         const updatedSocialMedia = {
           ...(profile?.social_media || {
             linkedin: "",
@@ -132,7 +126,6 @@ export function useProfile() {
         return updateProfile({ social_media: updatedSocialMedia });
       }
       
-      // Para outros campos, cria um objeto de atualização simples
       const updates = { [field]: value };
       return updateProfile(updates);
     } catch (error) {
@@ -145,18 +138,24 @@ export function useProfile() {
     if (!user) return { error: new Error("No user logged in") };
     
     try {
+      console.log("Attempting to grant admin role to user:", user.id);
       const { success, error } = await assignUserRole(user.id, 'admin');
       
-      if (error) throw error;
+      if (error) {
+        console.error("Error from assignUserRole:", error);
+        throw error;
+      }
       
       if (success) {
+        console.log("Successfully granted admin role");
         setIsAdmin(true);
         return { error: null };
       } else {
+        console.error("Failed to grant admin role (no success reported)");
         return { error: new Error("Failed to grant admin role") };
       }
     } catch (error) {
-      console.error("Error granting admin role:", error);
+      console.error("Exception in grantAdminRole:", error);
       return { error: error as Error };
     }
   }
@@ -189,7 +188,6 @@ export function useProfile() {
       const result = await uploadUserAvatar(user.id, file);
       
       if (result.url) {
-        // Atualiza o estado local
         setProfile(prev => prev ? { ...prev, avatar_url: result.url } : null);
       }
       

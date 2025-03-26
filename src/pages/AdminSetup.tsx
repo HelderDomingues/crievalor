@@ -26,9 +26,11 @@ const AdminSetup = () => {
     setIsProcessing(true);
     
     try {
-      const { error } = await grantAdminRole();
+      const result = await grantAdminRole();
       
-      if (error) throw error;
+      if (result.error) {
+        throw result.error;
+      }
       
       toast.success("Privilégios de administrador concedidos com sucesso!");
     } catch (error) {
