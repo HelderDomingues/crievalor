@@ -3,7 +3,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import PortfolioAdminPanel from "@/components/PortfolioAdmin";
+import PortfolioAdminPanel from "@/components/PortfolioAdminPanel";
 import AdminAuth from "@/components/admin/AdminAuth";
 import { Button } from "@/components/ui/button";
 
