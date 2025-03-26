@@ -1,3 +1,4 @@
+
 import { serve } from "https://deno.land/std@0.208.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.38.4";
 
@@ -241,7 +242,7 @@ serve(async (req) => {
         
       case "create-payment": {
         try {
-          const { customerId, value, description, installments = 1, dueDate, planId, successUrl, cancelUrl, generateLink = true, nextDueDate, externalReference } = data;
+          const { customerId, value, description, installments = 1, dueDate, planId, successUrl, cancelUrl, generateLink = true, externalReference } = data;
           
           if (!customerId) {
             throw new Error("Missing customerId parameter");
@@ -253,6 +254,10 @@ serve(async (req) => {
           
           if (!externalReference) {
             throw new Error("Missing externalReference parameter");
+          }
+          
+          if (!planId) {
+            throw new Error("Missing planId parameter");
           }
           
           // Check for duplicate payment with same external reference
@@ -347,31 +352,70 @@ serve(async (req) => {
           
           // Skip saving to database if we're returning an existing payment
           if (!existingPayment || !existingPaymentLink) {
-            // Save subscription data in database
-            const { data: subscriptionData, error: subError } = await supabase
+            // First, check if a subscription record already exists for this user
+            const { data: existingSub } = await supabase
               .from("subscriptions")
-              .upsert({
-                user_id: user.id,
-                asaas_customer_id: customerId,
-                asaas_subscription_id: payment.id,
-                asaas_payment_link: paymentLink,
-                plan_id: planId,
-                status: payment.status || "pending",
-                installments,
-                current_period_end: null, // Since it's a one-time payment
-                created_at: new Date().toISOString(),
-                updated_at: new Date().toISOString()
-              }, { onConflict: 'user_id', returning: 'representation' });
+              .select("*")
+              .eq("user_id", user.id)
+              .maybeSingle();
+            
+            let subscriptionData;
+            
+            if (existingSub) {
+              // Update existing subscription
+              const { data: updatedSub, error: updateError } = await supabase
+                .from("subscriptions")
+                .update({
+                  asaas_customer_id: customerId,
+                  asaas_subscription_id: payment.id,
+                  asaas_payment_link: paymentLink,
+                  plan_id: planId,
+                  status: payment.status || "pending",
+                  installments,
+                  current_period_end: null, // Since it's a one-time payment
+                  updated_at: new Date().toISOString()
+                })
+                .eq("id", existingSub.id)
+                .select()
+                .single();
+                
+              if (updateError) {
+                console.error("Error updating subscription:", updateError);
+                throw new Error(`Error updating subscription: ${updateError.message}`);
+              }
               
-            if (subError) {
-              console.error("Error saving payment data to database:", subError);
-              throw new Error(`Error saving payment data: ${subError.message}`);
+              subscriptionData = updatedSub;
+            } else {
+              // Create new subscription
+              const { data: newSub, error: insertError } = await supabase
+                .from("subscriptions")
+                .insert({
+                  user_id: user.id,
+                  asaas_customer_id: customerId,
+                  asaas_subscription_id: payment.id,
+                  asaas_payment_link: paymentLink,
+                  plan_id: planId,
+                  status: payment.status || "pending",
+                  installments,
+                  current_period_end: null, // Since it's a one-time payment
+                  created_at: new Date().toISOString(),
+                  updated_at: new Date().toISOString()
+                })
+                .select()
+                .single();
+                
+              if (insertError) {
+                console.error("Error inserting subscription:", insertError);
+                throw new Error(`Error inserting subscription: ${insertError.message}`);
+              }
+              
+              subscriptionData = newSub;
             }
             
             result = { 
               payment, 
               paymentLink,
-              dbSubscription: subscriptionData?.[0] 
+              dbSubscription: subscriptionData 
             };
           } else {
             result = { 
@@ -426,31 +470,70 @@ serve(async (req) => {
             }
           });
           
-          // Save subscription in database
-          const { data: subscriptionData, error: subError } = await supabase
+          // Check if a subscription already exists for this user
+          const { data: existingSub } = await supabase
             .from("subscriptions")
-            .upsert({
-              user_id: user.id,
-              asaas_customer_id: customerId,
-              asaas_subscription_id: subscription.id,
-              asaas_payment_link: paymentLink.url,
-              plan_id: planId,
-              status: "pending",
-              installments,
-              current_period_end: new Date(subscription.nextDueDate).toISOString(),
-              created_at: new Date().toISOString(),
-              updated_at: new Date().toISOString()
-            }, { onConflict: 'user_id', returning: 'representation' });
+            .select("*")
+            .eq("user_id", user.id)
+            .maybeSingle();
+          
+          let subscriptionData;
+          
+          if (existingSub) {
+            // Update existing subscription
+            const { data: updatedSub, error: updateError } = await supabase
+              .from("subscriptions")
+              .update({
+                asaas_customer_id: customerId,
+                asaas_subscription_id: subscription.id,
+                asaas_payment_link: paymentLink.url,
+                plan_id: planId,
+                status: "pending",
+                installments,
+                current_period_end: new Date(subscription.nextDueDate).toISOString(),
+                updated_at: new Date().toISOString()
+              })
+              .eq("id", existingSub.id)
+              .select()
+              .single();
+              
+            if (updateError) {
+              console.error("Error updating subscription:", updateError);
+              throw new Error(`Error updating subscription: ${updateError.message}`);
+            }
             
-          if (subError) {
-            console.error("Error saving subscription to database:", subError);
-            throw new Error(`Error saving subscription: ${subError.message}`);
+            subscriptionData = updatedSub;
+          } else {
+            // Create new subscription
+            const { data: newSub, error: insertError } = await supabase
+              .from("subscriptions")
+              .insert({
+                user_id: user.id,
+                asaas_customer_id: customerId,
+                asaas_subscription_id: subscription.id,
+                asaas_payment_link: paymentLink.url,
+                plan_id: planId,
+                status: "pending",
+                installments,
+                current_period_end: new Date(subscription.nextDueDate).toISOString(),
+                created_at: new Date().toISOString(),
+                updated_at: new Date().toISOString()
+              })
+              .select()
+              .single();
+              
+            if (insertError) {
+              console.error("Error inserting subscription:", insertError);
+              throw new Error(`Error inserting subscription: ${insertError.message}`);
+            }
+            
+            subscriptionData = newSub;
           }
           
           result = { 
             subscription, 
             paymentLink: paymentLink.url,
-            dbSubscription: subscriptionData?.[0] 
+            dbSubscription: subscriptionData 
           };
         } catch (error) {
           console.error("Error creating subscription:", error);
@@ -483,14 +566,25 @@ serve(async (req) => {
           if (subscription?.asaas_subscription_id) {
             // Get latest status from Asaas
             try {
-              const asaasSubscription = await asaasRequest(`/subscriptions/${subscription.asaas_subscription_id}`);
+              // Check if it's a subscription or a one-time payment
+              let asaasStatus;
+              
+              if (subscription.asaas_subscription_id.startsWith("sub_")) {
+                // It's a subscription
+                const asaasSubscription = await asaasRequest(`/subscriptions/${subscription.asaas_subscription_id}`);
+                asaasStatus = asaasSubscription.status;
+              } else {
+                // It's a payment
+                const asaasPayment = await asaasRequest(`/payments/${subscription.asaas_subscription_id}`);
+                asaasStatus = asaasPayment.status;
+              }
               
               // Update the database if status has changed
-              if (asaasSubscription.status !== subscription.status) {
+              if (asaasStatus && asaasStatus !== subscription.status) {
                 const { error: updateError } = await supabase
                   .from("subscriptions")
                   .update({ 
-                    status: asaasSubscription.status,
+                    status: asaasStatus,
                     updated_at: new Date().toISOString()
                   })
                   .eq("id", subscription.id);
@@ -499,10 +593,10 @@ serve(async (req) => {
                   console.error("Error updating subscription status:", updateError);
                 }
                 
-                subscription.status = asaasSubscription.status;
+                subscription.status = asaasStatus;
               }
             } catch (error) {
-              console.error("Error fetching subscription from Asaas:", error);
+              console.error("Error fetching data from Asaas:", error);
               // Continue with local data if Asaas API call fails
             }
           }
@@ -549,8 +643,23 @@ serve(async (req) => {
             });
           }
           
-          // Cancel the subscription in Asaas
-          await asaasRequest(`/subscriptions/${subscriptionId}/cancel`, "POST");
+          // Check if it's a subscription or a one-time payment
+          if (subscriptionId.startsWith("sub_")) {
+            // Cancel the subscription in Asaas
+            await asaasRequest(`/subscriptions/${subscriptionId}/cancel`, "POST");
+          } else {
+            // It's a payment, we can't cancel it if it's already paid
+            const payment = await asaasRequest(`/payments/${subscriptionId}`);
+            
+            if (["CONFIRMED", "RECEIVED", "PAID"].includes(payment.status)) {
+              throw new Error("Cannot cancel a payment that has already been processed");
+            }
+            
+            // Try to delete or refund the payment
+            if (["PENDING", "AWAITING_RISK_ANALYSIS"].includes(payment.status)) {
+              await asaasRequest(`/payments/${subscriptionId}`, "DELETE");
+            }
+          }
           
           // Update the subscription status in database
           await supabase
