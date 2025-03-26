@@ -66,11 +66,13 @@ const Profile = () => {
     );
   }
 
-  const isProfileComplete = 
+  // Fix: Convert string values to boolean for isProfileComplete
+  const isProfileComplete = !!(
     profile?.full_name && 
     profile?.company_name && 
     profile?.company_address && 
-    (profile?.cnpj || profile?.cpf);
+    (profile?.cnpj || profile?.cpf)
+  );
 
   return (
     <div className="min-h-screen flex flex-col">
