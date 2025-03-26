@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { WebhookManager } from '@/components/admin/WebhookManager';
 import { useProfile } from '@/hooks/useProfile';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Button } from '@/components/ui/button';
@@ -21,6 +21,8 @@ const WebhookAdmin = () => {
       // If user doesn't have admin permissions after loading completes, show a toast
       if (!(profile?.social_media && 'admin' in profile.social_media)) {
         toast.error("Você não tem permissões de administrador");
+        // Use window.location to force a complete page reload
+        window.location.href = "/admin-setup";
       }
     }
   }, [loading, profile]);
