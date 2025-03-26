@@ -1,33 +1,31 @@
+
 import React from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { formatDate } from "@/lib/utils";
-import { PLANS } from "@/services/subscriptionService";
 import { ExternalLink } from "lucide-react";
 import DeleteCustomerData from "./DeleteCustomerData";
 
 interface SubscriptionOverviewProps {
   subscription: any;
-  onCancelSubscription: () => void;
+  planDetails: any;
+  getStatusColor: (status: string) => string;
+  getStatusText: (status: string) => string;
 }
 
-const statusMap: { [key: string]: { label: string; variant: "default" | "destructive" | "success" | "outline" } } = {
-  active: { label: "Ativa", variant: "success" },
-  pending: { label: "Pendente", variant: "default" },
-  canceled: { label: "Cancelada", variant: "destructive" },
-  past_due: { label: "Vencida", variant: "destructive" },
-  trialing: { label: "Em teste", variant: "default" },
-};
-
-const SubscriptionOverview = ({ subscription, onCancelSubscription }: SubscriptionOverviewProps) => {
-  const plan = PLANS.find((p) => p.id === subscription.plan_id);
-
-  if (!plan) {
-    return <p>Plano não encontrado.</p>;
+const SubscriptionOverview = ({ 
+  subscription, 
+  planDetails, 
+  getStatusColor, 
+  getStatusText 
+}: SubscriptionOverviewProps) => {
+  if (!subscription) {
+    return <p>Assinatura não encontrada.</p>;
   }
 
-  const statusInfo = statusMap[subscription.status] || { label: "Desconhecido", variant: "default" };
+  const statusBadgeClass = getStatusColor(subscription.status);
+  const statusText = getStatusText(subscription.status);
   const formattedCreatedAt = formatDate(subscription.created_at);
 
   return (
@@ -41,11 +39,11 @@ const SubscriptionOverview = ({ subscription, onCancelSubscription }: Subscripti
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <p className="text-sm font-medium">Plano:</p>
-              <p className="text-lg font-semibold">{plan.name}</p>
+              <p className="text-lg font-semibold">{planDetails.name}</p>
             </div>
             <div>
               <p className="text-sm font-medium">Status:</p>
-              <Badge variant={statusInfo.variant}>{statusInfo.label}</Badge>
+              <Badge className={statusBadgeClass}>{statusText}</Badge>
             </div>
             <div>
               <p className="text-sm font-medium">Data de Início:</p>
@@ -53,13 +51,15 @@ const SubscriptionOverview = ({ subscription, onCancelSubscription }: Subscripti
             </div>
             <div>
               <p className="text-sm font-medium">Valor:</p>
-              <p>{(plan.price).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</p>
+              <p>{typeof planDetails.price === 'number' 
+                ? planDetails.price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
+                : planDetails.price}</p>
             </div>
           </div>
           
           <div className="flex flex-col space-y-2 mt-6">
             {subscription.status === "active" && (
-              <Button variant="outline" onClick={onCancelSubscription}>
+              <Button variant="outline" onClick={() => {}}>
                 Cancelar assinatura
               </Button>
             )}
