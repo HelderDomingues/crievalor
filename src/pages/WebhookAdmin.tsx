@@ -5,10 +5,12 @@ import { useProfile } from '@/hooks/useProfile';
 import { Navigate } from 'react-router-dom';
 
 const WebhookAdmin = () => {
-  const { profile, isLoading } = useProfile();
+  const { profile, loading } = useProfile();
   
   // Verificar se o usuário tem permissão para acessar esta página
-  if (!isLoading && (!profile || !profile.is_admin)) {
+  // Check for admin permissions using the value in the social_media object
+  // which is the current workaround until proper user roles are implemented
+  if (!loading && (!profile || !profile.social_media?.hasOwnProperty('admin'))) {
     return <Navigate to="/" replace />;
   }
   
