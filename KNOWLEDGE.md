@@ -1,14 +1,22 @@
 
 # Project Log - Crie Valor Estratégia
 
-## Metadata
+## Table of Contents
+1. [Project Metadata](#project-metadata)
+2. [Interaction Log](#interaction-log)
+3. [Problems and Solutions](#problems-and-solutions)
+4. [Architectural Decisions](#architectural-decisions)
+5. [Payment Integration](#payment-integration)
+6. [Version History](#version-history)
+
+## Project Metadata {#project-metadata}
 
 - **Project Name**: Crie Valor Estratégia Website
 - **Start Date**: 2024 (ongoing)
 - **Primary Goals**: Create a professional website for Crie Valor showcasing their services, with subscription and payment functionality
 - **Technologies**: React, TypeScript, Tailwind CSS, shadcn/ui, Supabase, Asaas Payment Integration
 
-## Interaction Log
+## Interaction Log {#interaction-log}
 
 ### 2024-05-30 - Initial Implementation of Project Log
 
@@ -44,7 +52,7 @@
 - Importance of proper error handling in payment flows
 - Value of clear user feedback during payment processes
 
-## Problems and Solutions Register
+## Problems and Solutions {#problems-and-solutions}
 
 ### Problem: Duplicate Customer Creation in Asaas
 
@@ -80,7 +88,7 @@ The Supabase functions were attempting to insert rows without proper RLS policie
 **Solution**:
 Updated RLS policies and ensured proper user context was maintained during payment processing.
 
-## Refactorings
+## Refactorings {#refactorings}
 
 ### Checkout Error Handling
 
@@ -104,7 +112,7 @@ Split payment logic into dedicated services:
 - asaasCustomerService for customer management
 - paymentsService for payment processing
 
-## Architectural Decisions
+## Architectural Decisions {#architectural-decisions}
 
 ### Payment Integration Architecture
 
@@ -131,9 +139,11 @@ Use a combination of React Query and local state
 - Improved caching
 - More predictable data flow
 
-## Integration Specifics (Asaas)
+## Payment Integration {#payment-integration}
 
-### Payment Flow
+### Asaas Integration Specifics
+
+#### Payment Flow
 
 1. User selects a plan
 2. System checks for existing customer
@@ -142,7 +152,7 @@ Use a combination of React Query and local state
 5. Redirects to Asaas checkout
 6. Handles success/failure redirects
 
-### Best Practices Identified
+#### Best Practices Identified
 
 - Always check for existing customers before creation
 - Use external references to track payment context
@@ -150,7 +160,7 @@ Use a combination of React Query and local state
 - Provide clear user feedback
 - Maintain payment session context across redirects
 
-## Version History
+## Version History {#version-history}
 
 ### Current Version
 
@@ -167,4 +177,3 @@ Use a combination of React Query and local state
 - Improved user feedback during payment process
 
 This log will be updated daily with new interactions, challenges, and solutions.
-
