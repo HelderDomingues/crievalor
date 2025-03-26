@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -28,6 +29,7 @@ import CheckoutCanceled from "./pages/CheckoutCanceled";
 import MaterialExclusivo from "./pages/MaterialExclusivo";
 import AdminMaterials from "./pages/AdminMaterials";
 import WebhookAdmin from "./pages/WebhookAdmin";
+import AdminSetup from "./pages/AdminSetup";
 
 const App = () => {
   const [queryClient] = useState(() => new QueryClient());
@@ -62,6 +64,7 @@ const App = () => {
                 <Route path="/material-exclusivo" element={<MaterialExclusivo />} />
                 <Route path="/admin-materials" element={<AdminMaterials />} />
                 <Route path="/admin/webhooks" element={<WebhookAdmin />} />
+                <Route path="/admin-setup" element={<AdminSetup />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
               <Chatbot />

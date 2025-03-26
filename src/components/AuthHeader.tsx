@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useProfile } from "@/hooks/useProfile";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { User, CreditCard, LogOut } from "lucide-react";
+import { User, CreditCard, LogOut, Settings } from "lucide-react";
 
 const AuthHeader = () => {
   const { user, signOut } = useAuth();
@@ -15,6 +15,9 @@ const AuthHeader = () => {
   const handleSignOut = async () => {
     await signOut();
   };
+
+  // Check if user has admin privileges
+  const isAdmin = profile?.social_media && 'admin' in profile.social_media;
 
   return (
     <div className="flex items-center gap-3">
@@ -41,6 +44,14 @@ const AuthHeader = () => {
                 <span>Assinaturas</span>
               </Link>
             </DropdownMenuItem>
+            {isAdmin && (
+              <DropdownMenuItem asChild>
+                <Link to="/admin/webhooks" className="flex items-center">
+                  <Settings className="mr-2 h-4 w-4" />
+                  <span>Admin Webhooks</span>
+                </Link>
+              </DropdownMenuItem>
+            )}
             <DropdownMenuItem onClick={handleSignOut} className="flex items-center">
               <LogOut className="mr-2 h-4 w-4" />
               <span>Sair</span>
