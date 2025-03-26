@@ -6,7 +6,7 @@ import Footer from "@/components/Footer";
 import AdminAuth from "@/components/admin/AdminAuth";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ImageIcon, BriefcaseIcon, WebhookIcon, FileTextIcon } from "lucide-react";
+import { ImageIcon, BriefcaseIcon, WebhookIcon, FileTextIcon, SettingsIcon } from "lucide-react";
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
@@ -29,6 +29,12 @@ const AdminDashboard = () => {
       description: "Gerenciar materiais exclusivos",
       icon: <FileTextIcon className="h-8 w-8 text-purple-500" />,
       path: "/admin-materials"
+    },
+    {
+      title: "Configurações",
+      description: "Gerenciar configurações do sistema",
+      icon: <SettingsIcon className="h-8 w-8 text-orange-500" />,
+      path: "/admin-settings"
     }
   ];
 

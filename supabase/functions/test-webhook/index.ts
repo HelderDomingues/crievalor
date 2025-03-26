@@ -1,10 +1,9 @@
-
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.38.4";
 
 const supabaseUrl = Deno.env.get("SUPABASE_URL") || "";
 const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
-const asaasApiKey = Deno.env.get("ASAAS_API_KEY") || "";
+let asaasApiKey = "";
 const asaasApiUrl = "https://sandbox.asaas.com/api/v3";
 
 const corsHeaders = {
@@ -13,7 +12,6 @@ const corsHeaders = {
 };
 
 serve(async (req) => {
-  // Lidar com requisições OPTIONS (CORS)
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
   }
@@ -22,11 +20,25 @@ serve(async (req) => {
     console.log("==== INÍCIO DO TESTE DE WEBHOOK ====");
     console.log("Iniciando teste de webhook com Asaas");
     
-    // Verificar se a API Key do Asaas está configurada
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+    
+    const { data: settingData, error: settingError } = await supabase
+      .from('system_settings')
+      .select('value')
+      .eq('key', 'ASAAS_API_KEY')
+      .single();
+    
+    if (settingError) {
+      console.error("Erro ao buscar chave da API:", settingError);
+      throw new Error("API Key do Asaas não encontrada no banco de dados");
+    }
+    
+    asaasApiKey = settingData.value;
+    
     if (!asaasApiKey) {
       console.error("Teste webhook: ASAAS_API_KEY não configurada");
       return new Response(
-        JSON.stringify({ error: "API Key do Asaas não configurada no servidor" }),
+        JSON.stringify({ error: "API Key do Asaas não configurada" }),
         {
           status: 500,
           headers: { ...corsHeaders, "Content-Type": "application/json" }
@@ -37,8 +49,6 @@ serve(async (req) => {
     console.log("ASAAS_API_KEY está configurada, verificando autenticação do usuário");
     console.log(`ASAAS_API_URL: ${asaasApiUrl}`);
     console.log(`Usando Supabase URL: ${supabaseUrl}`);
-    
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
     
     // Obter usuário autenticado
     const authHeader = req.headers.get('Authorization');
