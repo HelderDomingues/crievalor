@@ -10,11 +10,16 @@ const SubscriptionNotFound = () => {
       <AlertCircle className="h-4 w-4" />
       <AlertTitle>Nenhuma assinatura encontrada</AlertTitle>
       <AlertDescription>
-        Você ainda não possui uma assinatura ativa. Visite nossa página de planos para conhecer nossas opções.
+        Você ainda não possui uma assinatura ativa. Visite nossa página de planos para conhecer nossas opções e potencializar seus resultados.
       </AlertDescription>
-      <Button variant="outline" className="mt-4" asChild>
-        <a href="/subscription">Ver planos</a>
-      </Button>
+      <div className="flex gap-2 mt-4">
+        <Button variant="default" asChild>
+          <a href="/subscription">Ver planos</a>
+        </Button>
+        <Button variant="outline" asChild>
+          <a href="/contato">Falar com consultor</a>
+        </Button>
+      </div>
     </Alert>
   );
 };

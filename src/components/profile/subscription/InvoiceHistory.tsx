@@ -3,7 +3,7 @@ import React from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Download } from "lucide-react";
+import { Download, FileText } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 
 interface InvoiceHistoryProps {
@@ -40,7 +40,18 @@ const InvoiceHistory = ({ invoices, requestReceipt }: InvoiceHistoryProps) => {
                   <div className="flex gap-2 self-end md:self-auto">
                     {invoice.hosted_invoice_url && (
                       <Button variant="outline" size="sm" asChild>
-                        <a href={invoice.hosted_invoice_url} target="_blank" rel="noopener noreferrer">Ver Fatura</a>
+                        <a href={invoice.hosted_invoice_url} target="_blank" rel="noopener noreferrer">
+                          <FileText className="h-4 w-4 mr-2" />
+                          Ver Fatura
+                        </a>
+                      </Button>
+                    )}
+                    {invoice.invoice_pdf && (
+                      <Button variant="outline" size="sm" asChild>
+                        <a href={invoice.invoice_pdf} target="_blank" rel="noopener noreferrer">
+                          <Download className="h-4 w-4 mr-2" />
+                          Baixar PDF
+                        </a>
                       </Button>
                     )}
                     <Button variant="outline" size="sm" onClick={() => requestReceipt(invoice.id)}>
