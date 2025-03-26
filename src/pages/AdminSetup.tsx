@@ -52,8 +52,10 @@ const AdminSetup = () => {
     }
   };
 
+  // Ensure we're using window.location.href instead of navigate
+  // This forces a complete page reload to ensure proper state updates
   const goToWebhookAdmin = () => {
-    navigate("/admin/webhooks");
+    window.location.href = "/admin/webhooks";
   };
 
   return (

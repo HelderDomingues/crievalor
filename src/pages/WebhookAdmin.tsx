@@ -46,7 +46,21 @@ const WebhookAdmin = () => {
   
   // If done loading and not admin, redirect to admin setup
   if (accessChecked && !isAdmin) {
-    return <Navigate to="/admin-setup" replace />;
+    // Use window.location instead of Navigate component for a full page reload
+    window.location.href = "/admin-setup";
+    // Return a loading state in the meantime
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Header />
+        <main className="flex-grow py-16 flex items-center justify-center">
+          <div className="text-center">
+            <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
+            <p className="text-lg">Redirecionando para página de configuração de admin...</p>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
   }
   
   return (
