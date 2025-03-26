@@ -63,7 +63,7 @@ const App = () => {
                 <Route path="/portfolio-admin" element={<PortfolioAdmin />} />
                 <Route path="/material-exclusivo" element={<MaterialExclusivo />} />
                 <Route path="/admin-materials" element={<AdminMaterials />} />
-                <Route path="/admin/webhooks" element={<WebhookAdmin />} />
+                <Route path="/admin-webhooks" element={<WebhookAdmin />} />
                 <Route path="/admin-setup" element={<AdminSetup />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
