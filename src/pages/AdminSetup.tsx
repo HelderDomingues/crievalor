@@ -8,13 +8,14 @@ import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
-import { CheckCircle, Loader2, AlertTriangle, ExternalLink } from "lucide-react";
+import { CheckCircle, Loader2, AlertTriangle, ExternalLink, ShieldAlert } from "lucide-react";
 
 const AdminSetup = () => {
   const { user } = useAuth();
   const { isAdmin, rolesLoading, grantAdminRole } = useProfile();
   const navigate = useNavigate();
   const [isProcessing, setIsProcessing] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const handleGrantAdmin = async () => {
     if (!user) {
@@ -24,18 +25,24 @@ const AdminSetup = () => {
     }
 
     setIsProcessing(true);
+    setErrorMessage(null);
     
     try {
+      console.log("Admin setup: Calling grantAdminRole");
       const result = await grantAdminRole();
       
       if (result.error) {
+        console.error("Admin setup: Error returned from grantAdminRole:", result.error);
+        setErrorMessage(result.error.message || "Erro desconhecido ao conceder privilégios");
         throw result.error;
       }
       
       toast.success("Privilégios de administrador concedidos com sucesso!");
     } catch (error) {
-      console.error("Erro ao conceder privilégios de administrador:", error);
-      toast.error(`Erro ao conceder privilégios de administrador: ${error instanceof Error ? error.message : 'Erro desconhecido'}`);
+      console.error("Admin setup: Exception in handleGrantAdmin:", error);
+      const errorMsg = error instanceof Error ? error.message : 'Erro desconhecido';
+      setErrorMessage(errorMsg);
+      toast.error(`Erro ao conceder privilégios de administrador: ${errorMsg}`);
     } finally {
       setIsProcessing(false);
     }
@@ -94,11 +101,20 @@ const AdminSetup = () => {
                     <p>Você já possui privilégios de administrador</p>
                   </div>
                 ) : (
-                  <p>
-                    Esta página permite conceder privilégios de administrador ao seu usuário.
-                    Isso permitirá que você acesse a página de administração de webhooks e outras 
-                    funcionalidades administrativas.
-                  </p>
+                  <>
+                    <p className="mb-4">
+                      Esta página permite conceder privilégios de administrador ao seu usuário.
+                      Isso permitirá que você acesse a página de administração de webhooks e outras 
+                      funcionalidades administrativas.
+                    </p>
+                    
+                    {errorMessage && (
+                      <div className="flex items-center p-4 mt-4 bg-red-50 text-red-700 rounded-lg border border-red-200">
+                        <ShieldAlert className="h-5 w-5 mr-2 flex-shrink-0" />
+                        <p className="text-sm">{errorMessage}</p>
+                      </div>
+                    )}
+                  </>
                 )}
               </CardContent>
               
@@ -112,12 +128,15 @@ const AdminSetup = () => {
                     <Button 
                       onClick={handleGrantAdmin} 
                       disabled={isProcessing || rolesLoading}
+                      className={errorMessage ? "bg-red-600 hover:bg-red-700" : ""}
                     >
                       {isProcessing ? (
                         <>
                           <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                           Processando...
                         </>
+                      ) : errorMessage ? (
+                        "Tentar Novamente"
                       ) : (
                         "Conceder Privilégios"
                       )}

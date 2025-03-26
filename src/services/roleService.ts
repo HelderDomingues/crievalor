@@ -42,9 +42,10 @@ export async function assignUserRole(userId: string, roleName: string) {
       return { success: true, error: null };
     }
 
-    // For admin role, first attempt to bootstrap if this is the first admin
+    // For admin role, attempt direct bootstrap function call first
     if (roleName === 'admin') {
       try {
+        console.log(`Attempting to bootstrap admin role for user: ${userId}`);
         const { data: bootstrapResult, error: bootstrapError } = await supabase.rpc(
           'bootstrap_admin_role',
           { admin_user_id: userId }
@@ -54,17 +55,19 @@ export async function assignUserRole(userId: string, roleName: string) {
           console.error("Bootstrap admin error:", bootstrapError);
           // Continue with normal insertion as fallback
         } else if (bootstrapResult === true) {
-          // Bootstrap succeeded
+          console.log("Bootstrap admin function succeeded");
           return { success: true, error: null };
+        } else {
+          console.log("Bootstrap admin function returned false (admins already exist)");
         }
       } catch (bootstrapError) {
         console.error("Bootstrap admin exception:", bootstrapError);
         // Continue with normal insertion as fallback
       }
-      
-      // If bootstrap reported false (already have admins), continue with normal insert
     }
 
+    // If bootstrap didn't succeed or wasn't attempted, try normal insertion
+    console.log(`Attempting direct insertion of role "${roleName}" for user: ${userId}`);
     const { error } = await supabase
       .from("user_roles")
       .insert({
@@ -73,9 +76,11 @@ export async function assignUserRole(userId: string, roleName: string) {
       });
 
     if (error) {
+      console.error("Error in direct role insertion:", error);
       throw error;
     }
 
+    console.log(`Successfully assigned role "${roleName}" to user: ${userId}`);
     return { success: true, error: null };
   } catch (error) {
     console.error("Error assigning user role:", error);

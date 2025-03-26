@@ -138,24 +138,24 @@ export function useProfile() {
     if (!user) return { error: new Error("No user logged in") };
     
     try {
-      console.log("Attempting to grant admin role to user:", user.id);
+      console.log("useProfile: Attempting to grant admin role to user:", user.id);
       const { success, error } = await assignUserRole(user.id, 'admin');
       
       if (error) {
-        console.error("Error from assignUserRole:", error);
-        throw error;
+        console.error("useProfile: Error from assignUserRole:", error);
+        return { error };
       }
       
       if (success) {
-        console.log("Successfully granted admin role");
+        console.log("useProfile: Successfully granted admin role");
         setIsAdmin(true);
         return { error: null };
       } else {
-        console.error("Failed to grant admin role (no success reported)");
-        return { error: new Error("Failed to grant admin role") };
+        console.error("useProfile: Failed to grant admin role (no success reported)");
+        return { error: new Error("Falha ao conceder privilégios de administrador") };
       }
     } catch (error) {
-      console.error("Exception in grantAdminRole:", error);
+      console.error("useProfile: Exception in grantAdminRole:", error);
       return { error: error as Error };
     }
   }
