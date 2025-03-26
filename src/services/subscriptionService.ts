@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { Subscription, CreateCheckoutOptions } from "@/types/subscription";
 import { plansService } from "./plansService";
@@ -296,11 +295,18 @@ export const subscriptionService = {
         .single();
       
       if (fetchError) {
-        throw fetchError;
+        console.error("Erro ao buscar assinatura:", fetchError);
+        return { 
+          success: false, 
+          message: "Não foi possível encontrar a assinatura"
+        };
       }
       
       if (!subscription) {
-        throw new Error("Assinatura não encontrada");
+        return { 
+          success: false, 
+          message: "Assinatura não encontrada" 
+        };
       }
       
       // Se houver um ID de assinatura do Asaas, cancelar no Asaas
@@ -316,7 +322,10 @@ export const subscriptionService = {
   
         if (response.error) {
           console.error("Erro ao cancelar assinatura no Asaas:", response.error);
-          throw new Error(`Erro ao cancelar assinatura: ${response.error.message}`);
+          return { 
+            success: false, 
+            message: `Erro ao cancelar assinatura: ${response.error.message}`
+          };
         }
       }
   
@@ -330,13 +339,20 @@ export const subscriptionService = {
         .eq("id", subscriptionId);
       
       if (updateError) {
-        throw updateError;
+        console.error("Erro ao atualizar status da assinatura:", updateError);
+        return { 
+          success: false, 
+          message: `Erro ao atualizar status: ${updateError.message}`
+        };
       }
   
-      return { success: true };
+      return { success: true, message: "Assinatura cancelada com sucesso" };
     } catch (error: any) {
       console.error("Erro em cancelSubscription:", error);
-      throw error;
+      return { 
+        success: false, 
+        message: error.message || "Ocorreu um erro ao cancelar a assinatura"
+      };
     }
   },
 

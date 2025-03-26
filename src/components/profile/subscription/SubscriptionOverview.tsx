@@ -6,6 +6,8 @@ import { Badge } from "@/components/ui/badge";
 import { formatDate } from "@/lib/utils";
 import { ExternalLink } from "lucide-react";
 import DeleteCustomerData from "./DeleteCustomerData";
+import { subscriptionService } from "@/services/subscriptionService";
+import { useToast } from "@/hooks/use-toast";
 
 interface SubscriptionOverviewProps {
   subscription: any;
@@ -20,6 +22,9 @@ const SubscriptionOverview = ({
   getStatusColor, 
   getStatusText 
 }: SubscriptionOverviewProps) => {
+  const { toast } = useToast();
+  const [isCancelling, setIsCancelling] = React.useState(false);
+
   if (!subscription) {
     return <p>Assinatura não encontrada.</p>;
   }
@@ -27,6 +32,42 @@ const SubscriptionOverview = ({
   const statusBadgeClass = getStatusColor(subscription.status);
   const statusText = getStatusText(subscription.status);
   const formattedCreatedAt = formatDate(subscription.created_at);
+
+  const handleCancelSubscription = async () => {
+    try {
+      setIsCancelling(true);
+      
+      const result = await subscriptionService.cancelSubscription(subscription.id);
+      
+      if (result.success) {
+        toast({
+          title: "Assinatura cancelada",
+          description: "Sua assinatura foi cancelada com sucesso.",
+          variant: "default",
+        });
+        
+        // Recarregar a página após 2 segundos para atualizar o estado
+        setTimeout(() => {
+          window.location.reload();
+        }, 2000);
+      } else {
+        toast({
+          title: "Erro ao cancelar assinatura",
+          description: result.message || "Ocorreu um erro ao cancelar sua assinatura.",
+          variant: "destructive",
+        });
+      }
+    } catch (error: any) {
+      console.error("Erro ao cancelar assinatura:", error);
+      toast({
+        title: "Erro ao cancelar assinatura",
+        description: error.message || "Ocorreu um erro ao cancelar sua assinatura.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsCancelling(false);
+    }
+  };
 
   return (
     <Card>
@@ -59,8 +100,12 @@ const SubscriptionOverview = ({
           
           <div className="flex flex-col space-y-2 mt-6">
             {subscription.status === "active" && (
-              <Button variant="outline" onClick={() => {}}>
-                Cancelar assinatura
+              <Button 
+                variant="outline" 
+                onClick={handleCancelSubscription}
+                disabled={isCancelling}
+              >
+                {isCancelling ? "Cancelando..." : "Cancelar assinatura"}
               </Button>
             )}
             
