@@ -244,6 +244,10 @@ export type Database = {
         }
         Returns: undefined
       }
+      setup_subscriptions_rls_policies: {
+        Args: Record<PropertyKey, never>
+        Returns: boolean
+      }
     }
     Enums: {
       [_ in never]: never
