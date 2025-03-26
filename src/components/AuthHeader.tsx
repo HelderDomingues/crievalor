@@ -5,8 +5,8 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useProfile } from "@/hooks/useProfile";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { User, CreditCard, LogOut, Settings } from "lucide-react";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator, DropdownMenuLabel } from "@/components/ui/dropdown-menu";
+import { User, CreditCard, LogOut, Settings, Shield } from "lucide-react";
 
 const AuthHeader = () => {
   const { user, signOut } = useAuth();
@@ -32,6 +32,7 @@ const AuthHeader = () => {
             </Avatar>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
+            <DropdownMenuLabel>Minha Conta</DropdownMenuLabel>
             <DropdownMenuItem asChild>
               <Link to="/profile" className="flex items-center">
                 <User className="mr-2 h-4 w-4" />
@@ -44,14 +45,30 @@ const AuthHeader = () => {
                 <span>Assinaturas</span>
               </Link>
             </DropdownMenuItem>
+            
             {isAdmin && (
+              <>
+                <DropdownMenuSeparator />
+                <DropdownMenuLabel>Administração</DropdownMenuLabel>
+                <DropdownMenuItem asChild>
+                  <Link to="/admin/webhooks" className="flex items-center">
+                    <Settings className="mr-2 h-4 w-4" />
+                    <span>Admin Webhooks</span>
+                  </Link>
+                </DropdownMenuItem>
+              </>
+            )}
+            
+            {!isAdmin && (
               <DropdownMenuItem asChild>
-                <Link to="/admin/webhooks" className="flex items-center">
-                  <Settings className="mr-2 h-4 w-4" />
-                  <span>Admin Webhooks</span>
+                <Link to="/admin-setup" className="flex items-center">
+                  <Shield className="mr-2 h-4 w-4" />
+                  <span>Configuração Admin</span>
                 </Link>
               </DropdownMenuItem>
             )}
+            
+            <DropdownMenuSeparator />
             <DropdownMenuItem onClick={handleSignOut} className="flex items-center">
               <LogOut className="mr-2 h-4 w-4" />
               <span>Sair</span>
