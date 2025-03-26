@@ -1,10 +1,9 @@
 
 import { useState, useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/context/AuthContext";
 import { UserProfile } from "@/types/auth";
-import { v4 as uuidv4 } from "uuid";
-import { Json } from "@/integrations/supabase/types";
+import { fetchUserProfile, updateUserProfile, uploadUserAvatar } from "@/services/profileService";
+import { formatProfileData, formatSocialMedia } from "@/utils/profileFormatter";
 
 export function useProfile() {
   const { user } = useAuth();
@@ -14,7 +13,7 @@ export function useProfile() {
   const [avatarUploading, setAvatarUploading] = useState(false);
 
   useEffect(() => {
-    async function fetchProfile() {
+    async function loadProfile() {
       if (!user) {
         setProfile(null);
         setLoading(false);
@@ -23,56 +22,13 @@ export function useProfile() {
 
       try {
         setLoading(true);
-        const { data, error } = await supabase
-          .from("profiles")
-          .select("*")
-          .eq("id", user.id)
-          .maybeSingle();
+        const { data, error } = await fetchUserProfile(user.id);
 
         if (error) {
           throw error;
         }
 
-        // Ensure social_media is properly structured as an object, never null
-        let formattedSocialMedia = {
-          linkedin: "",
-          twitter: "",
-          instagram: "",
-          facebook: ""
-        };
-
-        if (data?.social_media) {
-          // Handle different possible types from the database
-          const socialMedia = data.social_media as any;
-          
-          if (typeof socialMedia === 'object' && !Array.isArray(socialMedia)) {
-            formattedSocialMedia = {
-              linkedin: socialMedia.linkedin || "",
-              twitter: socialMedia.twitter || "",
-              instagram: socialMedia.instagram || "",
-              facebook: socialMedia.facebook || ""
-            };
-          }
-        }
-
-        const formattedData = data ? {
-          ...data,
-          social_media: formattedSocialMedia,
-          // Ensure all fields conform to UserProfile type
-          id: data.id,
-          username: data.username,
-          avatar_url: data.avatar_url,
-          updated_at: data.updated_at,
-          full_name: data.full_name,
-          phone: data.phone,
-          company_name: data.company_name,
-          company_address: data.company_address,
-          website: data.website,
-          cnpj: data.cnpj,
-          cpf: data.cpf,
-          email: user.email
-        } as UserProfile : null;
-
+        const formattedData = formatProfileData(data, user.email);
         setProfile(formattedData);
       } catch (err) {
         console.error("Error fetching profile:", err);
@@ -82,7 +38,7 @@ export function useProfile() {
       }
     }
 
-    fetchProfile();
+    loadProfile();
   }, [user]);
 
   async function updateProfile(updates: Partial<UserProfile>) {
@@ -91,10 +47,10 @@ export function useProfile() {
     try {
       console.log("Original updates:", updates);
       
-      // Make sure social_media is always an object
+      // Garantir que social_media seja sempre um objeto
       let updatesToSend = { ...updates };
       
-      // If we're updating social_media, ensure it's complete
+      // Se estamos atualizando social_media, garantir que está completo
       if ('social_media' in updates) {
         updatesToSend.social_media = {
           linkedin: updates.social_media?.linkedin || profile?.social_media?.linkedin || "",
@@ -106,75 +62,30 @@ export function useProfile() {
       
       console.log("Sending updates to Supabase:", updatesToSend);
 
-      const { data, error } = await supabase
-        .from("profiles")
-        .update(updatesToSend)
-        .eq("id", user.id)
-        .select()
-        .maybeSingle();
+      const { data, error } = await updateUserProfile(user.id, updatesToSend, user.email);
 
       if (error) {
         throw error;
       }
 
-      // Process the response data to ensure social_media is properly structured
-      let formattedSocialMedia = {
-        linkedin: "",
-        twitter: "",
-        instagram: "",
-        facebook: ""
-      };
-
-      if (data?.social_media) {
-        // Handle different possible types from the database
-        const socialMedia = data.social_media as any;
-        
-        if (typeof socialMedia === 'object' && !Array.isArray(socialMedia)) {
-          formattedSocialMedia = {
-            linkedin: socialMedia.linkedin || "",
-            twitter: socialMedia.twitter || "",
-            instagram: socialMedia.instagram || "",
-            facebook: socialMedia.facebook || ""
-          };
-        }
-      }
-
-      const formattedData = data ? {
-        ...data,
-        social_media: formattedSocialMedia,
-        // Ensure all fields conform to UserProfile type
-        id: data.id,
-        username: data.username,
-        avatar_url: data.avatar_url,
-        updated_at: data.updated_at,
-        full_name: data.full_name,
-        phone: data.phone,
-        company_name: data.company_name,
-        company_address: data.company_address,
-        website: data.website,
-        cnpj: data.cnpj,
-        cpf: data.cpf,
-        email: user.email
-      } as UserProfile : null;
-
-      setProfile(formattedData);
-      return { data: formattedData, error: null };
+      setProfile(data);
+      return { data, error: null };
     } catch (error) {
       console.error("Error updating profile:", error);
       return { data: null, error: error as Error };
     }
   }
 
-  // Update a single field
+  // Atualiza um único campo
   async function updateProfileField(field: string, value: any) {
     if (!user) return { error: new Error("No user logged in") };
     
     try {
-      // Handle nested social_media fields
+      // Trata campos aninhados em social_media
       if (field.startsWith('social_media.')) {
         const socialField = field.split('.')[1];
         
-        // Create an updated social_media object
+        // Cria um objeto social_media atualizado
         const updatedSocialMedia = {
           ...(profile?.social_media || {
             linkedin: "",
@@ -188,7 +99,7 @@ export function useProfile() {
         return updateProfile({ social_media: updatedSocialMedia });
       }
       
-      // For other fields, create a simple update object
+      // Para outros campos, cria um objeto de atualização simples
       const updates = { [field]: value };
       return updateProfile(updates);
     } catch (error) {
@@ -202,73 +113,16 @@ export function useProfile() {
     
     try {
       setAvatarUploading(true);
+      const result = await uploadUserAvatar(user.id, file);
       
-      // Check if the storage bucket exists, create if not
-      try {
-        const { data: buckets } = await supabase.storage.listBuckets();
-        const avatarBucketExists = buckets?.some(bucket => bucket.name === 'avatars');
-        
-        if (!avatarBucketExists) {
-          console.log("Creating avatars bucket");
-          const { error: createBucketError } = await supabase.storage.createBucket('avatars', {
-            public: true,
-          });
-          
-          if (createBucketError) {
-            console.error("Error creating avatars bucket:", createBucketError);
-          }
-        }
-      } catch (bucketError) {
-        console.error("Error checking/creating avatars bucket:", bucketError);
-        // Continue with upload attempt even if bucket check/creation fails
+      if (result.url) {
+        // Atualiza o estado local
+        setProfile(prev => prev ? { ...prev, avatar_url: result.url } : null);
       }
       
-      // Create a unique file path for the avatar
-      const fileExt = file.name.split('.').pop();
-      const filePath = `${user.id}/${uuidv4()}.${fileExt}`;
-      
-      console.log(`Uploading avatar to path: ${filePath}`);
-      
-      // Upload the file
-      const { error: uploadError, data: uploadData } = await supabase.storage
-        .from('avatars')
-        .upload(filePath, file, {
-          upsert: true,
-          cacheControl: '3600',
-          contentType: file.type
-        });
-        
-      if (uploadError) {
-        console.error("Error uploading file:", uploadError);
-        throw uploadError;
-      }
-      
-      console.log("File uploaded successfully:", uploadData);
-      
-      // Get the public URL
-      const { data: urlData } = supabase.storage
-        .from('avatars')
-        .getPublicUrl(filePath);
-        
-      console.log("Public URL:", urlData.publicUrl);
-      
-      // Update the user profile with the new avatar URL
-      const { error: updateError } = await supabase
-        .from('profiles')
-        .update({ avatar_url: urlData.publicUrl })
-        .eq('id', user.id);
-        
-      if (updateError) {
-        console.error("Error updating profile with avatar URL:", updateError);
-        throw updateError;
-      }
-      
-      // Update local state
-      setProfile(prev => prev ? { ...prev, avatar_url: urlData.publicUrl } : null);
-      
-      return { error: null, url: urlData.publicUrl };
+      return result;
     } catch (error) {
-      console.error("Error uploading avatar:", error);
+      console.error("Error in uploadAvatar:", error);
       return { error: error as Error, url: null };
     } finally {
       setAvatarUploading(false);
