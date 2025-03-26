@@ -18,14 +18,13 @@ const WebhookAdmin = () => {
     if (!loading) {
       setAccessChecked(true);
       
-      // If user doesn't have admin permissions after loading completes, show a toast
+      // If user doesn't have admin permissions after loading completes, redirect
       if (!(profile?.social_media && 'admin' in profile.social_media)) {
         toast.error("Você não tem permissões de administrador");
-        // Use window.location to force a complete page reload
-        window.location.href = "/admin-setup";
+        navigate("/admin-setup");
       }
     }
-  }, [loading, profile]);
+  }, [loading, profile, navigate]);
   
   // Check for admin permissions
   const isAdmin = profile?.social_media && 'admin' in profile.social_media;
@@ -46,11 +45,9 @@ const WebhookAdmin = () => {
     );
   }
   
-  // If done loading and not admin, redirect to admin setup
+  // If done loading and not admin, the useEffect will handle redirection
+  // This is a fallback just in case
   if (accessChecked && !isAdmin) {
-    // Use window.location instead of Navigate component for a full page reload
-    window.location.href = "/admin-setup";
-    // Return a loading state in the meantime
     return (
       <div className="min-h-screen flex flex-col">
         <Header />

@@ -52,10 +52,9 @@ const AdminSetup = () => {
     }
   };
 
-  // Função explícita para navegar para a página de webhooks admin
+  // Função para navegar para a página de webhooks admin
   const navigateToWebhookAdmin = () => {
-    // Usando window.location.href para força um carregamento completo da página
-    window.location.href = "/admin-webhooks";
+    navigate("/admin-webhooks");
   };
 
   return (
@@ -137,7 +136,7 @@ const AdminSetup = () => {
                   )}
                 </div>
                 
-                {/* Novo botão que só aparece quando os privilégios de administrador foram concedidos */}
+                {/* Botão que só aparece quando os privilégios de administrador foram concedidos */}
                 {adminGranted && (
                   <Button 
                     className="w-full mt-4"
