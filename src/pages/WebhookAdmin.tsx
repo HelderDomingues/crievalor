@@ -7,6 +7,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Button } from '@/components/ui/button';
 import { Loader2 } from 'lucide-react';
+import { toast } from 'sonner';
 
 const WebhookAdmin = () => {
   const { profile, loading } = useProfile();
@@ -16,8 +17,13 @@ const WebhookAdmin = () => {
   useEffect(() => {
     if (!loading) {
       setAccessChecked(true);
+      
+      // If user doesn't have admin permissions after loading completes, show a toast
+      if (!(profile?.social_media && 'admin' in profile.social_media)) {
+        toast.error("Você não tem permissões de administrador");
+      }
     }
-  }, [loading]);
+  }, [loading, profile]);
   
   // Check for admin permissions
   const isAdmin = profile?.social_media && 'admin' in profile.social_media;

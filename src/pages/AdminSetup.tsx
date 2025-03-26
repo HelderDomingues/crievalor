@@ -52,6 +52,10 @@ const AdminSetup = () => {
     }
   };
 
+  const goToWebhookAdmin = () => {
+    navigate("/admin/webhooks");
+  };
+
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
@@ -130,7 +134,7 @@ const AdminSetup = () => {
                 )}
                 
                 {adminGranted && (
-                  <Button onClick={() => navigate("/admin/webhooks")}>
+                  <Button onClick={goToWebhookAdmin}>
                     Ir para Admin Webhooks
                   </Button>
                 )}
