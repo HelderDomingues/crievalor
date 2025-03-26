@@ -8,7 +8,7 @@ import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
-import { CheckCircle, Loader2, AlertTriangle } from "lucide-react";
+import { CheckCircle, Loader2, AlertTriangle, ExternalLink } from "lucide-react";
 
 const AdminSetup = () => {
   const { user } = useAuth();
@@ -52,8 +52,9 @@ const AdminSetup = () => {
     }
   };
 
-  // Ensure we're using the correct path for navigation
-  const goToWebhookAdmin = () => {
+  // Função explícita para navegar para a página de webhooks admin
+  const navigateToWebhookAdmin = () => {
+    // Usando window.location.href para força um carregamento completo da página
     window.location.href = "/admin-webhooks";
   };
 
@@ -113,30 +114,37 @@ const AdminSetup = () => {
                 )}
               </CardContent>
               
-              <CardFooter className="flex justify-between">
-                <Button variant="outline" onClick={() => navigate("/")}>
-                  Voltar para Home
-                </Button>
-                
-                {!adminGranted && user && (
-                  <Button 
-                    onClick={handleGrantAdmin} 
-                    disabled={isProcessing || loading}
-                  >
-                    {isProcessing ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Processando...
-                      </>
-                    ) : (
-                      "Conceder Privilégios"
-                    )}
+              <CardFooter className="flex flex-col space-y-4 w-full">
+                <div className="flex justify-between w-full">
+                  <Button variant="outline" onClick={() => navigate("/")}>
+                    Voltar para Home
                   </Button>
-                )}
+                  
+                  {!adminGranted && user && (
+                    <Button 
+                      onClick={handleGrantAdmin} 
+                      disabled={isProcessing || loading}
+                    >
+                      {isProcessing ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Processando...
+                        </>
+                      ) : (
+                        "Conceder Privilégios"
+                      )}
+                    </Button>
+                  )}
+                </div>
                 
+                {/* Novo botão que só aparece quando os privilégios de administrador foram concedidos */}
                 {adminGranted && (
-                  <Button onClick={goToWebhookAdmin}>
-                    Ir para Admin Webhooks
+                  <Button 
+                    className="w-full mt-4"
+                    onClick={navigateToWebhookAdmin}
+                  >
+                    <ExternalLink className="mr-2" />
+                    Acessar Administração de Webhooks
                   </Button>
                 )}
               </CardFooter>
