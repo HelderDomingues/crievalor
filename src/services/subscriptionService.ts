@@ -117,7 +117,32 @@ export const subscriptionService = {
       const paymentValue = plansService.calculatePaymentAmount(regularPlan, installments);
       
       // Generate a unique reference ID to prevent duplicate payments
-      const uniqueReference = uuidv4();
+      // Use a composite string that includes user ID, plan ID, and timestamp to ensure uniqueness
+      const uniqueReference = `${user.id}_${planId}_${Date.now()}`;
+      
+      // Check if there's already a pending payment with this plan and user combo
+      const { data: existingPayments } = await supabase.functions.invoke("asaas", {
+        body: {
+          action: "check-existing-payments",
+          data: {
+            customerId,
+            planId,
+            userId: user.id
+          },
+        },
+      });
+      
+      // If we already have a pending payment with a payment link, return that instead of creating a new one
+      if (existingPayments?.paymentLink) {
+        console.log("Found existing payment, returning payment link:", existingPayments.paymentLink);
+        return {
+          url: existingPayments.paymentLink,
+          payment: existingPayments.payment,
+          dbSubscription: existingPayments.dbSubscription,
+          directRedirect: true,
+          isExisting: true
+        };
+      }
       
       // Prepare payment data according to Asaas API requirements
       const paymentData = {

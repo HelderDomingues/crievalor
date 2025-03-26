@@ -128,7 +128,77 @@ serve(async (req) => {
       }
     }
 
+    // New function: Check if user has any pending payments for a specific plan
+    async function checkPendingPayments(customerId: string, planId: string, userId: string) {
+      try {
+        // Query subscriptions for this user and plan
+        const { data: subscriptions, error } = await supabase
+          .from("subscriptions")
+          .select("*, asaas_subscription_id, asaas_payment_link")
+          .eq("user_id", userId)
+          .eq("plan_id", planId)
+          .eq("status", "pending");
+          
+        if (error) {
+          console.error("Error querying subscriptions:", error);
+          return null;
+        }
+        
+        if (!subscriptions || subscriptions.length === 0) {
+          return null;
+        }
+        
+        // Check if any subscription has a payment link
+        const subscription = subscriptions[0];
+        if (subscription.asaas_payment_link) {
+          // Verify if the payment link is still valid in Asaas
+          try {
+            const paymentId = subscription.asaas_subscription_id;
+            const payment = await asaasRequest(`/payments/${paymentId}`);
+            
+            // Only return if the payment is still pending
+            if (payment && ["PENDING", "RECEIVED", "CONFIRMED"].includes(payment.status)) {
+              return {
+                payment,
+                paymentLink: subscription.asaas_payment_link,
+                dbSubscription: subscription
+              };
+            }
+          } catch (error) {
+            console.error("Error checking payment status:", error);
+            // If we can't verify the payment, assume it's invalid and continue
+          }
+        }
+        
+        return null;
+      } catch (error) {
+        console.error("Error in checkPendingPayments:", error);
+        return null;
+      }
+    }
+
     switch (action) {
+      case "check-existing-payments": {
+        try {
+          const { customerId, planId, userId } = data;
+          
+          if (!customerId || !planId || !userId) {
+            throw new Error("Missing required parameters for check-existing-payments");
+          }
+          
+          const pendingPayment = await checkPendingPayments(customerId, planId, userId);
+          
+          result = pendingPayment || { exists: false };
+        } catch (error) {
+          console.error("Error checking existing payments:", error);
+          return new Response(JSON.stringify({ error: `Failed to check existing payments: ${error.message}` }), {
+            status: 500,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          });
+        }
+        break;
+      }
+      
       case "create-customer": {
         const { name, email, phone, cpfCnpj, mobilePhone, address, postalCode, externalReference } = data;
         

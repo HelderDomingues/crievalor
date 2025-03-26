@@ -15,10 +15,15 @@ const CheckoutSuccess = () => {
   useEffect(() => {
     // Mostrar toast de confirmação
     toast({
-      title: "Assinatura realizada com sucesso!",
-      description: "Bem-vindo ao seu novo plano.",
+      title: "Pagamento confirmado!",
+      description: "Seu pagamento foi realizado com sucesso. Você já pode acessar todos os recursos do seu plano.",
       variant: "default",
     });
+    
+    // Limpar dados de checkout que foram salvos durante o redirecionamento
+    localStorage.removeItem('checkoutPlanId');
+    localStorage.removeItem('checkoutInstallments');
+    localStorage.removeItem('checkoutTimestamp');
   }, [toast]);
 
   const handleContinue = () => {

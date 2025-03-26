@@ -88,6 +88,11 @@ const SubscriptionPage = () => {
 
     if (processingPayment) {
       console.log("Payment already processing, preventing duplicate submissions");
+      toast({
+        title: "Processando pagamento",
+        description: "Aguarde, seu pagamento já está sendo processado.",
+        variant: "default",
+      });
       return;
     }
 
@@ -118,7 +123,18 @@ const SubscriptionPage = () => {
       console.log("Redirecting to Asaas checkout:", result.url);
       
       // Direct redirection to payment page
-      window.location.href = result.url;
+      if (result.directRedirect) {
+        // Save current state to localStorage before redirecting
+        localStorage.setItem('checkoutPlanId', planId);
+        localStorage.setItem('checkoutInstallments', String(selectedInstallments));
+        localStorage.setItem('checkoutTimestamp', String(Date.now()));
+        
+        // Hard redirect to payment page
+        window.location.href = result.url;
+      } else {
+        // This is just a fallback, we should always have directRedirect=true
+        navigate(result.url);
+      }
     } catch (error: any) {
       console.error("Error creating checkout session:", error);
       setCheckoutError(
@@ -130,9 +146,7 @@ const SubscriptionPage = () => {
         variant: "destructive",
       });
       setProcessingPayment(false);
-    } finally {
       setIsCheckingOut(false);
-      // Note: we don't reset processingPayment here because we're redirecting
     }
   };
 

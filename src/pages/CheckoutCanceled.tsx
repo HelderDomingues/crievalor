@@ -11,17 +11,35 @@ const CheckoutCanceled = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
 
+  // Recuperar informações do checkout cancelado do localStorage
+  const planId = localStorage.getItem('checkoutPlanId');
+  const installments = localStorage.getItem('checkoutInstallments');
+
   useEffect(() => {
     // Mostrar toast de cancelamento
     toast({
       title: "Checkout cancelado",
-      description: "O processo de assinatura foi cancelado.",
+      description: "O processo de pagamento foi cancelado. Você pode tentar novamente quando quiser.",
       variant: "destructive",
     });
   }, [toast]);
 
   const handleTryAgain = () => {
-    navigate("/subscription?tab=plans");
+    // Se temos o plano e installments no localStorage, podemos redirecionar diretamente para o mesmo checkout
+    if (planId) {
+      navigate(`/subscription?tab=plans&plan=${planId}`);
+    } else {
+      navigate("/subscription?tab=plans");
+    }
+  };
+
+  const handleBackToPlans = () => {
+    // Limpar dados de checkout que foram salvos durante o redirecionamento
+    localStorage.removeItem('checkoutPlanId');
+    localStorage.removeItem('checkoutInstallments');
+    localStorage.removeItem('checkoutTimestamp');
+    
+    navigate("/mar#pricing");
   };
 
   return (
@@ -55,7 +73,7 @@ const CheckoutCanceled = () => {
               <Button 
                 variant="outline"
                 size="lg" 
-                onClick={() => navigate("/mar#pricing")}
+                onClick={handleBackToPlans}
                 className="gap-2"
               >
                 <ArrowLeft className="h-4 w-4" />
