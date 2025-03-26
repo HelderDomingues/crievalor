@@ -3,10 +3,11 @@ import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { AlertCircle, Check, Loader2, ExternalLink, RotateCw, ShieldCheck } from "lucide-react";
+import { AlertCircle, Check, Loader2, ExternalLink, RotateCw, ShieldCheck, AlertTriangle } from "lucide-react";
 import { toast } from "sonner";
 import { webhookService } from '@/services/webhookService';
 import { Badge } from "@/components/ui/badge";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 export const WebhookManager = () => {
   const [webhookUrl, setWebhookUrl] = useState(webhookService.getRecommendedWebhookUrl());
@@ -14,6 +15,7 @@ export const WebhookManager = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isTestLoading, setIsTestLoading] = useState(false);
   const [webhookStatus, setWebhookStatus] = useState<'active' | 'unknown'>('unknown');
+  const [errorDetails, setErrorDetails] = useState<string | null>(null);
   
   useEffect(() => {
     // Extract token from webhook URL if present
@@ -27,6 +29,7 @@ export const WebhookManager = () => {
   const handleTestWebhook = async () => {
     try {
       setIsTestLoading(true);
+      setErrorDetails(null);
       
       if (!webhookUrl.trim()) {
         toast.error("URL do webhook é obrigatória");
@@ -41,6 +44,7 @@ export const WebhookManager = () => {
         });
         setWebhookStatus('active');
       } else {
+        setErrorDetails(result.error || "Erro ao verificar a conexão com o Asaas");
         toast.error("Falha ao testar webhook", {
           description: result.error || "Erro ao verificar a conexão com o Asaas"
         });
@@ -48,6 +52,7 @@ export const WebhookManager = () => {
       
     } catch (error: any) {
       console.error("Erro ao testar webhook:", error);
+      setErrorDetails(error.message || "Erro desconhecido");
       toast.error("Erro ao testar webhook", {
         description: error.message
       });
@@ -94,6 +99,19 @@ export const WebhookManager = () => {
             Este webhook já está configurado manualmente no painel do Asaas
           </p>
         </div>
+        
+        {errorDetails && (
+          <Alert variant="destructive" className="mt-4">
+            <AlertTriangle className="h-4 w-4" />
+            <AlertDescription className="mt-2">
+              <p className="font-medium">Erro ao testar webhook:</p>
+              <p className="text-sm mt-1">{errorDetails}</p>
+              <p className="text-sm mt-2">
+                Certifique-se de que você está logado como administrador e que o Asaas está configurado corretamente.
+              </p>
+            </AlertDescription>
+          </Alert>
+        )}
         
         <div className="rounded-md bg-blue-50 p-4">
           <div className="flex">

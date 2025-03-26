@@ -24,14 +24,28 @@ serve(async (req) => {
     // Obter usuário autenticado
     const authHeader = req.headers.get('Authorization');
     if (!authHeader) {
-      throw new Error('Autenticação necessária');
+      console.error("Teste webhook: Autenticação necessária");
+      return new Response(
+        JSON.stringify({ error: "Autenticação necessária" }),
+        {
+          status: 401,
+          headers: { ...corsHeaders, "Content-Type": "application/json" }
+        }
+      );
     }
     
     const token = authHeader.replace('Bearer ', '');
     const { data: { user }, error: userError } = await supabase.auth.getUser(token);
     
     if (userError || !user) {
-      throw new Error('Usuário não autenticado');
+      console.error("Teste webhook: Usuário não autenticado", userError);
+      return new Response(
+        JSON.stringify({ error: "Usuário não autenticado", details: userError }),
+        {
+          status: 401,
+          headers: { ...corsHeaders, "Content-Type": "application/json" }
+        }
+      );
     }
     
     console.log("Usuário autenticado:", user.id);
@@ -42,13 +56,45 @@ serve(async (req) => {
       { user_id: user.id }
     );
     
-    if (adminCheckError || !isAdmin) {
-      throw new Error('O usuário não possui permissões de administrador');
+    if (adminCheckError) {
+      console.error("Teste webhook: Erro ao verificar se usuário é admin", adminCheckError);
+      return new Response(
+        JSON.stringify({ 
+          error: "Erro ao verificar permissões de administrador", 
+          details: adminCheckError 
+        }),
+        {
+          status: 500,
+          headers: { ...corsHeaders, "Content-Type": "application/json" }
+        }
+      );
+    }
+    
+    if (!isAdmin) {
+      console.error("Teste webhook: Usuário não é administrador", user.id);
+      return new Response(
+        JSON.stringify({ error: "O usuário não possui permissões de administrador" }),
+        {
+          status: 403,
+          headers: { ...corsHeaders, "Content-Type": "application/json" }
+        }
+      );
     }
     
     console.log("Usuário é administrador, prosseguindo com teste de webhook");
     
     // Verificar webhooks ativos no Asaas
+    if (!asaasApiKey) {
+      console.error("Teste webhook: ASAAS_API_KEY não configurada");
+      return new Response(
+        JSON.stringify({ error: "API Key do Asaas não configurada no servidor" }),
+        {
+          status: 500,
+          headers: { ...corsHeaders, "Content-Type": "application/json" }
+        }
+      );
+    }
+    
     const webhooksResponse = await fetch(`${asaasApiUrl}/webhooks`, {
       method: 'GET',
       headers: {
@@ -60,14 +106,32 @@ serve(async (req) => {
     if (!webhooksResponse.ok) {
       const errorData = await webhooksResponse.json();
       console.error("Erro ao obter webhooks:", errorData);
-      throw new Error(`Erro ao obter webhooks: ${webhooksResponse.status}`);
+      return new Response(
+        JSON.stringify({ 
+          error: `Erro ao obter webhooks do Asaas: ${webhooksResponse.status}`,
+          details: errorData
+        }),
+        {
+          status: 500,
+          headers: { ...corsHeaders, "Content-Type": "application/json" }
+        }
+      );
     }
     
     const webhooks = await webhooksResponse.json();
     console.log("Webhooks encontrados:", webhooks.data);
     
     if (!webhooks?.data?.length) {
-      throw new Error('Nenhum webhook configurado no Asaas');
+      return new Response(
+        JSON.stringify({ 
+          success: false,
+          error: 'Nenhum webhook configurado no Asaas'
+        }),
+        {
+          status: 200,
+          headers: { ...corsHeaders, "Content-Type": "application/json" }
+        }
+      );
     }
     
     // Webhook está configurado e funcionando

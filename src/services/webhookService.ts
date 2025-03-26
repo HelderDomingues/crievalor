@@ -9,8 +9,22 @@ export const webhookService = {
     try {
       console.log(`Testando conexão do webhook`);
       
+      // Get the current session token to pass to the edge function
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session?.access_token) {
+        console.error("Erro ao testar webhook: Usuário não autenticado");
+        return { 
+          success: false, 
+          error: "Usuário não autenticado. Faça login novamente." 
+        };
+      }
+      
       const response = await supabase.functions.invoke("test-webhook", {
         body: {},
+        headers: {
+          Authorization: `Bearer ${session.access_token}`
+        }
       });
       
       if (response.error) {
