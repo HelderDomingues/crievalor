@@ -9,6 +9,36 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      asaas_customers: {
+        Row: {
+          asaas_id: string
+          cpf_cnpj: string
+          created_at: string
+          email: string | null
+          id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          asaas_id: string
+          cpf_cnpj: string
+          created_at?: string
+          email?: string | null
+          id?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          asaas_id?: string
+          cpf_cnpj?: string
+          created_at?: string
+          email?: string | null
+          id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       material_accesses: {
         Row: {
           accessed_at: string | null
@@ -85,6 +115,7 @@ export type Database = {
           company_name: string | null
           cpf: string | null
           full_name: string | null
+          has_asaas_customer: boolean | null
           id: string
           phone: string | null
           social_media: Json | null
@@ -99,6 +130,7 @@ export type Database = {
           company_name?: string | null
           cpf?: string | null
           full_name?: string | null
+          has_asaas_customer?: boolean | null
           id: string
           phone?: string | null
           social_media?: Json | null
@@ -113,6 +145,7 @@ export type Database = {
           company_name?: string | null
           cpf?: string | null
           full_name?: string | null
+          has_asaas_customer?: boolean | null
           id?: string
           phone?: string | null
           social_media?: Json | null
@@ -131,8 +164,11 @@ export type Database = {
           contract_accepted_at: string | null
           created_at: string
           current_period_end: string | null
+          external_reference: string | null
           id: string
           installments: number | null
+          payment_id: string | null
+          payment_status: string | null
           plan_id: string
           status: string
           updated_at: string
@@ -146,8 +182,11 @@ export type Database = {
           contract_accepted_at?: string | null
           created_at?: string
           current_period_end?: string | null
+          external_reference?: string | null
           id?: string
           installments?: number | null
+          payment_id?: string | null
+          payment_status?: string | null
           plan_id: string
           status: string
           updated_at?: string
@@ -161,8 +200,11 @@ export type Database = {
           contract_accepted_at?: string | null
           created_at?: string
           current_period_end?: string | null
+          external_reference?: string | null
           id?: string
           installments?: number | null
+          payment_id?: string | null
+          payment_status?: string | null
           plan_id?: string
           status?: string
           updated_at?: string

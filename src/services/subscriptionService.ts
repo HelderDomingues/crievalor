@@ -4,7 +4,6 @@ import { Subscription, CreateCheckoutOptions } from "@/types/subscription";
 import { plansService } from "./plansService";
 import { asaasCustomerService } from "./asaasCustomerService";
 import { paymentsService } from "./paymentsService";
-import { v4 as uuidv4 } from 'uuid';
 
 export { PLANS } from "./plansService";
 export type { Plan, Subscription, CreateCheckoutOptions, RegularPlan, CustomPricePlan } from "@/types/subscription";
@@ -14,33 +13,33 @@ export const subscriptionService = {
     try {
       const { planId, successUrl, cancelUrl, installments = 1 } = options;
       
-      // Find the plan with the matching ID
+      // Encontrar o plano com o ID correspondente
       const plan = plansService.getPlanById(planId);
       
       if (!plan) {
-        throw new Error(`Plan with ID ${planId} not found`);
+        throw new Error(`Plano com ID ${planId} não encontrado`);
       }
       
       if (plansService.isCustomPricePlan(plan)) {
-        // For custom price plans, redirect to contact page
+        // Para planos de preço personalizado, redirecionar para página de contato
         return {
           url: "/contato?subject=Plano Corporativo",
           isCustomPlan: true
         };
       }
       
-      // Now we can safely cast plan to RegularPlan since we've checked customPrice above
-      const regularPlan = plan as any; // TypeScript issue fixed by treating as any
+      // Agora podemos fazer cast para RegularPlan com segurança
+      const regularPlan = plan as any;
       
-      console.log(`Creating checkout for plan: ${planId} with ${installments} installments`);
+      console.log(`Criando checkout para plano: ${planId} com ${installments} parcelas`);
       
-      // Get the current user
+      // Obter o usuário atual
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
-        throw new Error("No authenticated user found");
+        throw new Error("Usuário não autenticado");
       }
       
-      // Get user profile to create or retrieve customer
+      // Obter perfil do usuário para criar ou recuperar cliente
       const { data: profileData } = await supabase
         .from("profiles")
         .select("*")
@@ -48,15 +47,15 @@ export const subscriptionService = {
         .maybeSingle();
         
       if (!profileData) {
-        throw new Error("User profile not found");
+        throw new Error("Perfil de usuário não encontrado");
       }
       
-      // Properly handle the social_media object which might be a Json type
+      // Tratar corretamente o objeto social_media que pode ser um tipo Json
       const socialMediaObj = typeof profileData.social_media === 'object' && profileData.social_media !== null
         ? profileData.social_media
         : {};
         
-      // Create a properly structured social_media object with defaults
+      // Criar um objeto social_media estruturado adequadamente com padrões
       const social_media = {
         linkedin: typeof socialMediaObj === 'object' && socialMediaObj !== null && 'linkedin' in socialMediaObj 
           ? String(socialMediaObj.linkedin || '') 
@@ -72,14 +71,14 @@ export const subscriptionService = {
           : ''
       };
       
-      // Add email to the profile for customer creation
+      // Adicionar email ao perfil para criação de cliente
       const profileWithEmail = {
         ...profileData,
         email: user.email,
         social_media: social_media
       };
       
-      // Validate required fields based on Asaas documentation
+      // Validar campos obrigatórios com base na documentação do Asaas
       if (!profileWithEmail.full_name) {
         throw new Error("Nome completo é obrigatório");
       }
@@ -92,202 +91,289 @@ export const subscriptionService = {
         throw new Error("CPF ou CNPJ é obrigatório");
       }
       
-      // Check if user already has an Asaas customer ID
-      const { data: existingSub } = await supabase
-        .from("subscriptions")
-        .select("asaas_customer_id")
-        .eq("user_id", user.id)
-        .maybeSingle();
+      // Criar ou recuperar cliente Asaas
+      const { customerId, isNew } = await asaasCustomerService.createOrRetrieveCustomer(profileWithEmail);
       
-      // Initialize customerId as null
-      let customerId = null;
-      
-      // Only try to access asaas_customer_id if data exists
-      if (existingSub?.asaas_customer_id) {
-        customerId = existingSub.asaas_customer_id;
-      }
-      
-      // If no customer ID exists, create a new customer
       if (!customerId) {
-        const customer = await asaasCustomerService.createCustomer(profileWithEmail);
-        customerId = customer.id;
+        throw new Error("Não foi possível obter ID do cliente no Asaas");
       }
       
-      // Calculate the payment value based on installments
+      console.log(`Cliente Asaas ${isNew ? 'criado' : 'recuperado'}: ${customerId}`);
+      
+      // Calcular o valor do pagamento com base nas parcelas
       const paymentValue = plansService.calculatePaymentAmount(regularPlan, installments);
       
-      // Generate a unique reference ID to prevent duplicate payments
-      // Use a composite string that includes user ID, plan ID, and timestamp to ensure uniqueness
-      const uniqueReference = `${user.id}_${planId}_${Date.now()}`;
+      // Gerar uma referência externa única para prevenir pagamentos duplicados
+      const externalReference = await paymentsService.generateUniqueReference(user.id, planId);
       
-      // Check if there's already a pending payment with this plan and user combo
-      const { data: existingPayments } = await supabase.functions.invoke("asaas", {
-        body: {
-          action: "check-existing-payments",
-          data: {
-            customerId,
-            planId,
-            userId: user.id
-          },
-        },
-      });
+      // Verificar se já existe um pagamento pendente para esta combinação de plano e usuário
+      const existingPaymentCheck = await paymentsService.checkExistingPayment(customerId, planId, user.id);
       
-      // If we already have a pending payment with a payment link, return that instead of creating a new one
-      if (existingPayments?.paymentLink) {
-        console.log("Found existing payment, returning payment link:", existingPayments.paymentLink);
+      // Se já temos um pagamento pendente com link, retornar esse link em vez de criar um novo
+      if (!existingPaymentCheck.needsCreation && existingPaymentCheck.paymentLink) {
+        console.log("Encontrado pagamento existente, retornando link:", existingPaymentCheck.paymentLink);
         return {
-          url: existingPayments.paymentLink,
-          payment: existingPayments.payment,
-          dbSubscription: existingPayments.dbSubscription,
+          url: existingPaymentCheck.paymentLink,
+          payment: existingPaymentCheck.payment,
+          dbSubscription: existingPaymentCheck.dbSubscription,
           directRedirect: true,
           isExisting: true
         };
       }
       
-      // Prepare payment data according to Asaas API requirements
-      const paymentData = {
+      // Preparar dados de pagamento de acordo com os requisitos da API Asaas
+      const nextDueDate = new Date(Date.now() + 3600 * 1000 * 24);
+      const dueDate = nextDueDate.toISOString().split('T')[0]; // formato YYYY-MM-DD
+      
+      // Criar pagamento no Asaas
+      const { paymentId, paymentLink } = await paymentsService.createPayment({
         customerId,
         planId,
+        userId: user.id,
         value: paymentValue,
         description: `Compra: ${regularPlan.name}`,
         successUrl,
         cancelUrl,
         installments,
-        nextDueDate: new Date(Date.now() + 3600 * 1000 * 24).toISOString().split('T')[0], // tomorrow
-        generateLink: true,
         billingType: installments > 1 ? "CREDIT_CARD" : "UNDEFINED",
-        dueDate: new Date(Date.now() + 3600 * 1000 * 24).toISOString().split('T')[0],
-        externalReference: uniqueReference,
+        dueDate,
+        externalReference,
         postalService: false
+      });
+      
+      // Criar ou atualizar registro de assinatura local
+      const subscriptionData = {
+        user_id: user.id,
+        plan_id: planId,
+        status: "pending",
+        asaas_customer_id: customerId,
+        asaas_payment_link: paymentLink,
+        payment_id: paymentId,
+        external_reference: externalReference,
+        payment_status: "PENDING",
+        installments
       };
       
-      console.log("Sending payment data to Asaas:", paymentData);
+      // Verificar se já existe registro para atualizar
+      const { data: existingSubscription } = await supabase
+        .from("subscriptions")
+        .select("id")
+        .eq("user_id", user.id)
+        .eq("plan_id", planId)
+        .maybeSingle();
       
-      // Create payment in Asaas for one-time purchase with installments
-      const response = await supabase.functions.invoke("asaas", {
-        body: {
-          action: "create-payment",
-          data: paymentData,
-        },
-      });
-
-      if (response.error) {
-        console.error("Error creating Asaas payment:", response.error);
-        throw new Error(`Error creating payment: ${response.error.message}`);
+      let subscriptionResult;
+      
+      if (existingSubscription) {
+        // Atualizar registro existente
+        const { data, error } = await supabase
+          .from("subscriptions")
+          .update(subscriptionData)
+          .eq("id", existingSubscription.id)
+          .select()
+          .single();
+          
+        if (error) throw error;
+        subscriptionResult = data;
+      } else {
+        // Criar novo registro
+        const { data, error } = await supabase
+          .from("subscriptions")
+          .insert(subscriptionData)
+          .select()
+          .single();
+          
+        if (error) throw error;
+        subscriptionResult = data;
       }
-
-      console.log("Asaas payment created successfully:", response.data);
       
-      // Important: Redirect directly to the payment link URL
-      if (response.data && response.data.paymentLink) {
-        // Use window.location.href for a hard redirect instead of returning a URL
-        // This ensures the user is taken directly to the Asaas payment page
+      console.log("Registro de assinatura criado/atualizado:", subscriptionResult);
+      
+      // Importante: Redirecionar diretamente para a URL do link de pagamento
+      if (paymentLink) {
+        // Salvar estado atual em localStorage antes de redirecionar
+        localStorage.setItem('checkoutPlanId', planId);
+        localStorage.setItem('checkoutInstallments', String(installments));
+        localStorage.setItem('checkoutTimestamp', String(Date.now()));
+        localStorage.setItem('checkoutReference', externalReference);
+        
         return {
-          url: response.data.paymentLink,
-          payment: response.data.payment,
-          dbSubscription: response.data.dbSubscription,
+          url: paymentLink,
+          payment: paymentId,
+          dbSubscription: subscriptionResult,
           directRedirect: true
         };
       } else {
-        throw new Error("No payment link was returned from Asaas");
+        throw new Error("Nenhum link de pagamento foi retornado do Asaas");
       }
     } catch (error: any) {
-      console.error("Error in createCheckoutSession:", error);
+      console.error("Erro em createCheckoutSession:", error);
       throw error;
     }
   },
 
   async getCurrentSubscription(): Promise<Subscription | null> {
     try {
-      console.log("Fetching current subscription...");
+      console.log("Buscando assinatura atual...");
       
-      // Get current user
+      // Obter usuário atual
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
-        console.log("No authenticated user found");
+        console.log("Nenhum usuário autenticado encontrado");
         return null;
       }
       
-      const response = await supabase.functions.invoke("asaas", {
-        body: {
-          action: "get-subscription",
-          data: {
-            userId: user.id,
-          },
-        },
-      });
-
-      if (response.error) {
-        console.error("Error fetching subscription:", response.error);
+      // Buscar assinatura diretamente na tabela local
+      const { data, error } = await supabase
+        .from("subscriptions")
+        .select("*")
+        .eq("user_id", user.id)
+        .order("created_at", { ascending: false })
+        .maybeSingle();
+      
+      if (error) {
+        console.error("Erro ao buscar assinatura:", error);
         return null;
       }
-
-      return response.data?.subscription || null;
+      
+      // Se não encontrou assinatura, retornar null
+      if (!data) {
+        return null;
+      }
+      
+      // Verificar status do pagamento se for assinatura pendente
+      if (data.status === "pending" && data.payment_id) {
+        const payment = await paymentsService.getPayment(data.payment_id);
+        
+        // Se o pagamento foi aprovado mas o status da assinatura ainda está pendente, atualizar
+        if (payment && ["RECEIVED", "CONFIRMED", "RECEIVED_IN_CASH"].includes(payment.status)) {
+          await this.updateSubscriptionStatus(data.id, "active");
+          data.status = "active";
+        } else if (payment && ["OVERDUE", "REFUNDED", "REFUND_REQUESTED", "CHARGEBACK_REQUESTED", 
+                               "CHARGEBACK_DISPUTE", "AWAITING_CHARGEBACK_REVERSAL"].includes(payment.status)) {
+          await this.updateSubscriptionStatus(data.id, "past_due");
+          data.status = "past_due";
+        }
+      }
+      
+      return data;
     } catch (error) {
-      console.error("Error in getCurrentSubscription:", error);
+      console.error("Erro em getCurrentSubscription:", error);
       return null;
+    }
+  },
+
+  async updateSubscriptionStatus(subscriptionId: string, status: string): Promise<void> {
+    try {
+      console.log(`Atualizando status da assinatura ${subscriptionId} para: ${status}`);
+      
+      const { error } = await supabase
+        .from("subscriptions")
+        .update({ 
+          status: status, 
+          updated_at: new Date().toISOString()
+        })
+        .eq("id", subscriptionId);
+        
+      if (error) {
+        throw error;
+      }
+    } catch (error) {
+      console.error("Erro em updateSubscriptionStatus:", error);
+      throw error;
     }
   },
 
   async cancelSubscription(subscriptionId: string) {
     try {
-      console.log(`Attempting to cancel subscription: ${subscriptionId}`);
-      const response = await supabase.functions.invoke("asaas", {
-        body: {
-          action: "cancel-subscription",
-          data: {
-            subscriptionId,
-          },
-        },
-      });
-
-      if (response.error) {
-        console.error("Error canceling subscription:", response.error);
-        throw new Error(`Error canceling subscription: ${response.error.message}`);
+      console.log(`Tentando cancelar assinatura: ${subscriptionId}`);
+      
+      // Primeiro obter a assinatura para verificar o ID de assinatura do Asaas
+      const { data: subscription, error: fetchError } = await supabase
+        .from("subscriptions")
+        .select("*")
+        .eq("id", subscriptionId)
+        .single();
+      
+      if (fetchError) {
+        throw fetchError;
       }
-
-      console.log("Subscription canceled successfully:", response.data);
-      return response.data;
+      
+      if (!subscription) {
+        throw new Error("Assinatura não encontrada");
+      }
+      
+      // Se houver um ID de assinatura do Asaas, cancelar no Asaas
+      if (subscription.asaas_subscription_id) {
+        const response = await supabase.functions.invoke("asaas", {
+          body: {
+            action: "cancel-subscription",
+            data: {
+              subscriptionId: subscription.asaas_subscription_id,
+            },
+          },
+        });
+  
+        if (response.error) {
+          console.error("Erro ao cancelar assinatura no Asaas:", response.error);
+          throw new Error(`Erro ao cancelar assinatura: ${response.error.message}`);
+        }
+      }
+  
+      // Atualizar o status da assinatura localmente, independente de haver ID no Asaas
+      const { error: updateError } = await supabase
+        .from("subscriptions")
+        .update({ 
+          status: "canceled", 
+          updated_at: new Date().toISOString()
+        })
+        .eq("id", subscriptionId);
+      
+      if (updateError) {
+        throw updateError;
+      }
+  
+      return { success: true };
     } catch (error: any) {
-      console.error("Error in cancelSubscription:", error);
+      console.error("Erro em cancelSubscription:", error);
       throw error;
     }
   },
 
-  // Helper function to check if user has an active subscription
+  // Função auxiliar para verificar se o usuário possui uma assinatura ativa
   async hasActiveSubscription(): Promise<boolean> {
     try {
       const subscription = await this.getCurrentSubscription();
-      const isActive = subscription !== null && ["active", "ACTIVE"].includes(subscription.status);
-      console.log(`Active subscription check: ${isActive}`, subscription);
+      const isActive = subscription !== null && ["active", "ACTIVE", "trialing"].includes(subscription.status);
+      console.log(`Verificação de assinatura ativa: ${isActive}`, subscription);
       return isActive;
     } catch (error) {
-      console.error("Error checking subscription status:", error);
+      console.error("Erro ao verificar status da assinatura:", error);
       return false;
     }
   },
 
-  // Helper function to get plan information from plan ID
+  // Função auxiliar para obter informações do plano a partir do ID
   getPlanFromId(planId: string): any {
     return plansService.getPlanById(planId);
   },
 
-  // Get payments using the paymentsService
+  // Obter pagamentos usando o paymentsService
   async getPayments() {
     return paymentsService.getPayments();
   },
 
-  // Get a specific payment using the paymentsService
+  // Obter um pagamento específico usando o paymentsService
   async getPayment(paymentId: string) {
     return paymentsService.getPayment(paymentId);
   },
 
   async updateContractAcceptance(accepted: boolean) {
     try {
-      console.log(`Updating contract acceptance: ${accepted}`);
+      console.log(`Atualizando aceitação do contrato: ${accepted}`);
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
-        throw new Error("No authenticated user found");
+        throw new Error("Nenhum usuário autenticado encontrado");
       }
       
       const { error } = await supabase
@@ -305,12 +391,12 @@ export const subscriptionService = {
 
       return { success: true };
     } catch (error: any) {
-      console.error("Error in updateContractAcceptance:", error);
+      console.error("Erro em updateContractAcceptance:", error);
       return { success: false, error: error.message };
     }
   },
 
-  // Request a receipt for a payment using the paymentsService
+  // Solicitar um comprovante para um pagamento usando o paymentsService
   async requestReceipt(paymentId: string) {
     return paymentsService.requestReceipt(paymentId);
   }

@@ -1,755 +1,664 @@
 
-import { serve } from "https://deno.land/std@0.208.0/http/server.ts";
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.38.4";
+
+const ASAAS_API_URL = "https://sandbox.asaas.com/api/v3";
+const ASAAS_API_KEY = Deno.env.get("ASAAS_API_KEY") || "";
+
+const supabaseUrl = Deno.env.get("SUPABASE_URL") || "";
+const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type"
 };
 
-const ASAAS_API_BASE_URL = "https://sandbox.asaas.com/api/v3";
-const ASAAS_API_KEY = Deno.env.get("ASAAS_API_KEY") || "";
-
 serve(async (req) => {
-  // Handle CORS preflight requests
+  // Handle preflight OPTIONS request
   if (req.method === "OPTIONS") {
-    return new Response(null, { headers: corsHeaders });
+    return new Response("ok", { headers: corsHeaders });
   }
 
   try {
-    // Initialize Supabase client
-    const supabaseUrl = Deno.env.get("SUPABASE_URL") || "";
-    const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY") || "";
-    const supabase = createClient(supabaseUrl, supabaseAnonKey);
-
-    // Parse request body
-    const body = await req.json();
-    const { action, data } = body;
-    
-    console.log(`Processing action: ${action}`, data);
-    
-    if (!action) {
-      throw new Error("Missing action parameter");
-    }
-
+    // Verificar se a chave da API Asaas está configurada
     if (!ASAAS_API_KEY) {
-      console.error("Missing ASAAS_API_KEY");
-      return new Response(JSON.stringify({ error: "Server configuration error - missing Asaas key" }), {
-        status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-    
-    // Get authenticated user
-    const authHeader = req.headers.get("Authorization");
-    
-    if (!authHeader) {
-      return new Response(JSON.stringify({ error: "Not authorized" }), {
-        status: 401,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+      throw new Error("ASAAS_API_KEY não está configurada");
     }
 
-    const token = authHeader.replace("Bearer ", "");
-    const { data: { user }, error: userError } = await supabase.auth.getUser(token);
+    // Inicializar cliente Supabase
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+    
+    // Verificar autenticação do usuário
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader) {
+      throw new Error("Token de autenticação não fornecido");
+    }
+    
+    // Verificar o usuário atual
+    const { data: { user }, error: userError } = await supabase.auth.getUser(
+      authHeader.replace("Bearer ", "")
+    );
     
     if (userError || !user) {
-      console.error("Auth error:", userError);
-      return new Response(JSON.stringify({ error: "Not authorized", details: userError }), {
-        status: 401,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+      throw new Error("Usuário não autenticado");
     }
-
-    console.log(`Authenticated user: ${user.id}`);
-    let result;
     
-    // Helper function to make Asaas API requests
-    async function asaasRequest(endpoint: string, method = "GET", payload?: any) {
-      const url = `${ASAAS_API_BASE_URL}${endpoint}`;
-      console.log(`Making ${method} request to Asaas API: ${url}`);
-      
-      if (payload) {
-        console.log("Request payload:", JSON.stringify(payload, null, 2));
-      }
-      
-      const options: RequestInit = {
-        method,
-        headers: {
-          "access_token": ASAAS_API_KEY,
-          "Content-Type": "application/json",
-        },
-      };
-      
-      if (payload && (method === "POST" || method === "PUT")) {
-        options.body = JSON.stringify(payload);
-      }
-      
-      try {
-        const response = await fetch(url, options);
-        const data = await response.json();
-        
-        console.log(`Asaas API response status: ${response.status}`);
-        
-        // More detailed logging of the response body
-        if (response.ok) {
-          console.log(`Asaas API response data:`, data);
-        } else {
-          console.error("Asaas API error details:", data);
-          throw new Error(`Asaas API error: ${JSON.stringify(data.errors || data)}`);
-        }
-        
-        return data;
-      } catch (error) {
-        console.error(`Error in Asaas request to ${url}:`, error);
-        throw error;
-      }
-    }
-
-    // Check if payment exists with this external reference
-    async function checkExistingPayment(externalReference: string) {
-      try {
-        // Query payments filtering by external reference
-        const response = await asaasRequest(`/payments?externalReference=${externalReference}`);
-        return response && response.data && response.data.length > 0 ? response.data[0] : null;
-      } catch (error) {
-        console.error("Error checking existing payment:", error);
-        return null;
-      }
-    }
-
-    // Check if payment link exists with this external reference
-    async function checkExistingPaymentLink(externalReference: string) {
-      try {
-        const response = await asaasRequest(`/paymentLinks?externalReference=${externalReference}`);
-        return response && response.data && response.data.length > 0 ? response.data[0] : null;
-      } catch (error) {
-        console.error("Error checking existing payment link:", error);
-        return null;
-      }
-    }
-
-    // New function: Check if user has any pending payments for a specific plan
-    async function checkPendingPayments(customerId: string, planId: string, userId: string) {
-      try {
-        // Query subscriptions for this user and plan
-        const { data: subscriptions, error } = await supabase
-          .from("subscriptions")
-          .select("*, asaas_subscription_id, asaas_payment_link")
-          .eq("user_id", userId)
-          .eq("plan_id", planId)
-          .eq("status", "pending");
-          
-        if (error) {
-          console.error("Error querying subscriptions:", error);
-          return null;
-        }
-        
-        if (!subscriptions || subscriptions.length === 0) {
-          return null;
-        }
-        
-        // Check if any subscription has a payment link
-        const subscription = subscriptions[0];
-        if (subscription.asaas_payment_link) {
-          // Verify if the payment link is still valid in Asaas
-          try {
-            const paymentId = subscription.asaas_subscription_id;
-            const payment = await asaasRequest(`/payments/${paymentId}`);
-            
-            // Only return if the payment is still pending
-            if (payment && ["PENDING", "RECEIVED", "CONFIRMED"].includes(payment.status)) {
-              return {
-                payment,
-                paymentLink: subscription.asaas_payment_link,
-                dbSubscription: subscription
-              };
-            }
-          } catch (error) {
-            console.error("Error checking payment status:", error);
-            // If we can't verify the payment, assume it's invalid and continue
-          }
-        }
-        
-        return null;
-      } catch (error) {
-        console.error("Error in checkPendingPayments:", error);
-        return null;
-      }
-    }
-
+    console.log("Usuário autenticado:", user.id);
+    
+    // Extrair ação e dados do corpo da requisição
+    const { action, data } = await req.json();
+    console.log(`Processando ação: ${action}`, data);
+    
+    // Processar a ação solicitada
     switch (action) {
-      case "check-existing-payments": {
-        try {
-          const { customerId, planId, userId } = data;
-          
-          if (!customerId || !planId || !userId) {
-            throw new Error("Missing required parameters for check-existing-payments");
-          }
-          
-          const pendingPayment = await checkPendingPayments(customerId, planId, userId);
-          
-          result = pendingPayment || { exists: false };
-        } catch (error) {
-          console.error("Error checking existing payments:", error);
-          return new Response(JSON.stringify({ error: `Failed to check existing payments: ${error.message}` }), {
-            status: 500,
-            headers: { ...corsHeaders, "Content-Type": "application/json" },
-          });
-        }
-        break;
-      }
-      
-      case "create-customer": {
-        const { name, email, phone, cpfCnpj, mobilePhone, address, postalCode, externalReference } = data;
+      case "create-customer":
+        return await createCustomer(req, data, user.id);
         
-        console.log("Creating customer with data:", { name, email, phone, cpfCnpj });
+      case "get-customer":
+        return await getCustomer(req, data, user.id);
         
-        if (!cpfCnpj) {
-          return new Response(JSON.stringify({ error: "CPF ou CNPJ é obrigatório" }), {
-            status: 400,
-            headers: { ...corsHeaders, "Content-Type": "application/json" },
-          });
-        }
+      case "get-customer-by-cpf-cnpj":
+        return await getCustomerByCpfCnpj(req, data, user.id);
         
-        try {
-          // Create customer in Asaas with all available fields from the documentation
-          const customerData = {
-            name: name || "Cliente",
-            email: email || "",
-            phone: phone || "",
-            mobilePhone: mobilePhone || phone || "",
-            cpfCnpj: cpfCnpj,
-            address: address || "",
-            postalCode: postalCode || "",
-            externalReference: externalReference || "",
-            notificationDisabled: false
-          };
-          
-          // Create customer in Asaas
-          const customer = await asaasRequest("/customers", "POST", customerData);
-          
-          result = { customer };
-        } catch (error) {
-          console.error("Error creating customer:", error);
-          return new Response(JSON.stringify({ error: `Failed to create customer: ${error.message}` }), {
-            status: 500,
-            headers: { ...corsHeaders, "Content-Type": "application/json" },
-          });
-        }
-        break;
-      }
+      case "create-payment":
+        return await createPayment(req, data, user.id, supabase);
         
-      case "create-payment": {
-        try {
-          const { customerId, value, description, installments = 1, dueDate, planId, successUrl, cancelUrl, generateLink = true, externalReference } = data;
-          
-          if (!customerId) {
-            throw new Error("Missing customerId parameter");
-          }
-          
-          if (!value && value !== 0) {
-            throw new Error("Missing value parameter");
-          }
-          
-          if (!externalReference) {
-            throw new Error("Missing externalReference parameter");
-          }
-          
-          if (!planId) {
-            throw new Error("Missing planId parameter");
-          }
-          
-          // Check for duplicate payment with same external reference
-          const existingPayment = await checkExistingPayment(externalReference);
-          const existingPaymentLink = await checkExistingPaymentLink(externalReference);
-          
-          if (existingPayment && existingPaymentLink) {
-            console.log(`Payment and link with externalReference ${externalReference} already exists, returning existing payment link`);
-            
-            // Find the subscription in database with the existing payment ID
-            const { data: subscriptionData } = await supabase
-              .from("subscriptions")
-              .select("*")
-              .eq("user_id", user.id)
-              .maybeSingle();
-            
-            return new Response(JSON.stringify({ 
-              payment: existingPayment,
-              paymentLink: existingPaymentLink.url,
-              dbSubscription: subscriptionData || null,
-              isExisting: true
-            }), {
-              headers: { ...corsHeaders, "Content-Type": "application/json" },
-            });
-          }
-          
-          // Calculate due date (1 business day after current date)
-          const paymentDueDate = dueDate || new Date(Date.now() + 3600 * 1000 * 24).toISOString().split('T')[0]; // Default to tomorrow
-          
-          let payment;
-          let paymentLink = null;
-          
-          // If payment doesn't exist, create it
-          if (!existingPayment) {
-            // Create payment in Asaas
-            const paymentData: any = {
-              customer: customerId,
-              billingType: installments > 1 ? "CREDIT_CARD" : "UNDEFINED",
-              value,
-              description: description || "Compra de Plano",
-              dueDate: paymentDueDate,
-              externalReference: externalReference
-            };
-            
-            if (installments > 1) {
-              paymentData.installmentCount = installments;
-              paymentData.installmentValue = (value / installments).toFixed(2);
-            }
-            
-            console.log("Creating payment with data:", paymentData);
-            
-            // Create payment in Asaas
-            payment = await asaasRequest("/payments", "POST", paymentData);
-          } else {
-            payment = existingPayment;
-          }
-          
-          // Generate payment link if it doesn't exist
-          if (!existingPaymentLink && generateLink) {
-            console.log("Generating payment link for payment");
-            
-            // Define data for payment link
-            const linkData = {
-              name: description || "Compra de Plano",
-              description: `Pagamento ${description || ""}`.trim(),
-              endDate: new Date(Date.now() + 3600 * 1000 * 24 * 7).toISOString().split('T')[0], // 7 days from now
-              value,
-              billingType: installments > 1 ? "CREDIT_CARD" : "UNDEFINED",
-              chargeType: "DETACHED",
-              dueDateLimitDays: 1, // Required parameter
-              installmentSettings: installments > 1 ? {
-                installmentCount: installments,
-                installmentValue: (value / installments).toFixed(2)
-              } : undefined,
-              externalReference: externalReference,
-              callback: {
-                autoRedirect: true,
-                successUrl: successUrl || "",
-                autoRedirectDelay: 5
-              }
-            };
-            
-            console.log("Creating payment link with data:", linkData);
-            
-            const linkResponse = await asaasRequest(`/paymentLinks`, "POST", linkData);
-            console.log("Payment link created:", linkResponse);
-            
-            paymentLink = linkResponse.url;
-          } else if (existingPaymentLink) {
-            paymentLink = existingPaymentLink.url;
-          }
-          
-          // Skip saving to database if we're returning an existing payment
-          if (!existingPayment || !existingPaymentLink) {
-            // First, check if a subscription record already exists for this user
-            const { data: existingSub } = await supabase
-              .from("subscriptions")
-              .select("*")
-              .eq("user_id", user.id)
-              .maybeSingle();
-            
-            let subscriptionData;
-            
-            if (existingSub) {
-              // Update existing subscription
-              const { data: updatedSub, error: updateError } = await supabase
-                .from("subscriptions")
-                .update({
-                  asaas_customer_id: customerId,
-                  asaas_subscription_id: payment.id,
-                  asaas_payment_link: paymentLink,
-                  plan_id: planId,
-                  status: payment.status || "pending",
-                  installments,
-                  current_period_end: null, // Since it's a one-time payment
-                  updated_at: new Date().toISOString()
-                })
-                .eq("id", existingSub.id)
-                .select()
-                .single();
-                
-              if (updateError) {
-                console.error("Error updating subscription:", updateError);
-                throw new Error(`Error updating subscription: ${updateError.message}`);
-              }
-              
-              subscriptionData = updatedSub;
-            } else {
-              // Create new subscription
-              const { data: newSub, error: insertError } = await supabase
-                .from("subscriptions")
-                .insert({
-                  user_id: user.id,
-                  asaas_customer_id: customerId,
-                  asaas_subscription_id: payment.id,
-                  asaas_payment_link: paymentLink,
-                  plan_id: planId,
-                  status: payment.status || "pending",
-                  installments,
-                  current_period_end: null, // Since it's a one-time payment
-                  created_at: new Date().toISOString(),
-                  updated_at: new Date().toISOString()
-                })
-                .select()
-                .single();
-                
-              if (insertError) {
-                console.error("Error inserting subscription:", insertError);
-                throw new Error(`Error inserting subscription: ${insertError.message}`);
-              }
-              
-              subscriptionData = newSub;
-            }
-            
-            result = { 
-              payment, 
-              paymentLink,
-              dbSubscription: subscriptionData 
-            };
-          } else {
-            result = { 
-              payment, 
-              paymentLink,
-              isExisting: true
-            };
-          }
-        } catch (error) {
-          console.error("Error creating payment:", error);
-          return new Response(JSON.stringify({ error: `Failed to create payment: ${error.message}` }), {
-            status: 500,
-            headers: { ...corsHeaders, "Content-Type": "application/json" },
-          });
-        }
-        break;
-      }
+      case "get-payment":
+        return await getPayment(req, data, user.id);
         
-      case "create-subscription": {
-        try {
-          const { customerId, planId, value, description, billingType = "CREDIT_CARD", installments = 1, nextDueDate } = data;
-          
-          // Create subscription in Asaas
-          const subscription = await asaasRequest("/subscriptions", "POST", {
-            customer: customerId,
-            billingType,
-            value,
-            nextDueDate: nextDueDate || new Date(Date.now() + 3600 * 1000 * 24).toISOString().split('T')[0], // Default to tomorrow
-            description,
-            cycle: "MONTHLY",
-            installments: installments > 1 ? installments : undefined,
-          });
-          
-          // Get the payment link for this subscription
-          const paymentLink = await asaasRequest(`/paymentLinks`, "POST", {
-            name: description || "Assinatura de Plano",
-            description: `Pagamento da assinatura: ${description || ""}`.trim(),
-            endDate: new Date(Date.now() + 3600 * 1000 * 24 * 7).toISOString().split('T')[0], // 7 days from now
-            value,
-            billingType: "CREDIT_CARD",
-            chargeType: "SUBSCRIPTION",
-            dueDateLimitDays: 1, // Importante! Adiciona o número de dias úteis para vencimento
-            subscriptionId: subscription.id,
-            installmentSettings: installments > 1 ? {
-              installmentCount: installments,
-              installmentValue: (value / installments).toFixed(2)
-            } : undefined,
-            callback: {
-              autoRedirect: true,
-              successUrl: `${data.successUrl || ""}`,
-              autoRedirectDelay: 5
-            }
-          });
-          
-          // Check if a subscription already exists for this user
-          const { data: existingSub } = await supabase
-            .from("subscriptions")
-            .select("*")
-            .eq("user_id", user.id)
-            .maybeSingle();
-          
-          let subscriptionData;
-          
-          if (existingSub) {
-            // Update existing subscription
-            const { data: updatedSub, error: updateError } = await supabase
-              .from("subscriptions")
-              .update({
-                asaas_customer_id: customerId,
-                asaas_subscription_id: subscription.id,
-                asaas_payment_link: paymentLink.url,
-                plan_id: planId,
-                status: "pending",
-                installments,
-                current_period_end: new Date(subscription.nextDueDate).toISOString(),
-                updated_at: new Date().toISOString()
-              })
-              .eq("id", existingSub.id)
-              .select()
-              .single();
-              
-            if (updateError) {
-              console.error("Error updating subscription:", updateError);
-              throw new Error(`Error updating subscription: ${updateError.message}`);
-            }
-            
-            subscriptionData = updatedSub;
-          } else {
-            // Create new subscription
-            const { data: newSub, error: insertError } = await supabase
-              .from("subscriptions")
-              .insert({
-                user_id: user.id,
-                asaas_customer_id: customerId,
-                asaas_subscription_id: subscription.id,
-                asaas_payment_link: paymentLink.url,
-                plan_id: planId,
-                status: "pending",
-                installments,
-                current_period_end: new Date(subscription.nextDueDate).toISOString(),
-                created_at: new Date().toISOString(),
-                updated_at: new Date().toISOString()
-              })
-              .select()
-              .single();
-              
-            if (insertError) {
-              console.error("Error inserting subscription:", insertError);
-              throw new Error(`Error inserting subscription: ${insertError.message}`);
-            }
-            
-            subscriptionData = newSub;
-          }
-          
-          result = { 
-            subscription, 
-            paymentLink: paymentLink.url,
-            dbSubscription: subscriptionData 
-          };
-        } catch (error) {
-          console.error("Error creating subscription:", error);
-          return new Response(JSON.stringify({ error: `Failed to create subscription: ${error.message}` }), {
-            status: 500,
-            headers: { ...corsHeaders, "Content-Type": "application/json" },
-          });
-        }
-        break;
-      }
+      case "get-payment-by-reference":
+        return await getPaymentByReference(req, data, user.id);
         
-      case "get-subscription": {
-        try {
-          // Use the provided userId if available, otherwise use the authenticated user's id
-          const effectiveUserId = data?.userId || user.id;
-          console.log(`Fetching subscription for user: ${effectiveUserId}`);
-          
-          // First try to get from database
-          const { data: subscription, error: fetchError } = await supabase
-            .from("subscriptions")
-            .select("*")
-            .eq("user_id", effectiveUserId)
-            .maybeSingle();
-            
-          if (fetchError) {
-            console.error("Error fetching subscription:", fetchError);
-            throw new Error(`Error fetching subscription: ${fetchError.message}`);
-          }
-          
-          if (subscription?.asaas_subscription_id) {
-            // Get latest status from Asaas
-            try {
-              // Check if it's a subscription or a one-time payment
-              let asaasStatus;
-              
-              if (subscription.asaas_subscription_id.startsWith("sub_")) {
-                // It's a subscription
-                const asaasSubscription = await asaasRequest(`/subscriptions/${subscription.asaas_subscription_id}`);
-                asaasStatus = asaasSubscription.status;
-              } else {
-                // It's a payment
-                const asaasPayment = await asaasRequest(`/payments/${subscription.asaas_subscription_id}`);
-                asaasStatus = asaasPayment.status;
-              }
-              
-              // Update the database if status has changed
-              if (asaasStatus && asaasStatus !== subscription.status) {
-                const { error: updateError } = await supabase
-                  .from("subscriptions")
-                  .update({ 
-                    status: asaasStatus,
-                    updated_at: new Date().toISOString()
-                  })
-                  .eq("id", subscription.id);
-                  
-                if (updateError) {
-                  console.error("Error updating subscription status:", updateError);
-                }
-                
-                subscription.status = asaasStatus;
-              }
-            } catch (error) {
-              console.error("Error fetching data from Asaas:", error);
-              // Continue with local data if Asaas API call fails
-            }
-          }
-          
-          result = { subscription };
-        } catch (error) {
-          console.error("Error in get-subscription:", error);
-          return new Response(JSON.stringify({ error: `Error getting subscription: ${error.message}` }), {
-            status: 500,
-            headers: { ...corsHeaders, "Content-Type": "application/json" },
-          });
-        }
-        break;
-      }
+      case "get-payment-link":
+        return await getPaymentLink(req, data, user.id);
         
-      case "cancel-subscription": {
-        try {
-          const { subscriptionId } = data;
-          
-          if (!subscriptionId) {
-            return new Response(JSON.stringify({ error: "Missing subscription ID" }), {
-              status: 400,
-              headers: { ...corsHeaders, "Content-Type": "application/json" },
-            });
-          }
-          
-          // Verify the subscription belongs to the user
-          const { data: subData, error: verifyError } = await supabase
-            .from("subscriptions")
-            .select("*")
-            .eq("user_id", user.id)
-            .eq("asaas_subscription_id", subscriptionId)
-            .maybeSingle();
-            
-          if (verifyError) {
-            console.error("Error verifying subscription:", verifyError);
-            throw new Error(`Error verifying subscription: ${verifyError.message}`);
-          }
-          
-          if (!subData) {
-            return new Response(JSON.stringify({ error: "Subscription not found or doesn't belong to user" }), {
-              status: 404,
-              headers: { ...corsHeaders, "Content-Type": "application/json" },
-            });
-          }
-          
-          // Check if it's a subscription or a one-time payment
-          if (subscriptionId.startsWith("sub_")) {
-            // Cancel the subscription in Asaas
-            await asaasRequest(`/subscriptions/${subscriptionId}/cancel`, "POST");
-          } else {
-            // It's a payment, we can't cancel it if it's already paid
-            const payment = await asaasRequest(`/payments/${subscriptionId}`);
-            
-            if (["CONFIRMED", "RECEIVED", "PAID"].includes(payment.status)) {
-              throw new Error("Cannot cancel a payment that has already been processed");
-            }
-            
-            // Try to delete or refund the payment
-            if (["PENDING", "AWAITING_RISK_ANALYSIS"].includes(payment.status)) {
-              await asaasRequest(`/payments/${subscriptionId}`, "DELETE");
-            }
-          }
-          
-          // Update the subscription status in database
-          await supabase
-            .from("subscriptions")
-            .update({ 
-              status: "canceled",
-              updated_at: new Date().toISOString()
-            })
-            .eq("asaas_subscription_id", subscriptionId);
-            
-          result = { success: true };
-        } catch (error) {
-          console.error("Error canceling subscription:", error);
-          return new Response(JSON.stringify({ error: `Failed to cancel subscription: ${error.message}` }), {
-            status: 500,
-            headers: { ...corsHeaders, "Content-Type": "application/json" },
-          });
-        }
-        break;
-      }
+      case "get-payments":
+        return await getPayments(req, data, user.id);
         
-      case "get-payments": {
-        try {
-          // Get payments for the customer from Asaas
-          const { data: subscription } = await supabase
-            .from("subscriptions")
-            .select("asaas_customer_id")
-            .eq("user_id", user.id)
-            .maybeSingle();
-            
-          if (!subscription?.asaas_customer_id) {
-            return new Response(JSON.stringify({ payments: [] }), {
-              headers: { ...corsHeaders, "Content-Type": "application/json" },
-            });
-          }
-          
-          // Get payments from Asaas
-          const payments = await asaasRequest(`/payments?customer=${subscription.asaas_customer_id}`);
-          
-          result = { payments: payments.data };
-        } catch (error) {
-          console.error("Error getting payments:", error);
-          return new Response(JSON.stringify({ error: `Failed to get payments: ${error.message}` }), {
-            status: 500,
-            headers: { ...corsHeaders, "Content-Type": "application/json" },
-          });
-        }
-        break;
-      }
-      
-      case "get-payment": {
-        try {
-          const { paymentId } = data;
-          
-          if (!paymentId) {
-            return new Response(JSON.stringify({ error: "Missing payment ID" }), {
-              status: 400,
-              headers: { ...corsHeaders, "Content-Type": "application/json" },
-            });
-          }
-          
-          // Get payment details from Asaas
-          const payment = await asaasRequest(`/payments/${paymentId}`);
-          
-          result = { payment };
-        } catch (error) {
-          console.error("Error getting payment:", error);
-          return new Response(JSON.stringify({ error: `Failed to get payment: ${error.message}` }), {
-            status: 500,
-            headers: { ...corsHeaders, "Content-Type": "application/json" },
-          });
-        }
-        break;
-      }
+      case "check-existing-payments":
+        return await checkExistingPayments(req, data, user.id, supabase);
+        
+      case "get-subscription":
+        return await getSubscription(req, data, user.id, supabase);
+        
+      case "cancel-subscription":
+        return await cancelSubscription(req, data, user.id);
         
       default:
-        return new Response(JSON.stringify({ error: `Unsupported action: ${action}` }), {
-          status: 400,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
+        throw new Error(`Ação desconhecida: ${action}`);
     }
-
-    return new Response(JSON.stringify(result), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
   } catch (error) {
-    console.error("Error in asaas function:", error);
-    return new Response(JSON.stringify({ error: error.message || "An unknown error occurred" }), {
-      status: 500,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+    console.error(`Erro: ${error.message}`);
+    return new Response(
+      JSON.stringify({ error: error.message }),
+      {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" }
+      }
+    );
   }
 });
+
+// Função auxiliar para fazer requisições à API Asaas
+async function asaasRequest(endpoint: string, method: string, body?: any) {
+  console.log(`Fazendo requisição ${method} para API Asaas: ${ASAAS_API_URL}${endpoint}`);
+  
+  const options: RequestInit = {
+    method,
+    headers: {
+      "access_token": ASAAS_API_KEY,
+      "Content-Type": "application/json"
+    }
+  };
+  
+  if (body && method !== "GET") {
+    options.body = JSON.stringify(body);
+    console.log("Request payload:", JSON.stringify(body, null, 2));
+  }
+  
+  const response = await fetch(`${ASAAS_API_URL}${endpoint}`, options);
+  console.log("Asaas API response status:", response.status);
+  
+  const data = await response.json();
+  console.log("Asaas API response data:", JSON.stringify(data, null, 2));
+  
+  return { status: response.status, data };
+}
+
+// Criar novo cliente no Asaas
+async function createCustomer(req: Request, data: any, userId: string) {
+  const customerData = {
+    name: data.name,
+    email: data.email,
+    phone: data.phone,
+    mobilePhone: data.mobilePhone,
+    cpfCnpj: data.cpfCnpj,
+    address: data.address,
+    postalCode: data.postalCode,
+    externalReference: data.externalReference,
+    notificationDisabled: false
+  };
+  
+  console.log("Criando cliente com dados:", customerData);
+  
+  const { status, data: customer } = await asaasRequest("/customers", "POST", customerData);
+  
+  return new Response(
+    JSON.stringify({ customer }),
+    {
+      status,
+      headers: { ...corsHeaders, "Content-Type": "application/json" }
+    }
+  );
+}
+
+// Buscar cliente por ID
+async function getCustomer(req: Request, data: any, userId: string) {
+  const { customerId } = data;
+  
+  if (!customerId) {
+    throw new Error("ID do cliente não fornecido");
+  }
+  
+  const { status, data: customer } = await asaasRequest(`/customers/${customerId}`, "GET");
+  
+  return new Response(
+    JSON.stringify({ customer }),
+    {
+      status,
+      headers: { ...corsHeaders, "Content-Type": "application/json" }
+    }
+  );
+}
+
+// Buscar cliente por CPF/CNPJ
+async function getCustomerByCpfCnpj(req: Request, data: any, userId: string) {
+  const { cpfCnpj } = data;
+  
+  if (!cpfCnpj) {
+    throw new Error("CPF/CNPJ não fornecido");
+  }
+  
+  // Remover formatação para garantir consistência
+  const cleanCpfCnpj = cpfCnpj.replace(/[^\d]/g, '');
+  
+  // Buscar todos os clientes com este CPF/CNPJ
+  const { status, data: response } = await asaasRequest(`/customers?cpfCnpj=${cleanCpfCnpj}`, "GET");
+  
+  // Retornar o primeiro cliente encontrado, se houver
+  const customer = response.data && response.data.length > 0 ? response.data[0] : null;
+  
+  return new Response(
+    JSON.stringify({ customer }),
+    {
+      status,
+      headers: { ...corsHeaders, "Content-Type": "application/json" }
+    }
+  );
+}
+
+// Criar novo pagamento
+async function createPayment(req: Request, data: any, userId: string, supabase: any) {
+  const {
+    customerId,
+    planId,
+    value,
+    description,
+    successUrl,
+    cancelUrl,
+    installments,
+    billingType,
+    dueDate,
+    externalReference,
+    postalService = false
+  } = data;
+  
+  // Primeiro, verificar se já existe um pagamento pendente com esta referência
+  const { status: checkStatus, data: existingPayments } = await asaasRequest(
+    `/payments?externalReference=${externalReference}`,
+    "GET"
+  );
+  
+  if (existingPayments.data && existingPayments.data.length > 0) {
+    const existingPayment = existingPayments.data[0];
+    if (existingPayment.status === "PENDING") {
+      console.log("Pagamento pendente encontrado:", existingPayment);
+      
+      // Gerar link de pagamento para o pagamento existente
+      const paymentLink = await generatePaymentLink({
+        name: description,
+        description: `Pagamento ${description}`,
+        endDate: "2025-04-02", // Data limite bem no futuro
+        value: value,
+        billingType,
+        chargeType: "DETACHED",
+        dueDateLimitDays: 1,
+        externalReference,
+        callback: {
+          autoRedirect: true,
+          successUrl,
+          autoRedirectDelay: 5
+        }
+      });
+      
+      return new Response(
+        JSON.stringify({
+          payment: existingPayment,
+          paymentLink: paymentLink.url
+        }),
+        {
+          status: 200,
+          headers: { ...corsHeaders, "Content-Type": "application/json" }
+        }
+      );
+    }
+  }
+  
+  // Verificar links de pagamento existentes
+  const { status: linkCheckStatus, data: existingLinks } = await asaasRequest(
+    `/paymentLinks?externalReference=${externalReference}`,
+    "GET"
+  );
+  
+  if (existingLinks.data && existingLinks.data.length > 0) {
+    const existingLink = existingLinks.data[0];
+    if (existingLink.active) {
+      console.log("Link de pagamento ativo encontrado:", existingLink);
+      return new Response(
+        JSON.stringify({
+          paymentLink: existingLink.url
+        }),
+        {
+          status: 200,
+          headers: { ...corsHeaders, "Content-Type": "application/json" }
+        }
+      );
+    }
+  }
+  
+  // Criar novo pagamento
+  const paymentData = {
+    customer: customerId,
+    billingType,
+    value,
+    description,
+    dueDate,
+    externalReference
+  };
+  
+  console.log("Criando pagamento com dados:", paymentData);
+  
+  const { status, data: payment } = await asaasRequest("/payments", "POST", paymentData);
+  
+  if (status !== 200 || !payment) {
+    throw new Error("Erro ao criar pagamento");
+  }
+  
+  console.log("Gerando link de pagamento para pagamento");
+  
+  // Gerar link de pagamento
+  const paymentLink = await generatePaymentLink({
+    name: description,
+    description: `Pagamento ${description}`,
+    endDate: "2025-04-02", // Data limite bem no futuro
+    value: value,
+    billingType,
+    chargeType: "DETACHED",
+    dueDateLimitDays: 1,
+    externalReference,
+    callback: {
+      autoRedirect: true,
+      successUrl,
+      autoRedirectDelay: 5
+    }
+  });
+  
+  console.log("Link de pagamento criado:", paymentLink);
+  
+  // Criar ou atualizar registro de assinatura
+  try {
+    const subscriptionData = {
+      user_id: userId,
+      plan_id: planId,
+      status: "pending",
+      asaas_customer_id: customerId,
+      asaas_payment_link: paymentLink.url,
+      payment_id: payment.id,
+      external_reference: externalReference,
+      payment_status: "PENDING",
+      installments
+    };
+    
+    // Verificar se já existe registro para atualizar
+    const { data: existingSubscription, error: selectError } = await supabase
+      .from("subscriptions")
+      .select("id")
+      .eq("user_id", userId)
+      .eq("plan_id", planId)
+      .maybeSingle();
+    
+    if (selectError) {
+      console.error("Erro ao buscar assinatura existente:", selectError);
+      throw new Error("Erro ao buscar assinatura existente");
+    }
+    
+    let dbSubscription;
+    
+    if (existingSubscription) {
+      // Atualizar registro existente
+      const { data, error } = await supabase
+        .from("subscriptions")
+        .update(subscriptionData)
+        .eq("id", existingSubscription.id)
+        .select()
+        .single();
+        
+      if (error) {
+        console.error("Erro ao atualizar assinatura:", error);
+        throw new Error("Erro ao atualizar assinatura");
+      }
+      
+      dbSubscription = data;
+    } else {
+      // Criar novo registro
+      const { data, error } = await supabase
+        .from("subscriptions")
+        .insert(subscriptionData)
+        .select()
+        .single();
+        
+      if (error) {
+        console.error("Erro ao inserir assinatura:", error);
+        throw new Error("Erro inserindo assinatura: " + error.message);
+      }
+      
+      dbSubscription = data;
+    }
+    
+    console.log("Registro de assinatura criado/atualizado:", dbSubscription);
+    
+    return new Response(
+      JSON.stringify({
+        payment,
+        paymentLink: paymentLink.url,
+        dbSubscription
+      }),
+      {
+        status: 200,
+        headers: { ...corsHeaders, "Content-Type": "application/json" }
+      }
+    );
+  } catch (error) {
+    console.error("Erro ao salvar assinatura:", error);
+    throw error;
+  }
+}
+
+// Buscar pagamento por ID
+async function getPayment(req: Request, data: any, userId: string) {
+  const { paymentId } = data;
+  
+  if (!paymentId) {
+    throw new Error("ID do pagamento não fornecido");
+  }
+  
+  const { status, data: payment } = await asaasRequest(`/payments/${paymentId}`, "GET");
+  
+  return new Response(
+    JSON.stringify({ payment }),
+    {
+      status,
+      headers: { ...corsHeaders, "Content-Type": "application/json" }
+    }
+  );
+}
+
+// Buscar pagamento por referência externa
+async function getPaymentByReference(req: Request, data: any, userId: string) {
+  const { externalReference } = data;
+  
+  if (!externalReference) {
+    throw new Error("Referência externa não fornecida");
+  }
+  
+  const { status, data: response } = await asaasRequest(
+    `/payments?externalReference=${externalReference}`,
+    "GET"
+  );
+  
+  // Retornar o primeiro pagamento encontrado, se houver
+  const payment = response.data && response.data.length > 0 ? response.data[0] : null;
+  
+  return new Response(
+    JSON.stringify({ payment }),
+    {
+      status,
+      headers: { ...corsHeaders, "Content-Type": "application/json" }
+    }
+  );
+}
+
+// Buscar link de pagamento por ID
+async function getPaymentLink(req: Request, data: any, userId: string) {
+  const { linkId } = data;
+  
+  if (!linkId) {
+    throw new Error("ID do link de pagamento não fornecido");
+  }
+  
+  const { status, data: paymentLink } = await asaasRequest(`/paymentLinks/${linkId}`, "GET");
+  
+  return new Response(
+    JSON.stringify({ paymentLink }),
+    {
+      status,
+      headers: { ...corsHeaders, "Content-Type": "application/json" }
+    }
+  );
+}
+
+// Buscar todos os pagamentos
+async function getPayments(req: Request, data: any, userId: string) {
+  const { status, data: response } = await asaasRequest("/payments", "GET");
+  
+  return new Response(
+    JSON.stringify({ payments: response.data }),
+    {
+      status,
+      headers: { ...corsHeaders, "Content-Type": "application/json" }
+    }
+  );
+}
+
+// Verificar pagamentos existentes
+async function checkExistingPayments(req: Request, data: any, userId: string, supabase: any) {
+  const { customerId, planId } = data;
+  
+  // Primeiro buscar assinaturas existentes no banco local
+  const { data: subscription, error: subscriptionError } = await supabase
+    .from("subscriptions")
+    .select("*")
+    .eq("user_id", userId)
+    .eq("plan_id", planId)
+    .eq("status", "pending")
+    .maybeSingle();
+  
+  if (subscriptionError) {
+    console.error("Erro ao buscar assinatura:", subscriptionError);
+    throw new Error("Erro ao buscar assinatura existente");
+  }
+  
+  if (subscription?.asaas_payment_link) {
+    // Verificar se o link ainda é válido
+    const paymentLinkId = subscription.asaas_payment_link.split('/').pop();
+    
+    if (paymentLinkId) {
+      const { status, data: linkData } = await asaasRequest(`/paymentLinks/${paymentLinkId}`, "GET");
+      
+      if (status === 200 && linkData.active) {
+        return new Response(
+          JSON.stringify({
+            payment: null,
+            paymentLink: subscription.asaas_payment_link,
+            dbSubscription: subscription
+          }),
+          {
+            status: 200,
+            headers: { ...corsHeaders, "Content-Type": "application/json" }
+          }
+        );
+      }
+    }
+  }
+  
+  // Se não encontrou link válido, verificar pagamentos pendentes
+  if (subscription?.payment_id) {
+    const { status, data: payment } = await asaasRequest(`/payments/${subscription.payment_id}`, "GET");
+    
+    if (status === 200 && payment.status === "PENDING") {
+      return new Response(
+        JSON.stringify({
+          payment,
+          paymentLink: null,
+          dbSubscription: subscription
+        }),
+        {
+          status: 200,
+          headers: { ...corsHeaders, "Content-Type": "application/json" }
+        }
+      );
+    }
+  }
+  
+  // Se não encontrou nada, retornar nulo
+  return new Response(
+    JSON.stringify({
+      payment: null,
+      paymentLink: null,
+      dbSubscription: null
+    }),
+    {
+      status: 200,
+      headers: { ...corsHeaders, "Content-Type": "application/json" }
+    }
+  );
+}
+
+// Buscar assinatura
+async function getSubscription(req: Request, data: any, userId: string, supabase: any) {
+  try {
+    console.log(`Buscando assinatura para usuário: ${userId}`);
+    
+    // Buscar assinatura no banco local
+    const { data: subscription, error: subscriptionError } = await supabase
+      .from("subscriptions")
+      .select("*")
+      .eq("user_id", userId)
+      .order("created_at", { ascending: false })
+      .maybeSingle();
+    
+    if (subscriptionError) {
+      console.error("Erro ao buscar assinatura:", subscriptionError);
+      throw subscriptionError;
+    }
+    
+    if (!subscription) {
+      return new Response(
+        JSON.stringify({ subscription: null }),
+        {
+          status: 200,
+          headers: { ...corsHeaders, "Content-Type": "application/json" }
+        }
+      );
+    }
+    
+    // Se for assinatura pendente, verificar status do pagamento
+    if (subscription.status === "pending" && subscription.payment_id) {
+      const { status, data: payment } = await asaasRequest(`/payments/${subscription.payment_id}`, "GET");
+      
+      if (status === 200) {
+        // Se o pagamento foi aprovado mas o status da assinatura ainda está pendente, atualizar
+        if (["RECEIVED", "CONFIRMED", "RECEIVED_IN_CASH"].includes(payment.status)) {
+          const { error: updateError } = await supabase
+            .from("subscriptions")
+            .update({ 
+              status: "active",
+              payment_status: payment.status,
+              updated_at: new Date().toISOString()
+            })
+            .eq("id", subscription.id);
+          
+          if (updateError) {
+            console.error("Erro ao atualizar status da assinatura:", updateError);
+          } else {
+            subscription.status = "active";
+            subscription.payment_status = payment.status;
+          }
+        }
+        // Se o pagamento foi recusado ou teve problema, atualizar status
+        else if (["OVERDUE", "REFUNDED", "REFUND_REQUESTED", "CHARGEBACK_REQUESTED", 
+                  "CHARGEBACK_DISPUTE", "AWAITING_CHARGEBACK_REVERSAL"].includes(payment.status)) {
+          const { error: updateError } = await supabase
+            .from("subscriptions")
+            .update({ 
+              status: "past_due",
+              payment_status: payment.status,
+              updated_at: new Date().toISOString()
+            })
+            .eq("id", subscription.id);
+          
+          if (updateError) {
+            console.error("Erro ao atualizar status da assinatura:", updateError);
+          } else {
+            subscription.status = "past_due";
+            subscription.payment_status = payment.status;
+          }
+        }
+      }
+    }
+    
+    return new Response(
+      JSON.stringify({ subscription }),
+      {
+        status: 200,
+        headers: { ...corsHeaders, "Content-Type": "application/json" }
+      }
+    );
+  } catch (error) {
+    console.error("Erro em getSubscription:", error);
+    throw error;
+  }
+}
+
+// Cancelar assinatura
+async function cancelSubscription(req: Request, data: any, userId: string) {
+  const { subscriptionId } = data;
+  
+  if (!subscriptionId) {
+    throw new Error("ID da assinatura não fornecido");
+  }
+  
+  const { status, data: response } = await asaasRequest(
+    `/subscriptions/${subscriptionId}/cancel`,
+    "POST"
+  );
+  
+  return new Response(
+    JSON.stringify({ success: status === 200, data: response }),
+    {
+      status,
+      headers: { ...corsHeaders, "Content-Type": "application/json" }
+    }
+  );
+}
+
+// Função auxiliar para gerar links de pagamento
+async function generatePaymentLink(data: any) {
+  const { status, data: paymentLink } = await asaasRequest("/paymentLinks", "POST", data);
+  
+  if (status !== 200 || !paymentLink) {
+    throw new Error("Erro ao gerar link de pagamento");
+  }
+  
+  return paymentLink;
+}
