@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { AlertCircle, Check, Loader2, ExternalLink, RotateCw, ShieldCheck, AlertTriangle } from "lucide-react";
+import { AlertCircle, Check, Loader2, ExternalLink, RotateCw, ShieldCheck, AlertTriangle, InfoIcon, Shield } from "lucide-react";
 import { toast } from "sonner";
 import { webhookService } from '@/services/webhookService';
 import { Badge } from "@/components/ui/badge";
@@ -20,6 +20,7 @@ export const WebhookManager = () => {
   const [isTestLoading, setIsTestLoading] = useState(false);
   const [webhookStatus, setWebhookStatus] = useState<'active' | 'unknown'>('unknown');
   const [errorDetails, setErrorDetails] = useState<string | null>(null);
+  const [fullError, setFullError] = useState<any>(null);
   
   useEffect(() => {
     // Extract token from webhook URL if present
@@ -34,6 +35,7 @@ export const WebhookManager = () => {
     try {
       setIsTestLoading(true);
       setErrorDetails(null);
+      setFullError(null);
       
       if (!webhookUrl.trim()) {
         toast.error("URL do webhook é obrigatória");
@@ -53,7 +55,10 @@ export const WebhookManager = () => {
         return;
       }
       
+      console.log("Iniciando teste de webhook com usuário:", user.id);
       const result = await webhookService.testWebhook();
+      
+      console.log("Resultado do teste de webhook:", result);
       
       if (result.success) {
         toast.success("Webhook funcionando corretamente!", {
@@ -62,6 +67,8 @@ export const WebhookManager = () => {
         setWebhookStatus('active');
       } else {
         setErrorDetails(result.error || "Erro ao verificar a conexão com o Asaas");
+        setFullError(result.details || null);
+        
         toast.error("Falha ao testar webhook", {
           description: result.error || "Erro ao verificar a conexão com o Asaas"
         });
@@ -117,6 +124,15 @@ export const WebhookManager = () => {
           </p>
         </div>
         
+        <Alert variant="info" className="bg-blue-50 border-blue-200">
+          <InfoIcon className="h-4 w-4 text-blue-600" />
+          <AlertTitle className="text-blue-700">Importante</AlertTitle>
+          <AlertDescription className="text-blue-600">
+            <p>Certifique-se de que você configurou o webhook no painel do Asaas apontando para a URL acima.</p>
+            <p className="mt-1">A API do Asaas usada é: <strong>Sandbox</strong> (ambiente de teste)</p>
+          </AlertDescription>
+        </Alert>
+        
         {!user && (
           <Alert variant="destructive">
             <AlertCircle className="h-4 w-4" />
@@ -140,12 +156,27 @@ export const WebhookManager = () => {
         {errorDetails && (
           <Alert variant="destructive" className="mt-4">
             <AlertTriangle className="h-4 w-4" />
-            <AlertDescription className="mt-2">
+            <AlertDescription className="space-y-2">
               <p className="font-medium">Erro ao testar webhook:</p>
-              <p className="text-sm mt-1">{errorDetails}</p>
+              <p className="text-sm">{errorDetails}</p>
+              
+              {fullError && (
+                <div className="mt-2 p-2 bg-red-950/10 rounded text-xs font-mono">
+                  <pre className="whitespace-pre-wrap overflow-auto">
+                    {JSON.stringify(fullError, null, 2)}
+                  </pre>
+                </div>
+              )}
+              
               <p className="text-sm mt-2">
-                Certifique-se de que você está logado como administrador e que o Asaas está configurado corretamente.
+                Certifique-se de que:
               </p>
+              <ul className="list-disc list-inside text-sm space-y-1">
+                <li>Você está logado como administrador</li>
+                <li>O Asaas está configurado corretamente</li>
+                <li>A API key do Asaas é válida e está atualizada</li>
+                <li>O webhook está registrado no painel do Asaas</li>
+              </ul>
             </AlertDescription>
           </Alert>
         )}

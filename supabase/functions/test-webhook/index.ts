@@ -19,6 +19,25 @@ serve(async (req) => {
   }
 
   try {
+    console.log("==== INÍCIO DO TESTE DE WEBHOOK ====");
+    console.log("Iniciando teste de webhook com Asaas");
+    
+    // Verificar se a API Key do Asaas está configurada
+    if (!asaasApiKey) {
+      console.error("Teste webhook: ASAAS_API_KEY não configurada");
+      return new Response(
+        JSON.stringify({ error: "API Key do Asaas não configurada no servidor" }),
+        {
+          status: 500,
+          headers: { ...corsHeaders, "Content-Type": "application/json" }
+        }
+      );
+    }
+    
+    console.log("ASAAS_API_KEY está configurada, verificando autenticação do usuário");
+    console.log(`ASAAS_API_URL: ${asaasApiUrl}`);
+    console.log(`Usando Supabase URL: ${supabaseUrl}`);
+    
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
     
     // Obter usuário autenticado
@@ -35,6 +54,8 @@ serve(async (req) => {
     }
     
     const token = authHeader.replace('Bearer ', '');
+    console.log("Token de autenticação obtido, verificando usuário");
+    
     const { data: { user }, error: userError } = await supabase.auth.getUser(token);
     
     if (userError || !user) {
@@ -50,11 +71,15 @@ serve(async (req) => {
     
     console.log("Usuário autenticado:", user.id);
     
-    // Verificar se o usuário é admin - correção na consulta para evitar ambiguidade
+    // Verificar se o usuário é admin - usando função RPC para evitar ambiguidade
+    console.log("Verificando permissões de administrador para o usuário:", user.id);
+    
     const { data: isAdmin, error: adminCheckError } = await supabase.rpc(
       'check_if_user_is_admin',
       { user_id: user.id }
     );
+    
+    console.log("Resultado da verificação de admin:", { isAdmin, error: adminCheckError });
     
     if (adminCheckError) {
       console.error("Teste webhook: Erro ao verificar se usuário é admin", adminCheckError);
@@ -84,72 +109,86 @@ serve(async (req) => {
     console.log("Usuário é administrador, prosseguindo com teste de webhook");
     
     // Verificar webhooks ativos no Asaas
-    if (!asaasApiKey) {
-      console.error("Teste webhook: ASAAS_API_KEY não configurada");
-      return new Response(
-        JSON.stringify({ error: "API Key do Asaas não configurada no servidor" }),
-        {
-          status: 500,
-          headers: { ...corsHeaders, "Content-Type": "application/json" }
-        }
-      );
-    }
+    console.log("Fazendo requisição para o Asaas para verificar webhooks");
+    console.log(`URL da requisição: ${asaasApiUrl}/webhooks`);
     
-    const webhooksResponse = await fetch(`${asaasApiUrl}/webhooks`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'access_token': asaasApiKey
+    try {
+      const webhooksResponse = await fetch(`${asaasApiUrl}/webhooks`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'access_token': asaasApiKey
+        }
+      });
+      
+      console.log("Status da resposta Asaas:", webhooksResponse.status);
+      
+      if (!webhooksResponse.ok) {
+        const errorData = await webhooksResponse.json();
+        console.error("Erro ao obter webhooks do Asaas:", errorData);
+        return new Response(
+          JSON.stringify({ 
+            error: `Erro ao obter webhooks do Asaas: ${webhooksResponse.status}`,
+            details: errorData
+          }),
+          {
+            status: 500,
+            headers: { ...corsHeaders, "Content-Type": "application/json" }
+          }
+        );
       }
-    });
-    
-    if (!webhooksResponse.ok) {
-      const errorData = await webhooksResponse.json();
-      console.error("Erro ao obter webhooks:", errorData);
+      
+      const webhooks = await webhooksResponse.json();
+      console.log("Webhooks encontrados:", webhooks);
+      
+      if (!webhooks?.data?.length) {
+        console.log("Nenhum webhook configurado no Asaas");
+        return new Response(
+          JSON.stringify({ 
+            success: false,
+            error: 'Nenhum webhook configurado no Asaas'
+          }),
+          {
+            status: 200,
+            headers: { ...corsHeaders, "Content-Type": "application/json" }
+          }
+        );
+      }
+      
+      // Webhook está configurado e funcionando
+      console.log("Webhook configurado corretamente");
       return new Response(
         JSON.stringify({ 
-          error: `Erro ao obter webhooks do Asaas: ${webhooksResponse.status}`,
-          details: errorData
-        }),
-        {
-          status: 500,
-          headers: { ...corsHeaders, "Content-Type": "application/json" }
-        }
-      );
-    }
-    
-    const webhooks = await webhooksResponse.json();
-    console.log("Webhooks encontrados:", webhooks.data);
-    
-    if (!webhooks?.data?.length) {
-      return new Response(
-        JSON.stringify({ 
-          success: false,
-          error: 'Nenhum webhook configurado no Asaas'
+          success: true, 
+          message: "Webhook configurado corretamente",
+          webhooks: webhooks.data 
         }),
         {
           status: 200,
           headers: { ...corsHeaders, "Content-Type": "application/json" }
         }
       );
+    } catch (asaasError) {
+      console.error("Erro na requisição ao Asaas:", asaasError.message);
+      return new Response(
+        JSON.stringify({ 
+          error: "Erro na comunicação com o Asaas", 
+          details: asaasError.message 
+        }),
+        {
+          status: 500,
+          headers: { ...corsHeaders, "Content-Type": "application/json" }
+        }
+      );
     }
-    
-    // Webhook está configurado e funcionando
-    return new Response(
-      JSON.stringify({ 
-        success: true, 
-        message: "Webhook configurado corretamente",
-        webhooks: webhooks.data 
-      }),
-      {
-        status: 200,
-        headers: { ...corsHeaders, "Content-Type": "application/json" }
-      }
-    );
   } catch (error) {
     console.error(`Erro ao testar webhook: ${error.message}`);
+    console.error(error.stack);
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ 
+        error: error.message,
+        stack: error.stack 
+      }),
       {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" }

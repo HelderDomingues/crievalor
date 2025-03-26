@@ -22,8 +22,11 @@ export const webhookService = {
       
       console.log("Auth token disponível, enviando para edge function");
       
+      // Adicionar timestamp para evitar cache
+      const timestamp = new Date().getTime();
+      
       const response = await supabase.functions.invoke("test-webhook", {
-        body: {},
+        body: { timestamp },
         headers: {
           Authorization: `Bearer ${session.access_token}`
         }
@@ -43,7 +46,8 @@ export const webhookService = {
         console.error("Erro retornado pela edge function:", response.data.error);
         return { 
           success: false, 
-          error: response.data.error 
+          error: response.data.error,
+          details: response.data.details
         };
       }
       
