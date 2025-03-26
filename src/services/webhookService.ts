@@ -3,30 +3,32 @@ import { supabase } from "@/integrations/supabase/client";
 
 export const webhookService = {
   /**
-   * Registra um webhook no Asaas para receber notificações de pagamentos
-   * @param webhookUrl URL completa do endpoint que receberá as notificações
-   * @returns 
+   * Testa a conexão com o webhook registrado no Asaas
    */
-  async registerWebhook(webhookUrl: string) {
+  async testWebhook() {
     try {
-      console.log(`Registrando webhook: ${webhookUrl}`);
+      console.log(`Testando conexão do webhook`);
       
-      const response = await supabase.functions.invoke("register-webhook", {
-        body: {
-          webhookUrl
-        },
+      const response = await supabase.functions.invoke("test-webhook", {
+        body: {},
       });
       
       if (response.error) {
-        console.error("Erro ao registrar webhook:", response.error);
-        throw new Error(`Erro ao registrar webhook: ${response.error.message}`);
+        console.error("Erro ao testar webhook:", response.error);
+        return { 
+          success: false, 
+          error: `Erro ao testar webhook: ${response.error.message || 'Erro desconhecido'}` 
+        };
       }
       
-      console.log("Webhook registrado com sucesso:", response.data);
-      return response.data;
+      console.log("Teste de webhook bem-sucedido:", response.data);
+      return { success: true, data: response.data };
     } catch (error: any) {
-      console.error("Erro em registerWebhook:", error);
-      throw error;
+      console.error("Erro em testWebhook:", error);
+      return { 
+        success: false, 
+        error: error.message || 'Erro desconhecido durante o teste do webhook' 
+      };
     }
   },
   
@@ -37,15 +39,15 @@ export const webhookService = {
     // Em produção, usar a URL da Edge Function
     if (window.location.hostname === 'crievalor.com.br' || 
         window.location.hostname === 'www.crievalor.com.br') {
-      return 'https://nmxfknwkhnengqqjtwru.supabase.co/functions/v1/asaas-webhook';
+      return 'https://nmxfknwkhnengqqjtwru.supabase.co/functions/v1/asaas-webhook?token=Thx11vbaBPEvUI2OJCoWvCM8OQHMlBDY';
     }
     
     // Para ambientes de desenvolvimento/preview
     if (window.location.hostname.includes('lovable.app')) {
-      return 'https://nmxfknwkhnengqqjtwru.supabase.co/functions/v1/asaas-webhook';
+      return 'https://nmxfknwkhnengqqjtwru.supabase.co/functions/v1/asaas-webhook?token=Thx11vbaBPEvUI2OJCoWvCM8OQHMlBDY';
     }
     
     // Para desenvolvimento local, recomendamos usar ngrok ou similar
-    return 'https://nmxfknwkhnengqqjtwru.supabase.co/functions/v1/asaas-webhook';
+    return 'https://nmxfknwkhnengqqjtwru.supabase.co/functions/v1/asaas-webhook?token=Thx11vbaBPEvUI2OJCoWvCM8OQHMlBDY';
   }
 };
