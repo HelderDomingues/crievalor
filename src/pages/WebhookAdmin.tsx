@@ -3,6 +3,8 @@ import React from 'react';
 import { WebhookManager } from '@/components/admin/WebhookManager';
 import { useProfile } from '@/hooks/useProfile';
 import { Navigate } from 'react-router-dom';
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 
 const WebhookAdmin = () => {
   const { profile, loading } = useProfile();
@@ -15,12 +17,28 @@ const WebhookAdmin = () => {
   }
   
   return (
-    <div className="container py-10 max-w-5xl">
-      <h1 className="text-3xl font-bold mb-10">Administração de Webhooks</h1>
+    <div className="min-h-screen flex flex-col">
+      <Header />
       
-      <div className="space-y-10">
-        <WebhookManager />
-      </div>
+      <main className="flex-grow py-16">
+        <div className="container mx-auto px-4">
+          <div className="flex justify-between items-center mb-8">
+            <h1 className="text-3xl font-bold">Administração de Webhooks</h1>
+            <a 
+              href="/"
+              className="text-blue-500 hover:text-blue-700 underline"
+            >
+              Voltar para Home
+            </a>
+          </div>
+          
+          <div className="space-y-10">
+            <WebhookManager />
+          </div>
+        </div>
+      </main>
+      
+      <Footer />
     </div>
   );
 };
