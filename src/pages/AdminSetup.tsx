@@ -34,7 +34,8 @@ const AdminSetup = () => {
       if (result.error) {
         console.error("Admin setup: Error returned from grantAdminRole:", result.error);
         setErrorMessage(result.error.message || "Erro desconhecido ao conceder privilégios");
-        throw result.error;
+        toast.error(`Erro ao conceder privilégios de administrador: ${result.error.message || "Erro desconhecido"}`);
+        return;
       }
       
       toast.success("Privilégios de administrador concedidos com sucesso!");

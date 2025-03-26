@@ -76,6 +76,15 @@ export async function assignUserRole(userId: string, roleName: string) {
       });
 
     if (error) {
+      // Check if it's an RLS error and provide a more user-friendly message
+      if (error.message && error.message.includes("row-level security")) {
+        console.error("RLS policy error in role insertion:", error);
+        return { 
+          success: false, 
+          error: new Error("Você não tem permissão para atribuir esta função. Contate o administrador do sistema.") 
+        };
+      }
+      
       console.error("Error in direct role insertion:", error);
       throw error;
     }
