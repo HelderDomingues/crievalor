@@ -8,7 +8,8 @@ import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
-import { CheckCircle, Loader2, AlertTriangle, ExternalLink, ShieldAlert } from "lucide-react";
+import { CheckCircle, Loader2, AlertTriangle, ExternalLink, ShieldAlert, Key } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const AdminSetup = () => {
   const { user } = useAuth();
@@ -16,6 +17,11 @@ const AdminSetup = () => {
   const navigate = useNavigate();
   const [isProcessing, setIsProcessing] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<string>("supabase");
+  
+  // Portfolio admin credentials
+  const [portfolioPassword, setPortfolioPassword] = useState("");
+  const [isPortfolioLoading, setIsPortfolioLoading] = useState(false);
 
   const handleGrantAdmin = async () => {
     if (!user) {
@@ -49,9 +55,20 @@ const AdminSetup = () => {
     }
   };
 
-  // Função para navegar para a página de webhooks admin
-  const navigateToWebhookAdmin = () => {
-    navigate("/admin-webhooks");
+  const handlePortfolioLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsPortfolioLoading(true);
+    
+    // Legacy auth logic - simple password check
+    if (portfolioPassword === "crie2024") {
+      localStorage.setItem("adminAuthenticated", "true");
+      setIsPortfolioLoading(false);
+      toast.success("Login de portfólio bem sucedido");
+      navigate("/portfolio-admin");
+    } else {
+      setIsPortfolioLoading(false);
+      toast.error("Senha incorreta para acesso ao portfólio");
+    }
   };
 
   return (
@@ -82,81 +99,131 @@ const AdminSetup = () => {
           )}
           
           {user && (
-            <Card className="w-full max-w-lg mx-auto">
-              <CardHeader>
-                <CardTitle>Conceder Privilégios de Administrador</CardTitle>
-                <CardDescription>
-                  Conceda privilégios de administrador ao seu usuário para acessar funcionalidades administrativas.
-                </CardDescription>
-              </CardHeader>
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full max-w-lg mx-auto">
+              <TabsList className="grid grid-cols-2 mb-4">
+                <TabsTrigger value="supabase">Admin Supabase</TabsTrigger>
+                <TabsTrigger value="portfolio">Admin Portfólio</TabsTrigger>
+              </TabsList>
               
-              <CardContent>
-                {rolesLoading ? (
-                  <div className="flex items-center justify-center p-6">
-                    <Loader2 className="animate-spin h-6 w-6 mr-2" />
-                    <p>Verificando permissões...</p>
-                  </div>
-                ) : isAdmin ? (
-                  <div className="flex items-center justify-center p-4 bg-green-50 rounded-lg">
-                    <CheckCircle className="text-green-500 mr-2" />
-                    <p>Você já possui privilégios de administrador</p>
-                  </div>
-                ) : (
-                  <>
-                    <p className="mb-4">
-                      Esta página permite conceder privilégios de administrador ao seu usuário.
-                      Isso permitirá que você acesse a página de administração de webhooks e outras 
-                      funcionalidades administrativas.
-                    </p>
-                    
-                    {errorMessage && (
-                      <div className="flex items-center p-4 mt-4 bg-red-50 text-red-700 rounded-lg border border-red-200">
-                        <ShieldAlert className="h-5 w-5 mr-2 flex-shrink-0" />
-                        <p className="text-sm">{errorMessage}</p>
-                      </div>
-                    )}
-                  </>
-                )}
-              </CardContent>
-              
-              <CardFooter className="flex flex-col space-y-4 w-full">
-                <div className="flex justify-between w-full">
-                  <Button variant="outline" onClick={() => navigate("/")}>
-                    Voltar para Home
-                  </Button>
+              <TabsContent value="supabase">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Admin Supabase</CardTitle>
+                    <CardDescription>
+                      Conceda privilégios de administrador ao seu usuário para acessar funcionalidades administrativas.
+                    </CardDescription>
+                  </CardHeader>
                   
-                  {!isAdmin && user && (
-                    <Button 
-                      onClick={handleGrantAdmin} 
-                      disabled={isProcessing || rolesLoading}
-                      className={errorMessage ? "bg-red-600 hover:bg-red-700" : ""}
-                    >
-                      {isProcessing ? (
-                        <>
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          Processando...
-                        </>
-                      ) : errorMessage ? (
-                        "Tentar Novamente"
-                      ) : (
-                        "Conceder Privilégios"
+                  <CardContent>
+                    {rolesLoading ? (
+                      <div className="flex items-center justify-center p-6">
+                        <Loader2 className="animate-spin h-6 w-6 mr-2" />
+                        <p>Verificando permissões...</p>
+                      </div>
+                    ) : isAdmin ? (
+                      <div className="flex items-center justify-center p-4 bg-green-50 rounded-lg">
+                        <CheckCircle className="text-green-500 mr-2" />
+                        <p>Você já possui privilégios de administrador</p>
+                      </div>
+                    ) : (
+                      <>
+                        <p className="mb-4">
+                          Esta página permite conceder privilégios de administrador ao seu usuário.
+                          Isso permitirá que você acesse a página de administração de webhooks e outras 
+                          funcionalidades administrativas.
+                        </p>
+                        
+                        {errorMessage && (
+                          <div className="flex items-center p-4 mt-4 bg-red-50 text-red-700 rounded-lg border border-red-200">
+                            <ShieldAlert className="h-5 w-5 mr-2 flex-shrink-0" />
+                            <p className="text-sm">{errorMessage}</p>
+                          </div>
+                        )}
+                      </>
+                    )}
+                  </CardContent>
+                  
+                  <CardFooter className="flex flex-col space-y-4 w-full">
+                    <div className="flex justify-between w-full">
+                      <Button variant="outline" onClick={() => navigate("/")}>
+                        Voltar para Home
+                      </Button>
+                      
+                      {!isAdmin && user && (
+                        <Button 
+                          onClick={handleGrantAdmin} 
+                          disabled={isProcessing || rolesLoading}
+                          className={errorMessage ? "bg-red-600 hover:bg-red-700" : ""}
+                        >
+                          {isProcessing ? (
+                            <>
+                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                              Processando...
+                            </>
+                          ) : errorMessage ? (
+                            "Tentar Novamente"
+                          ) : (
+                            "Conceder Privilégios"
+                          )}
+                        </Button>
                       )}
-                    </Button>
-                  )}
-                </div>
-                
-                {/* Botão que só aparece quando os privilégios de administrador foram concedidos */}
-                {isAdmin && (
-                  <Button 
-                    className="w-full mt-4"
-                    onClick={navigateToWebhookAdmin}
-                  >
-                    <ExternalLink className="mr-2" />
-                    Acessar Administração de Webhooks
-                  </Button>
-                )}
-              </CardFooter>
-            </Card>
+                    </div>
+                    
+                    {/* Botão que só aparece quando os privilégios de administrador foram concedidos */}
+                    {isAdmin && (
+                      <Button 
+                        className="w-full mt-4"
+                        onClick={() => navigate("/admin")}
+                      >
+                        <ExternalLink className="mr-2" />
+                        Acessar Painel Administrativo
+                      </Button>
+                    )}
+                  </CardFooter>
+                </Card>
+              </TabsContent>
+              
+              <TabsContent value="portfolio">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center">
+                      <Key className="mr-2 h-5 w-5" />
+                      Acesso ao Admin de Portfólio
+                    </CardTitle>
+                    <CardDescription>
+                      Use a senha para acessar o painel de administração do portfólio
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <form onSubmit={handlePortfolioLogin} className="space-y-4">
+                      <div className="space-y-2">
+                        <label htmlFor="portfolio-password" className="text-sm font-medium">
+                          Senha de administrador
+                        </label>
+                        <input
+                          id="portfolio-password"
+                          type="password"
+                          value={portfolioPassword}
+                          onChange={(e) => setPortfolioPassword(e.target.value)}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                          required
+                        />
+                      </div>
+                      <Button type="submit" className="w-full" disabled={isPortfolioLoading}>
+                        {isPortfolioLoading ? (
+                          <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            Verificando...
+                          </>
+                        ) : (
+                          "Acessar Portfólio Admin"
+                        )}
+                      </Button>
+                    </form>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+            </Tabs>
           )}
         </div>
       </main>

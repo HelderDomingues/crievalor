@@ -1,63 +1,14 @@
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { WebhookManager } from '@/components/admin/WebhookManager';
-import { useProfile } from '@/hooks/useProfile';
 import { useNavigate } from 'react-router-dom';
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Button } from '@/components/ui/button';
-import { Loader2 } from 'lucide-react';
-import { toast } from 'sonner';
+import AdminAuth from '@/components/admin/AdminAuth';
 
 const WebhookAdmin = () => {
-  const { isAdmin, rolesLoading } = useProfile();
   const navigate = useNavigate();
-  const [accessChecked, setAccessChecked] = useState(false);
-  
-  useEffect(() => {
-    if (!rolesLoading) {
-      setAccessChecked(true);
-      
-      // If user doesn't have admin permissions after loading completes, redirect
-      if (!isAdmin) {
-        toast.error("Você não tem permissões de administrador");
-        navigate("/admin-setup");
-      }
-    }
-  }, [rolesLoading, isAdmin, navigate]);
-  
-  // If still loading, show loading state
-  if (rolesLoading) {
-    return (
-      <div className="min-h-screen flex flex-col">
-        <Header />
-        <main className="flex-grow py-16 flex items-center justify-center">
-          <div className="text-center">
-            <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
-            <p className="text-lg">Verificando permissões...</p>
-          </div>
-        </main>
-        <Footer />
-      </div>
-    );
-  }
-  
-  // If done loading and not admin, the useEffect will handle redirection
-  // This is a fallback just in case
-  if (accessChecked && !isAdmin) {
-    return (
-      <div className="min-h-screen flex flex-col">
-        <Header />
-        <main className="flex-grow py-16 flex items-center justify-center">
-          <div className="text-center">
-            <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
-            <p className="text-lg">Redirecionando para página de configuração de admin...</p>
-          </div>
-        </main>
-        <Footer />
-      </div>
-    );
-  }
   
   return (
     <div className="min-h-screen flex flex-col">
@@ -83,9 +34,14 @@ const WebhookAdmin = () => {
             </div>
           </div>
           
-          <div className="space-y-10">
-            <WebhookManager />
-          </div>
+          <AdminAuth 
+            onAuthenticated={() => {}}
+            redirectPath="/admin-setup"
+          >
+            <div className="space-y-10">
+              <WebhookManager />
+            </div>
+          </AdminAuth>
         </div>
       </main>
       

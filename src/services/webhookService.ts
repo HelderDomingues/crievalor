@@ -20,6 +20,8 @@ export const webhookService = {
         };
       }
       
+      console.log("Auth token disponível, enviando para edge function");
+      
       const response = await supabase.functions.invoke("test-webhook", {
         body: {},
         headers: {
@@ -27,11 +29,21 @@ export const webhookService = {
         }
       });
       
+      console.log("Resposta da edge function:", response);
+      
       if (response.error) {
         console.error("Erro ao testar webhook:", response.error);
         return { 
           success: false, 
           error: `Erro ao testar webhook: ${response.error.message || 'Erro desconhecido'}` 
+        };
+      }
+      
+      if (response.data && response.data.error) {
+        console.error("Erro retornado pela edge function:", response.data.error);
+        return { 
+          success: false, 
+          error: response.data.error 
         };
       }
       

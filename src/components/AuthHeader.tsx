@@ -48,9 +48,9 @@ const AuthHeader = () => {
                 <DropdownMenuSeparator />
                 <DropdownMenuLabel>Administração</DropdownMenuLabel>
                 <DropdownMenuItem asChild>
-                  <Link to="/admin-webhooks" className="flex items-center">
+                  <Link to="/admin" className="flex items-center">
                     <Settings className="mr-2 h-4 w-4" />
-                    <span>Admin Webhooks</span>
+                    <span>Painel Admin</span>
                   </Link>
                 </DropdownMenuItem>
               </>
