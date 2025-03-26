@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { UserProfile } from "@/types/auth";
@@ -146,12 +145,16 @@ export function useProfile() {
     if (!user) return { error: new Error("No user logged in") };
     
     try {
-      const { error } = await assignUserRole(user.id, 'admin');
+      const { success, error } = await assignUserRole(user.id, 'admin');
       
       if (error) throw error;
       
-      setIsAdmin(true);
-      return { error: null };
+      if (success) {
+        setIsAdmin(true);
+        return { error: null };
+      } else {
+        return { error: new Error("Failed to grant admin role") };
+      }
     } catch (error) {
       console.error("Error granting admin role:", error);
       return { error: error as Error };
@@ -162,12 +165,16 @@ export function useProfile() {
     if (!user) return { error: new Error("No user logged in") };
     
     try {
-      const { error } = await removeUserRole(user.id, 'admin');
+      const { success, error } = await removeUserRole(user.id, 'admin');
       
       if (error) throw error;
       
-      setIsAdmin(false);
-      return { error: null };
+      if (success) {
+        setIsAdmin(false);
+        return { error: null };
+      } else {
+        return { error: new Error("Failed to remove admin role") };
+      }
     } catch (error) {
       console.error("Error removing admin role:", error);
       return { error: error as Error };

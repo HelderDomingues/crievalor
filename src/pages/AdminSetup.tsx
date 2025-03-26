@@ -33,7 +33,7 @@ const AdminSetup = () => {
       toast.success("Privilégios de administrador concedidos com sucesso!");
     } catch (error) {
       console.error("Erro ao conceder privilégios de administrador:", error);
-      toast.error("Erro ao conceder privilégios de administrador");
+      toast.error(`Erro ao conceder privilégios de administrador: ${error instanceof Error ? error.message : 'Erro desconhecido'}`);
     } finally {
       setIsProcessing(false);
     }

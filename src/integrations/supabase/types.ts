@@ -238,6 +238,18 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      bootstrap_admin_role: {
+        Args: {
+          admin_user_id: string
+        }
+        Returns: boolean
+      }
+      check_if_user_is_admin: {
+        Args: {
+          user_id: string
+        }
+        Returns: boolean
+      }
       increment_material_access_count: {
         Args: {
           material_id: string

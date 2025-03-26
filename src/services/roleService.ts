@@ -26,6 +26,7 @@ export async function checkUserRole(userId: string, roleName: string) {
 
 /**
  * Assigns a role to a user
+ * For the first admin, it uses the bootstrap function
  */
 export async function assignUserRole(userId: string, roleName: string) {
   try {
@@ -38,7 +39,25 @@ export async function assignUserRole(userId: string, roleName: string) {
     
     // If the user already has the role, return early
     if (hasRole) {
-      return { error: null };
+      return { success: true, error: null };
+    }
+
+    // For admin role, first attempt to bootstrap if this is the first admin
+    if (roleName === 'admin') {
+      const { data: bootstrapResult, error: bootstrapError } = await supabase.rpc(
+        'bootstrap_admin_role',
+        { admin_user_id: userId }
+      );
+      
+      if (bootstrapError) {
+        console.error("Bootstrap admin error:", bootstrapError);
+        // Continue with normal insertion as fallback
+      } else if (bootstrapResult === true) {
+        // Bootstrap succeeded
+        return { success: true, error: null };
+      }
+      
+      // If bootstrap reported false (already have admins), continue with normal insert
     }
 
     const { error } = await supabase
@@ -52,10 +71,10 @@ export async function assignUserRole(userId: string, roleName: string) {
       throw error;
     }
 
-    return { error: null };
+    return { success: true, error: null };
   } catch (error) {
     console.error("Error assigning user role:", error);
-    return { error: error as Error };
+    return { success: false, error: error as Error };
   }
 }
 
@@ -74,9 +93,9 @@ export async function removeUserRole(userId: string, roleName: string) {
       throw error;
     }
 
-    return { error: null };
+    return { success: true, error: null };
   } catch (error) {
     console.error("Error removing user role:", error);
-    return { error: error as Error };
+    return { success: false, error: error as Error };
   }
 }
