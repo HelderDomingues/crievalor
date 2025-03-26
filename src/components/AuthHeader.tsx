@@ -10,14 +10,11 @@ import { User, CreditCard, LogOut, Settings, Shield } from "lucide-react";
 
 const AuthHeader = () => {
   const { user, signOut } = useAuth();
-  const { profile } = useProfile();
+  const { profile, isAdmin } = useProfile();
 
   const handleSignOut = async () => {
     await signOut();
   };
-
-  // Check if user has admin privileges
-  const isAdmin = profile?.social_media && 'admin' in profile.social_media;
 
   return (
     <div className="flex items-center gap-3">

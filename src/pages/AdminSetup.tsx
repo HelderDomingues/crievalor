@@ -12,17 +12,9 @@ import { CheckCircle, Loader2, AlertTriangle, ExternalLink } from "lucide-react"
 
 const AdminSetup = () => {
   const { user } = useAuth();
-  const { profile, updateProfileField, loading } = useProfile();
+  const { isAdmin, rolesLoading, grantAdminRole } = useProfile();
   const navigate = useNavigate();
   const [isProcessing, setIsProcessing] = useState(false);
-  const [adminGranted, setAdminGranted] = useState(false);
-
-  useEffect(() => {
-    // Check if user already has admin privileges
-    if (profile?.social_media && 'admin' in profile.social_media) {
-      setAdminGranted(true);
-    }
-  }, [profile]);
 
   const handleGrantAdmin = async () => {
     if (!user) {
@@ -34,16 +26,11 @@ const AdminSetup = () => {
     setIsProcessing(true);
     
     try {
-      // Update the social_media object to include admin privileges
-      const updatedSocialMedia = {
-        ...(profile?.social_media || {}),
-        admin: true
-      };
+      const { error } = await grantAdminRole();
       
-      await updateProfileField("social_media", updatedSocialMedia);
+      if (error) throw error;
       
       toast.success("Privilégios de administrador concedidos com sucesso!");
-      setAdminGranted(true);
     } catch (error) {
       console.error("Erro ao conceder privilégios de administrador:", error);
       toast.error("Erro ao conceder privilégios de administrador");
@@ -94,12 +81,12 @@ const AdminSetup = () => {
               </CardHeader>
               
               <CardContent>
-                {loading ? (
+                {rolesLoading ? (
                   <div className="flex items-center justify-center p-6">
                     <Loader2 className="animate-spin h-6 w-6 mr-2" />
-                    <p>Carregando informações do perfil...</p>
+                    <p>Verificando permissões...</p>
                   </div>
-                ) : adminGranted ? (
+                ) : isAdmin ? (
                   <div className="flex items-center justify-center p-4 bg-green-50 rounded-lg">
                     <CheckCircle className="text-green-500 mr-2" />
                     <p>Você já possui privilégios de administrador</p>
@@ -119,10 +106,10 @@ const AdminSetup = () => {
                     Voltar para Home
                   </Button>
                   
-                  {!adminGranted && user && (
+                  {!isAdmin && user && (
                     <Button 
                       onClick={handleGrantAdmin} 
-                      disabled={isProcessing || loading}
+                      disabled={isProcessing || rolesLoading}
                     >
                       {isProcessing ? (
                         <>
@@ -137,7 +124,7 @@ const AdminSetup = () => {
                 </div>
                 
                 {/* Botão que só aparece quando os privilégios de administrador foram concedidos */}
-                {adminGranted && (
+                {isAdmin && (
                   <Button 
                     className="w-full mt-4"
                     onClick={navigateToWebhookAdmin}

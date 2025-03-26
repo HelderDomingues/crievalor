@@ -4,6 +4,7 @@ import { useAuth } from "@/context/AuthContext";
 import { UserProfile } from "@/types/auth";
 import { fetchUserProfile, updateUserProfile, uploadUserAvatar } from "@/services/profileService";
 import { formatProfileData, formatSocialMedia } from "@/utils/profileFormatter";
+import { checkUserRole, assignUserRole, removeUserRole } from "@/services/roleService";
 
 export function useProfile() {
   const { user } = useAuth();
@@ -11,12 +12,15 @@ export function useProfile() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
   const [avatarUploading, setAvatarUploading] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [rolesLoading, setRolesLoading] = useState(true);
 
   useEffect(() => {
     async function loadProfile() {
       if (!user) {
         setProfile(null);
         setLoading(false);
+        setRolesLoading(false);
         return;
       }
 
@@ -39,6 +43,36 @@ export function useProfile() {
     }
 
     loadProfile();
+  }, [user]);
+
+  // Fetch user roles
+  useEffect(() => {
+    async function loadUserRoles() {
+      if (!user) {
+        setIsAdmin(false);
+        setRolesLoading(false);
+        return;
+      }
+
+      try {
+        setRolesLoading(true);
+        const { hasRole, error } = await checkUserRole(user.id, 'admin');
+        
+        if (error) {
+          console.error("Error checking admin role:", error);
+          setIsAdmin(false);
+        } else {
+          setIsAdmin(hasRole);
+        }
+      } catch (err) {
+        console.error("Error checking user roles:", err);
+        setIsAdmin(false);
+      } finally {
+        setRolesLoading(false);
+      }
+    }
+
+    loadUserRoles();
   }, [user]);
 
   async function updateProfile(updates: Partial<UserProfile>) {
@@ -108,6 +142,38 @@ export function useProfile() {
     }
   }
 
+  async function grantAdminRole() {
+    if (!user) return { error: new Error("No user logged in") };
+    
+    try {
+      const { error } = await assignUserRole(user.id, 'admin');
+      
+      if (error) throw error;
+      
+      setIsAdmin(true);
+      return { error: null };
+    } catch (error) {
+      console.error("Error granting admin role:", error);
+      return { error: error as Error };
+    }
+  }
+
+  async function removeAdminRole() {
+    if (!user) return { error: new Error("No user logged in") };
+    
+    try {
+      const { error } = await removeUserRole(user.id, 'admin');
+      
+      if (error) throw error;
+      
+      setIsAdmin(false);
+      return { error: null };
+    } catch (error) {
+      console.error("Error removing admin role:", error);
+      return { error: error as Error };
+    }
+  }
+
   async function uploadAvatar(file: File) {
     if (!user) return { error: new Error("No user logged in"), url: null };
     
@@ -133,9 +199,13 @@ export function useProfile() {
     profile,
     loading,
     error,
+    isAdmin,
+    rolesLoading,
     updateProfile,
     updateProfileField,
     uploadAvatar,
-    avatarUploading
+    avatarUploading,
+    grantAdminRole,
+    removeAdminRole
   };
 }

@@ -10,27 +10,24 @@ import { Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 
 const WebhookAdmin = () => {
-  const { profile, loading } = useProfile();
+  const { isAdmin, rolesLoading } = useProfile();
   const navigate = useNavigate();
   const [accessChecked, setAccessChecked] = useState(false);
   
   useEffect(() => {
-    if (!loading) {
+    if (!rolesLoading) {
       setAccessChecked(true);
       
       // If user doesn't have admin permissions after loading completes, redirect
-      if (!(profile?.social_media && 'admin' in profile.social_media)) {
+      if (!isAdmin) {
         toast.error("Você não tem permissões de administrador");
         navigate("/admin-setup");
       }
     }
-  }, [loading, profile, navigate]);
-  
-  // Check for admin permissions
-  const isAdmin = profile?.social_media && 'admin' in profile.social_media;
+  }, [rolesLoading, isAdmin, navigate]);
   
   // If still loading, show loading state
-  if (loading) {
+  if (rolesLoading) {
     return (
       <div className="min-h-screen flex flex-col">
         <Header />
