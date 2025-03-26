@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/context/AuthContext";
 import { UserProfile } from "@/types/auth";
 import { v4 as uuidv4 } from "uuid";
+import { Json } from "@/integrations/supabase/types";
 
 export function useProfile() {
   const { user } = useAuth();
@@ -33,19 +34,46 @@ export function useProfile() {
         }
 
         // Ensure social_media is properly structured as an object, never null
-        const social_media = data?.social_media || {
+        let formattedSocialMedia = {
           linkedin: "",
           twitter: "",
           instagram: "",
           facebook: ""
         };
 
+        if (data?.social_media) {
+          // Handle different possible types from the database
+          const socialMedia = data.social_media as any;
+          
+          if (typeof socialMedia === 'object' && !Array.isArray(socialMedia)) {
+            formattedSocialMedia = {
+              linkedin: socialMedia.linkedin || "",
+              twitter: socialMedia.twitter || "",
+              instagram: socialMedia.instagram || "",
+              facebook: socialMedia.facebook || ""
+            };
+          }
+        }
+
         const formattedData = data ? {
           ...data,
-          social_media: social_media
-        } : null;
+          social_media: formattedSocialMedia,
+          // Ensure all fields conform to UserProfile type
+          id: data.id,
+          username: data.username,
+          avatar_url: data.avatar_url,
+          updated_at: data.updated_at,
+          full_name: data.full_name,
+          phone: data.phone,
+          company_name: data.company_name,
+          company_address: data.company_address,
+          website: data.website,
+          cnpj: data.cnpj,
+          cpf: data.cpf,
+          email: user.email
+        } as UserProfile : null;
 
-        setProfile(formattedData as UserProfile | null);
+        setProfile(formattedData);
       } catch (err) {
         console.error("Error fetching profile:", err);
         setError(err as Error);
@@ -90,19 +118,46 @@ export function useProfile() {
       }
 
       // Process the response data to ensure social_media is properly structured
-      const social_media = data?.social_media || {
+      let formattedSocialMedia = {
         linkedin: "",
         twitter: "",
         instagram: "",
         facebook: ""
       };
 
+      if (data?.social_media) {
+        // Handle different possible types from the database
+        const socialMedia = data.social_media as any;
+        
+        if (typeof socialMedia === 'object' && !Array.isArray(socialMedia)) {
+          formattedSocialMedia = {
+            linkedin: socialMedia.linkedin || "",
+            twitter: socialMedia.twitter || "",
+            instagram: socialMedia.instagram || "",
+            facebook: socialMedia.facebook || ""
+          };
+        }
+      }
+
       const formattedData = data ? {
         ...data,
-        social_media: social_media
-      } : null;
+        social_media: formattedSocialMedia,
+        // Ensure all fields conform to UserProfile type
+        id: data.id,
+        username: data.username,
+        avatar_url: data.avatar_url,
+        updated_at: data.updated_at,
+        full_name: data.full_name,
+        phone: data.phone,
+        company_name: data.company_name,
+        company_address: data.company_address,
+        website: data.website,
+        cnpj: data.cnpj,
+        cpf: data.cpf,
+        email: user.email
+      } as UserProfile : null;
 
-      setProfile(formattedData as UserProfile | null);
+      setProfile(formattedData);
       return { data: formattedData, error: null };
     } catch (error) {
       console.error("Error updating profile:", error);
