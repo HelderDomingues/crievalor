@@ -2,7 +2,7 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.38.4";
 
 const ASAAS_API_URL = "https://sandbox.asaas.com/api/v3";
-const ASAAS_API_KEY = Deno.env.get("ASAAS_API_KEY") || "";
+let ASAAS_API_KEY = Deno.env.get("ASAAS_API_KEY") || "";
 
 const supabaseUrl = Deno.env.get("SUPABASE_URL") || "";
 const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
@@ -19,13 +19,33 @@ serve(async (req) => {
   }
 
   try {
+    // Inicializar cliente Supabase
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+    
+    // Buscar a chave da API Asaas da tabela system_settings, se não estiver disponível como variável de ambiente
+    if (!ASAAS_API_KEY) {
+      console.log("Buscando ASAAS_API_KEY da tabela system_settings");
+      const { data, error } = await supabase
+        .from('system_settings')
+        .select('value')
+        .eq('key', 'ASAAS_API_KEY')
+        .maybeSingle();
+
+      if (error) {
+        console.error("Erro ao buscar ASAAS_API_KEY:", error);
+        throw new Error("Não foi possível obter a chave da API Asaas do banco de dados");
+      }
+
+      if (data && data.value) {
+        ASAAS_API_KEY = data.value;
+        console.log(`ASAAS_API_KEY obtida da tabela system_settings`);
+      }
+    }
+
     // Verificar se a chave da API Asaas está configurada
     if (!ASAAS_API_KEY) {
       throw new Error("ASAAS_API_KEY não está configurada");
     }
-
-    // Inicializar cliente Supabase
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
     
     // Verificar autenticação do usuário
     const authHeader = req.headers.get("Authorization");
