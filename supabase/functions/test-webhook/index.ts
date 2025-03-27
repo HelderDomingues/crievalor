@@ -111,9 +111,9 @@ serve(async (req) => {
     
     // FIX: Use table alias to avoid ambiguous column reference
     const { data: adminRoles, error: adminQueryError } = await supabase
-      .from('user_roles')
-      .select('role')
-      .eq('user_id', user.id)
+      .from('user_roles as ur')
+      .select('ur.role')
+      .eq('ur.user_id', user.id)
       .eq('role', 'admin')
       .maybeSingle();
     
