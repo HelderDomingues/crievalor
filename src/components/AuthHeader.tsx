@@ -10,7 +10,7 @@ import { User, CreditCard, LogOut, Settings, Shield } from "lucide-react";
 
 const AuthHeader = () => {
   const { user, signOut } = useAuth();
-  const { profile, isAdmin } = useProfile();
+  const { profile, isAdmin, rolesLoading } = useProfile();
 
   const handleSignOut = async () => {
     await signOut();
@@ -51,6 +51,18 @@ const AuthHeader = () => {
                   <Link to="/admin" className="flex items-center">
                     <Settings className="mr-2 h-4 w-4" />
                     <span>Painel Admin</span>
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to="/admin-materials" className="flex items-center">
+                    <Shield className="mr-2 h-4 w-4" />
+                    <span>Materiais</span>
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to="/admin-webhooks" className="flex items-center">
+                    <Shield className="mr-2 h-4 w-4" />
+                    <span>Webhooks</span>
                   </Link>
                 </DropdownMenuItem>
               </>

@@ -43,8 +43,10 @@ const AdminAuth: React.FC<AdminAuthProps> = ({
   }, [onAuthenticated]);
 
   useEffect(() => {
-    // If the user is an admin in Supabase, authenticate them
+    // If the user is an admin in the database, authenticate them
+    console.log("AdminAuth - isAdmin:", isAdmin, "rolesLoading:", rolesLoading);
     if (isAdmin && !rolesLoading) {
+      console.log("User is admin, authenticating");
       onAuthenticated();
     }
   }, [isAdmin, rolesLoading, onAuthenticated]);

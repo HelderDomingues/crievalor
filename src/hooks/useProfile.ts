@@ -21,6 +21,7 @@ export function useProfile() {
         setProfile(null);
         setLoading(false);
         setRolesLoading(false);
+        setIsAdmin(false);
         return;
       }
 
@@ -35,7 +36,8 @@ export function useProfile() {
         const formattedData = formatProfileData(data, user.email);
         setProfile(formattedData);
         
-        // Since we're now storing the role in the profile, we can set isAdmin here
+        // Check and set admin status based on the role field
+        console.log("Profile role:", formattedData?.role);
         setIsAdmin(formattedData?.role === 'admin');
       } catch (err) {
         console.error("Error fetching profile:", err);
