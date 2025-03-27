@@ -109,7 +109,7 @@ serve(async (req) => {
     // Verificar se o usuário é admin - utilizando tabela diretamente para evitar problemas da função RPC
     console.log("Verificando permissões de administrador para o usuário:", user.id);
     
-    // Approach 1: Check admin using direct query to avoid RPC function issues
+    // FIX: Use table alias to avoid ambiguous column reference
     const { data: adminRoles, error: adminQueryError } = await supabase
       .from('user_roles')
       .select('role')
