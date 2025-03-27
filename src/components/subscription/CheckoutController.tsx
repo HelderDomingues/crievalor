@@ -94,7 +94,7 @@ const CheckoutController: React.FC<CheckoutControllerProps> = ({
       toast({
         title: "Aguarde um momento",
         description: "Por favor, aguarde alguns segundos antes de tentar novamente.",
-        variant: "warning",
+        variant: "default", // Changed from "warning" to "default"
       });
       return false;
     }
@@ -117,7 +117,7 @@ const CheckoutController: React.FC<CheckoutControllerProps> = ({
       toast({
         title: "Processando pagamento",
         description: "Seu pagamento já está sendo processado. Aguarde um momento.",
-        variant: "warning",
+        variant: "default", // Changed from "warning" to "default"
       });
       return;
     }
