@@ -38,4 +38,5 @@ export interface UserProfile {
   cnpj: string | null;
   cpf: string | null;
   email?: string | null;
+  role?: string | null;
 }
