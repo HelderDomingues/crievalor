@@ -302,6 +302,10 @@ export type Database = {
         }
         Returns: undefined
       }
+      setup_asaas_customers_rls_policies: {
+        Args: Record<PropertyKey, never>
+        Returns: boolean
+      }
       setup_subscriptions_rls_policies: {
         Args: Record<PropertyKey, never>
         Returns: boolean

@@ -26,6 +26,9 @@ serve(async (req) => {
     // Aplicar políticas RLS para a tabela de subscriptions
     const setupSubscriptionsRLS = await supabase.rpc("setup_subscriptions_rls_policies");
     
+    // Aplicar políticas RLS para a tabela de asaas_customers
+    const setupAsaasCustomersRLS = await supabase.rpc("setup_asaas_customers_rls_policies");
+    
     console.log("Políticas RLS configuradas com sucesso");
     
     return new Response(
@@ -33,7 +36,8 @@ serve(async (req) => {
         success: true,
         message: "Políticas RLS aplicadas com sucesso",
         results: {
-          subscriptions: setupSubscriptionsRLS
+          subscriptions: setupSubscriptionsRLS,
+          asaas_customers: setupAsaasCustomersRLS
         }
       }),
       {
