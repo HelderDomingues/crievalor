@@ -198,7 +198,7 @@ const Index = () => {
                       <div className="pt-4 border-t border-border">
                         <div className="flex justify-between items-center">
                           <p className="text-sm text-muted-foreground">
-                            A partir de <span className="text-primary font-bold">12 X de R$ 179,90</span>
+                            A partir de <span className="text-primary font-bold">R$ 179,90</span>
                           </p>
                           <Button variant="outline" size="sm" asChild>
                             <Link to="/mar">Ver detalhes</Link>
