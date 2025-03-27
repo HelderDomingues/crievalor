@@ -29,6 +29,11 @@ const AdminAuth: React.FC<AdminAuthProps> = ({
   const navigate = useNavigate();
   const { toast } = useToast();
   
+  // Add debug logging to help diagnose issues
+  console.log("AdminAuth - User:", user?.id);
+  console.log("AdminAuth - isAdmin:", isAdmin);
+  console.log("AdminAuth - rolesLoading:", rolesLoading);
+  
   // Legacy portfolio admin auth
   const [legacyPassword, setLegacyPassword] = useState("");
   const [isLegacyLoading, setIsLegacyLoading] = useState(false);
@@ -38,13 +43,14 @@ const AdminAuth: React.FC<AdminAuthProps> = ({
     // Check if the user is already authenticated in legacy portfolio admin
     const adminAuth = localStorage.getItem("adminAuthenticated");
     if (adminAuth === "true") {
+      console.log("User has legacy admin auth");
       onAuthenticated();
     }
   }, [onAuthenticated]);
 
   useEffect(() => {
     // If the user is an admin in the database, authenticate them
-    console.log("AdminAuth - isAdmin:", isAdmin, "rolesLoading:", rolesLoading);
+    console.log("AdminAuth useEffect - isAdmin:", isAdmin, "rolesLoading:", rolesLoading);
     if (isAdmin && !rolesLoading) {
       console.log("User is admin, authenticating");
       onAuthenticated();

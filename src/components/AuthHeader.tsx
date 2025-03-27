@@ -12,6 +12,12 @@ const AuthHeader = () => {
   const { user, signOut } = useAuth();
   const { profile, isAdmin, rolesLoading } = useProfile();
 
+  // Add debug logs to help diagnose issues
+  console.log("AuthHeader - User:", user?.id);
+  console.log("AuthHeader - Profile:", profile);
+  console.log("AuthHeader - isAdmin:", isAdmin);
+  console.log("AuthHeader - rolesLoading:", rolesLoading);
+
   const handleSignOut = async () => {
     await signOut();
   };
@@ -28,7 +34,7 @@ const AuthHeader = () => {
               </AvatarFallback>
             </Avatar>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
+          <DropdownMenuContent align="end" className="z-50 min-w-[200px] bg-background shadow-md">
             <DropdownMenuLabel>Minha Conta</DropdownMenuLabel>
             <DropdownMenuItem asChild>
               <Link to="/profile" className="flex items-center">

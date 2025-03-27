@@ -27,6 +27,8 @@ export function useProfile() {
 
       try {
         setLoading(true);
+        setRolesLoading(true); // Ensure roles loading is set to true
+
         const { data, error } = await fetchUserProfile(user.id);
 
         if (error) {
@@ -36,9 +38,19 @@ export function useProfile() {
         const formattedData = formatProfileData(data, user.email);
         setProfile(formattedData);
         
-        // Check and set admin status based on the role field
-        console.log("Profile role:", formattedData?.role);
-        setIsAdmin(formattedData?.role === 'admin');
+        // Add more extensive logging to debug the admin role
+        console.log("loadProfile - Raw profile data:", data);
+        console.log("loadProfile - Formatted profile data:", formattedData);
+        console.log("loadProfile - Role value:", formattedData?.role);
+        
+        // Make sure we correctly check for the admin role string
+        if (formattedData?.role === 'admin') {
+          console.log("User is admin - setting isAdmin to true");
+          setIsAdmin(true);
+        } else {
+          console.log("User is NOT admin - setting isAdmin to false");
+          setIsAdmin(false);
+        }
       } catch (err) {
         console.error("Error fetching profile:", err);
         setError(err as Error);
