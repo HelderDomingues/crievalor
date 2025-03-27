@@ -122,6 +122,7 @@ export type Database = {
           updated_at: string | null
           username: string | null
           website: string | null
+          role: string | null
         }
         Insert: {
           avatar_url?: string | null
@@ -137,6 +138,7 @@ export type Database = {
           updated_at?: string | null
           username?: string | null
           website?: string | null
+          role?: string | null
         }
         Update: {
           avatar_url?: string | null
@@ -152,6 +154,7 @@ export type Database = {
           updated_at?: string | null
           username?: string | null
           website?: string | null
+          role?: string | null
         }
         Relationships: []
       }
@@ -245,18 +248,21 @@ export type Database = {
           id: string
           role: string
           user_id: string | null
+          email: string | null
         }
         Insert: {
           created_at?: string | null
           id?: string
           role: string
           user_id?: string | null
+          email?: string | null
         }
         Update: {
           created_at?: string | null
           id?: string
           role?: string
           user_id?: string | null
+          email?: string | null
         }
         Relationships: []
       }
