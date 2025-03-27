@@ -23,23 +23,47 @@ serve(async (req) => {
     
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
     
+    // Get ASAAS_API_KEY from database system_settings
+    console.log("Buscando ASAAS_API_KEY da tabela system_settings");
     const { data: settingData, error: settingError } = await supabase
       .from('system_settings')
       .select('value')
       .eq('key', 'ASAAS_API_KEY')
-      .single();
+      .maybeSingle();
     
     if (settingError) {
       console.error("Erro ao buscar chave da API:", settingError);
-      throw new Error("API Key do Asaas não encontrada no banco de dados");
+      throw new Error(`API Key do Asaas não encontrada no banco de dados: ${settingError.message}`);
+    }
+    
+    if (!settingData || !settingData.value) {
+      console.error("Teste webhook: ASAAS_API_KEY não encontrada na tabela system_settings");
+      return new Response(
+        JSON.stringify({ 
+          error: "API Key do Asaas não configurada na tabela system_settings",
+          details: "Verifique se a chave ASAAS_API_KEY está configurada na tabela system_settings"
+        }),
+        {
+          status: 500,
+          headers: { ...corsHeaders, "Content-Type": "application/json" }
+        }
+      );
     }
     
     asaasApiKey = settingData.value;
+    console.log("ASAAS_API_KEY obtida da tabela system_settings");
+    
+    // Log first few characters of API key for debugging (never log full API keys)
+    if (asaasApiKey) {
+      const keyLength = asaasApiKey.length;
+      const maskedKey = asaasApiKey.substring(0, 5) + "..." + asaasApiKey.substring(keyLength - 5);
+      console.log(`ASAAS_API_KEY encontrada (formato: ${maskedKey}), comprimento: ${keyLength} caracteres`);
+    }
     
     if (!asaasApiKey) {
-      console.error("Teste webhook: ASAAS_API_KEY não configurada");
+      console.error("Teste webhook: ASAAS_API_KEY obtida mas está vazia");
       return new Response(
-        JSON.stringify({ error: "API Key do Asaas não configurada" }),
+        JSON.stringify({ error: "API Key do Asaas está vazia" }),
         {
           status: 500,
           headers: { ...corsHeaders, "Content-Type": "application/json" }
@@ -82,22 +106,23 @@ serve(async (req) => {
     
     console.log("Usuário autenticado:", user.id);
     
-    // Verificar se o usuário é admin usando função RPC para evitar ambiguidade na coluna user_id
+    // Verificar se o usuário é admin - utilizando tabela diretamente para evitar problemas da função RPC
     console.log("Verificando permissões de administrador para o usuário:", user.id);
     
-    const { data: isAdmin, error: adminCheckError } = await supabase.rpc(
-      'check_if_user_is_admin',
-      { user_id: user.id }
-    );
+    // Approach 1: Check admin using direct query to avoid RPC function issues
+    const { data: adminRoles, error: adminQueryError } = await supabase
+      .from('user_roles')
+      .select('role')
+      .eq('user_id', user.id)
+      .eq('role', 'admin')
+      .maybeSingle();
     
-    console.log("Resultado da verificação de admin:", { isAdmin, error: adminCheckError });
-    
-    if (adminCheckError) {
-      console.error("Teste webhook: Erro ao verificar se usuário é admin", adminCheckError);
+    if (adminQueryError) {
+      console.error("Erro ao verificar permissões de admin:", adminQueryError);
       return new Response(
         JSON.stringify({ 
           error: "Erro ao verificar permissões de administrador", 
-          details: adminCheckError 
+          details: adminQueryError 
         }),
         {
           status: 500,
@@ -105,6 +130,9 @@ serve(async (req) => {
         }
       );
     }
+    
+    const isAdmin = !!adminRoles;
+    console.log("Resultado da verificação de admin (consulta direta):", { isAdmin });
     
     if (!isAdmin) {
       console.error("Teste webhook: Usuário não é administrador", user.id);
@@ -124,6 +152,9 @@ serve(async (req) => {
     console.log(`URL da requisição: ${asaasApiUrl}/webhooks`);
     
     try {
+      console.log("Iniciando chamada à API do Asaas com access_token:", 
+                  asaasApiKey.substring(0, 5) + "..." + asaasApiKey.substring(asaasApiKey.length - 5));
+      
       const webhooksResponse = await fetch(`${asaasApiUrl}/webhooks`, {
         method: 'GET',
         headers: {
@@ -133,13 +164,25 @@ serve(async (req) => {
       });
       
       console.log("Status da resposta Asaas:", webhooksResponse.status);
+      console.log("Headers da resposta:", JSON.stringify([...webhooksResponse.headers.entries()]));
       
       if (!webhooksResponse.ok) {
-        const errorData = await webhooksResponse.json();
-        console.error("Erro ao obter webhooks do Asaas:", errorData);
+        let errorData;
+        try {
+          errorData = await webhooksResponse.json();
+        } catch (jsonError) {
+          errorData = { 
+            parseError: "Não foi possível analisar a resposta como JSON",
+            textContent: await webhooksResponse.text()
+          };
+        }
+        
+        console.error("Erro ao obter webhooks do Asaas:", 
+                      webhooksResponse.status, webhooksResponse.statusText, errorData);
+        
         return new Response(
           JSON.stringify({ 
-            error: `Erro ao obter webhooks do Asaas: ${webhooksResponse.status}`,
+            error: `Erro ao obter webhooks do Asaas: ${webhooksResponse.status} ${webhooksResponse.statusText}`,
             details: errorData
           }),
           {
@@ -149,15 +192,51 @@ serve(async (req) => {
         );
       }
       
-      const webhooks = await webhooksResponse.json();
-      console.log("Webhooks encontrados:", webhooks);
+      let webhooks;
+      try {
+        webhooks = await webhooksResponse.json();
+        console.log("Webhooks obtidos com sucesso, formato da resposta:", 
+                    JSON.stringify(webhooks, null, 2).substring(0, 500) + "...");
+      } catch (jsonError) {
+        console.error("Erro ao analisar resposta JSON do Asaas:", jsonError);
+        const textResponse = await webhooksResponse.text();
+        return new Response(
+          JSON.stringify({ 
+            error: "Erro ao analisar resposta do Asaas como JSON", 
+            details: {
+              parseError: jsonError.message,
+              responseText: textResponse.substring(0, 1000) + (textResponse.length > 1000 ? "..." : "")
+            }
+          }),
+          {
+            status: 500,
+            headers: { ...corsHeaders, "Content-Type": "application/json" }
+          }
+        );
+      }
       
-      if (!webhooks?.data?.length) {
+      if (!webhooks?.data) {
+        console.log("Resposta não contém data array:", webhooks);
+        return new Response(
+          JSON.stringify({ 
+            success: false,
+            error: 'Resposta do Asaas não contém o campo data esperado',
+            response: webhooks
+          }),
+          {
+            status: 200,
+            headers: { ...corsHeaders, "Content-Type": "application/json" }
+          }
+        );
+      }
+      
+      if (!webhooks.data.length) {
         console.log("Nenhum webhook configurado no Asaas");
         return new Response(
           JSON.stringify({ 
             success: false,
-            error: 'Nenhum webhook configurado no Asaas'
+            error: 'Nenhum webhook configurado no Asaas',
+            details: 'É necessário configurar pelo menos um webhook no painel do Asaas'
           }),
           {
             status: 200,
@@ -167,7 +246,7 @@ serve(async (req) => {
       }
       
       // Webhook está configurado e funcionando
-      console.log("Webhook configurado corretamente");
+      console.log("Webhook configurado corretamente, encontrados:", webhooks.data.length, "webhooks");
       return new Response(
         JSON.stringify({ 
           success: true, 
@@ -180,11 +259,14 @@ serve(async (req) => {
         }
       );
     } catch (asaasError) {
-      console.error("Erro na requisição ao Asaas:", asaasError.message);
+      console.error("Erro na requisição ao Asaas:", asaasError.message, asaasError.stack);
       return new Response(
         JSON.stringify({ 
           error: "Erro na comunicação com o Asaas", 
-          details: asaasError.message 
+          details: {
+            message: asaasError.message,
+            stack: asaasError.stack
+          }
         }),
         {
           status: 500,
