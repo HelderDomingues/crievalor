@@ -147,6 +147,41 @@ async function asaasRequest(endpoint: string, method: string, body?: any) {
   return { status: response.status, data };
 }
 
+// Função auxiliar para gerar links de pagamento
+async function generatePaymentLink(data: any) {
+  try {
+    // Remover as propriedades de callback que estão causando o erro de domínio
+    const { callback, ...safeData } = data;
+    
+    // Mantemos apenas a propriedade autoRedirect se existir
+    let paymentLinkData = safeData;
+    
+    if (callback && typeof callback === 'object') {
+      // Versão simplificada sem URL para evitar erros de domínio
+      paymentLinkData = {
+        ...safeData,
+        callback: {
+          autoRedirect: true
+        }
+      };
+    }
+    
+    console.log("Gerando link de pagamento com dados:", JSON.stringify(paymentLinkData, null, 2));
+    
+    const { status, data: paymentLink } = await asaasRequest("/paymentLinks", "POST", paymentLinkData);
+    
+    if (status !== 200 || !paymentLink) {
+      console.error("Erro ao gerar link de pagamento:", paymentLink);
+      throw new Error("Erro ao gerar link de pagamento");
+    }
+    
+    return paymentLink;
+  } catch (error) {
+    console.error("Erro em generatePaymentLink:", error);
+    throw error;
+  }
+}
+
 // Criar novo cliente no Asaas
 async function createCustomer(req: Request, data: any, userId: string) {
   const customerData = {
@@ -255,12 +290,7 @@ async function createPayment(req: Request, data: any, userId: string, supabase: 
         billingType,
         chargeType: "DETACHED",
         dueDateLimitDays: 1,
-        externalReference,
-        callback: {
-          autoRedirect: true,
-          successUrl,
-          autoRedirectDelay: 5
-        }
+        externalReference
       });
       
       return new Response(
@@ -327,12 +357,7 @@ async function createPayment(req: Request, data: any, userId: string, supabase: 
     billingType,
     chargeType: "DETACHED",
     dueDateLimitDays: 1,
-    externalReference,
-    callback: {
-      autoRedirect: true,
-      successUrl,
-      autoRedirectDelay: 5
-    }
+    externalReference
   });
   
   console.log("Link de pagamento criado:", paymentLink);
@@ -672,17 +697,6 @@ async function cancelSubscription(req: Request, data: any, userId: string) {
       headers: { ...corsHeaders, "Content-Type": "application/json" }
     }
   );
-}
-
-// Função auxiliar para gerar links de pagamento
-async function generatePaymentLink(data: any) {
-  const { status, data: paymentLink } = await asaasRequest("/paymentLinks", "POST", data);
-  
-  if (status !== 200 || !paymentLink) {
-    throw new Error("Erro ao gerar link de pagamento");
-  }
-  
-  return paymentLink;
 }
 
 // Nova função para excluir cliente no Asaas

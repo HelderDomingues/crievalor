@@ -66,18 +66,14 @@ export const webhookService = {
    * Retorna a URL do webhook ideal com base no ambiente atual
    */
   getRecommendedWebhookUrl() {
-    // Em produção, usar a URL da Edge Function
+    // Usar o domínio oficial registrado no Asaas para evitar erros de domínio
+    // É necessário registrar este domínio no painel do Asaas em Minha Conta > Informações
     if (window.location.hostname === 'crievalor.com.br' || 
         window.location.hostname === 'www.crievalor.com.br') {
-      return 'https://nmxfknwkhnengqqjtwru.supabase.co/functions/v1/asaas-webhook?token=Thx11vbaBPEvUI2OJCoWvCM8OQHMlBDY';
+      return 'https://crievalor.com.br/api/webhook/asaas?token=Thx11vbaBPEvUI2OJCoWvCM8OQHMlBDY';
     }
     
-    // Para ambientes de desenvolvimento/preview
-    if (window.location.hostname.includes('lovable.app')) {
-      return 'https://nmxfknwkhnengqqjtwru.supabase.co/functions/v1/asaas-webhook?token=Thx11vbaBPEvUI2OJCoWvCM8OQHMlBDY';
-    }
-    
-    // Para desenvolvimento local, recomendamos usar ngrok ou similar
-    return 'https://nmxfknwkhnengqqjtwru.supabase.co/functions/v1/asaas-webhook?token=Thx11vbaBPEvUI2OJCoWvCM8OQHMlBDY';
+    // Para ambientes de desenvolvimento, usar o domínio oficial também, mas com caminho diferente
+    return 'https://crievalor.com.br/api/webhook/asaas-sandbox?token=Thx11vbaBPEvUI2OJCoWvCM8OQHMlBDY';
   }
 };

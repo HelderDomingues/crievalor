@@ -33,6 +33,7 @@ const CheckoutController: React.FC<CheckoutControllerProps> = ({
   const [isCheckingOut, setIsCheckingOut] = useState(false);
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
   const [checkoutProcessId, setCheckoutProcessId] = useState<string | null>(null);
+  const [checkoutAttempts, setCheckoutAttempts] = useState(0);
 
   // Limpar qualquer erro ao carregar ou quando mudam os parâmetros
   useEffect(() => {
@@ -63,6 +64,44 @@ const CheckoutController: React.FC<CheckoutControllerProps> = ({
     }
   }, [planId]);
 
+  // Verificador de tempo para evitar múltiplos cliques
+  const canAttemptCheckout = () => {
+    const now = Date.now();
+    const lastTime = Number(localStorage.getItem('checkoutTimestamp') || '0');
+    const attempts = Number(localStorage.getItem('checkoutAttempts') || '0');
+    
+    // Se a última tentativa foi há mais de 5 minutos, resetar contador
+    if (now - lastTime > 5 * 60 * 1000) {
+      localStorage.setItem('checkoutAttempts', '1');
+      return true;
+    }
+    
+    // Permitir no máximo 3 tentativas em 5 minutos
+    if (attempts >= 3) {
+      toast({
+        title: "Muitas tentativas",
+        description: "Aguarde alguns minutos antes de tentar novamente.",
+        variant: "destructive",
+      });
+      return false;
+    }
+    
+    // Incrementar contador de tentativas
+    localStorage.setItem('checkoutAttempts', String(attempts + 1));
+    
+    // Se a última tentativa foi há menos de 15 segundos, bloquear
+    if (now - lastTime < 15000) {
+      toast({
+        title: "Aguarde um momento",
+        description: "Por favor, aguarde alguns segundos antes de tentar novamente.",
+        variant: "warning",
+      });
+      return false;
+    }
+    
+    return true;
+  };
+
   const handleCheckout = async () => {
     if (!user) {
       if (redirectToProfile) {
@@ -75,6 +114,16 @@ const CheckoutController: React.FC<CheckoutControllerProps> = ({
 
     if (isCheckingOut) {
       console.log("Checkout já em processamento, ignorando clique");
+      toast({
+        title: "Processando pagamento",
+        description: "Seu pagamento já está sendo processado. Aguarde um momento.",
+        variant: "warning",
+      });
+      return;
+    }
+
+    // Verificar tempo entre tentativas
+    if (!canAttemptCheckout()) {
       return;
     }
 
@@ -87,6 +136,9 @@ const CheckoutController: React.FC<CheckoutControllerProps> = ({
     
     try {
       console.log(`[${processId}] Iniciando checkout para plano: ${planId} com ${installments} parcelas`);
+      
+      // Registrar timestamp da tentativa
+      localStorage.setItem('checkoutTimestamp', String(Date.now()));
       
       const result = await subscriptionService.createCheckoutSession({
         planId,
@@ -112,7 +164,6 @@ const CheckoutController: React.FC<CheckoutControllerProps> = ({
         // Registrar no localStorage antes de redirecionar
         localStorage.setItem('checkoutPlanId', planId);
         localStorage.setItem('checkoutInstallments', String(installments));
-        localStorage.setItem('checkoutTimestamp', String(Date.now()));
         
         // Redirecionar para a página de pagamento
         window.location.href = result.url;

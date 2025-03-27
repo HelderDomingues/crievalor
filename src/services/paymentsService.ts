@@ -66,9 +66,32 @@ export interface PaymentCheckResult {
 }
 
 export const paymentsService = {
+  // Contador de tentativas para evitar múltiplas criações
+  _paymentAttempts: {} as Record<string, { count: number, timestamp: number }>,
+  
   async generateUniqueReference(userId: string, planId: string): Promise<string> {
     // Garantir que referências sejam únicas mesmo com muitas tentativas rápidas
     return `${userId}_${planId}_${Date.now()}_${uuidv4().substring(0, 8)}`;
+  },
+  
+  // Método para controlar e limitar tentativas de criação de pagamento
+  _trackPaymentAttempt(userId: string, planId: string): boolean {
+    const key = `${userId}_${planId}`;
+    const now = Date.now();
+    const currentAttempt = this._paymentAttempts[key] || { count: 0, timestamp: 0 };
+    
+    // Limpar tentativas antigas (mais de 5 minutos)
+    if (now - currentAttempt.timestamp > 5 * 60 * 1000) {
+      currentAttempt.count = 0;
+    }
+    
+    // Atualizar contador de tentativas
+    currentAttempt.count += 1;
+    currentAttempt.timestamp = now;
+    this._paymentAttempts[key] = currentAttempt;
+    
+    // Permitir apenas 1 tentativa a cada 15 segundos, no máximo 3 tentativas em 5 minutos
+    return currentAttempt.count <= 3 && (currentAttempt.count === 1 || now - currentAttempt.timestamp > 15000);
   },
   
   async checkExistingPayment(customerId: string, planId: string, userId: string): Promise<PaymentCheckResult> {
@@ -211,6 +234,12 @@ export const paymentsService = {
   async createPayment(options: PaymentCreationOptions): Promise<{ paymentId: string, paymentLink: string }> {
     try {
       console.log("Criando pagamento com opções:", options);
+      
+      // Anti-duplicação: Verificar se já houve muitas tentativas recentes
+      if (!this._trackPaymentAttempt(options.userId, options.planId)) {
+        console.warn("Múltiplas tentativas de pagamento detectadas. Bloqueando para evitar duplicação.");
+        throw new Error("Muitas tentativas de pagamento em um curto período. Aguarde alguns segundos e tente novamente.");
+      }
       
       // Verificar se já existe um pagamento pendente
       const existingPayment = await this.checkExistingPayment(
