@@ -153,18 +153,15 @@ async function generatePaymentLink(data: any) {
     // Remover as propriedades de callback que estão causando o erro de domínio
     const { callback, ...safeData } = data;
     
-    // Mantemos apenas a propriedade autoRedirect se existir
-    let paymentLinkData = safeData;
-    
-    if (callback && typeof callback === 'object') {
-      // Versão simplificada sem URL para evitar erros de domínio
-      paymentLinkData = {
-        ...safeData,
-        callback: {
-          autoRedirect: true
-        }
-      };
-    }
+    // Usar configurações simplificadas para evitar erros de domínio
+    let paymentLinkData = {
+      ...safeData,
+      callback: {
+        autoRedirect: true,
+        successUrl: `https://crievalor.lovable.app/checkout/success`,
+        cancelUrl: `https://crievalor.lovable.app/checkout/canceled`
+      }
+    };
     
     console.log("Gerando link de pagamento com dados:", JSON.stringify(paymentLinkData, null, 2));
     

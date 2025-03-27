@@ -5,7 +5,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.38.4";
 // Configurações
 const ASAAS_API_URL = "https://sandbox.asaas.com/api/v3";
 const ASAAS_API_KEY = Deno.env.get("ASAAS_API_KEY") || "";
-const ASAAS_WEBHOOK_TOKEN = Deno.env.get("ASAAS_WEBHOOK_TOKEN") || "";
+const ASAAS_WEBHOOK_TOKEN = Deno.env.get("ASAAS_WEBHOOK_TOKEN") || "Thx11vbaBPEvUI2OJCoWvCM8OQHMlBDY";
 
 const supabaseUrl = Deno.env.get("SUPABASE_URL") || "";
 const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
@@ -51,11 +51,12 @@ serve(async (req) => {
     
     console.log("Usuário autenticado:", user.id);
     
-    // URL do webhook (onde o Asaas enviará as notificações)
-    const { webhookUrl } = await req.json();
+    // Use the URL provided or default to the new domain
+    let { webhookUrl } = await req.json();
     
     if (!webhookUrl) {
-      throw new Error("URL do webhook não fornecida");
+      // Default to the new domain
+      webhookUrl = "https://crievalor.lovable.app/api/webhook/asaas";
     }
     
     // URL completa do webhook com token de segurança
@@ -133,7 +134,7 @@ async function createWebhook(url) {
   
   const webhookData = {
     url,
-    email: "webhook@crievalor.com.br", // Email para notificações de falha
+    email: "webhook@crievalor.lovable.app", // Email atualizado
     apiVersion: 3,
     enabled: true,
     interrupted: false,
@@ -179,7 +180,7 @@ async function updateWebhook(webhookId, url) {
   
   const webhookData = {
     url,
-    email: "webhook@crievalor.com.br", // Email para notificações de falha
+    email: "webhook@crievalor.lovable.app", // Email atualizado
     apiVersion: 3,
     enabled: true,
     interrupted: false,

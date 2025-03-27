@@ -66,14 +66,7 @@ export const webhookService = {
    * Retorna a URL do webhook ideal com base no ambiente atual
    */
   getRecommendedWebhookUrl() {
-    // Usar o domínio oficial registrado no Asaas para evitar erros de domínio
-    // É necessário registrar este domínio no painel do Asaas em Minha Conta > Informações
-    if (window.location.hostname === 'crievalor.com.br' || 
-        window.location.hostname === 'www.crievalor.com.br') {
-      return 'https://crievalor.com.br/api/webhook/asaas?token=Thx11vbaBPEvUI2OJCoWvCM8OQHMlBDY';
-    }
-    
-    // Para ambientes de desenvolvimento, usar o domínio oficial também, mas com caminho diferente
-    return 'https://crievalor.com.br/api/webhook/asaas-sandbox?token=Thx11vbaBPEvUI2OJCoWvCM8OQHMlBDY';
+    // Usar o domínio fornecido pelo cliente
+    return 'https://crievalor.lovable.app/api/webhook/asaas?token=Thx11vbaBPEvUI2OJCoWvCM8OQHMlBDY';
   }
 };

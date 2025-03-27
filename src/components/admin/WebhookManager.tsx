@@ -113,7 +113,7 @@ export const WebhookManager = () => {
               id="webhook-url"
               value={webhookUrl}
               onChange={(e) => setWebhookUrl(e.target.value)}
-              placeholder="https://sua-url-de-webhook.com/asaas-webhook"
+              placeholder="https://crievalor.lovable.app/api/webhook/asaas"
               className="flex-1"
               readOnly
             />
@@ -130,6 +130,7 @@ export const WebhookManager = () => {
           <AlertDescription className="text-blue-600">
             <p>Certifique-se de que você configurou o webhook no painel do Asaas apontando para a URL acima.</p>
             <p className="mt-1">A API do Asaas usada é: <strong>Sandbox</strong> (ambiente de teste)</p>
+            <p className="mt-1">O domínio foi atualizado para: <strong>crievalor.lovable.app</strong></p>
           </AlertDescription>
         </Alert>
         
@@ -175,7 +176,7 @@ export const WebhookManager = () => {
                 <li>Você está logado como administrador</li>
                 <li>O Asaas está configurado corretamente</li>
                 <li>A API key do Asaas é válida e está atualizada</li>
-                <li>O webhook está registrado no painel do Asaas</li>
+                <li>O webhook está registrado no painel do Asaas com o domínio <strong>crievalor.lovable.app</strong></li>
               </ul>
             </AlertDescription>
           </Alert>

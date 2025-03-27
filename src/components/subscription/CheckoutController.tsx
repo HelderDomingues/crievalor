@@ -140,10 +140,13 @@ const CheckoutController: React.FC<CheckoutControllerProps> = ({
       // Registrar timestamp da tentativa
       localStorage.setItem('checkoutTimestamp', String(Date.now()));
       
+      // Get current domain for success/cancel URLs
+      const baseUrl = window.location.origin;
+      
       const result = await subscriptionService.createCheckoutSession({
         planId,
-        successUrl: `${window.location.origin}/checkout/success`,
-        cancelUrl: `${window.location.origin}/checkout/canceled`,
+        successUrl: `${baseUrl}/checkout/success`,
+        cancelUrl: `${baseUrl}/checkout/canceled`,
         installments
       });
       

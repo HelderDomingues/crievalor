@@ -24,10 +24,18 @@ serve(async (req) => {
     
     const requestUrl = new URL(req.url);
     const token = requestUrl.searchParams.get("token");
-
+    
+    // Verificar token no cabeçalho de autorização (formato: Bearer TOKEN ou apenas TOKEN)
+    const authHeader = req.headers.get("authorization") || req.headers.get("Authorization");
+    const headerToken = authHeader ? authHeader.replace("Bearer ", "") : null;
+    
+    // Aceitar token tanto pela URL quanto pelo cabeçalho de autorização
+    const isValidToken = (token && token === ASAAS_WEBHOOK_TOKEN) || 
+                         (headerToken && headerToken === ASAAS_WEBHOOK_TOKEN);
+                         
     // Verificar token de segurança para autenticar o webhook
-    if (!token || token !== ASAAS_WEBHOOK_TOKEN) {
-      console.error(`Token de webhook inválido ou não configurado. Recebido: ${token}`);
+    if (!isValidToken) {
+      console.error(`Token de webhook inválido ou não configurado. URL Token: ${token}, Header Token: ${headerToken}`);
       return new Response(
         JSON.stringify({ error: "Não autorizado", code: 401, message: "Missing or invalid token" }),
         {
