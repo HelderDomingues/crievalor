@@ -7,17 +7,16 @@ import { supabase } from "@/integrations/supabase/client";
 export async function checkUserRole(userId: string, roleName: string) {
   try {
     const { data, error } = await supabase
-      .from("user_roles")
-      .select("*")
-      .eq("user_id", userId)
-      .eq("role", roleName)
+      .from("profiles")
+      .select("role")
+      .eq("id", userId)
       .maybeSingle();
 
     if (error) {
       throw error;
     }
 
-    return { hasRole: !!data, error: null };
+    return { hasRole: data?.role === roleName, error: null };
   } catch (error) {
     console.error("Error checking user role:", error);
     return { hasRole: false, error: error as Error };
@@ -25,8 +24,7 @@ export async function checkUserRole(userId: string, roleName: string) {
 }
 
 /**
- * Assigns a role to a user
- * For the first admin, it uses the bootstrap function
+ * Assigns a role to a user by updating their profile
  */
 export async function assignUserRole(userId: string, roleName: string) {
   try {
@@ -42,50 +40,23 @@ export async function assignUserRole(userId: string, roleName: string) {
       return { success: true, error: null };
     }
 
-    // For admin role, attempt direct bootstrap function call first
-    if (roleName === 'admin') {
-      try {
-        console.log(`Attempting to bootstrap admin role for user: ${userId}`);
-        const { data: bootstrapResult, error: bootstrapError } = await supabase.rpc(
-          'bootstrap_admin_role',
-          { admin_user_id: userId }
-        );
-        
-        if (bootstrapError) {
-          console.error("Bootstrap admin error:", bootstrapError);
-          // Continue with normal insertion as fallback
-        } else if (bootstrapResult === true) {
-          console.log("Bootstrap admin function succeeded");
-          return { success: true, error: null };
-        } else {
-          console.log("Bootstrap admin function returned false (admins already exist)");
-        }
-      } catch (bootstrapError) {
-        console.error("Bootstrap admin exception:", bootstrapError);
-        // Continue with normal insertion as fallback
-      }
-    }
-
-    // If bootstrap didn't succeed or wasn't attempted, try normal insertion
-    console.log(`Attempting direct insertion of role "${roleName}" for user: ${userId}`);
+    // Update the user's profile with the new role
     const { error } = await supabase
-      .from("user_roles")
-      .insert({
-        user_id: userId,
-        role: roleName
-      });
+      .from("profiles")
+      .update({ role: roleName })
+      .eq("id", userId);
 
     if (error) {
       // Check if it's an RLS error and provide a more user-friendly message
       if (error.message && error.message.includes("row-level security")) {
-        console.error("RLS policy error in role insertion:", error);
+        console.error("RLS policy error in role update:", error);
         return { 
           success: false, 
           error: new Error("Você não tem permissão para atribuir esta função. Contate o administrador do sistema.") 
         };
       }
       
-      console.error("Error in direct role insertion:", error);
+      console.error("Error in profile role update:", error);
       throw error;
     }
 
@@ -98,15 +69,27 @@ export async function assignUserRole(userId: string, roleName: string) {
 }
 
 /**
- * Removes a role from a user
+ * Removes a role from a user by setting it to the default 'user' role
  */
 export async function removeUserRole(userId: string, roleName: string) {
   try {
+    // Only proceed if the user actually has this role
+    const { hasRole, error: checkError } = await checkUserRole(userId, roleName);
+    
+    if (checkError) {
+      throw checkError;
+    }
+    
+    // If the user doesn't have this role, return early
+    if (!hasRole) {
+      return { success: true, error: null };
+    }
+
+    // Reset the user's role to 'user'
     const { error } = await supabase
-      .from("user_roles")
-      .delete()
-      .eq("user_id", userId)
-      .eq("role", roleName);
+      .from("profiles")
+      .update({ role: 'user' })
+      .eq("id", userId);
 
     if (error) {
       throw error;

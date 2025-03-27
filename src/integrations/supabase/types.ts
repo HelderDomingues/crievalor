@@ -118,11 +118,11 @@ export type Database = {
           has_asaas_customer: boolean | null
           id: string
           phone: string | null
+          role: string | null
           social_media: Json | null
           updated_at: string | null
           username: string | null
           website: string | null
-          role: string | null
         }
         Insert: {
           avatar_url?: string | null
@@ -134,11 +134,11 @@ export type Database = {
           has_asaas_customer?: boolean | null
           id: string
           phone?: string | null
+          role?: string | null
           social_media?: Json | null
           updated_at?: string | null
           username?: string | null
           website?: string | null
-          role?: string | null
         }
         Update: {
           avatar_url?: string | null
@@ -150,11 +150,11 @@ export type Database = {
           has_asaas_customer?: boolean | null
           id?: string
           phone?: string | null
+          role?: string | null
           social_media?: Json | null
           updated_at?: string | null
           username?: string | null
           website?: string | null
-          role?: string | null
         }
         Relationships: []
       }
@@ -245,24 +245,24 @@ export type Database = {
       user_roles: {
         Row: {
           created_at: string | null
+          email: string | null
           id: string
           role: string
           user_id: string | null
-          email: string | null
         }
         Insert: {
           created_at?: string | null
+          email?: string | null
           id?: string
           role: string
           user_id?: string | null
-          email?: string | null
         }
         Update: {
           created_at?: string | null
+          email?: string | null
           id?: string
           role?: string
           user_id?: string | null
-          email?: string | null
         }
         Relationships: []
       }
@@ -277,12 +277,19 @@ export type Database = {
         }
         Returns: boolean
       }
-      check_if_user_is_admin: {
-        Args: {
-          user_id: string
-        }
-        Returns: boolean
-      }
+      check_if_user_is_admin:
+        | {
+            Args: {
+              user_id: number
+            }
+            Returns: boolean
+          }
+        | {
+            Args: {
+              user_id: string
+            }
+            Returns: boolean
+          }
       get_system_setting: {
         Args: {
           setting_key: string

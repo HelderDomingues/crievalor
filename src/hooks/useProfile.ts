@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { UserProfile } from "@/types/auth";
@@ -33,44 +34,19 @@ export function useProfile() {
 
         const formattedData = formatProfileData(data, user.email);
         setProfile(formattedData);
+        
+        // Since we're now storing the role in the profile, we can set isAdmin here
+        setIsAdmin(formattedData?.role === 'admin');
       } catch (err) {
         console.error("Error fetching profile:", err);
         setError(err as Error);
       } finally {
         setLoading(false);
+        setRolesLoading(false);
       }
     }
 
     loadProfile();
-  }, [user]);
-
-  useEffect(() => {
-    async function loadUserRoles() {
-      if (!user) {
-        setIsAdmin(false);
-        setRolesLoading(false);
-        return;
-      }
-
-      try {
-        setRolesLoading(true);
-        const { hasRole, error } = await checkUserRole(user.id, 'admin');
-        
-        if (error) {
-          console.error("Error checking admin role:", error);
-          setIsAdmin(false);
-        } else {
-          setIsAdmin(hasRole);
-        }
-      } catch (err) {
-        console.error("Error checking user roles:", err);
-        setIsAdmin(false);
-      } finally {
-        setRolesLoading(false);
-      }
-    }
-
-    loadUserRoles();
   }, [user]);
 
   async function updateProfile(updates: Partial<UserProfile>) {
@@ -99,6 +75,12 @@ export function useProfile() {
       }
 
       setProfile(data);
+      
+      // Update isAdmin if role was changed
+      if (updatesToSend.role !== undefined) {
+        setIsAdmin(updatesToSend.role === 'admin');
+      }
+      
       return { data, error: null };
     } catch (error) {
       console.error("Error updating profile:", error);
@@ -149,6 +131,7 @@ export function useProfile() {
       if (success) {
         console.log("useProfile: Successfully granted admin role");
         setIsAdmin(true);
+        setProfile(prev => prev ? { ...prev, role: 'admin' } : null);
         return { error: null };
       } else {
         console.error("useProfile: Failed to grant admin role (no success reported)");
@@ -170,6 +153,7 @@ export function useProfile() {
       
       if (success) {
         setIsAdmin(false);
+        setProfile(prev => prev ? { ...prev, role: 'user' } : null);
         return { error: null };
       } else {
         return { error: new Error("Failed to remove admin role") };

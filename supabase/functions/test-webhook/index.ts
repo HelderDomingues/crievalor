@@ -106,19 +106,21 @@ serve(async (req) => {
     
     console.log("Usuário autenticado:", user.id);
     
-    // Verificar se o usuário é admin usando o database function
+    // Verificar se o usuário é admin usando o profiles table
     console.log("Verificando permissões de administrador para o usuário:", user.id);
     
-    // Use the database function to check if user is admin - this avoids column ambiguity
-    const { data: isAdminData, error: adminFuncError } = await supabase
-      .rpc('check_if_user_is_admin', { user_id: user.id });
-    
-    if (adminFuncError) {
-      console.error("Erro ao verificar permissões de admin:", adminFuncError);
+    const { data: userData, error: profileError } = await supabase
+      .from('profiles')
+      .select('role')
+      .eq('id', user.id)
+      .maybeSingle();
+      
+    if (profileError) {
+      console.error("Erro ao verificar perfil do usuário:", profileError);
       return new Response(
         JSON.stringify({ 
-          error: "Erro ao verificar permissões de administrador", 
-          details: adminFuncError 
+          error: "Erro ao verificar perfil do usuário", 
+          details: profileError 
         }),
         {
           status: 500,
@@ -127,8 +129,8 @@ serve(async (req) => {
       );
     }
     
-    const isAdmin = !!isAdminData;
-    console.log("Resultado da verificação de admin (via função RPC):", { isAdmin });
+    const isAdmin = userData?.role === 'admin';
+    console.log("Resultado da verificação de admin (via perfil):", { isAdmin, userRole: userData?.role });
     
     if (!isAdmin) {
       console.error("Teste webhook: Usuário não é administrador", user.id);
