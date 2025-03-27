@@ -1,4 +1,3 @@
-
 import React from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -12,56 +11,37 @@ import ClientLogosCarousel from "@/components/ClientLogosCarousel";
 import { Link } from "react-router-dom";
 import { Brain, Target, Zap, Lightbulb, TrendingUp, Users, ArrowRight, Anchor, Map, BarChart3 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-
 const Index = () => {
-  const features = [
-    {
-      icon: Brain,
-      title: "Inteligência Artificial",
-      description: "Utilizamos algoritmos avançados para processar e analisar dados de mercado com precisão e velocidade."
-    },
-    {
-      icon: Target,
-      title: "Estratégia Orientada",
-      description: "Desenvolvemos planos estratégicos focados em resultados mensuráveis e acionáveis."
-    },
-    {
-      icon: Zap,
-      title: "Implementação Rápida",
-      description: "Acelere o tempo de desenvolvimento estratégico de meses para semanas."
-    },
-    {
-      icon: Lightbulb,
-      title: "Inovação Contínua",
-      description: "Identificamos oportunidades não óbvias e ideias disruptivas para o seu negócio."
-    },
-    {
-      icon: TrendingUp,
-      title: "Crescimento Sustentável",
-      description: "Criamos estratégias que permitem um crescimento consistente e escalável."
-    },
-    {
-      icon: Users,
-      title: "Expertise Humana",
-      description: "Consultores experientes refinam e personalizam as estratégias geradas pela IA."
-    }
-  ];
-
-  return (
-    <div className="min-h-screen flex flex-col">
+  const features = [{
+    icon: Brain,
+    title: "Inteligência Artificial",
+    description: "Utilizamos algoritmos avançados para processar e analisar dados de mercado com precisão e velocidade."
+  }, {
+    icon: Target,
+    title: "Estratégia Orientada",
+    description: "Desenvolvemos planos estratégicos focados em resultados mensuráveis e acionáveis."
+  }, {
+    icon: Zap,
+    title: "Implementação Rápida",
+    description: "Acelere o tempo de desenvolvimento estratégico de meses para semanas."
+  }, {
+    icon: Lightbulb,
+    title: "Inovação Contínua",
+    description: "Identificamos oportunidades não óbvias e ideias disruptivas para o seu negócio."
+  }, {
+    icon: TrendingUp,
+    title: "Crescimento Sustentável",
+    description: "Criamos estratégias que permitem um crescimento consistente e escalável."
+  }, {
+    icon: Users,
+    title: "Expertise Humana",
+    description: "Consultores experientes refinam e personalizam as estratégias geradas pela IA."
+  }];
+  return <div className="min-h-screen flex flex-col">
       <Header />
       
       <main className="flex-grow">
-        <HeroSection
-          title="Transforme sua empresa com estratégias personalizadas"
-          subtitle="Bem-vindo(a) à Crie Valor"
-          description="Somos especialistas em desenvolver estratégias de alto impacto que combinam o poder da inteligência artificial com a experiência humana."
-          ctaText="Conheça o MAR"
-          ctaUrl="/mar"
-          secondaryCtaText="Fale Conosco"
-          secondaryCtaUrl="#contato"
-          useParticleWaves={true}
-        />
+        <HeroSection title="Transforme sua empresa com estratégias personalizadas" subtitle="Bem-vindo(a) à Crie Valor" description="Somos especialistas em desenvolver estratégias de alto impacto que combinam o poder da inteligência artificial com a experiência humana." ctaText="Conheça o MAR" ctaUrl="/mar" secondaryCtaText="Fale Conosco" secondaryCtaUrl="#contato" useParticleWaves={true} />
         
         {/* Features Section */}
         <section className="py-16 md:py-24 bg-secondary/30 relative">
@@ -83,15 +63,7 @@ const Index = () => {
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-12">
-              {features.map((feature, index) => (
-                <FeatureCard
-                  key={index}
-                  icon={feature.icon}
-                  title={feature.title}
-                  description={feature.description}
-                  index={index}
-                />
-              ))}
+              {features.map((feature, index) => <FeatureCard key={index} icon={feature.icon} title={feature.title} description={feature.description} index={index} />)}
             </div>
           </div>
         </section>
@@ -111,13 +83,17 @@ const Index = () => {
               <h2 className="text-3xl md:text-5xl font-bold mb-4 animate-fade-in">
                 MAR - Mapa para Alto Rendimento
               </h2>
-              <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto animate-fade-in" style={{ animationDelay: "0.2s" }}>
+              <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto animate-fade-in" style={{
+              animationDelay: "0.2s"
+            }}>
                 A solução que combina <strong>inteligência artificial</strong> e <strong>consultoria humana</strong> para criar estratégias de negócios excepcionais.
               </p>
             </div>
             
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-              <div className="order-2 lg:order-1 animate-fade-in" style={{ animationDelay: "0.3s" }}>
+              <div className="order-2 lg:order-1 animate-fade-in" style={{
+              animationDelay: "0.3s"
+            }}>
                 <div className="bg-primary/10 text-primary rounded-full px-4 py-2 inline-block mb-4">
                   Transforme sua estratégia
                 </div>
@@ -168,17 +144,15 @@ const Index = () => {
                 </Button>
               </div>
               
-              <div className="order-1 lg:order-2 animate-fade-in" style={{ animationDelay: "0.4s" }}>
+              <div className="order-1 lg:order-2 animate-fade-in" style={{
+              animationDelay: "0.4s"
+            }}>
                 <div className="relative">
                   <div className="bg-card border border-border rounded-xl overflow-hidden shadow-xl glow-border">
                     <div className="p-6">
                       <div className="flex justify-between items-center mb-6">
                         <div className="flex items-center">
-                          <img 
-                            src="/lovable-uploads/91e6888f-e3da-40dc-8c55-5718c15ada21.png" 
-                            alt="MAR" 
-                            className="h-10 mr-3" 
-                          />
+                          <img src="/lovable-uploads/91e6888f-e3da-40dc-8c55-5718c15ada21.png" alt="MAR" className="h-10 mr-3" />
                           <div>
                             <h3 className="text-xl font-bold">MAR</h3>
                             <p className="text-muted-foreground text-sm">Mapa para Alto Rendimento</p>
@@ -224,7 +198,7 @@ const Index = () => {
                       <div className="pt-4 border-t border-border">
                         <div className="flex justify-between items-center">
                           <p className="text-sm text-muted-foreground">
-                            A partir de <span className="text-primary font-bold">R$ 3.997</span>
+                            A partir de <span className="text-primary font-bold">12 X de R$ 179,90</span>
                           </p>
                           <Button variant="outline" size="sm" asChild>
                             <Link to="/mar">Ver detalhes</Link>
@@ -302,8 +276,6 @@ const Index = () => {
       </main>
       
       <Footer />
-    </div>
-  );
+    </div>;
 };
-
 export default Index;
