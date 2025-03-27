@@ -1,3 +1,4 @@
+
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.38.4";
 
@@ -81,7 +82,7 @@ serve(async (req) => {
     
     console.log("Usuário autenticado:", user.id);
     
-    // Verificar se o usuário é admin - usando função RPC para evitar ambiguidade
+    // Verificar se o usuário é admin usando função RPC para evitar ambiguidade na coluna user_id
     console.log("Verificando permissões de administrador para o usuário:", user.id);
     
     const { data: isAdmin, error: adminCheckError } = await supabase.rpc(

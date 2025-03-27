@@ -31,6 +31,7 @@ import AdminMaterials from "./pages/AdminMaterials";
 import WebhookAdmin from "./pages/WebhookAdmin";
 import AdminSetup from "./pages/AdminSetup";
 import AdminDashboard from "./pages/AdminDashboard";
+import AdminSettings from "./pages/AdminSettings";
 
 const App = () => {
   const [queryClient] = useState(() => new QueryClient());
@@ -67,6 +68,7 @@ const App = () => {
                 <Route path="/admin-webhooks" element={<WebhookAdmin />} />
                 <Route path="/admin-setup" element={<AdminSetup />} />
                 <Route path="/admin" element={<AdminDashboard />} />
+                <Route path="/admin-settings" element={<AdminSettings />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
               <Chatbot />
