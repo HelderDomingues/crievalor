@@ -41,10 +41,10 @@ export function useProfile() {
         // Add more extensive logging to debug the admin role
         console.log("loadProfile - Raw profile data:", data);
         console.log("loadProfile - Formatted profile data:", formattedData);
-        console.log("loadProfile - Role value:", formattedData?.role);
+        console.log("loadProfile - Role value:", data?.role);
         
-        // Make sure we correctly check for the admin role string
-        if (formattedData?.role === 'admin') {
+        // Important: directly check the raw data.role value, not the formatted data
+        if (data?.role === 'admin') {
           console.log("User is admin - setting isAdmin to true");
           setIsAdmin(true);
         } else {

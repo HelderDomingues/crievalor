@@ -49,7 +49,7 @@ const AuthHeader = () => {
               </Link>
             </DropdownMenuItem>
             
-            {isAdmin && (
+            {isAdmin && !rolesLoading && (
               <>
                 <DropdownMenuSeparator />
                 <DropdownMenuLabel>Administração</DropdownMenuLabel>

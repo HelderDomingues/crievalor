@@ -38,6 +38,7 @@ const AdminAuth: React.FC<AdminAuthProps> = ({
   const [legacyPassword, setLegacyPassword] = useState("");
   const [isLegacyLoading, setIsLegacyLoading] = useState(false);
   const [showLegacyLogin, setShowLegacyLogin] = useState(false);
+  const [authAttempted, setAuthAttempted] = useState(false);
   
   useEffect(() => {
     // Check if the user is already authenticated in legacy portfolio admin
@@ -51,9 +52,14 @@ const AdminAuth: React.FC<AdminAuthProps> = ({
   useEffect(() => {
     // If the user is an admin in the database, authenticate them
     console.log("AdminAuth useEffect - isAdmin:", isAdmin, "rolesLoading:", rolesLoading);
-    if (isAdmin && !rolesLoading) {
-      console.log("User is admin, authenticating");
-      onAuthenticated();
+    
+    if (!rolesLoading) {
+      setAuthAttempted(true);
+      
+      if (isAdmin) {
+        console.log("User is admin, authenticating");
+        onAuthenticated();
+      }
     }
   }, [isAdmin, rolesLoading, onAuthenticated]);
 
@@ -80,7 +86,7 @@ const AdminAuth: React.FC<AdminAuthProps> = ({
     }
   };
 
-  // If already authenticated through Supabase or loading, show loading state
+  // If loading roles, show loading state
   if (rolesLoading) {
     return (
       <div className="flex items-center justify-center p-8">
@@ -91,7 +97,7 @@ const AdminAuth: React.FC<AdminAuthProps> = ({
   }
 
   // If not an admin and not authenticated legacy, show login options
-  if (!isAdmin) {
+  if (!isAdmin && authAttempted) {
     return (
       <div className="space-y-6">
         {!user ? (
