@@ -56,15 +56,6 @@ const AuthHeader = () => {
               </>
             )}
             
-            {!isAdmin && (
-              <DropdownMenuItem asChild>
-                <Link to="/admin-setup" className="flex items-center">
-                  <Shield className="mr-2 h-4 w-4" />
-                  <span>Configuração Admin</span>
-                </Link>
-              </DropdownMenuItem>
-            )}
-            
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={handleSignOut} className="flex items-center">
               <LogOut className="mr-2 h-4 w-4" />

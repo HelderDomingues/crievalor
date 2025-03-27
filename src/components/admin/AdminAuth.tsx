@@ -8,7 +8,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
-import { Loader2, ShieldAlert, Key } from "lucide-react";
+import { Loader2, ShieldAlert, Lock } from "lucide-react";
+
+const ADMIN_PASSWORD = "crie2024"; // Password for admin auth in production environment
 
 interface AdminAuthProps {
   onAuthenticated: () => void;
@@ -52,7 +54,7 @@ const AdminAuth: React.FC<AdminAuthProps> = ({
     setIsLegacyLoading(true);
     
     // Legacy auth logic - simple password check
-    if (legacyPassword === "crie2024") {
+    if (legacyPassword === ADMIN_PASSWORD) {
       localStorage.setItem("adminAuthenticated", "true");
       setIsLegacyLoading(false);
       toast({
@@ -108,24 +110,22 @@ const AdminAuth: React.FC<AdminAuthProps> = ({
             </CardHeader>
             <CardContent>
               <p>Sua conta não possui permissões de administrador.</p>
+              <p className="mt-2 text-sm text-gray-500">Se você é um administrador, por favor entre em contato com outro administrador para obter acesso.</p>
             </CardContent>
             <CardFooter className="flex justify-between">
               <Button variant="outline" onClick={() => navigate("/")}>
                 Voltar para a Home
               </Button>
-              <Button onClick={() => navigate(redirectPath)}>
-                Solicitar acesso admin
-              </Button>
             </CardFooter>
           </Card>
         )}
 
-        {/* Legacy authentication option */}
-        {showLegacyLogin ? (
+        {/* Legacy authentication option - only show to admins */}
+        {user && showLegacyLogin && (
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <Key className="mr-2 h-5 w-5" />
+                <Lock className="mr-2 h-5 w-5" />
                 Login Legado
               </CardTitle>
             </CardHeader>
@@ -154,7 +154,9 @@ const AdminAuth: React.FC<AdminAuthProps> = ({
               </form>
             </CardContent>
           </Card>
-        ) : (
+        )}
+        
+        {user && !showLegacyLogin && (
           <div className="text-center">
             <Button variant="ghost" onClick={() => setShowLegacyLogin(true)}>
               Usar método alternativo de login

@@ -8,8 +8,11 @@ import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
-import { CheckCircle, Loader2, AlertTriangle, ExternalLink, ShieldAlert, Key } from "lucide-react";
+import { CheckCircle, Loader2, AlertTriangle, ExternalLink, ShieldAlert, Key, Lock } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import AdminAuth from "@/components/admin/AdminAuth";
+
+const ADMIN_PASSWORD = "crie2024"; // Password for admin setup in production environment
 
 const AdminSetup = () => {
   const { user } = useAuth();
@@ -19,14 +22,44 @@ const AdminSetup = () => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<string>("supabase");
   
+  // Admin authentication
+  const [isAdminAuthOpen, setIsAdminAuthOpen] = useState(false);
+  const [adminPassword, setAdminPassword] = useState("");
+  const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(false);
+  
   // Portfolio admin credentials
   const [portfolioPassword, setPortfolioPassword] = useState("");
   const [isPortfolioLoading, setIsPortfolioLoading] = useState(false);
+
+  useEffect(() => {
+    // Check if the user is already an admin, if so, we don't need to show the admin setup
+    if (isAdmin && !rolesLoading) {
+      setIsAdminAuthenticated(true);
+    }
+  }, [isAdmin, rolesLoading]);
+
+  const handleAdminAuth = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (adminPassword === ADMIN_PASSWORD) {
+      setIsAdminAuthenticated(true);
+      setIsAdminAuthOpen(false);
+      setAdminPassword("");
+      toast.success("Autenticação bem-sucedida");
+    } else {
+      toast.error("Senha de administrador incorreta");
+    }
+  };
 
   const handleGrantAdmin = async () => {
     if (!user) {
       toast.error("Você precisa estar logado para acessar esta funcionalidade");
       navigate("/auth");
+      return;
+    }
+
+    if (!isAdminAuthenticated) {
+      setIsAdminAuthOpen(true);
       return;
     }
 
@@ -45,6 +78,7 @@ const AdminSetup = () => {
       }
       
       toast.success("Privilégios de administrador concedidos com sucesso!");
+      setTimeout(() => navigate("/admin"), 1500);
     } catch (error) {
       console.error("Admin setup: Exception in handleGrantAdmin:", error);
       const errorMsg = error instanceof Error ? error.message : 'Erro desconhecido';
@@ -110,7 +144,7 @@ const AdminSetup = () => {
                   <CardHeader>
                     <CardTitle>Admin Supabase</CardTitle>
                     <CardDescription>
-                      Conceda privilégios de administrador ao seu usuário para acessar funcionalidades administrativas.
+                      Configuração de privilégios de administrador para acesso a funcionalidades administrativas.
                     </CardDescription>
                   </CardHeader>
                   
@@ -133,7 +167,38 @@ const AdminSetup = () => {
                           funcionalidades administrativas.
                         </p>
                         
-                        {errorMessage && (
+                        {isAdminAuthOpen ? (
+                          <form onSubmit={handleAdminAuth} className="space-y-4 mt-4">
+                            <div className="space-y-2">
+                              <label htmlFor="admin-password" className="text-sm font-medium">
+                                Senha de Administrador
+                              </label>
+                              <div className="relative">
+                                <input
+                                  id="admin-password"
+                                  type="password"
+                                  value={adminPassword}
+                                  onChange={(e) => setAdminPassword(e.target.value)}
+                                  className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md"
+                                  required
+                                />
+                                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                              </div>
+                            </div>
+                            <div className="flex justify-end space-x-2">
+                              <Button 
+                                type="button" 
+                                variant="outline" 
+                                onClick={() => setIsAdminAuthOpen(false)}
+                              >
+                                Cancelar
+                              </Button>
+                              <Button type="submit">
+                                Verificar
+                              </Button>
+                            </div>
+                          </form>
+                        ) : errorMessage && (
                           <div className="flex items-center p-4 mt-4 bg-red-50 text-red-700 rounded-lg border border-red-200">
                             <ShieldAlert className="h-5 w-5 mr-2 flex-shrink-0" />
                             <p className="text-sm">{errorMessage}</p>
@@ -149,7 +214,7 @@ const AdminSetup = () => {
                         Voltar para Home
                       </Button>
                       
-                      {!isAdmin && user && (
+                      {!isAdmin && user && !isAdminAuthOpen && (
                         <Button 
                           onClick={handleGrantAdmin} 
                           disabled={isProcessing || rolesLoading}
