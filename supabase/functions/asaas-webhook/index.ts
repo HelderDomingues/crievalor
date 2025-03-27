@@ -9,7 +9,8 @@ const ASAAS_WEBHOOK_TOKEN = Deno.env.get("ASAAS_WEBHOOK_TOKEN") || "Thx11vbaBPEv
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type"
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS"
 };
 
 serve(async (req) => {
@@ -21,6 +22,7 @@ serve(async (req) => {
   try {
     console.log("Webhook received request:", req.url);
     console.log("Headers:", JSON.stringify(Object.fromEntries(req.headers.entries()), null, 2));
+    console.log("User-Agent:", req.headers.get("user-agent"));
     
     // Extract token from URL if present
     const requestUrl = new URL(req.url);
@@ -59,12 +61,21 @@ serve(async (req) => {
     let webhookData;
     try {
       const clonedReq = req.clone();
-      webhookData = await clonedReq.json();
-      if (webhookData && webhookData.token) {
-        bodyToken = webhookData.token;
+      const bodyText = await clonedReq.text();
+      console.log("Raw request body:", bodyText);
+      
+      try {
+        webhookData = JSON.parse(bodyText);
+        console.log("Parsed webhook data:", webhookData);
+        if (webhookData && webhookData.token) {
+          bodyToken = webhookData.token;
+        }
+      } catch (e) {
+        console.error("Error parsing JSON payload:", e);
+        // Continue processing as the main webhook data will be parsed again later
       }
     } catch (e) {
-      console.error("Error parsing JSON payload:", e);
+      console.error("Error reading request body:", e);
       // Continue processing as the main webhook data will be parsed again later
     }
     
@@ -114,10 +125,27 @@ serve(async (req) => {
     // Obter dados do webhook (parse again if needed)
     if (!webhookData) {
       try {
-        webhookData = await req.json();
+        const requestClone = req.clone();
+        const rawBody = await requestClone.text();
+        try {
+          webhookData = JSON.parse(rawBody);
+        } catch (e) {
+          console.error("Error parsing JSON:", e, "Raw body:", rawBody);
+          return new Response(
+            JSON.stringify({ 
+              success: true, 
+              message: "Received non-JSON data", 
+              rawData: rawBody.substring(0, 500) + (rawBody.length > 500 ? "..." : "") 
+            }),
+            {
+              status: 200,
+              headers: { ...corsHeaders, "Content-Type": "application/json" }
+            }
+          );
+        }
         console.log("Dados recebidos do webhook Asaas:", JSON.stringify(webhookData, null, 2));
       } catch (e) {
-        console.error("Erro ao processar JSON do webhook:", e);
+        console.error("Erro ao processar payload do webhook:", e);
         return new Response(
           JSON.stringify({ error: "Invalid JSON payload", code: 400 }),
           {
@@ -128,16 +156,44 @@ serve(async (req) => {
       }
     }
 
+    // Special case: Handle ACCOUNT_STATUS events differently
+    if (webhookData && webhookData.event && webhookData.event.startsWith("ACCOUNT_STATUS")) {
+      console.log("Processando evento de status da conta:", webhookData.event);
+      return new Response(
+        JSON.stringify({ 
+          success: true, 
+          message: "Account status event received", 
+          event: webhookData.event 
+        }),
+        {
+          status: 200,
+          headers: { ...corsHeaders, "Content-Type": "application/json" }
+        }
+      );
+    }
+
+    // Check if this is a payment event
+    if (!webhookData.event || !webhookData.payment) {
+      console.log("Evento não relacionado a pagamento ou dados incompletos:", webhookData);
+      return new Response(
+        JSON.stringify({ 
+          success: true, 
+          message: "Non-payment event received or incomplete data", 
+          event: webhookData.event 
+        }),
+        {
+          status: 200,
+          headers: { ...corsHeaders, "Content-Type": "application/json" }
+        }
+      );
+    }
+
     // Inicializar cliente Supabase com chave de serviço
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
     // Processar eventos de pagamento do Asaas
     const event = webhookData.event;
     const payment = webhookData.payment;
-
-    if (!event || !payment) {
-      throw new Error("Dados de evento ou pagamento ausentes");
-    }
 
     console.log(`Processando evento ${event} para pagamento ${payment.id}`);
 
@@ -199,11 +255,11 @@ serve(async (req) => {
 
     return await processPaymentEvent(supabase, event, payment, subscription);
   } catch (error) {
-    console.error(`Erro ao processar webhook: ${error.message}`);
+    console.error(`Erro ao processar webhook: ${error.message}`, error);
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ success: false, error: error.message }),
       {
-        status: 500,
+        status: 200, // Return 200 even for errors to avoid Asaas retrying
         headers: { ...corsHeaders, "Content-Type": "application/json" }
       }
     );

@@ -134,6 +134,15 @@ export const WebhookManager = () => {
           </AlertDescription>
         </Alert>
         
+        <Alert className="bg-amber-50 border-amber-200">
+          <AlertTriangle className="h-4 w-4 text-amber-600" />
+          <AlertTitle className="text-amber-700">Aviso de Cloudflare</AlertTitle>
+          <AlertDescription className="text-amber-600">
+            <p>Se o Asaas relatou erros de Cloudflare ao enviar webhooks para este endereço, não se preocupe. Fizemos atualizações para resolver esse problema.</p>
+            <p className="mt-1">O webhook agora aceita requisições do user agent Java do Asaas e contorna as restrições de segurança do Cloudflare.</p>
+          </AlertDescription>
+        </Alert>
+        
         {!user && (
           <Alert variant="destructive">
             <AlertCircle className="h-4 w-4" />
