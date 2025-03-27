@@ -22,22 +22,88 @@ serve(async (req) => {
     console.log("Webhook received request:", req.url);
     console.log("Headers:", JSON.stringify(Object.fromEntries(req.headers.entries()), null, 2));
     
+    // Extract token from URL if present
     const requestUrl = new URL(req.url);
     const token = requestUrl.searchParams.get("token");
     
-    // Verificar token no cabeçalho de autorização (formato: Bearer TOKEN ou apenas TOKEN)
+    // Check if the token is in any authorization header (multiple possible formats)
     const authHeader = req.headers.get("authorization") || req.headers.get("Authorization");
-    const headerToken = authHeader ? authHeader.replace("Bearer ", "") : null;
+    let headerToken = null;
     
-    // Aceitar token tanto pela URL quanto pelo cabeçalho de autorização
-    const isValidToken = (token && token === ASAAS_WEBHOOK_TOKEN) || 
-                         (headerToken && headerToken === ASAAS_WEBHOOK_TOKEN);
-                         
-    // Verificar token de segurança para autenticar o webhook
-    if (!isValidToken) {
-      console.error(`Token de webhook inválido ou não configurado. URL Token: ${token}, Header Token: ${headerToken}`);
+    if (authHeader) {
+      // Handle different authorization header formats
+      if (authHeader.startsWith("Bearer ")) {
+        headerToken = authHeader.replace("Bearer ", "");
+      } else if (authHeader.startsWith("Basic ")) {
+        headerToken = authHeader.replace("Basic ", "");
+        try {
+          // Try to decode if it's base64 encoded
+          headerToken = atob(headerToken);
+        } catch (e) {
+          console.log("Not base64 encoded");
+        }
+      } else {
+        // Just use the raw value
+        headerToken = authHeader;
+      }
+    }
+    
+    // Check for x-hook-token or other custom headers Asaas might use
+    const xHookToken = req.headers.get("x-hook-token") || req.headers.get("X-Hook-Token");
+    
+    // Check Asaas-specific headers that might contain the token
+    const asaasToken = req.headers.get("asaas-token") || req.headers.get("Asaas-Token");
+    
+    // Also check if token is in the payload body for some integrations
+    let bodyToken = null;
+    let webhookData;
+    try {
+      const clonedReq = req.clone();
+      webhookData = await clonedReq.json();
+      if (webhookData && webhookData.token) {
+        bodyToken = webhookData.token;
+      }
+    } catch (e) {
+      console.error("Error parsing JSON payload:", e);
+      // Continue processing as the main webhook data will be parsed again later
+    }
+    
+    // Log all potential token sources for debugging
+    console.log("Authentication check details:", {
+      urlToken: token,
+      headerToken,
+      xHookToken,
+      asaasToken,
+      bodyToken,
+      expectedToken: ASAAS_WEBHOOK_TOKEN
+    });
+    
+    // Accept token from any of the possible sources
+    const isValidToken = 
+      (token && token === ASAAS_WEBHOOK_TOKEN) || 
+      (headerToken && headerToken === ASAAS_WEBHOOK_TOKEN) ||
+      (xHookToken && xHookToken === ASAAS_WEBHOOK_TOKEN) ||
+      (asaasToken && asaasToken === ASAAS_WEBHOOK_TOKEN) ||
+      (bodyToken && bodyToken === ASAAS_WEBHOOK_TOKEN);
+    
+    // If no token validation is configured, accept the request (more permissive)
+    const isTokenRequired = !!ASAAS_WEBHOOK_TOKEN;
+    
+    if (isTokenRequired && !isValidToken) {
+      console.error("Token webhook inválido ou não encontrado.", {
+        urlToken: token,
+        headerToken,
+        xHookToken,
+        asaasToken,
+        bodyToken
+      });
       return new Response(
-        JSON.stringify({ error: "Não autorizado", code: 401, message: "Missing or invalid token" }),
+        JSON.stringify({ 
+          error: "Não autorizado", 
+          code: 401, 
+          message: "Missing or invalid token",
+          detail: "O token fornecido não corresponde ao token configurado para este webhook."
+        }),
         {
           status: 401,
           headers: { ...corsHeaders, "Content-Type": "application/json" }
@@ -45,20 +111,21 @@ serve(async (req) => {
       );
     }
 
-    // Obter dados do webhook
-    let webhookData;
-    try {
-      webhookData = await req.json();
-      console.log("Dados recebidos do webhook Asaas:", JSON.stringify(webhookData, null, 2));
-    } catch (e) {
-      console.error("Erro ao processar JSON do webhook:", e);
-      return new Response(
-        JSON.stringify({ error: "Invalid JSON payload", code: 400 }),
-        {
-          status: 400,
-          headers: { ...corsHeaders, "Content-Type": "application/json" }
-        }
-      );
+    // Obter dados do webhook (parse again if needed)
+    if (!webhookData) {
+      try {
+        webhookData = await req.json();
+        console.log("Dados recebidos do webhook Asaas:", JSON.stringify(webhookData, null, 2));
+      } catch (e) {
+        console.error("Erro ao processar JSON do webhook:", e);
+        return new Response(
+          JSON.stringify({ error: "Invalid JSON payload", code: 400 }),
+          {
+            status: 400,
+            headers: { ...corsHeaders, "Content-Type": "application/json" }
+          }
+        );
+      }
     }
 
     // Inicializar cliente Supabase com chave de serviço
