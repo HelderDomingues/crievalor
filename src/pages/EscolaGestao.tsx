@@ -1,4 +1,3 @@
-
 import React from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -6,42 +5,18 @@ import HeroSection from "@/components/HeroSection";
 import ContactSection from "@/components/ContactSection";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { 
-  MapPin, 
-  Calendar, 
-  Users, 
-  Target, 
-  Award, 
-  BarChart3, 
-  CheckCircle2, 
-  ArrowRight,
-  Phone
-} from "lucide-react";
+import { MapPin, Calendar, Users, Target, Award, BarChart3, CheckCircle2, ArrowRight, Phone } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import EscolaGestaoLeadForm from "@/components/EscolaGestaoLeadForm";
-
 const EscolaGestao = () => {
   // Hero images for the carousel
-  const heroImages = [
-    "https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=2070",
-    "https://images.unsplash.com/photo-1558021211-6d1403321394?q=80&w=2083",
-    "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?q=80&w=2070"
-  ];
-  
-  return (
-    <div className="min-h-screen flex flex-col">
+  const heroImages = ["https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=2070", "https://images.unsplash.com/photo-1558021211-6d1403321394?q=80&w=2083", "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?q=80&w=2070"];
+  return <div className="min-h-screen flex flex-col">
       <Header />
       
       <main className="flex-grow">
         {/* Hero Section */}
-        <HeroSection
-          title="Escola de Gestão"
-          subtitle="Formação Executiva Presencial"
-          description="Um programa completo de desenvolvimento de líderes e gestores com metodologias práticas e aplicação imediata."
-          ctaText="Inscreva-se Agora"
-          ctaUrl="#lead-form"
-          backgroundImages={heroImages}
-        />
+        <HeroSection title="Escola de Gestão" subtitle="Formação Executiva Presencial" description="Um programa completo de desenvolvimento de líderes e gestores com metodologias práticas e aplicação imediata." ctaText="Inscreva-se Agora" ctaUrl="#lead-form" backgroundImages={heroImages} />
         
         {/* About Section */}
         <section className="py-16 md:py-20 bg-secondary/30">
@@ -103,12 +78,8 @@ const EscolaGestao = () => {
               
               <div className="order-1 lg:order-2 flex justify-center">
                 <div className="relative w-full max-w-md">
-                  <div className="absolute -top-5 -left-5 w-full h-full border-2 border-primary rounded-xl"></div>
-                  <img 
-                    src="/lovable-uploads/fc868084-d22b-4877-907b-fe02e64fc501.png" 
-                    alt="Escola de Gestão" 
-                    className="w-full h-auto rounded-xl shadow-lg relative z-10"
-                  />
+                  
+                  <img alt="Escola de Gestão" className="w-full h-auto rounded-xl shadow-lg relative z-10" src="/lovable-uploads/79fc50b5-6add-4fe3-9592-59bd9722648a.png" />
                   <div className="absolute -bottom-5 -right-5 bg-primary/10 w-24 h-24 rounded-full"></div>
                 </div>
               </div>
@@ -399,7 +370,7 @@ const EscolaGestao = () => {
                       <li className="flex items-start">
                         <CheckCircle2 className="h-5 w-5 text-primary mr-3 mt-0.5" />
                         <div>
-                          <p className="font-medium">Encontros presenciais mensais</p>
+                          <p className="font-medium">Encontros presenciais semanais de 2h</p>
                           <p className="text-sm text-muted-foreground">Em Navegantes/SC</p>
                         </div>
                       </li>
@@ -523,8 +494,6 @@ const EscolaGestao = () => {
       </main>
       
       <Footer />
-    </div>
-  );
+    </div>;
 };
-
 export default EscolaGestao;
