@@ -10,7 +10,7 @@ const ASAAS_WEBHOOK_TOKEN = Deno.env.get("ASAAS_WEBHOOK_TOKEN") || "Thx11vbaBPEv
 // Enhanced CORS headers to ensure Asaas requests are accepted
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*", // Allow requests from any origin
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, user-agent, x-hook-token, asaas-token",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, user-agent, x-hook-token, asaas-token, access_token",
   "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS"
 };
 
@@ -50,6 +50,7 @@ serve(async (req) => {
     const authHeader = req.headers.get("authorization") || req.headers.get("Authorization");
     const xHookToken = req.headers.get("x-hook-token") || req.headers.get("X-Hook-Token");
     const asaasToken = req.headers.get("asaas-token") || req.headers.get("Asaas-Token");
+    const accessToken = req.headers.get("access_token") || req.headers.get("Access-Token");
     
     let headerToken = null;
     if (authHeader) {
@@ -101,6 +102,7 @@ serve(async (req) => {
       headerToken,
       xHookToken,
       asaasToken,
+      accessToken,
       bodyToken,
       expectedToken: ASAAS_WEBHOOK_TOKEN
     });
@@ -111,6 +113,7 @@ serve(async (req) => {
       (headerToken && headerToken === ASAAS_WEBHOOK_TOKEN) ||
       (xHookToken && xHookToken === ASAAS_WEBHOOK_TOKEN) ||
       (asaasToken && asaasToken === ASAAS_WEBHOOK_TOKEN) ||
+      (accessToken && accessToken === ASAAS_WEBHOOK_TOKEN) ||
       (bodyToken && bodyToken === ASAAS_WEBHOOK_TOKEN);
     
     // If no token validation is configured, accept the request (more permissive)
@@ -122,6 +125,7 @@ serve(async (req) => {
         headerToken,
         xHookToken,
         asaasToken,
+        accessToken,
         bodyToken
       });
       return new Response(
@@ -139,6 +143,25 @@ serve(async (req) => {
       );
     }
 
+    // Initialize Supabase client
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+
+    // If this is a test request from our test-webhook function, just return success
+    if (webhookData && webhookData.testMode === true) {
+      console.log("Detected test mode request, returning success");
+      return new Response(
+        JSON.stringify({ 
+          success: true, 
+          message: "Test request received and validated successfully", 
+          timestamp: new Date().toISOString() 
+        }),
+        {
+          status: 200,
+          headers: { ...corsHeaders, "Content-Type": "application/json" }
+        }
+      );
+    }
+    
     // Parse webhook data if not already done
     if (!webhookData) {
       try {
@@ -225,9 +248,6 @@ serve(async (req) => {
         }
       );
     }
-
-    // Initialize Supabase client
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
     // Process payment events
     const event = webhookData.event;

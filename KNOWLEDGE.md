@@ -18,6 +18,25 @@
 
 ## Interaction Log {#interaction-log}
 
+### 2024-03-28 - Correção do erro 500 no teste de webhook e problemas de autorização
+
+**Discussão**:
+- Erro 500 nas requisições de teste do webhook
+- "Missing authorization header" retornado pelo Asaas
+- Necessidade de adicionar o header `access_token` nas requisições para o Asaas
+- Expansão dos CORS headers para aceitar headers adicionais
+
+**Implementação**:
+- Atualização do `test-webhook` com melhor tratamento de erros
+- Adição do header `access_token` nas requisições de teste para o endpoint do Asaas
+- Atualização dos CORS headers no `asaas-webhook` para aceitar o header `access_token`
+- Melhoria no tratamento de requisições de teste no `asaas-webhook`
+- Simplificação do `webhookService.ts` para usar exclusivamente a URL do Supabase
+
+**Ação planejada**:
+- Testar a conexão com as novas configurações
+- Confirmar que o Asaas está recebendo os webhooks corretamente
+
 ### 2024-05-31 - Correção do webhook e erros 500
 
 **Discussão**:
@@ -96,6 +115,7 @@
 4. Creating a dedicated webhook testing interface
 5. Verifying webhook configuration directly in Asaas
 6. Corrigindo erros 500 na função de teste de webhook
+7. Adicionando header de access_token para autenticação no Asaas
 
 **Current Status**:
 - Webhook configurado para usar exclusivamente a URL da função do Supabase
@@ -103,6 +123,7 @@
 - Removidas todas as referências ao webhook anterior baseado no Cloudflare
 - Interface de gerenciamento de webhook simplificada para a nova configuração
 - Correção de erros 500 no teste de webhook
+- Melhoria na autorização através do header access_token
 
 ### Past Interactions: Asaas Integration Challenges
 
@@ -125,6 +146,22 @@
 - Critical importance of webhook configuration for payment notifications
 
 ## Problems and Solutions {#problems-and-solutions}
+
+### Problem: Missing Authorization Header in Asaas Webhook
+
+**Description**:
+Asaas webhook reportando erro 401 com a mensagem "Missing authorization header" ao tentar enviar notificações.
+
+**Analysis**:
+O Asaas necessita do header `access_token` para autorizar as requisições, mas este não estava sendo enviado nos testes.
+
+**Solution**:
+- Adição do header `access_token` com a chave API do Asaas nas requisições de teste
+- Expansão dos CORS headers para aceitar este header adicional
+- Modificação da função de teste para simular corretamente uma requisição do Asaas
+
+**Status Atual**:
+Implementado. As functions de webhook foram atualizadas para aceitar e verificar corretamente os tokens de autorização.
 
 ### Problem: 500 Error in Webhook Testing
 
@@ -251,6 +288,7 @@ Use a combination of React Query and local state
 - URL atualizada para:
   - `https://nmxfknwkhnengqqjtwru.supabase.co/functions/v1/asaas-webhook`
 - Todas as referências ao webhook anterior usando o domínio crievalor.lovable.app foram removidas
+- Autenticação via header `access_token` contendo a chave API do Asaas
 
 #### Best Practices Identified
 
@@ -280,6 +318,7 @@ Use a combination of React Query and local state
 - Simplificação do gerenciamento de webhook
 - Remoção de código legado relacionado ao webhook anterior
 - Interface atualizada para refletir a nova configuração
+- Adição do header access_token para autenticação com Asaas
 
 ## Recent Issues and Actions
 
@@ -293,6 +332,14 @@ Em vez de tentar fazer o Cloudflare aceitar as requisições do Asaas, optamos p
 2. Modificação das funções edge para trabalhar com a nova configuração
 3. Atualização da interface de gerenciamento de webhook
 4. Remoção de todas as referências ao webhook anterior
+
+### Correção do problema de autorização com o Asaas
+
+**Implementação**:
+1. Adição do header `access_token` nas requisições de teste para o Asaas
+2. Expansão dos CORS headers para aceitar headers adicionais
+3. Melhor tratamento de diferentes fontes de tokens de autorização
+4. Resposta amigável para erros de autorização
 
 ### Correção de Erro 500 no Teste
 

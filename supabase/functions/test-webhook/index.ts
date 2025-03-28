@@ -168,7 +168,8 @@ async function testEndpoint(url) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "User-Agent": "Java/1.8.0_282" // Simulate Asaas User-Agent
+        "User-Agent": "Java/1.8.0_282", // Simulate Asaas User-Agent
+        "access_token": asaasApiKey // Add the access_token header needed by Asaas
       },
       body: JSON.stringify(testPayload)
     });

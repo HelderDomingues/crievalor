@@ -75,12 +75,7 @@ export const webhookService = {
    * Retorna a URL do webhook do Supabase
    */
   getSupabaseWebhookUrl() {
-    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-    if (!supabaseUrl) {
-      return 'https://nmxfknwkhnengqqjtwru.supabase.co/functions/v1/asaas-webhook';
-    }
-    
-    return `${supabaseUrl}/functions/v1/asaas-webhook`;
+    return 'https://nmxfknwkhnengqqjtwru.supabase.co/functions/v1/asaas-webhook';
   },
   
   /**
