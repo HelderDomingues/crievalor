@@ -41,7 +41,7 @@ const Index = () => {
       <Header />
       
       <main className="flex-grow">
-        <HeroSection title="Transforme sua empresa com estratégias personalizadas" subtitle="Bem-vindo(a) à Crie Valor" description="Somos especialistas em desenvolver estratégias de alto impacto que combinam o poder da inteligência artificial com a experiência humana." ctaText="Conheça o MAR" ctaUrl="/mar" secondaryCtaText="Fale Conosco" secondaryCtaUrl="#contato" useParticleWaves={true} />
+        <HeroSection title="Transforme sua empresa com estratégias personalizadas" subtitle="Bem-vindo(a) à Crie Valor" description="Somos especialistas em desenvolver estratégias de alto impacto que combinam a expertise humana com o poder da inteligência artificial." ctaText="Conheça o MAR" ctaUrl="/mar" secondaryCtaText="Fale Conosco" secondaryCtaUrl="#contato" useParticleWaves={true} />
         
         {/* Features Section */}
         <section className="py-16 md:py-24 bg-secondary/30 relative">
