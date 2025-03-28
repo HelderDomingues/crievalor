@@ -37,7 +37,7 @@ const EscolaGestao = () => {
         <HeroSection
           title="Escola de Gestão"
           subtitle="Formação Executiva Presencial"
-          description="Um programa completo de desenvolvimento de líderes e gestores para empresas do Baixo Vale do Itajaí (SC), com metodologias práticas e aplicação imediata."
+          description="Um programa completo de desenvolvimento de líderes e gestores com metodologias práticas e aplicação imediata."
           ctaText="Inscreva-se Agora"
           ctaUrl="#lead-form"
           backgroundImages={heroImages}
