@@ -1,9 +1,9 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { AlertCircle, Check, Loader2, ExternalLink, RotateCw, ShieldCheck, AlertTriangle, InfoIcon, Shield } from "lucide-react";
+import { AlertCircle, Loader2, ExternalLink, RotateCw, ShieldCheck, AlertTriangle, InfoIcon } from "lucide-react";
 import { toast } from "sonner";
 import { webhookService } from '@/services/webhookService';
 import { Badge } from "@/components/ui/badge";
@@ -14,33 +14,17 @@ import { useProfile } from "@/hooks/useProfile";
 export const WebhookManager = () => {
   const { user } = useAuth();
   const { isAdmin } = useProfile();
-  const [webhookUrl, setWebhookUrl] = useState(webhookService.getRecommendedWebhookUrl());
-  const [webhookToken, setWebhookToken] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+  const [webhookUrl, setWebhookUrl] = useState(webhookService.getPreferredWebhookUrl());
   const [isTestLoading, setIsTestLoading] = useState(false);
   const [webhookStatus, setWebhookStatus] = useState<'active' | 'unknown'>('unknown');
   const [errorDetails, setErrorDetails] = useState<string | null>(null);
   const [fullError, setFullError] = useState<any>(null);
-  
-  useEffect(() => {
-    // Extract token from webhook URL if present
-    const url = new URL(webhookUrl);
-    const token = url.searchParams.get('token');
-    if (token) {
-      setWebhookToken(token);
-    }
-  }, [webhookUrl]);
   
   const handleTestWebhook = async () => {
     try {
       setIsTestLoading(true);
       setErrorDetails(null);
       setFullError(null);
-      
-      if (!webhookUrl.trim()) {
-        toast.error("URL do webhook é obrigatória");
-        return;
-      }
       
       // Check if user is authenticated and admin
       if (!user) {
@@ -112,15 +96,13 @@ export const WebhookManager = () => {
             <Input
               id="webhook-url"
               value={webhookUrl}
-              onChange={(e) => setWebhookUrl(e.target.value)}
-              placeholder="https://crievalor.lovable.app/api/webhook/asaas"
-              className="flex-1"
               readOnly
+              className="flex-1"
             />
           </div>
           <p className="text-sm text-muted-foreground mt-1">
             <AlertCircle className="inline-block w-4 h-4 mr-1" />
-            Este webhook já está configurado manualmente no painel do Asaas
+            Este webhook deve estar configurado no painel do Asaas
           </p>
         </div>
         
@@ -130,16 +112,15 @@ export const WebhookManager = () => {
           <AlertDescription className="text-sm text-blue-700">
             <p>Certifique-se de que você configurou o webhook no painel do Asaas apontando para a URL acima.</p>
             <p className="mt-1">A API do Asaas usada é: <strong>Sandbox</strong> (ambiente de teste)</p>
-            <p className="mt-1">O domínio foi atualizado para: <strong>crievalor.lovable.app</strong></p>
+            <p className="mt-1">Usando a URL da função Supabase: <strong>{webhookUrl}</strong></p>
           </AlertDescription>
         </Alert>
         
         <Alert className="bg-amber-50 border-amber-200">
           <AlertTriangle className="h-4 w-4 text-amber-600" />
-          <AlertTitle className="text-amber-700">Aviso de Cloudflare</AlertTitle>
+          <AlertTitle className="text-amber-700">Configuração atual</AlertTitle>
           <AlertDescription className="text-sm text-amber-600">
-            <p>Se o Asaas relatou erros de Cloudflare ao enviar webhooks para este endereço, não se preocupe. Fizemos atualizações para resolver esse problema.</p>
-            <p className="mt-1">O webhook agora aceita requisições do user agent Java do Asaas e contorna as restrições de segurança do Cloudflare.</p>
+            <p>O webhook está configurado para usar a função do Supabase diretamente, evitando problemas com o Cloudflare.</p>
           </AlertDescription>
         </Alert>
         
@@ -185,7 +166,7 @@ export const WebhookManager = () => {
                 <li>Você está logado como administrador</li>
                 <li>O Asaas está configurado corretamente</li>
                 <li>A API key do Asaas é válida e está atualizada</li>
-                <li>O webhook está registrado no painel do Asaas com o domínio <strong>crievalor.lovable.app</strong></li>
+                <li>O webhook está registrado no painel do Asaas com a URL do Supabase</li>
               </ul>
             </AlertDescription>
           </Alert>
@@ -197,9 +178,9 @@ export const WebhookManager = () => {
               <ExternalLink className="h-5 w-5 text-blue-400" aria-hidden="true" />
             </div>
             <div className="ml-3">
-              <h3 className="text-sm font-medium text-blue-800">Webhook configurado manualmente</h3>
+              <h3 className="text-sm font-medium text-blue-800">Webhook configuração manual</h3>
               <div className="mt-2 text-sm text-blue-700">
-                <p>O webhook foi configurado manualmente no painel do Asaas. Você pode testar a conexão para verificar se está funcionando corretamente.</p>
+                <p>O webhook precisa ser configurado manualmente no painel do Asaas. Você pode testar a conexão para verificar se está funcionando corretamente.</p>
               </div>
               
               <div className="mt-4">

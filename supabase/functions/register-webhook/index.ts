@@ -5,7 +5,6 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.38.4";
 // Configurações
 const ASAAS_API_URL = "https://sandbox.asaas.com/api/v3";
 const ASAAS_API_KEY = Deno.env.get("ASAAS_API_KEY") || "";
-const ASAAS_WEBHOOK_TOKEN = Deno.env.get("ASAAS_WEBHOOK_TOKEN") || "Thx11vbaBPEvUI2OJCoWvCM8OQHMlBDY";
 
 const supabaseUrl = Deno.env.get("SUPABASE_URL") || "";
 const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
@@ -25,10 +24,6 @@ serve(async (req) => {
     // Verificar se as chaves estão configuradas
     if (!ASAAS_API_KEY) {
       throw new Error("ASAAS_API_KEY não está configurada");
-    }
-    
-    if (!ASAAS_WEBHOOK_TOKEN) {
-      throw new Error("ASAAS_WEBHOOK_TOKEN não está configurada");
     }
 
     // Inicializar cliente Supabase
@@ -51,18 +46,10 @@ serve(async (req) => {
     
     console.log("Usuário autenticado:", user.id);
     
-    // Use the URL provided or default to the new domain
-    let { webhookUrl } = await req.json();
+    // Define a URL do webhook do Supabase
+    let webhookUrl = "https://nmxfknwkhnengqqjtwru.supabase.co/functions/v1/asaas-webhook";
     
-    if (!webhookUrl) {
-      // Default to the new domain
-      webhookUrl = "https://crievalor.lovable.app/api/webhook/asaas";
-    }
-    
-    // URL completa do webhook com token de segurança
-    const webhookUrlWithToken = `${webhookUrl}?token=${ASAAS_WEBHOOK_TOKEN}`;
-    
-    console.log("Registrando webhook no Asaas:", webhookUrlWithToken);
+    console.log("Registrando webhook no Asaas:", webhookUrl);
     
     // Verificar se já existe webhook configurado
     const existingWebhooks = await getWebhooks();
@@ -71,7 +58,7 @@ serve(async (req) => {
       // Se encontrar um webhook com a mesma URL base, atualizar
       if (webhook.url.startsWith(webhookUrl)) {
         console.log("Webhook existente encontrado, atualizando...");
-        const updateResult = await updateWebhook(webhook.id, webhookUrlWithToken);
+        const updateResult = await updateWebhook(webhook.id, webhookUrl);
         
         return new Response(
           JSON.stringify({ success: true, message: "Webhook atualizado com sucesso", webhook: updateResult }),
@@ -85,7 +72,7 @@ serve(async (req) => {
     
     // Se não encontrou webhook existente, criar novo
     console.log("Criando novo webhook...");
-    const newWebhook = await createWebhook(webhookUrlWithToken);
+    const newWebhook = await createWebhook(webhookUrl);
     
     return new Response(
       JSON.stringify({ success: true, message: "Webhook registrado com sucesso", webhook: newWebhook }),
@@ -134,11 +121,10 @@ async function createWebhook(url) {
   
   const webhookData = {
     url,
-    email: "webhook@crievalor.lovable.app", // Email atualizado
+    email: "webhook@crievalor.lovable.app",
     apiVersion: 3,
     enabled: true,
     interrupted: false,
-    authToken: ASAAS_WEBHOOK_TOKEN,
     types: [
       "PAYMENT_CREATED",
       "PAYMENT_UPDATED",
@@ -180,11 +166,10 @@ async function updateWebhook(webhookId, url) {
   
   const webhookData = {
     url,
-    email: "webhook@crievalor.lovable.app", // Email atualizado
+    email: "webhook@crievalor.lovable.app",
     apiVersion: 3,
     enabled: true,
     interrupted: false,
-    authToken: ASAAS_WEBHOOK_TOKEN,
     types: [
       "PAYMENT_CREATED",
       "PAYMENT_UPDATED",

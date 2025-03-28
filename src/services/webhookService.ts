@@ -72,39 +72,21 @@ export const webhookService = {
   },
   
   /**
-   * Retorna a URL do webhook ideal com base no ambiente atual
+   * Retorna a URL do webhook do Supabase
    */
-  getRecommendedWebhookUrl() {
-    // Verificar se estamos no ambiente de produção ou desenvolvimento
-    const isProduction = window.location.hostname !== 'localhost' && 
-                         !window.location.hostname.includes('127.0.0.1');
-                         
-    // No ambiente de produção, tentar primeiro obter a URL do Supabase
-    if (isProduction) {
-      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-      if (supabaseUrl) {
-        return `${supabaseUrl}/functions/v1/asaas-webhook?token=Thx11vbaBPEvUI2OJCoWvCM8OQHMlBDY`;
-      }
+  getSupabaseWebhookUrl() {
+    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+    if (!supabaseUrl) {
+      return 'https://nmxfknwkhnengqqjtwru.supabase.co/functions/v1/asaas-webhook';
     }
     
-    // Fallback para a URL do domínio personalizado
-    return 'https://crievalor.lovable.app/api/webhook/asaas?token=Thx11vbaBPEvUI2OJCoWvCM8OQHMlBDY';
+    return `${supabaseUrl}/functions/v1/asaas-webhook`;
   },
   
   /**
-   * Verifica qual URL de webhook deve ser usada com base nos resultados do teste
+   * Determina qual URL de webhook deve ser usada
    */
-  getPreferredWebhookUrl(testResults: any) {
-    // Se não houver resultados de teste, usar a URL recomendada padrão
-    if (!testResults) return this.getRecommendedWebhookUrl();
-    
-    // Se o teste do endpoint direto falhou mas o da função Supabase passou, usar a URL da função
-    if ((testResults.directEndpoint.error || testResults.directEndpoint.status >= 400) &&
-        testResults.supabaseFunction.status >= 200 && testResults.supabaseFunction.status < 300) {
-      return testResults.supabaseFunction.url;
-    }
-    
-    // Caso contrário, usar a URL recomendada padrão
-    return this.getRecommendedWebhookUrl();
+  getPreferredWebhookUrl() {
+    return this.getSupabaseWebhookUrl();
   }
 };

@@ -6,7 +6,6 @@ const supabaseUrl = Deno.env.get("SUPABASE_URL") || "";
 const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
 const asaasApiKey = Deno.env.get("ASAAS_API_KEY") || "";
 const ASAAS_API_URL = "https://sandbox.asaas.com/api/v3";
-const ASAAS_WEBHOOK_TOKEN = Deno.env.get("ASAAS_WEBHOOK_TOKEN") || "Thx11vbaBPEvUI2OJCoWvCM8OQHMlBDY";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -82,15 +81,17 @@ serve(async (req) => {
     const { data: request } = await req.json();
     console.log("Request payload:", request);
     
-    const directEndpointUrl = "https://crievalor.lovable.app/api/webhook/asaas?token=" + ASAAS_WEBHOOK_TOKEN;
-    const supabaseFunctionUrl = `${supabaseUrl}/functions/v1/asaas-webhook?token=${ASAAS_WEBHOOK_TOKEN}`;
+    // Define Supabase function URL for webhook
+    const supabaseFunctionUrl = `${supabaseUrl}/functions/v1/asaas-webhook`;
+    if (!supabaseFunctionUrl.includes('supabase.co')) {
+      const projectId = supabaseUrl.split('//')[1].split('.')[0];
+      supabaseFunctionUrl = `https://${projectId}.supabase.co/functions/v1/asaas-webhook`;
+    }
     
-    console.log("Testing direct endpoint:", directEndpointUrl);
     console.log("Testing Supabase function endpoint:", supabaseFunctionUrl);
     
     // Test results to track webhook connectivity
     const testResults = {
-      directEndpoint: await testEndpoint(directEndpointUrl),
       supabaseFunction: await testEndpoint(supabaseFunctionUrl),
       asaasAccount: await testAsaasAccount()
     };
@@ -99,15 +100,11 @@ serve(async (req) => {
     let recommendations = [];
     let options = {};
     
-    if (testResults.directEndpoint.status >= 200 && testResults.directEndpoint.status < 300) {
-      recommendations.push("O endpoint direto está funcionando corretamente.");
-      options.preferredEndpoint = "direct";
-    } else if (testResults.supabaseFunction.status >= 200 && testResults.supabaseFunction.status < 300) {
-      recommendations.push("O endpoint da função Supabase está funcionando, mas o endpoint direto falhou.");
-      recommendations.push("Use a URL da função Supabase no painel do Asaas.");
+    if (testResults.supabaseFunction.status >= 200 && testResults.supabaseFunction.status < 300) {
+      recommendations.push("O endpoint da função Supabase está funcionando corretamente.");
       options.preferredEndpoint = "supabase";
     } else {
-      recommendations.push("Ambos endpoints falharam. Verifique as configurações do webhook e do Cloudflare.");
+      recommendations.push("O endpoint da função Supabase falhou. Verifique as configurações da função.");
       options.preferredEndpoint = "none";
     }
     

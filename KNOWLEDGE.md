@@ -18,6 +18,23 @@
 
 ## Interaction Log {#interaction-log}
 
+### 2024-05-31 - Migração para URL de Webhook do Supabase
+
+**Discussão**:
+- Decisão de migrar completamente para a URL de webhook do Supabase
+- Remoção de todas as referências ao webhook anterior
+- Configuração do novo sistema para usar exclusivamente a função Supabase
+
+**Implementação**:
+- Atualização do `webhookService.ts` para retornar apenas a URL do Supabase
+- Modificação da função `test-webhook` para testar apenas o endpoint do Supabase
+- Atualização do componente `WebhookManager` para mostrar a nova configuração
+- Simplificação da função `register-webhook` para usar apenas a URL do Supabase
+
+**Ação planejada**:
+- Atualizar a configuração do webhook no painel do Asaas para apontar para a URL do Supabase
+- Testar a conexão com a nova configuração
+
 ### 2024-05-30 - Initial Implementation of Project Log
 
 **Discussion**:
@@ -62,9 +79,10 @@
 5. Verifying webhook configuration directly in Asaas
 
 **Current Status**:
-- Webhook is configured but still facing issues with Cloudflare blocking requests
-- Considering using the Supabase function URL directly to bypass Cloudflare
-- Evaluating options for token management with proper encryption
+- Webhook configurado para usar exclusivamente a URL da função do Supabase
+- Teste de webhook atualizado para verificar apenas o endpoint do Supabase
+- Removidas todas as referências ao webhook anterior baseado no Cloudflare
+- Interface de gerenciamento de webhook simplificada para a nova configuração
 
 ### Past Interactions: Asaas Integration Challenges
 
@@ -96,17 +114,11 @@ Edge function logs and Asaas webhook status showed that Cloudflare was blocking 
 **Analysis**:
 Cloudflare security settings are blocking requests from Asaas's Java-based infrastructure, preventing payment notifications from reaching our system.
 
-**Attempted Solutions**:
-1. Testing both direct domain URL and Supabase function URL
-2. Implementing detailed logging to pinpoint issues
-3. Creating a webhook testing interface to verify configurations
-4. Investigating token management approaches
+**Solution Final**:
+Migração completa para o uso direto da URL da função Supabase, evitando completamente o Cloudflare e suas restrições de segurança.
 
-**Current Status**:
-Still working on the issue. Main options being considered:
-- Using Supabase function URL directly (bypassing Cloudflare)
-- Working with Lovable support to modify Cloudflare settings
-- Exploring alternative notification methods
+**Status Atual**:
+Implementado. Todas as referências ao webhook anterior foram removidas, e o sistema foi atualizado para usar exclusivamente a URL da função Supabase.
 
 ### Problem: Duplicate Customer Creation in Asaas
 
@@ -198,11 +210,10 @@ Use a combination of React Query and local state
 
 #### Webhook Configuration
 
-- Configured in Asaas dashboard
-- URL set to either:
-  - `https://crievalor.lovable.app/api/webhook/asaas?token=Thx11vbaBPEvUI2OJCoWvCM8OQHMlBDY`
-  - `https://nmxfknwkhnengqqjtwru.supabase.co/functions/v1/asaas-webhook?token=Thx11vbaBPEvUI2OJCoWvCM8OQHMlBDY`
-- Current challenge: Cloudflare blocking webhook requests
+- Configurado no painel do Asaas
+- URL atualizada para:
+  - `https://nmxfknwkhnengqqjtwru.supabase.co/functions/v1/asaas-webhook`
+- Todas as referências ao webhook anterior usando o domínio crievalor.lovable.app foram removidas
 
 #### Best Practices Identified
 
@@ -225,39 +236,23 @@ Use a combination of React Query and local state
 - Success/failure handling
 - Webhook testing interface
 
-**Pending Improvements**:
-- Resolving Cloudflare webhook blocking issues
-- Enhancing token management for webhooks
-- Improving webhook reliability
-- Better error handling for webhook failures
+**Recent Improvements**:
+- Migração completa para o webhook do Supabase, evitando problemas com o Cloudflare
+- Simplificação do gerenciamento de webhook
+- Remoção de código legado relacionado ao webhook anterior
+- Interface atualizada para refletir a nova configuração
 
 ## Recent Issues and Actions
 
-### Cloudflare Blocking Issue
+### Problema do Cloudflare Resolvido
 
-**Problem**:
-Cloudflare is blocking webhook requests from Asaas due to the Java User-Agent. The logs indicate "the owner has banned this user agent signature."
+**Solução Final**:
+Em vez de tentar fazer o Cloudflare aceitar as requisições do Asaas, optamos por uma abordagem diferente: usar diretamente a URL da função Supabase para o webhook, evitando completamente o Cloudflare.
 
-**Attempted Solutions**:
-1. Testing direct domain URL
-2. Testing Supabase function URL
-3. Investigating token encryption approaches
-4. Creating a WebhookManager component to test connections
-5. Detailed logging to identify exact points of failure
+**Implementação**:
+1. Atualização dos serviços para usar apenas a URL do Supabase
+2. Modificação das funções edge para trabalhar com a nova configuração
+3. Atualização da interface de gerenciamento de webhook
+4. Remoção de todas as referências ao webhook anterior
 
-**Current Plan**:
-1. Consider using Supabase function URL exclusively to bypass Cloudflare
-2. Encrypt and manage tokens securely
-3. Test and verify the new approach
-
-### Token Management Challenge
-
-**Problem**:
-The ASAAS_WEBHOOK_TOKEN was excluded from Edge Function secrets as Supabase encrypts information automatically when saving secrets, causing issues with direct access.
-
-**Solution Being Considered**:
-- Use the encrypted value from Supabase as the token
-- Direct Asaas webhook to the Supabase function URL
-- Store the encrypted value in our database
-
-This log will continue to be updated with new interactions, challenges, and solutions as the project progresses.
+Este log continuará a ser atualizado com novas interações, desafios e soluções à medida que o projeto avança.
