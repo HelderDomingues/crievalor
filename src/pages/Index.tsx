@@ -13,13 +13,17 @@ import { Brain, Target, Zap, Lightbulb, TrendingUp, Users, ArrowRight, Anchor, M
 import { Button } from "@/components/ui/button";
 const Index = () => {
   const features = [{
-    icon: Brain,
-    title: "Inteligência Artificial",
-    description: "Utilizamos algoritmos avançados para processar e analisar dados de mercado com precisão e velocidade."
+    icon: Users,
+    title: "Expertise Humana",
+    description: "Consultores experientes refinam e personalizam as estratégias geradas pela IA."
   }, {
     icon: Target,
     title: "Estratégia Orientada",
     description: "Desenvolvemos planos estratégicos focados em resultados mensuráveis e acionáveis."
+  }, {
+    icon: Brain,
+    title: "Inteligência Artificial",
+    description: "Utilizamos algoritmos avançados para processar e analisar dados de mercado com precisão e velocidade."
   }, {
     icon: Zap,
     title: "Implementação Rápida",
@@ -32,10 +36,6 @@ const Index = () => {
     icon: TrendingUp,
     title: "Crescimento Sustentável",
     description: "Criamos estratégias que permitem um crescimento consistente e escalável."
-  }, {
-    icon: Users,
-    title: "Expertise Humana",
-    description: "Consultores experientes refinam e personalizam as estratégias geradas pela IA."
   }];
   return <div className="min-h-screen flex flex-col">
       <Header />
