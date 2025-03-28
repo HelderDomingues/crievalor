@@ -9,7 +9,7 @@ const asaasApiUrl = "https://sandbox.asaas.com/api/v3";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type"
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, user-agent"
 };
 
 serve(async (req) => {
@@ -53,29 +53,7 @@ serve(async (req) => {
     asaasApiKey = settingData.value;
     console.log("ASAAS_API_KEY obtida da tabela system_settings");
     
-    // Log first few characters of API key for debugging (never log full API keys)
-    if (asaasApiKey) {
-      const keyLength = asaasApiKey.length;
-      const maskedKey = asaasApiKey.substring(0, 5) + "..." + asaasApiKey.substring(keyLength - 5);
-      console.log(`ASAAS_API_KEY encontrada (formato: ${maskedKey}), comprimento: ${keyLength} caracteres`);
-    }
-    
-    if (!asaasApiKey) {
-      console.error("Teste webhook: ASAAS_API_KEY obtida mas está vazia");
-      return new Response(
-        JSON.stringify({ error: "API Key do Asaas está vazia" }),
-        {
-          status: 500,
-          headers: { ...corsHeaders, "Content-Type": "application/json" }
-        }
-      );
-    }
-    
-    console.log("ASAAS_API_KEY está configurada, verificando autenticação do usuário");
-    console.log(`ASAAS_API_URL: ${asaasApiUrl}`);
-    console.log(`Usando Supabase URL: ${supabaseUrl}`);
-    
-    // Obter usuário autenticado
+    // Authentication check
     const authHeader = req.headers.get('Authorization');
     if (!authHeader) {
       console.error("Teste webhook: Autenticação necessária");
@@ -89,8 +67,6 @@ serve(async (req) => {
     }
     
     const token = authHeader.replace('Bearer ', '');
-    console.log("Token de autenticação obtido, verificando usuário");
-    
     const { data: { user }, error: userError } = await supabase.auth.getUser(token);
     
     if (userError || !user) {
@@ -106,9 +82,7 @@ serve(async (req) => {
     
     console.log("Usuário autenticado:", user.id);
     
-    // Verificar se o usuário é admin usando o profiles table
-    console.log("Verificando permissões de administrador para o usuário:", user.id);
-    
+    // Check admin permissions
     const { data: userData, error: profileError } = await supabase
       .from('profiles')
       .select('role')
@@ -130,8 +104,6 @@ serve(async (req) => {
     }
     
     const isAdmin = userData?.role === 'admin';
-    console.log("Resultado da verificação de admin (via perfil):", { isAdmin, userRole: userData?.role });
-    
     if (!isAdmin) {
       console.error("Teste webhook: Usuário não é administrador", user.id);
       return new Response(
@@ -143,16 +115,47 @@ serve(async (req) => {
       );
     }
     
-    console.log("Usuário é administrador, prosseguindo com teste de webhook");
-    
-    // Verificar webhooks ativos no Asaas
-    console.log("Fazendo requisição para o Asaas para verificar webhooks");
-    console.log(`URL da requisição: ${asaasApiUrl}/webhooks`);
-    
+    // First test - check if webhook endpoint is responding
+    console.log("Testando conexão direta com o webhook endpoint");
     try {
-      console.log("Iniciando chamada à API do Asaas com access_token:", 
-                  asaasApiKey.substring(0, 5) + "..." + asaasApiKey.substring(asaasApiKey.length - 5));
+      const webhookEndpoint = "https://crievalor.lovable.app/api/webhook/asaas?token=Thx11vbaBPEvUI2OJCoWvCM8OQHMlBDY";
+      const pingResponse = await fetch(webhookEndpoint, { 
+        method: 'GET',
+        headers: { 'User-Agent': 'WebhookTest/1.0' }
+      });
       
+      console.log(`Status da resposta do endpoint: ${pingResponse.status}`);
+      
+      const pingResult = {
+        status: pingResponse.status,
+        ok: pingResponse.ok
+      };
+      
+      try {
+        pingResult.text = await pingResponse.text();
+        if (pingResponse.headers.get('content-type')?.includes('application/json')) {
+          try {
+            pingResult.json = JSON.parse(pingResult.text);
+          } catch (e) {
+            console.log("Resposta não é JSON válido");
+          }
+        }
+      } catch (e) {
+        console.error("Erro ao ler resposta do endpoint:", e);
+      }
+      
+      console.log("Resultado do ping ao endpoint:", pingResult);
+      
+      if (!pingResponse.ok) {
+        console.error("Endpoint do webhook não está respondendo corretamente");
+      }
+    } catch (pingError) {
+      console.error("Erro ao fazer ping no webhook endpoint:", pingError);
+    }
+    
+    // Second test - check webhooks registered in Asaas
+    console.log("Verificando webhooks registrados no Asaas");
+    try {
       const webhooksResponse = await fetch(`${asaasApiUrl}/webhooks`, {
         method: 'GET',
         headers: {
@@ -162,7 +165,6 @@ serve(async (req) => {
       });
       
       console.log("Status da resposta Asaas:", webhooksResponse.status);
-      console.log("Headers da resposta:", JSON.stringify([...webhooksResponse.headers.entries()]));
       
       if (!webhooksResponse.ok) {
         let errorData;
@@ -181,7 +183,8 @@ serve(async (req) => {
         return new Response(
           JSON.stringify({ 
             error: `Erro ao obter webhooks do Asaas: ${webhooksResponse.status} ${webhooksResponse.statusText}`,
-            details: errorData
+            details: errorData,
+            solution: "Verifique se a API Key do Asaas está correta e tem as permissões necessárias."
           }),
           {
             status: 500,
@@ -193,8 +196,7 @@ serve(async (req) => {
       let webhooks;
       try {
         webhooks = await webhooksResponse.json();
-        console.log("Webhooks obtidos com sucesso, formato da resposta:", 
-                    JSON.stringify(webhooks, null, 2).substring(0, 500) + "...");
+        console.log("Webhooks obtidos com sucesso");
       } catch (jsonError) {
         console.error("Erro ao analisar resposta JSON do Asaas:", jsonError);
         const textResponse = await webhooksResponse.text();
@@ -219,7 +221,8 @@ serve(async (req) => {
           JSON.stringify({ 
             success: false,
             error: 'Resposta do Asaas não contém o campo data esperado',
-            response: webhooks
+            response: webhooks,
+            solution: "Entre em contato com o suporte do Asaas para verificar o formato da resposta."
           }),
           {
             status: 200,
@@ -234,7 +237,8 @@ serve(async (req) => {
           JSON.stringify({ 
             success: false,
             error: 'Nenhum webhook configurado no Asaas',
-            details: 'É necessário configurar pelo menos um webhook no painel do Asaas'
+            details: 'É necessário configurar pelo menos um webhook no painel do Asaas',
+            solution: "Acesse o painel do Asaas e configure o webhook com a URL: https://crievalor.lovable.app/api/webhook/asaas?token=Thx11vbaBPEvUI2OJCoWvCM8OQHMlBDY"
           }),
           {
             status: 200,
@@ -243,13 +247,15 @@ serve(async (req) => {
         );
       }
       
-      // Webhook está configurado e funcionando
+      // Success response
       console.log("Webhook configurado corretamente, encontrados:", webhooks.data.length, "webhooks");
       return new Response(
         JSON.stringify({ 
           success: true, 
           message: "Webhook configurado corretamente",
-          webhooks: webhooks.data 
+          webhooks: webhooks.data,
+          webhookUrl: "https://crievalor.lovable.app/api/webhook/asaas?token=Thx11vbaBPEvUI2OJCoWvCM8OQHMlBDY",
+          note: "Se o webhook estiver retornando erro 1010 do Cloudflare, recomendamos usar diretamente o endereço da função do Supabase para evitar o firewall."
         }),
         {
           status: 200,
@@ -264,7 +270,8 @@ serve(async (req) => {
           details: {
             message: asaasError.message,
             stack: asaasError.stack
-          }
+          },
+          solution: "Verifique se você consegue acessar a API do Asaas de outros contextos."
         }),
         {
           status: 500,
@@ -278,7 +285,8 @@ serve(async (req) => {
     return new Response(
       JSON.stringify({ 
         error: error.message,
-        stack: error.stack 
+        stack: error.stack,
+        solution: "Entre em contato com o suporte técnico para resolver este problema."
       }),
       {
         status: 500,
