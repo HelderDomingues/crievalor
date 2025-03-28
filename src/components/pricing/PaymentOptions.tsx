@@ -5,17 +5,23 @@ import { Slider } from "@/components/ui/slider";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 
+export type PaymentType = "credit" | "pix" | "boleto";
+
 interface PaymentOptionsProps {
   onInstallmentsChange?: (installments: number) => void;
+  onPaymentTypeChange?: (paymentType: PaymentType) => void;
   selectedInstallments?: number;
+  selectedPaymentType?: PaymentType;
 }
 
 const PaymentOptions = ({ 
   onInstallmentsChange,
-  selectedInstallments = 1 
+  onPaymentTypeChange,
+  selectedInstallments = 1,
+  selectedPaymentType = "credit"
 }: PaymentOptionsProps) => {
   const [localInstallments, setLocalInstallments] = useState(selectedInstallments);
-  const [paymentType, setPaymentType] = useState<"credit" | "pix" | "boleto">("credit");
+  const [paymentType, setPaymentType] = useState<PaymentType>(selectedPaymentType);
 
   const handleInstallmentsChange = (value: number[]) => {
     const installments = value[0];
@@ -26,14 +32,19 @@ const PaymentOptions = ({
   };
 
   const handlePaymentTypeChange = (value: string) => {
-    setPaymentType(value as "credit" | "pix" | "boleto");
+    const newPaymentType = value as PaymentType;
+    setPaymentType(newPaymentType);
     
     // Reset installments to 1 for non-credit card options
-    if (value !== "credit" && localInstallments > 1) {
+    if (newPaymentType !== "credit" && localInstallments > 1) {
       setLocalInstallments(1);
       if (onInstallmentsChange) {
         onInstallmentsChange(1);
       }
+    }
+    
+    if (onPaymentTypeChange) {
+      onPaymentTypeChange(newPaymentType);
     }
   };
 
@@ -58,7 +69,7 @@ const PaymentOptions = ({
       
       <div className="mb-8">
         <RadioGroup 
-          defaultValue="credit" 
+          defaultValue={selectedPaymentType}
           value={paymentType}
           onValueChange={handlePaymentTypeChange}
           className="grid grid-cols-1 md:grid-cols-3 gap-4"

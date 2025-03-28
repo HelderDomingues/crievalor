@@ -7,10 +7,12 @@ import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 import CheckoutError from "./CheckoutError";
+import { PaymentType } from "@/components/pricing/PaymentOptions";
 
 interface CheckoutControllerProps {
   planId: string;
   installments: number;
+  paymentType: PaymentType;
   buttonText?: string;
   redirectToProfile?: boolean;
   className?: string;
@@ -21,6 +23,7 @@ interface CheckoutControllerProps {
 const CheckoutController: React.FC<CheckoutControllerProps> = ({
   planId,
   installments,
+  paymentType,
   buttonText = "Assinar agora",
   redirectToProfile = false,
   className = "",
@@ -38,7 +41,7 @@ const CheckoutController: React.FC<CheckoutControllerProps> = ({
   // Limpar qualquer erro ao carregar ou quando mudam os parâmetros
   useEffect(() => {
     setCheckoutError(null);
-  }, [planId, installments]);
+  }, [planId, installments, paymentType]);
 
   // Limitar a frequência de tentativas de checkout
   useEffect(() => {
@@ -94,7 +97,7 @@ const CheckoutController: React.FC<CheckoutControllerProps> = ({
       toast({
         title: "Aguarde um momento",
         description: "Por favor, aguarde alguns segundos antes de tentar novamente.",
-        variant: "default", // Changed from "warning" to "default"
+        variant: "default",
       });
       return false;
     }
@@ -117,7 +120,7 @@ const CheckoutController: React.FC<CheckoutControllerProps> = ({
       toast({
         title: "Processando pagamento",
         description: "Seu pagamento já está sendo processado. Aguarde um momento.",
-        variant: "default", // Changed from "warning" to "default"
+        variant: "default",
       });
       return;
     }
@@ -135,7 +138,7 @@ const CheckoutController: React.FC<CheckoutControllerProps> = ({
     setCheckoutError(null);
     
     try {
-      console.log(`[${processId}] Iniciando checkout para plano: ${planId} com ${installments} parcelas`);
+      console.log(`[${processId}] Iniciando checkout para plano: ${planId} com ${installments} parcelas, método de pagamento: ${paymentType}`);
       
       // Registrar timestamp da tentativa
       localStorage.setItem('checkoutTimestamp', String(Date.now()));
@@ -147,7 +150,8 @@ const CheckoutController: React.FC<CheckoutControllerProps> = ({
         planId,
         successUrl: `${baseUrl}/checkout/success`,
         cancelUrl: `${baseUrl}/checkout/canceled`,
-        installments
+        installments,
+        paymentType
       });
       
       // Se for um plano de preço personalizado, redirecionar para página de contato
@@ -167,6 +171,7 @@ const CheckoutController: React.FC<CheckoutControllerProps> = ({
         // Registrar no localStorage antes de redirecionar
         localStorage.setItem('checkoutPlanId', planId);
         localStorage.setItem('checkoutInstallments', String(installments));
+        localStorage.setItem('checkoutPaymentType', paymentType);
         
         // Redirecionar para a página de pagamento
         window.location.href = result.url;
