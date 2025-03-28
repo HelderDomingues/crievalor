@@ -114,46 +114,72 @@ serve(async (req) => {
         }
       );
     }
-    
+
     // First test - check if webhook endpoint is responding
     console.log("Testando conexão direta com o webhook endpoint");
+
+    // Armazenar os resultados dos testes
+    const testResults = {
+      directEndpoint: { status: null, response: null, error: null },
+      supabaseFunction: { status: null, response: null, error: null },
+      asaasWebhooks: { status: null, response: null, error: null }
+    };
+
     try {
+      // Teste 1: URL pública do domínio do cliente
       const webhookEndpoint = "https://crievalor.lovable.app/api/webhook/asaas?token=Thx11vbaBPEvUI2OJCoWvCM8OQHMlBDY";
+      console.log(`Testando endpoint público: ${webhookEndpoint}`);
+      
       const pingResponse = await fetch(webhookEndpoint, { 
         method: 'GET',
-        headers: { 'User-Agent': 'WebhookTest/1.0' }
+        headers: { 
+          'User-Agent': 'Asaas-Webhook-Test/1.0',
+          'accept': '*/*'
+        }
       });
       
-      console.log(`Status da resposta do endpoint: ${pingResponse.status}`);
+      console.log(`Status da resposta do endpoint público: ${pingResponse.status}`);
       
-      const pingResult = {
-        status: pingResponse.status,
-        ok: pingResponse.ok
-      };
-      
+      testResults.directEndpoint.status = pingResponse.status;
       try {
-        pingResult.text = await pingResponse.text();
-        if (pingResponse.headers.get('content-type')?.includes('application/json')) {
-          try {
-            pingResult.json = JSON.parse(pingResult.text);
-          } catch (e) {
-            console.log("Resposta não é JSON válido");
-          }
-        }
+        testResults.directEndpoint.response = await pingResponse.text();
       } catch (e) {
-        console.error("Erro ao ler resposta do endpoint:", e);
-      }
-      
-      console.log("Resultado do ping ao endpoint:", pingResult);
-      
-      if (!pingResponse.ok) {
-        console.error("Endpoint do webhook não está respondendo corretamente");
+        console.error("Erro ao ler resposta do endpoint público:", e);
+        testResults.directEndpoint.error = e.message;
       }
     } catch (pingError) {
-      console.error("Erro ao fazer ping no webhook endpoint:", pingError);
+      console.error("Erro ao fazer ping no webhook endpoint público:", pingError);
+      testResults.directEndpoint.error = pingError.message;
+    }
+
+    // Teste 2: URL direta da função Supabase
+    try {
+      const supabaseFunction = `${supabaseUrl}/functions/v1/asaas-webhook?token=Thx11vbaBPEvUI2OJCoWvCM8OQHMlBDY`;
+      console.log(`Testando endpoint Supabase: ${supabaseFunction}`);
+      
+      const supabaseResponse = await fetch(supabaseFunction, {
+        method: 'GET',
+        headers: { 
+          'User-Agent': 'Asaas-Webhook-Test/1.0',
+          'accept': '*/*'
+        }
+      });
+      
+      console.log(`Status da resposta da função Supabase: ${supabaseResponse.status}`);
+      
+      testResults.supabaseFunction.status = supabaseResponse.status;
+      try {
+        testResults.supabaseFunction.response = await supabaseResponse.text();
+      } catch (e) {
+        console.error("Erro ao ler resposta da função Supabase:", e);
+        testResults.supabaseFunction.error = e.message;
+      }
+    } catch (supabaseError) {
+      console.error("Erro ao testar função Supabase:", supabaseError);
+      testResults.supabaseFunction.error = supabaseError.message;
     }
     
-    // Second test - check webhooks registered in Asaas
+    // Third test - check webhooks registered in Asaas
     console.log("Verificando webhooks registrados no Asaas");
     try {
       const webhooksResponse = await fetch(`${asaasApiUrl}/webhooks`, {
@@ -165,6 +191,7 @@ serve(async (req) => {
       });
       
       console.log("Status da resposta Asaas:", webhooksResponse.status);
+      testResults.asaasWebhooks.status = webhooksResponse.status;
       
       if (!webhooksResponse.ok) {
         let errorData;
@@ -179,6 +206,7 @@ serve(async (req) => {
         
         console.error("Erro ao obter webhooks do Asaas:", 
                       webhooksResponse.status, webhooksResponse.statusText, errorData);
+        testResults.asaasWebhooks.error = errorData;
         
         return new Response(
           JSON.stringify({ 
@@ -196,6 +224,7 @@ serve(async (req) => {
       let webhooks;
       try {
         webhooks = await webhooksResponse.json();
+        testResults.asaasWebhooks.response = webhooks;
         console.log("Webhooks obtidos com sucesso");
       } catch (jsonError) {
         console.error("Erro ao analisar resposta JSON do Asaas:", jsonError);
@@ -238,7 +267,20 @@ serve(async (req) => {
             success: false,
             error: 'Nenhum webhook configurado no Asaas',
             details: 'É necessário configurar pelo menos um webhook no painel do Asaas',
-            solution: "Acesse o painel do Asaas e configure o webhook com a URL: https://crievalor.lovable.app/api/webhook/asaas?token=Thx11vbaBPEvUI2OJCoWvCM8OQHMlBDY"
+            solution: "Acesse o painel do Asaas e configure o webhook",
+            options: [
+              {
+                url: `${supabaseUrl}/functions/v1/asaas-webhook?token=Thx11vbaBPEvUI2OJCoWvCM8OQHMlBDY`,
+                label: "URL da função Supabase (recomendado se o domínio não funcionar)",
+                note: "Esta URL acessa diretamente a função do Supabase, evitando o Cloudflare"
+              },
+              {
+                url: "https://crievalor.lovable.app/api/webhook/asaas?token=Thx11vbaBPEvUI2OJCoWvCM8OQHMlBDY",
+                label: "URL do domínio personalizado",
+                note: "Esta URL passa pelo Cloudflare e pode ser bloqueada"
+              }
+            ],
+            testResults
           }),
           {
             status: 200,
@@ -247,15 +289,65 @@ serve(async (req) => {
         );
       }
       
+      // Determine se algum webhook está usando a URL da função Supabase diretamente
+      const webhooksInfo = webhooks.data.map(webhook => ({
+        id: webhook.id,
+        name: webhook.name,
+        url: webhook.url,
+        enabled: webhook.enabled,
+        interrupted: webhook.interrupted,
+        apiVersion: webhook.apiVersion,
+        usesFunctionUrl: webhook.url.includes(`${supabaseUrl}/functions/v1/asaas-webhook`)
+      }));
+
+      // Verificar se há um webhook configurado com URL direta da função
+      const hasFunctionWebhook = webhooksInfo.some(w => w.usesFunctionUrl);
+      
+      // Verificar se há um webhook configurado com URL do domínio personalizado
+      const hasCustomDomainWebhook = webhooksInfo.some(w => 
+        w.url.includes("crievalor.lovable.app/api/webhook/asaas")
+      );
+
+      // Verificar se algum webhook está com problemas
+      const hasInterruptedWebhooks = webhooksInfo.some(w => w.interrupted);
+      
       // Success response
       console.log("Webhook configurado corretamente, encontrados:", webhooks.data.length, "webhooks");
+      
+      // Incluir recomendações com base no status dos testes
+      let recommendations = [];
+      
+      if (testResults.directEndpoint.error || 
+          (testResults.directEndpoint.status && testResults.directEndpoint.status >= 400)) {
+        // Se o endpoint público falhou, recomendar usar a URL direta da função
+        if (!hasFunctionWebhook) {
+          recommendations.push({
+            type: "warning",
+            message: "O endpoint público está retornando erro. Recomendamos configurar um webhook usando a URL direta da função Supabase.",
+            action: `Configure um novo webhook no Asaas com a URL: ${supabaseUrl}/functions/v1/asaas-webhook?token=Thx11vbaBPEvUI2OJCoWvCM8OQHMlBDY`
+          });
+        }
+      }
+      
+      if (hasInterruptedWebhooks) {
+        recommendations.push({
+          type: "warning",
+          message: "Há webhooks interrompidos no Asaas. Isso pode indicar falhas nas entregas.",
+          action: "Verifique o painel do Asaas e reative os webhooks se necessário."
+        });
+      }
+      
       return new Response(
         JSON.stringify({ 
           success: true, 
           message: "Webhook configurado corretamente",
-          webhooks: webhooks.data,
-          webhookUrl: "https://crievalor.lovable.app/api/webhook/asaas?token=Thx11vbaBPEvUI2OJCoWvCM8OQHMlBDY",
-          note: "Se o webhook estiver retornando erro 1010 do Cloudflare, recomendamos usar diretamente o endereço da função do Supabase para evitar o firewall."
+          webhooksInfo: webhooksInfo,
+          recommendations: recommendations,
+          testResults: testResults,
+          options: {
+            functionUrl: `${supabaseUrl}/functions/v1/asaas-webhook?token=Thx11vbaBPEvUI2OJCoWvCM8OQHMlBDY`,
+            customDomainUrl: "https://crievalor.lovable.app/api/webhook/asaas?token=Thx11vbaBPEvUI2OJCoWvCM8OQHMlBDY"
+          }
         }),
         {
           status: 200,
@@ -271,7 +363,8 @@ serve(async (req) => {
             message: asaasError.message,
             stack: asaasError.stack
           },
-          solution: "Verifique se você consegue acessar a API do Asaas de outros contextos."
+          solution: "Verifique se você consegue acessar a API do Asaas de outros contextos.",
+          testResults
         }),
         {
           status: 500,
