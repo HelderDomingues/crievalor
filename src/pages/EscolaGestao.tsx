@@ -385,7 +385,7 @@ const EscolaGestao = () => {
                         <CheckCircle2 className="h-5 w-5 text-primary mr-3 mt-0.5" />
                         <div>
                           <p className="font-medium">Turmas reduzidas</p>
-                          <p className="text-sm text-muted-foreground">Máximo de 15 participantes</p>
+                          <p className="text-sm text-muted-foreground">Máximo de 20 participantes</p>
                         </div>
                       </li>
                     </ul>
