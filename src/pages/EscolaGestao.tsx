@@ -49,7 +49,7 @@ const EscolaGestao = () => {
                     <Calendar className="h-5 w-5 text-primary mr-3" />
                     <div>
                       <h4 className="font-medium">Encontros Presenciais</h4>
-                      <p className="text-sm text-muted-foreground">Módulos mensais imersivos</p>
+                      <p className="text-sm text-muted-foreground">Módulos semanais imersivos</p>
                     </div>
                   </div>
                   
