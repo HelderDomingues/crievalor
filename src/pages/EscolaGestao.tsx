@@ -371,7 +371,7 @@ const EscolaGestao = () => {
                         <CheckCircle2 className="h-5 w-5 text-primary mr-3 mt-0.5" />
                         <div>
                           <p className="font-medium">Encontros presenciais semanais de 2h</p>
-                          <p className="text-sm text-muted-foreground">Em Navegantes/SC</p>
+                          <p className="text-sm text-muted-foreground">Região do Baixo Vale/SC</p>
                         </div>
                       </li>
                       <li className="flex items-start">
