@@ -320,9 +320,9 @@ serve(async (req) => {
       {
         status: 200, // Return 200 even for errors to prevent Asaas from retrying
         headers: { ...corsHeaders, "Content-Type": "application/json" }
-      }
-    );
-  }
+        }
+      );
+    }
 });
 
 // Helper function to process payment events

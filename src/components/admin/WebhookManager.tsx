@@ -118,7 +118,7 @@ export const WebhookManager = () => {
               readOnly
             />
           </div>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-muted-foreground mt-1">
             <AlertCircle className="inline-block w-4 h-4 mr-1" />
             Este webhook já está configurado manualmente no painel do Asaas
           </p>
@@ -127,7 +127,7 @@ export const WebhookManager = () => {
         <Alert className="bg-blue-50 border-blue-200">
           <InfoIcon className="h-4 w-4 text-blue-600" />
           <AlertTitle className="text-blue-700">Importante</AlertTitle>
-          <AlertDescription className="text-blue-600">
+          <AlertDescription className="text-sm text-blue-700">
             <p>Certifique-se de que você configurou o webhook no painel do Asaas apontando para a URL acima.</p>
             <p className="mt-1">A API do Asaas usada é: <strong>Sandbox</strong> (ambiente de teste)</p>
             <p className="mt-1">O domínio foi atualizado para: <strong>crievalor.lovable.app</strong></p>
@@ -137,7 +137,7 @@ export const WebhookManager = () => {
         <Alert className="bg-amber-50 border-amber-200">
           <AlertTriangle className="h-4 w-4 text-amber-600" />
           <AlertTitle className="text-amber-700">Aviso de Cloudflare</AlertTitle>
-          <AlertDescription className="text-amber-600">
+          <AlertDescription className="text-sm text-amber-600">
             <p>Se o Asaas relatou erros de Cloudflare ao enviar webhooks para este endereço, não se preocupe. Fizemos atualizações para resolver esse problema.</p>
             <p className="mt-1">O webhook agora aceita requisições do user agent Java do Asaas e contorna as restrições de segurança do Cloudflare.</p>
           </AlertDescription>
