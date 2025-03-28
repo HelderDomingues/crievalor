@@ -37,6 +37,7 @@ serve(async (req) => {
     );
     
     if (userError || !user) {
+      console.error("User authentication error:", userError);
       return new Response(
         JSON.stringify({ error: "Unauthorized or invalid token", details: userError }),
         { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
@@ -53,6 +54,7 @@ serve(async (req) => {
       .single();
       
     if (profileError) {
+      console.error("Profile retrieval error:", profileError);
       return new Response(
         JSON.stringify({ error: "Failed to retrieve user profile", details: profileError }),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
@@ -77,22 +79,25 @@ serve(async (req) => {
       );
     }
     
-    // Get the webhook URLs to test
-    const { data: request } = await req.json();
-    console.log("Request payload:", request);
-    
-    // Define Supabase function URL for webhook
-    const supabaseFunctionUrl = `${supabaseUrl}/functions/v1/asaas-webhook`;
-    if (!supabaseFunctionUrl.includes('supabase.co')) {
-      const projectId = supabaseUrl.split('//')[1].split('.')[0];
-      supabaseFunctionUrl = `https://${projectId}.supabase.co/functions/v1/asaas-webhook`;
+    // Get the request data
+    let requestData = {};
+    try {
+      if (req.headers.get("content-type")?.includes("application/json")) {
+        const json = await req.json();
+        requestData = json.data || json;
+        console.log("Request data:", requestData);
+      }
+    } catch (e) {
+      console.error("Error parsing request JSON:", e);
     }
     
-    console.log("Testing Supabase function endpoint:", supabaseFunctionUrl);
+    // Define Supabase function URL for webhook
+    const webhookUrl = `${supabaseUrl}/functions/v1/asaas-webhook`;
+    console.log("Testing webhook endpoint:", webhookUrl);
     
     // Test results to track webhook connectivity
     const testResults = {
-      supabaseFunction: await testEndpoint(supabaseFunctionUrl),
+      webhookEndpoint: await testEndpoint(webhookUrl),
       asaasAccount: await testAsaasAccount()
     };
     
@@ -100,12 +105,12 @@ serve(async (req) => {
     let recommendations = [];
     let options = {};
     
-    if (testResults.supabaseFunction.status >= 200 && testResults.supabaseFunction.status < 300) {
-      recommendations.push("O endpoint da função Supabase está funcionando corretamente.");
-      options.preferredEndpoint = "supabase";
+    if (testResults.webhookEndpoint.status >= 200 && testResults.webhookEndpoint.status < 300) {
+      recommendations.push("O endpoint do webhook está funcionando corretamente.");
+      options.webhookStatus = "active";
     } else {
-      recommendations.push("O endpoint da função Supabase falhou. Verifique as configurações da função.");
-      options.preferredEndpoint = "none";
+      recommendations.push("O endpoint do webhook falhou. Verifique as configurações da função.");
+      options.webhookStatus = "inactive";
     }
     
     if (testResults.asaasAccount.status >= 200 && testResults.asaasAccount.status < 300) {
@@ -168,15 +173,20 @@ async function testEndpoint(url) {
       body: JSON.stringify(testPayload)
     });
     
-    const text = await response.text();
-    
-    console.log(`Response from ${url}: status=${response.status}, body=`, text);
+    let responseText;
+    try {
+      responseText = await response.text();
+      console.log(`Response from ${url}: status=${response.status}, body=`, responseText);
+    } catch (e) {
+      console.error(`Error reading response text:`, e);
+      responseText = "Could not read response text";
+    }
     
     let data;
     try {
-      data = JSON.parse(text);
+      data = JSON.parse(responseText);
     } catch (e) {
-      data = { rawText: text };
+      data = { rawText: responseText };
     }
     
     return {
@@ -211,13 +221,18 @@ async function testAsaasAccount() {
       }
     });
     
-    const text = await response.text();
+    let responseText;
+    try {
+      responseText = await response.text();
+    } catch (e) {
+      responseText = "Could not read response text";
+    }
     
     let data;
     try {
-      data = JSON.parse(text);
+      data = JSON.parse(responseText);
     } catch (e) {
-      data = { rawText: text };
+      data = { rawText: responseText };
     }
     
     return {

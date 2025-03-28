@@ -18,6 +18,23 @@
 
 ## Interaction Log {#interaction-log}
 
+### 2024-05-31 - Correção do webhook e erros 500
+
+**Discussão**:
+- Correção de erro 500 no teste de webhook
+- Ajuste da função de teste para tratar corretamente o endpoint do Supabase
+- Verificação de problemas de autenticação e log detalhado 
+
+**Implementação**:
+- Simplificação da função test-webhook para testar apenas o endpoint do Supabase
+- Correção de erros na leitura de respostas e tratamento de erros
+- Melhoria na exibição de resultados no componente WebhookManager
+- Garantia de que o URL correto seja utilizado em todas as funções
+
+**Ação planejada**:
+- Testar a conexão com a nova configuração
+- Verificar logs para identificar possíveis erros restantes
+
 ### 2024-05-31 - Migração para URL de Webhook do Supabase
 
 **Discussão**:
@@ -70,6 +87,7 @@
 - Edge function permissions and authentication challenges
 - Difficulty in determining correct webhook URL to use
 - Unauthorized errors when accessing webhook endpoints
+- 500 errors when testing webhook connection
 
 **Solutions Attempted**:
 1. Testing both direct URL and Supabase function URL approaches
@@ -77,12 +95,14 @@
 3. Exploring token encryption options
 4. Creating a dedicated webhook testing interface
 5. Verifying webhook configuration directly in Asaas
+6. Corrigindo erros 500 na função de teste de webhook
 
 **Current Status**:
 - Webhook configurado para usar exclusivamente a URL da função do Supabase
 - Teste de webhook atualizado para verificar apenas o endpoint do Supabase
 - Removidas todas as referências ao webhook anterior baseado no Cloudflare
 - Interface de gerenciamento de webhook simplificada para a nova configuração
+- Correção de erros 500 no teste de webhook
 
 ### Past Interactions: Asaas Integration Challenges
 
@@ -105,6 +125,23 @@
 - Critical importance of webhook configuration for payment notifications
 
 ## Problems and Solutions {#problems-and-solutions}
+
+### Problem: 500 Error in Webhook Testing
+
+**Description**:
+Função de teste de webhook retornando erro 500 ao tentar verificar a conexão.
+
+**Analysis**:
+Erros na função edge do Supabase relacionados à leitura de respostas e tratamento de dados.
+
+**Solution**:
+- Melhoria do tratamento de erros na função test-webhook
+- Adição de mais logs para identificar os pontos de falha
+- Correção do parsing de respostas HTTP
+- Simplificação do fluxo de teste para focar apenas no endpoint do Supabase
+
+**Status Atual**:
+Implementado. O código foi atualizado para lidar corretamente com as respostas e tratar erros de forma mais robusta.
 
 ### Problem: Cloudflare Blocking Asaas Webhooks
 
@@ -237,6 +274,8 @@ Use a combination of React Query and local state
 - Webhook testing interface
 
 **Recent Improvements**:
+- Correção de erro 500 no teste de webhook
+- Tratamento melhorado para respostas e erros
 - Migração completa para o webhook do Supabase, evitando problemas com o Cloudflare
 - Simplificação do gerenciamento de webhook
 - Remoção de código legado relacionado ao webhook anterior
@@ -254,5 +293,13 @@ Em vez de tentar fazer o Cloudflare aceitar as requisições do Asaas, optamos p
 2. Modificação das funções edge para trabalhar com a nova configuração
 3. Atualização da interface de gerenciamento de webhook
 4. Remoção de todas as referências ao webhook anterior
+
+### Correção de Erro 500 no Teste
+
+**Implementação**:
+1. Melhor tratamento de erros e respostas nas funções de teste
+2. Adição de logs mais detalhados para diagnóstico
+3. Simplificação da lógica de teste para focar no essencial
+4. Exibição mais clara dos resultados na interface
 
 Este log continuará a ser atualizado com novas interações, desafios e soluções à medida que o projeto avança.

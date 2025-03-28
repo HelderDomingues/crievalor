@@ -19,12 +19,14 @@ export const WebhookManager = () => {
   const [webhookStatus, setWebhookStatus] = useState<'active' | 'unknown'>('unknown');
   const [errorDetails, setErrorDetails] = useState<string | null>(null);
   const [fullError, setFullError] = useState<any>(null);
+  const [testResults, setTestResults] = useState<any>(null);
   
   const handleTestWebhook = async () => {
     try {
       setIsTestLoading(true);
       setErrorDetails(null);
       setFullError(null);
+      setTestResults(null);
       
       // Check if user is authenticated and admin
       if (!user) {
@@ -45,10 +47,23 @@ export const WebhookManager = () => {
       console.log("Resultado do teste de webhook:", result);
       
       if (result.success) {
-        toast.success("Webhook funcionando corretamente!", {
-          description: "A conexão com o Asaas foi estabelecida e o webhook está configurado."
+        toast.success("Teste de webhook concluído", {
+          description: "Conexão verificada com o endpoint do Supabase"
         });
-        setWebhookStatus('active');
+        
+        setTestResults(result.testResults);
+        
+        if (result.testResults?.webhookEndpoint?.success) {
+          setWebhookStatus('active');
+          toast.success("Webhook respondendo corretamente", {
+            description: "O webhook está configurado e respondendo adequadamente"
+          });
+        } else {
+          setErrorDetails("Webhook disponível, mas com resposta inesperada");
+          toast.warning("Webhook com resposta inesperada", {
+            description: "Verifique a configuração do webhook no painel do Asaas"
+          });
+        }
       } else {
         setErrorDetails(result.error || "Erro ao verificar a conexão com o Asaas");
         setFullError(result.details || null);
@@ -90,7 +105,7 @@ export const WebhookManager = () => {
       <CardContent className="space-y-4">
         <div className="space-y-2">
           <label htmlFor="webhook-url" className="text-sm font-medium">
-            URL do Webhook
+            URL do Webhook (Supabase)
           </label>
           <div className="flex items-center space-x-2">
             <Input
@@ -112,15 +127,6 @@ export const WebhookManager = () => {
           <AlertDescription className="text-sm text-blue-700">
             <p>Certifique-se de que você configurou o webhook no painel do Asaas apontando para a URL acima.</p>
             <p className="mt-1">A API do Asaas usada é: <strong>Sandbox</strong> (ambiente de teste)</p>
-            <p className="mt-1">Usando a URL da função Supabase: <strong>{webhookUrl}</strong></p>
-          </AlertDescription>
-        </Alert>
-        
-        <Alert className="bg-amber-50 border-amber-200">
-          <AlertTriangle className="h-4 w-4 text-amber-600" />
-          <AlertTitle className="text-amber-700">Configuração atual</AlertTitle>
-          <AlertDescription className="text-sm text-amber-600">
-            <p>O webhook está configurado para usar a função do Supabase diretamente, evitando problemas com o Cloudflare.</p>
           </AlertDescription>
         </Alert>
         
@@ -142,6 +148,50 @@ export const WebhookManager = () => {
               Você precisa ter privilégios de administrador para testar o webhook.
             </AlertDescription>
           </Alert>
+        )}
+        
+        {testResults && (
+          <div className="space-y-4">
+            <h3 className="text-lg font-medium">Resultados do teste</h3>
+            
+            <div className="space-y-3">
+              <div className={`p-3 rounded-md ${testResults.webhookEndpoint?.success ? 'bg-green-50 border border-green-200' : 'bg-amber-50 border border-amber-200'}`}>
+                <h4 className="font-medium flex items-center gap-2">
+                  {testResults.webhookEndpoint?.success ? (
+                    <ShieldCheck className="h-4 w-4 text-green-600" />
+                  ) : (
+                    <AlertTriangle className="h-4 w-4 text-amber-600" />
+                  )}
+                  Endpoint do Webhook
+                </h4>
+                <p className="text-sm mt-1">
+                  Status: {testResults.webhookEndpoint?.status} 
+                  ({testResults.webhookEndpoint?.success ? 'Sucesso' : 'Falha'})
+                </p>
+                {testResults.webhookEndpoint?.error && (
+                  <p className="text-sm text-red-600 mt-1">{testResults.webhookEndpoint.error}</p>
+                )}
+              </div>
+              
+              <div className={`p-3 rounded-md ${testResults.asaasAccount?.success ? 'bg-green-50 border border-green-200' : 'bg-amber-50 border border-amber-200'}`}>
+                <h4 className="font-medium flex items-center gap-2">
+                  {testResults.asaasAccount?.success ? (
+                    <ShieldCheck className="h-4 w-4 text-green-600" />
+                  ) : (
+                    <AlertTriangle className="h-4 w-4 text-amber-600" />
+                  )}
+                  Conta Asaas
+                </h4>
+                <p className="text-sm mt-1">
+                  Status: {testResults.asaasAccount?.status}
+                  ({testResults.asaasAccount?.success ? 'Válida' : 'Inválida'})
+                </p>
+                {testResults.asaasAccount?.error && (
+                  <p className="text-sm text-red-600 mt-1">{testResults.asaasAccount.error}</p>
+                )}
+              </div>
+            </div>
+          </div>
         )}
         
         {errorDetails && (

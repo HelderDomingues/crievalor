@@ -47,7 +47,7 @@ serve(async (req) => {
     console.log("Usuário autenticado:", user.id);
     
     // Define a URL do webhook do Supabase
-    let webhookUrl = "https://nmxfknwkhnengqqjtwru.supabase.co/functions/v1/asaas-webhook";
+    const webhookUrl = "https://nmxfknwkhnengqqjtwru.supabase.co/functions/v1/asaas-webhook";
     
     console.log("Registrando webhook no Asaas:", webhookUrl);
     
@@ -56,7 +56,7 @@ serve(async (req) => {
     
     for (const webhook of existingWebhooks) {
       // Se encontrar um webhook com a mesma URL base, atualizar
-      if (webhook.url.startsWith(webhookUrl)) {
+      if (webhook.url && webhook.url.includes("supabase.co/functions/v1/asaas-webhook")) {
         console.log("Webhook existente encontrado, atualizando...");
         const updateResult = await updateWebhook(webhook.id, webhookUrl);
         
