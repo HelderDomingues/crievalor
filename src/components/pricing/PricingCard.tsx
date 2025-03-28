@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
@@ -31,14 +30,8 @@ const PricingCard = ({
       return;
     }
 
-    if (!user) {
-      // Redirect to auth page with plan parameter
-      navigate(`/auth?redirect=subscription&plan=${plan.id}`);
-      return;
-    }
-    
-    // If user is logged in, redirect to subscription page
-    navigate(`/subscription?plan=${plan.id}`);
+    // Direct users to the new checkout flow
+    navigate(`/checkout?plan=${plan.id}`);
   };
 
   // Determine if button should be disabled
@@ -58,7 +51,7 @@ const PricingCard = ({
     } else if (plan.comingSoon) {
       return "Em Breve";
     } else {
-      return plan.cta;
+      return plan.cta || "Quero este plano";
     }
   };
 

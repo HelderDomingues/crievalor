@@ -32,6 +32,7 @@ import WebhookAdmin from "./pages/WebhookAdmin";
 import AdminSetup from "./pages/AdminSetup";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminSettings from "./pages/AdminSettings";
+import Checkout from "./pages/Checkout";
 
 const App = () => {
   const [queryClient] = useState(() => new QueryClient());
@@ -60,6 +61,7 @@ const App = () => {
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/projetos" element={<Projetos />} />
                 <Route path="/subscription" element={<Subscription />} />
+                <Route path="/checkout" element={<Checkout />} />
                 <Route path="/checkout/success" element={<CheckoutSuccess />} />
                 <Route path="/checkout/canceled" element={<CheckoutCanceled />} />
                 <Route path="/portfolio-admin" element={<PortfolioAdmin />} />
