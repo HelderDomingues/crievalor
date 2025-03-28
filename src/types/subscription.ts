@@ -1,5 +1,6 @@
 
 import { Json } from "@/integrations/supabase/types";
+import { PaymentType } from "@/components/pricing/PaymentOptions";
 
 // Define subscription types
 export interface Subscription {
@@ -43,6 +44,7 @@ export interface CreateCheckoutOptions {
   successUrl: string;
   cancelUrl: string;
   installments?: number;
+  paymentType?: PaymentType;
 }
 
 export interface AsaasCustomer {

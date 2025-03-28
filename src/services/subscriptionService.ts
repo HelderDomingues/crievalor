@@ -10,7 +10,7 @@ export type { Plan, Subscription, CreateCheckoutOptions, RegularPlan, CustomPric
 export const subscriptionService = {
   async createCheckoutSession(options: CreateCheckoutOptions) {
     try {
-      const { planId, successUrl, cancelUrl, installments = 1 } = options;
+      const { planId, successUrl, cancelUrl, installments = 1, paymentType = "credit" } = options;
       
       // Encontrar o plano com o ID correspondente
       const plan = plansService.getPlanById(planId);
@@ -30,7 +30,7 @@ export const subscriptionService = {
       // Agora podemos fazer cast para RegularPlan com segurança
       const regularPlan = plan as any;
       
-      console.log(`Criando checkout para plano: ${planId} com ${installments} parcelas`);
+      console.log(`Criando checkout para plano: ${planId} com ${installments} parcelas, tipo de pagamento: ${paymentType}`);
       
       // Obter o usuário atual
       const { data: { user } } = await supabase.auth.getUser();
@@ -124,6 +124,13 @@ export const subscriptionService = {
       const nextDueDate = new Date(Date.now() + 3600 * 1000 * 24);
       const dueDate = nextDueDate.toISOString().split('T')[0]; // formato YYYY-MM-DD
       
+      // Determinar o tipo de cobrança com base no método de pagamento selecionado
+      const billingType = paymentType === "credit" 
+        ? (installments > 1 ? "CREDIT_CARD" : "CREDIT_CARD") 
+        : paymentType === "pix" 
+          ? "PIX" 
+          : "BOLETO";
+      
       // Criar pagamento no Asaas
       const { paymentId, paymentLink } = await paymentsService.createPayment({
         customerId,
@@ -134,7 +141,8 @@ export const subscriptionService = {
         successUrl,
         cancelUrl,
         installments,
-        billingType: installments > 1 ? "CREDIT_CARD" : "UNDEFINED",
+        billingType,
+        paymentType,
         dueDate,
         externalReference,
         postalService: false
@@ -356,7 +364,6 @@ export const subscriptionService = {
     }
   },
 
-  // Função auxiliar para verificar se o usuário possui uma assinatura ativa
   async hasActiveSubscription(): Promise<boolean> {
     try {
       const subscription = await this.getCurrentSubscription();
@@ -369,17 +376,14 @@ export const subscriptionService = {
     }
   },
 
-  // Função auxiliar para obter informações do plano a partir do ID
   getPlanFromId(planId: string): any {
     return plansService.getPlanById(planId);
   },
 
-  // Obter pagamentos usando o paymentsService
   async getPayments() {
     return paymentsService.getPayments();
   },
 
-  // Obter um pagamento específico usando o paymentsService
   async getPayment(paymentId: string) {
     return paymentsService.getPayment(paymentId);
   },
@@ -412,7 +416,6 @@ export const subscriptionService = {
     }
   },
 
-  // Solicitar um comprovante para um pagamento usando o paymentsService
   async requestReceipt(paymentId: string) {
     return paymentsService.requestReceipt(paymentId);
   }
