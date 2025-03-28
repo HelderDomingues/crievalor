@@ -33,6 +33,39 @@
 - Continue to update this log with all past and future interactions
 - Document challenges faced with Asaas integration and their solutions
 
+### 2024-05-30 to Current - Asaas Webhook Integration Challenges
+
+**Discussion**:
+- Primary focus has been on getting Asaas webhook integration working properly
+- Multiple attempts to configure webhooks correctly
+- Issues with Cloudflare blocking webhook requests due to Java user-agent
+- Challenges with token management and URL configuration
+
+**Implementation**:
+- Created a dedicated test-webhook Edge Function
+- Implemented WebhookManager component to test connections
+- Added support for both direct URL and Supabase function URL
+- Enhanced logging to identify exact points of failure
+
+**Problems Encountered**:
+- Cloudflare blocking Asaas webhook requests with "Java/1.8.0_282" User-Agent
+- ASAAS_WEBHOOK_TOKEN management issues with encryption
+- Edge function permissions and authentication challenges
+- Difficulty in determining correct webhook URL to use
+- Unauthorized errors when accessing webhook endpoints
+
+**Solutions Attempted**:
+1. Testing both direct URL and Supabase function URL approaches
+2. Implementing detailed logging in Edge Functions
+3. Exploring token encryption options
+4. Creating a dedicated webhook testing interface
+5. Verifying webhook configuration directly in Asaas
+
+**Current Status**:
+- Webhook is configured but still facing issues with Cloudflare blocking requests
+- Considering using the Supabase function URL directly to bypass Cloudflare
+- Evaluating options for token management with proper encryption
+
 ### Past Interactions: Asaas Integration Challenges
 
 **Payment Integration Issues**:
@@ -51,8 +84,29 @@
 - Need for careful tracking of external payment provider references
 - Importance of proper error handling in payment flows
 - Value of clear user feedback during payment processes
+- Critical importance of webhook configuration for payment notifications
 
 ## Problems and Solutions {#problems-and-solutions}
+
+### Problem: Cloudflare Blocking Asaas Webhooks
+
+**Description**:
+Edge function logs and Asaas webhook status showed that Cloudflare was blocking webhook calls from Asaas due to the Java/1.8.0_282 User-Agent.
+
+**Analysis**:
+Cloudflare security settings are blocking requests from Asaas's Java-based infrastructure, preventing payment notifications from reaching our system.
+
+**Attempted Solutions**:
+1. Testing both direct domain URL and Supabase function URL
+2. Implementing detailed logging to pinpoint issues
+3. Creating a webhook testing interface to verify configurations
+4. Investigating token management approaches
+
+**Current Status**:
+Still working on the issue. Main options being considered:
+- Using Supabase function URL directly (bypassing Cloudflare)
+- Working with Lovable support to modify Cloudflare settings
+- Exploring alternative notification methods
 
 ### Problem: Duplicate Customer Creation in Asaas
 
@@ -88,31 +142,20 @@ The Supabase functions were attempting to insert rows without proper RLS policie
 **Solution**:
 Updated RLS policies and ensured proper user context was maintained during payment processing.
 
-## Refactorings {#refactorings}
-
-### Checkout Error Handling
-
-**Motivation**:
-Improve user experience by providing clearer error messages during checkout.
-
-**Implementation**:
-Created dedicated CheckoutError component to handle various error scenarios:
-- Edge function communication errors
-- Missing profile information
-- Payment processing issues
-
-### Payment Flow Organization
-
-**Motivation**:
-Better separation of concerns in payment processing code.
-
-**Implementation**:
-Split payment logic into dedicated services:
-- subscriptionService for subscription management
-- asaasCustomerService for customer management
-- paymentsService for payment processing
-
 ## Architectural Decisions {#architectural-decisions}
+
+### Edge Function Strategy
+
+**Decision**:
+Use separate edge functions for different purposes:
+- `asaas-webhook`: Handle incoming webhook notifications
+- `test-webhook`: Test webhook connectivity
+- `asaas`: Handle payment creation and customer management
+
+**Impact**:
+- Better separation of concerns
+- Easier debugging
+- More focused functionality
 
 ### Payment Integration Architecture
 
@@ -151,6 +194,15 @@ Use a combination of React Query and local state
 4. Generates payment link
 5. Redirects to Asaas checkout
 6. Handles success/failure redirects
+7. Receives webhook notifications for payment status updates
+
+#### Webhook Configuration
+
+- Configured in Asaas dashboard
+- URL set to either:
+  - `https://crievalor.lovable.app/api/webhook/asaas?token=Thx11vbaBPEvUI2OJCoWvCM8OQHMlBDY`
+  - `https://nmxfknwkhnengqqjtwru.supabase.co/functions/v1/asaas-webhook?token=Thx11vbaBPEvUI2OJCoWvCM8OQHMlBDY`
+- Current challenge: Cloudflare blocking webhook requests
 
 #### Best Practices Identified
 
@@ -159,6 +211,7 @@ Use a combination of React Query and local state
 - Implement proper error handling
 - Provide clear user feedback
 - Maintain payment session context across redirects
+- Ensure webhooks are properly configured for payment notifications
 
 ## Version History {#version-history}
 
@@ -170,10 +223,41 @@ Use a combination of React Query and local state
 - Subscription plans
 - Payment integration
 - Success/failure handling
+- Webhook testing interface
 
 **Pending Improvements**:
-- Enhanced error messaging
-- Better payment session management
-- Improved user feedback during payment process
+- Resolving Cloudflare webhook blocking issues
+- Enhancing token management for webhooks
+- Improving webhook reliability
+- Better error handling for webhook failures
 
-This log will be updated daily with new interactions, challenges, and solutions.
+## Recent Issues and Actions
+
+### Cloudflare Blocking Issue
+
+**Problem**:
+Cloudflare is blocking webhook requests from Asaas due to the Java User-Agent. The logs indicate "the owner has banned this user agent signature."
+
+**Attempted Solutions**:
+1. Testing direct domain URL
+2. Testing Supabase function URL
+3. Investigating token encryption approaches
+4. Creating a WebhookManager component to test connections
+5. Detailed logging to identify exact points of failure
+
+**Current Plan**:
+1. Consider using Supabase function URL exclusively to bypass Cloudflare
+2. Encrypt and manage tokens securely
+3. Test and verify the new approach
+
+### Token Management Challenge
+
+**Problem**:
+The ASAAS_WEBHOOK_TOKEN was excluded from Edge Function secrets as Supabase encrypts information automatically when saving secrets, causing issues with direct access.
+
+**Solution Being Considered**:
+- Use the encrypted value from Supabase as the token
+- Direct Asaas webhook to the Supabase function URL
+- Store the encrypted value in our database
+
+This log will continue to be updated with new interactions, challenges, and solutions as the project progresses.
