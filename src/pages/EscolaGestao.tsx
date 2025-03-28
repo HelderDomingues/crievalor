@@ -396,7 +396,7 @@ const EscolaGestao = () => {
                         <CheckCircle2 className="h-5 w-5 text-primary mr-3 mt-0.5" />
                         <div>
                           <p className="font-medium">Empresários</p>
-                          <p className="text-sm text-muted-foreground">De pequenas e médias empresas</p>
+                          <p className="text-sm text-muted-foreground">Micros, pequenas e médias empresas</p>
                         </div>
                       </li>
                       <li className="flex items-start">
