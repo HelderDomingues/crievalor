@@ -38,26 +38,26 @@ const CheckoutController: React.FC<CheckoutControllerProps> = ({
   const [checkoutProcessId, setCheckoutProcessId] = useState<string | null>(null);
   const [checkoutAttempts, setCheckoutAttempts] = useState(0);
 
-  // Limpar qualquer erro ao carregar ou quando mudam os parâmetros
+  // Clear any errors when loading or when parameters change
   useEffect(() => {
     setCheckoutError(null);
   }, [planId, installments, paymentType]);
 
-  // Limitar a frequência de tentativas de checkout
+  // Limit checkout attempt frequency
   useEffect(() => {
-    // Verificar se há um checkout em andamento com timestamp recente
+    // Check if there's an ongoing checkout with a recent timestamp
     const lastCheckoutTime = localStorage.getItem('checkoutTimestamp');
     const checkoutPlanId = localStorage.getItem('checkoutPlanId');
     
     if (lastCheckoutTime && checkoutPlanId === planId) {
       const timeSinceLastCheckout = Date.now() - Number(lastCheckoutTime);
       
-      // Se tentou fazer checkout nos últimos 5 segundos, mostrar mensagem
+      // If checkout was attempted in the last 5 seconds, show message
       if (timeSinceLastCheckout < 5000) {
-        console.log("Tentativa de checkout muito recente, aguardando...");
+        console.log("Recent checkout attempt detected, waiting...");
         setIsCheckingOut(true);
         
-        // Limpar após 3 segundos
+        // Clear after 3 seconds
         const timer = setTimeout(() => {
           setIsCheckingOut(false);
         }, 3000);
@@ -67,19 +67,19 @@ const CheckoutController: React.FC<CheckoutControllerProps> = ({
     }
   }, [planId]);
 
-  // Verificador de tempo para evitar múltiplos cliques
+  // Time checker to prevent multiple clicks
   const canAttemptCheckout = () => {
     const now = Date.now();
     const lastTime = Number(localStorage.getItem('checkoutTimestamp') || '0');
     const attempts = Number(localStorage.getItem('checkoutAttempts') || '0');
     
-    // Se a última tentativa foi há mais de 5 minutos, resetar contador
+    // If last attempt was more than 5 minutes ago, reset counter
     if (now - lastTime > 5 * 60 * 1000) {
       localStorage.setItem('checkoutAttempts', '1');
       return true;
     }
     
-    // Permitir no máximo 3 tentativas em 5 minutos
+    // Allow max 3 attempts in 5 minutes
     if (attempts >= 3) {
       toast({
         title: "Muitas tentativas",
@@ -89,10 +89,10 @@ const CheckoutController: React.FC<CheckoutControllerProps> = ({
       return false;
     }
     
-    // Incrementar contador de tentativas
+    // Increment attempt counter
     localStorage.setItem('checkoutAttempts', String(attempts + 1));
     
-    // Se a última tentativa foi há menos de 15 segundos, bloquear
+    // If last attempt was less than 15 seconds ago, block
     if (now - lastTime < 15000) {
       toast({
         title: "Aguarde um momento",
@@ -116,7 +116,7 @@ const CheckoutController: React.FC<CheckoutControllerProps> = ({
     }
 
     if (isCheckingOut) {
-      console.log("Checkout já em processamento, ignorando clique");
+      console.log("Checkout already in progress, ignoring click");
       toast({
         title: "Processando pagamento",
         description: "Seu pagamento já está sendo processado. Aguarde um momento.",
@@ -125,12 +125,12 @@ const CheckoutController: React.FC<CheckoutControllerProps> = ({
       return;
     }
 
-    // Verificar tempo entre tentativas
+    // Check time between attempts
     if (!canAttemptCheckout()) {
       return;
     }
 
-    // Gerar ID de processo único para este checkout
+    // Generate a unique process ID for this checkout
     const processId = `checkout_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
     setCheckoutProcessId(processId);
     
@@ -138,9 +138,9 @@ const CheckoutController: React.FC<CheckoutControllerProps> = ({
     setCheckoutError(null);
     
     try {
-      console.log(`[${processId}] Iniciando checkout para plano: ${planId} com ${installments} parcelas, método de pagamento: ${paymentType}`);
+      console.log(`[${processId}] Starting checkout for plan: ${planId} with ${installments} installments, payment method: ${paymentType}`);
       
-      // Registrar timestamp da tentativa
+      // Register timestamp of the attempt
       localStorage.setItem('checkoutTimestamp', String(Date.now()));
       
       // Get current domain for success/cancel URLs
@@ -154,33 +154,33 @@ const CheckoutController: React.FC<CheckoutControllerProps> = ({
         paymentType
       });
       
-      // Se for um plano de preço personalizado, redirecionar para página de contato
+      // If it's a custom price plan, redirect to contact page
       if (result.isCustomPlan) {
         navigate(result.url);
         return;
       }
       
       if (!result.url) {
-        throw new Error("Nenhuma URL de checkout retornada");
+        throw new Error("No checkout URL returned");
       }
       
-      console.log(`[${processId}] Redirecionando para checkout: ${result.url}`);
+      console.log(`[${processId}] Redirecting to checkout: ${result.url}`);
       
-      // Redirecionamento direto para página de pagamento
+      // Direct redirection to payment page
       if (result.directRedirect) {
-        // Registrar no localStorage antes de redirecionar
+        // Save to localStorage before redirecting
         localStorage.setItem('checkoutPlanId', planId);
         localStorage.setItem('checkoutInstallments', String(installments));
         localStorage.setItem('checkoutPaymentType', paymentType);
         
-        // Redirecionar para a página de pagamento
+        // Redirect to payment page
         window.location.href = result.url;
       } else {
-        // Fallback, devemos sempre ter directRedirect=true
+        // Fallback, we should always have directRedirect=true
         navigate(result.url);
       }
     } catch (error: any) {
-      console.error(`[${processId}] Erro criando sessão de checkout:`, error);
+      console.error(`[${processId}] Error creating checkout session:`, error);
       setCheckoutError(
         error.message || "Não foi possível iniciar o processo de assinatura."
       );

@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
@@ -13,7 +14,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import SubscriptionDetails from "@/components/profile/SubscriptionDetails";
 import { Card, CardHeader, CardContent, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import PaymentOptions from "@/components/pricing/PaymentOptions";
+import PaymentOptions, { PaymentType } from "@/components/pricing/PaymentOptions";
+import CheckoutController from "@/components/subscription/CheckoutController";
 
 const SubscriptionPage = () => {
   const navigate = useNavigate();
@@ -26,12 +28,14 @@ const SubscriptionPage = () => {
   const [isCanceling, setIsCanceling] = useState(false);
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
   const [selectedInstallments, setSelectedInstallments] = useState(1);
+  const [selectedPaymentType, setSelectedPaymentType] = useState<PaymentType>("credit");
   const [processingPayment, setProcessingPayment] = useState(false);
+  const [selectedPlanId, setSelectedPlanId] = useState<string | null>(null);
 
   const success = searchParams.get("success");
   const canceled = searchParams.get("canceled");
   const selectedTab = searchParams.get("tab") || "overview";
-  const selectedPlan = searchParams.get("plan");
+  const planIdParam = searchParams.get("plan");
 
   useEffect(() => {
     if (success === "true") {
@@ -62,8 +66,8 @@ const SubscriptionPage = () => {
         console.log("Subscription loaded:", sub);
         setSubscription(sub);
         
-        if (selectedPlan && (!sub || (sub.status !== "active" && sub.status !== "ACTIVE" && sub.status !== "trialing"))) {
-          handleSubscribe(selectedPlan);
+        if (planIdParam && (!sub || (sub.status !== "active" && sub.status !== "ACTIVE" && sub.status !== "trialing"))) {
+          setSelectedPlanId(planIdParam);
         }
       } catch (error) {
         console.error("Error loading subscription:", error);
@@ -78,7 +82,7 @@ const SubscriptionPage = () => {
     }
 
     loadSubscription();
-  }, [user, navigate, toast, selectedPlan]);
+  }, [user, navigate, toast, planIdParam]);
 
   const handleSubscribe = async (planId: string) => {
     if (!user) {
@@ -86,67 +90,13 @@ const SubscriptionPage = () => {
       return;
     }
 
-    if (processingPayment) {
-      console.log("Payment already processing, preventing duplicate submissions");
-      toast({
-        title: "Processando pagamento",
-        description: "Aguarde, seu pagamento já está sendo processado.",
-        variant: "default",
-      });
-      return;
-    }
-
-    setIsCheckingOut(true);
-    setProcessingPayment(true);
-    setCheckoutError(null);
+    // Instead of proceeding to checkout directly, set the selected plan ID
+    setSelectedPlanId(planId);
     
-    try {
-      console.log(`Starting checkout for plan: ${planId} with ${selectedInstallments} installments`);
-      
-      const result = await subscriptionService.createCheckoutSession({
-        planId,
-        successUrl: `${window.location.origin}/checkout/success`,
-        cancelUrl: `${window.location.origin}/checkout/canceled`,
-        installments: selectedInstallments
-      });
-      
-      // If it's a custom price plan, redirect to contact page
-      if (result.isCustomPlan) {
-        navigate(result.url);
-        return;
-      }
-      
-      if (!result.url) {
-        throw new Error("No checkout URL returned from Asaas");
-      }
-      
-      console.log("Redirecting to Asaas checkout:", result.url);
-      
-      // Direct redirection to payment page
-      if (result.directRedirect) {
-        // Save current state to localStorage before redirecting
-        localStorage.setItem('checkoutPlanId', planId);
-        localStorage.setItem('checkoutInstallments', String(selectedInstallments));
-        localStorage.setItem('checkoutTimestamp', String(Date.now()));
-        
-        // Hard redirect to payment page
-        window.location.href = result.url;
-      } else {
-        // This is just a fallback, we should always have directRedirect=true
-        navigate(result.url);
-      }
-    } catch (error: any) {
-      console.error("Error creating checkout session:", error);
-      setCheckoutError(
-        error.message || "Não foi possível iniciar o processo de assinatura."
-      );
-      toast({
-        title: "Erro ao iniciar checkout",
-        description: "Não foi possível iniciar o processo de assinatura. Por favor, tente novamente mais tarde.",
-        variant: "destructive",
-      });
-      setProcessingPayment(false);
-      setIsCheckingOut(false);
+    // Scroll to payment options
+    const paymentOptionsElement = document.getElementById('payment-options');
+    if (paymentOptionsElement) {
+      paymentOptionsElement.scrollIntoView({ behavior: 'smooth' });
     }
   };
 
@@ -188,6 +138,14 @@ const SubscriptionPage = () => {
 
   const handleInstallmentsChange = (installments: number) => {
     setSelectedInstallments(installments);
+  };
+
+  const handlePaymentTypeChange = (paymentType: PaymentType) => {
+    setSelectedPaymentType(paymentType);
+    // Reset installments to 1 for non-credit payment types
+    if (paymentType !== "credit") {
+      setSelectedInstallments(1);
+    }
   };
 
   if (loading) {
@@ -286,12 +244,29 @@ const SubscriptionPage = () => {
                 onInstallmentsChange={handleInstallmentsChange}
               />
               
-              <div className="mt-8">
-                <PaymentOptions 
-                  onInstallmentsChange={handleInstallmentsChange}
-                  selectedInstallments={selectedInstallments}
-                />
-              </div>
+              {selectedPlanId && (
+                <div id="payment-options" className="mt-8 scroll-mt-16">
+                  <h2 className="text-2xl font-semibold mb-4">Opções de pagamento para {subscriptionService.getPlanFromId(selectedPlanId)?.name || "plano selecionado"}</h2>
+                  
+                  <PaymentOptions 
+                    onInstallmentsChange={handleInstallmentsChange}
+                    onPaymentTypeChange={handlePaymentTypeChange}
+                    selectedInstallments={selectedInstallments}
+                    selectedPaymentType={selectedPaymentType}
+                  />
+                  
+                  <div className="mt-6 text-center">
+                    <CheckoutController 
+                      planId={selectedPlanId}
+                      installments={selectedInstallments}
+                      paymentType={selectedPaymentType}
+                      buttonText="Continuar com o pagamento"
+                      className="px-8 py-3 text-lg"
+                      size="lg"
+                    />
+                  </div>
+                </div>
+              )}
             </TabsContent>
             
             <TabsContent value="details">
