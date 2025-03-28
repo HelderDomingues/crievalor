@@ -5,9 +5,10 @@ import HeroSection from "@/components/HeroSection";
 import ContactSection from "@/components/ContactSection";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { MapPin, Calendar, Users, Target, Award, BarChart3, CheckCircle2, ArrowRight, Phone } from "lucide-react";
+import { MapPin, Calendar, Users, Target, Award, BarChart3, CheckCircle2, ArrowRight, Phone, MessageCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import EscolaGestaoLeadForm from "@/components/EscolaGestaoLeadForm";
+
 const EscolaGestao = () => {
   // Hero images for the carousel
   const heroImages = ["https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=2070", "https://images.unsplash.com/photo-1558021211-6d1403321394?q=80&w=2083", "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?q=80&w=2070"];
@@ -69,8 +70,8 @@ const EscolaGestao = () => {
                     </a>
                   </Button>
                   <Button variant="outline" size="lg" asChild>
-                    <a href="tel:+5547992150289">
-                      <Phone className="mr-2 h-4 w-4" /> Falar com consultor
+                    <a href="https://wa.me/+5547992150289" target="_blank" rel="noreferrer">
+                      <MessageCircle className="mr-2 h-4 w-4" /> Falar com consultor
                     </a>
                   </Button>
                 </div>
@@ -477,8 +478,8 @@ const EscolaGestao = () => {
                 <div className="mt-8 pt-6 border-t border-border">
                   <h4 className="font-medium mb-2">Prefere falar diretamente conosco?</h4>
                   <div className="flex items-center">
-                    <Phone className="h-5 w-5 text-primary mr-2" />
-                    <a href="tel:+5547992150289" className="text-primary hover:underline">
+                    <MessageCircle className="h-5 w-5 text-primary mr-2" />
+                    <a href="https://wa.me/+5547992150289" target="_blank" rel="noreferrer" className="text-primary hover:underline">
                       (47) 99215-0289
                     </a>
                     <span className="mx-2 text-muted-foreground">•</span>
