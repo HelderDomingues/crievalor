@@ -8,6 +8,7 @@ const corsHeaders = {
 };
 
 const ASAAS_API_KEY = Deno.env.get("ASAAS_API_KEY") || "";
+const ASAAS_WEBHOOK_TOKEN = Deno.env.get("ASAAS_WEBHOOK_TOKEN") || "";
 
 serve(async (req) => {
   // Handle CORS preflight requests
@@ -35,6 +36,7 @@ serve(async (req) => {
     const testResults = {
       webhookEndpoint: await testWebhookEndpoint(),
       asaasAccount: await testAsaasAccount(ASAAS_API_KEY),
+      webhookToken: Boolean(ASAAS_WEBHOOK_TOKEN)
     };
 
     return new Response(
@@ -72,13 +74,17 @@ async function testWebhookEndpoint() {
     console.log("Testing webhook endpoint...");
     const webhookUrl = "https://nmxfknwkhnengqqjtwru.supabase.co/functions/v1/asaas-webhook";
     
+    // Get webhook token if available
+    const webhookToken = ASAAS_WEBHOOK_TOKEN || "test_webhook_token";
+    
     // Simulate a request that looks like it comes from Asaas
     const response = await fetch(webhookUrl, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         "User-Agent": "Java/1.8.0_282",  // Simulate Asaas Java user agent
-        "access_token": ASAAS_API_KEY || "test_token" // Use API key if available, otherwise test token
+        "access_token": ASAAS_API_KEY || "test_token", // Use API key if available, otherwise test token
+        "asaas-access-token": webhookToken // Add webhook token in expected format
       },
       body: JSON.stringify({
         testMode: true,
@@ -87,7 +93,9 @@ async function testWebhookEndpoint() {
         payment: {
           id: "test_payment_id",
           status: "PENDING",
-          externalReference: "test_external_reference"
+          externalReference: "test_external_reference",
+          installmentCount: 3, // Add installment info in test data
+          billingType: "CREDIT_CARD"
         }
       })
     });

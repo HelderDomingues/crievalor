@@ -163,6 +163,11 @@ async function generatePaymentLink(data: any) {
       }
     };
     
+    // Garantir que o maxInstallmentCount seja definido corretamente
+    if (paymentLinkData.billingType === "CREDIT_CARD" && !paymentLinkData.maxInstallmentCount && data.installmentCount) {
+      paymentLinkData.maxInstallmentCount = data.installmentCount;
+    }
+    
     console.log("Gerando link de pagamento com dados:", JSON.stringify(paymentLinkData, null, 2));
     
     const { status, data: paymentLink } = await asaasRequest("/paymentLinks", "POST", paymentLinkData);
@@ -287,7 +292,9 @@ async function createPayment(req: Request, data: any, userId: string, supabase: 
         billingType,
         chargeType: "DETACHED",
         dueDateLimitDays: 1,
-        externalReference
+        externalReference,
+        maxInstallmentCount: billingType === "CREDIT_CARD" ? installments : 1,
+        installmentCount: billingType === "CREDIT_CARD" ? installments : 1
       });
       
       return new Response(
@@ -326,7 +333,7 @@ async function createPayment(req: Request, data: any, userId: string, supabase: 
   }
   
   // Criar novo pagamento
-  const paymentData = {
+  const paymentData: any = {
     customer: customerId,
     billingType,
     value,
@@ -334,6 +341,12 @@ async function createPayment(req: Request, data: any, userId: string, supabase: 
     dueDate,
     externalReference
   };
+  
+  // Adicionar configuração de parcelamento para cartão de crédito
+  if (billingType === "CREDIT_CARD" && installments > 1) {
+    paymentData.installmentCount = installments;
+    paymentData.installmentValue = value / installments;
+  }
   
   console.log("Criando pagamento com dados:", paymentData);
   
@@ -354,7 +367,9 @@ async function createPayment(req: Request, data: any, userId: string, supabase: 
     billingType,
     chargeType: "DETACHED",
     dueDateLimitDays: 1,
-    externalReference
+    externalReference,
+    maxInstallmentCount: billingType === "CREDIT_CARD" ? installments : 1,
+    installmentCount: billingType === "CREDIT_CARD" ? installments : 1
   });
   
   console.log("Link de pagamento criado:", paymentLink);

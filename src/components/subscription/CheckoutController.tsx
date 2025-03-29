@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
@@ -38,26 +37,21 @@ const CheckoutController: React.FC<CheckoutControllerProps> = ({
   const [checkoutProcessId, setCheckoutProcessId] = useState<string | null>(null);
   const [checkoutAttempts, setCheckoutAttempts] = useState(0);
 
-  // Clear any errors when loading or when parameters change
   useEffect(() => {
     setCheckoutError(null);
   }, [planId, installments, paymentType]);
 
-  // Limit checkout attempt frequency
   useEffect(() => {
-    // Check if there's an ongoing checkout with a recent timestamp
     const lastCheckoutTime = localStorage.getItem('checkoutTimestamp');
     const checkoutPlanId = localStorage.getItem('checkoutPlanId');
     
     if (lastCheckoutTime && checkoutPlanId === planId) {
       const timeSinceLastCheckout = Date.now() - Number(lastCheckoutTime);
       
-      // If checkout was attempted in the last 5 seconds, show message
       if (timeSinceLastCheckout < 5000) {
         console.log("Recent checkout attempt detected, waiting...");
         setIsCheckingOut(true);
         
-        // Clear after 3 seconds
         const timer = setTimeout(() => {
           setIsCheckingOut(false);
         }, 3000);
@@ -67,19 +61,16 @@ const CheckoutController: React.FC<CheckoutControllerProps> = ({
     }
   }, [planId]);
 
-  // Time checker to prevent multiple clicks
   const canAttemptCheckout = () => {
     const now = Date.now();
     const lastTime = Number(localStorage.getItem('checkoutTimestamp') || '0');
     const attempts = Number(localStorage.getItem('checkoutAttempts') || '0');
     
-    // If last attempt was more than 5 minutes ago, reset counter
     if (now - lastTime > 5 * 60 * 1000) {
       localStorage.setItem('checkoutAttempts', '1');
       return true;
     }
     
-    // Allow max 3 attempts in 5 minutes
     if (attempts >= 3) {
       toast({
         title: "Muitas tentativas",
@@ -89,10 +80,8 @@ const CheckoutController: React.FC<CheckoutControllerProps> = ({
       return false;
     }
     
-    // Increment attempt counter
     localStorage.setItem('checkoutAttempts', String(attempts + 1));
     
-    // If last attempt was less than 15 seconds ago, block
     if (now - lastTime < 15000) {
       toast({
         title: "Aguarde um momento",
@@ -125,12 +114,10 @@ const CheckoutController: React.FC<CheckoutControllerProps> = ({
       return;
     }
 
-    // Check time between attempts
     if (!canAttemptCheckout()) {
       return;
     }
 
-    // Generate a unique process ID for this checkout
     const processId = `checkout_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
     setCheckoutProcessId(processId);
     
@@ -140,10 +127,8 @@ const CheckoutController: React.FC<CheckoutControllerProps> = ({
     try {
       console.log(`[${processId}] Starting checkout for plan: ${planId} with ${installments} installments, payment method: ${paymentType}`);
       
-      // Register timestamp of the attempt
       localStorage.setItem('checkoutTimestamp', String(Date.now()));
       
-      // Get current domain for success/cancel URLs
       const baseUrl = window.location.origin;
       
       const result = await subscriptionService.createCheckoutSession({
@@ -154,7 +139,6 @@ const CheckoutController: React.FC<CheckoutControllerProps> = ({
         paymentType
       });
       
-      // If it's a custom price plan, redirect to contact page
       if (result.isCustomPlan) {
         navigate(result.url);
         return;
@@ -166,17 +150,13 @@ const CheckoutController: React.FC<CheckoutControllerProps> = ({
       
       console.log(`[${processId}] Redirecting to checkout: ${result.url}`);
       
-      // Direct redirection to payment page
       if (result.directRedirect) {
-        // Save to localStorage before redirecting
         localStorage.setItem('checkoutPlanId', planId);
         localStorage.setItem('checkoutInstallments', String(installments));
         localStorage.setItem('checkoutPaymentType', paymentType);
         
-        // Redirect to payment page
         window.location.href = result.url;
       } else {
-        // Fallback, we should always have directRedirect=true
         navigate(result.url);
       }
     } catch (error: any) {
