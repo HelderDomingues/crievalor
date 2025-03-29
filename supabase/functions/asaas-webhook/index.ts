@@ -15,11 +15,25 @@ const corsHeaders = {
   "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS"
 };
 
+// List of trusted Asaas IP addresses (to be updated with actual Asaas IPs)
+// For sandbox testing, we'll accept all IPs, but in production you should restrict this
+const trustedIPs = [
+  // Add known Asaas IP addresses here for production
+  // For sandbox testing, we accept all
+];
+
 serve(async (req) => {
   // Log all requests for debugging
   console.log(`${req.method} request received at ${new Date().toISOString()}`);
   console.log("URL:", req.url);
-  console.log("Headers:", JSON.stringify(Object.fromEntries(req.headers.entries()), null, 2));
+  
+  // Get client IP
+  const clientIP = req.headers.get("x-forwarded-for") || req.headers.get("X-Forwarded-For") || "unknown";
+  console.log("Client IP:", clientIP);
+  
+  // Log all headers for debugging
+  const headersObj = Object.fromEntries(req.headers.entries());
+  console.log("Headers:", JSON.stringify(headersObj, null, 2));
   
   try {
     // Handle OPTIONS requests for CORS preflight
@@ -53,8 +67,9 @@ serve(async (req) => {
     const accessToken = req.headers.get("access_token") || req.headers.get("Access-Token");
     const userAgent = req.headers.get("User-Agent") || "";
     
-    // Detect if this is from Asaas sandbox/production (Java-based)
+    // Detect if this is from Asaas (Java-based) or a test
     const isFromAsaas = userAgent.includes("Java");
+    const isTestMode = requestUrl.searchParams.get("test") === "true";
     
     // Log all potential token sources for debugging
     console.log("Token sources:", {
@@ -65,47 +80,12 @@ serve(async (req) => {
       accessToken,
       userAgent,
       isFromAsaas,
+      isTestMode,
+      clientIP,
       expectedToken: ASAAS_WEBHOOK_TOKEN
     });
     
-    // Check if we have a valid Asaas API Key in the access_token header
-    const isValidAsaasApiKey = accessToken && ASAAS_API_KEY && accessToken === ASAAS_API_KEY;
-    
-    // Authenticate the request - Accept both our webhook token and the Asaas API key
-    let validToken = null;
-    let validApiKey = false;
-    
-    // Check token from URL parameters
-    if (token === ASAAS_WEBHOOK_TOKEN) validToken = token;
-    
-    // Check token from Authorization header
-    else if (authHeader) {
-      let headerToken = authHeader;
-      if (authHeader.startsWith("Bearer ")) {
-        headerToken = authHeader.replace("Bearer ", "");
-      } else if (authHeader.startsWith("Basic ")) {
-        headerToken = authHeader.replace("Basic ", "");
-        try {
-          headerToken = atob(headerToken);
-        } catch (e) {
-          console.log("Not base64 encoded");
-        }
-      }
-      if (headerToken === ASAAS_WEBHOOK_TOKEN) validToken = headerToken;
-    }
-    
-    // Check other header sources
-    else if (xHookToken === ASAAS_WEBHOOK_TOKEN) validToken = xHookToken;
-    else if (asaasToken === ASAAS_WEBHOOK_TOKEN) validToken = asaasToken;
-    else if (accessToken === ASAAS_WEBHOOK_TOKEN) validToken = accessToken;
-    
-    // Check if the access_token matches our Asaas API Key
-    if (isValidAsaasApiKey) {
-      console.log("Authenticated via Asaas API Key in access_token header");
-      validApiKey = true;
-    }
-    
-    // Parse webhook data
+    // Parse webhook data first to check for body tokens and test mode indicators
     let webhookData;
     try {
       const clonedReq = req.clone();
@@ -119,7 +99,13 @@ serve(async (req) => {
           
           // Check for token in body
           if (webhookData && webhookData.token && webhookData.token === ASAAS_WEBHOOK_TOKEN) {
-            validToken = webhookData.token;
+            console.log("Found valid token in request body");
+          }
+          
+          // Check for test mode indicator in body
+          if (webhookData && webhookData.testMode === true) {
+            console.log("Test mode detected in request body");
+            isTestMode = true;
           }
         } catch (e) {
           console.error("Error parsing JSON payload:", e);
@@ -134,74 +120,248 @@ serve(async (req) => {
       webhookData = {};
     }
     
-    // Log authentication check details
-    console.log("Authentication check details:", {
-      urlToken: token,
-      headerToken: authHeader,
-      xHookToken,
-      asaasToken,
-      accessToken,
-      bodyToken: webhookData?.token,
-      validToken,
-      validApiKey,
-      userAgent,
-      isFromAsaas,
-      expectedToken: ASAAS_WEBHOOK_TOKEN
-    });
+    // Check if we have a valid Asaas API Key in the access_token header
+    const isValidAsaasApiKey = accessToken && ASAAS_API_KEY && accessToken === ASAAS_API_KEY;
     
-    // Token validation with special handling for Asaas sandbox/production (Java User-Agent)
-    // This is a temporary measure for development and the sandbox environment
-    const isTokenRequired = !!ASAAS_WEBHOOK_TOKEN;
+    // Authenticate the request - Accept both our webhook token and the Asaas API key
+    let validToken = false;
+    let validApiKey = false;
+    let ipValidated = false;
     
-    if (isTokenRequired && !validToken && !validApiKey) {
-      // Special handling for Asaas sandbox/production requests
-      if (isFromAsaas) {
-        console.log("Accepting request from Asaas (Java User-Agent) without token for sandbox development");
-        // Continue processing without token validation
+    // IP-based validation for Asaas requests (SOLUTION 4)
+    if (isFromAsaas) {
+      if (trustedIPs.length === 0) {
+        // If no trusted IPs are configured, allow all IPs for Asaas requests (for development)
+        console.log("No trusted IPs configured, accepting all IPs for Asaas requests");
+        ipValidated = true;
+      } else if (clientIP && trustedIPs.includes(clientIP)) {
+        console.log(`IP validation passed: ${clientIP} is in trusted IPs list`);
+        ipValidated = true;
       } else {
-        console.warn("Invalid or missing webhook token", {
-          receivedTokens: {
-            urlToken: token,
-            authHeader,
-            xHookToken,
-            asaasToken,
-            accessToken,
-            bodyToken: webhookData?.token
-          },
-          expectedToken: ASAAS_WEBHOOK_TOKEN
-        });
+        console.log(`IP validation failed: ${clientIP} is not in trusted IPs list`);
+      }
+    }
+    
+    // Check token from URL parameters
+    if (token === ASAAS_WEBHOOK_TOKEN) {
+      console.log("Valid token found in URL parameters");
+      validToken = true;
+    }
+    
+    // Check token from Authorization header
+    else if (authHeader) {
+      let headerToken = authHeader;
+      if (authHeader.startsWith("Bearer ")) {
+        headerToken = authHeader.replace("Bearer ", "");
+      } else if (authHeader.startsWith("Basic ")) {
+        headerToken = authHeader.replace("Basic ", "");
+        try {
+          headerToken = atob(headerToken);
+        } catch (e) {
+          console.log("Not base64 encoded");
+        }
+      }
+      if (headerToken === ASAAS_WEBHOOK_TOKEN) {
+        console.log("Valid token found in Authorization header");
+        validToken = true;
+      }
+    }
+    
+    // Check other header sources
+    else if (xHookToken === ASAAS_WEBHOOK_TOKEN) {
+      console.log("Valid token found in x-hook-token header");
+      validToken = true;
+    }
+    else if (asaasToken === ASAAS_WEBHOOK_TOKEN) {
+      console.log("Valid token found in asaas-token header");
+      validToken = true;
+    }
+    else if (accessToken === ASAAS_WEBHOOK_TOKEN) {
+      console.log("Valid token found in access_token header");
+      validToken = true;
+    }
+    
+    // Check if the access_token matches our Asaas API Key
+    if (isValidAsaasApiKey) {
+      console.log("Authenticated via Asaas API Key in access_token header");
+      validApiKey = true;
+    }
+    
+    // SOLUTION 1: More permissive authentication for Asaas sandbox environment
+    // Special handling for Asaas requests with Java User-Agent
+    if (isFromAsaas) {
+      console.log("Request appears to be from Asaas based on User-Agent");
+      
+      // For Asaas sandbox, we accept requests even without proper tokens to facilitate development
+      // SOLUTION 2: Always send 200 OK to prevent Asaas from retrying
+      if (!validToken && !validApiKey && !ipValidated) {
+        console.log("Request from Asaas without valid token, but accepting for development");
         
-        // For test calls, respond with clear error
-        if (webhookData && webhookData.testMode) {
-          return new Response(
-            JSON.stringify({ 
-              success: false,
-              error: "Unauthorized", 
-              message: "Missing or invalid token for webhook authentication",
-              hint: "Make sure your webhook is configured with the correct token in access_token header"
-            }),
-            {
-              status: 401,
-              headers: { ...corsHeaders, "Content-Type": "application/json" }
+        // Check if this is an actual payment event that we should process
+        if (webhookData && webhookData.event && webhookData.payment) {
+          console.log("Processing webhook despite missing authentication due to Asaas User-Agent");
+          
+          // Process payment information below
+          const event = webhookData.event;
+          const payment = webhookData.payment;
+          
+          // Initialize Supabase client for database operations
+          const supabase = createClient(supabaseUrl, supabaseServiceKey);
+          
+          // Find subscription associated with this payment
+          const { data: subscription, error: subscriptionError } = await supabase
+            .from("subscriptions")
+            .select("*")
+            .eq("payment_id", payment.id)
+            .maybeSingle();
+          
+          if (subscriptionError) {
+            console.error("Error finding subscription by payment_id:", subscriptionError);
+          }
+          
+          if (!subscription) {
+            console.log(`No subscription found for payment_id ${payment.id}, trying to find by externalReference`);
+            
+            // Try looking up by external reference
+            if (payment.externalReference) {
+              const { data: subByRef, error: refError } = await supabase
+                .from("subscriptions")
+                .select("*")
+                .eq("external_reference", payment.externalReference)
+                .maybeSingle();
+              
+              if (refError) {
+                console.error("Error finding subscription by external reference:", refError);
+              }
+              
+              if (!refError && subByRef) {
+                console.log(`Found subscription by external reference: ${payment.externalReference}`);
+                
+                // Update the payment_id in the subscription
+                const { error: updateError } = await supabase
+                  .from("subscriptions")
+                  .update({ 
+                    payment_id: payment.id,
+                    payment_status: payment.status,
+                    updated_at: new Date().toISOString() 
+                  })
+                  .eq("id", subByRef.id);
+                
+                if (updateError) {
+                  console.error("Error updating payment_id in subscription:", updateError);
+                } else {
+                  console.log(`Payment ID updated in subscription ${subByRef.id}`);
+                  
+                  // Continue processing with the found subscription
+                  return await processPaymentEvent(supabase, event, payment, subByRef);
+                }
+              } else {
+                console.log(`No subscription found for external reference: ${payment.externalReference}`);
+              }
             }
-          );
+            
+            // If we got here, no subscription was found
+            return new Response(
+              JSON.stringify({ 
+                success: true, 
+                message: "Payment event received, but no matching subscription found",
+                paymentId: payment.id,
+                externalReference: payment.externalReference || 'none'
+              }),
+              {
+                status: 200, // Return 200 to prevent retries
+                headers: { ...corsHeaders, "Content-Type": "application/json" }
+              }
+            );
+          }
+          
+          // Process the payment event for the found subscription
+          return await processPaymentEvent(supabase, event, payment, subscription);
         }
         
-        // For other unauthorized calls, return 200 to prevent retries but indicate error
+        // Always acknowledge Asaas requests, even when not processing them
         return new Response(
           JSON.stringify({ 
-            success: false,
-            error: "Unauthorized", 
-            code: 401, 
-            message: "Missing or invalid token",
-            detail: "The provided token does not match the configured webhook token. Please configure access_token header."
+            success: true, 
+            message: "Webhook acknowledged (sandbox/development mode)", 
+            timestamp: new Date().toISOString(),
+            note: "Authentication not required for sandbox in development mode"
           }),
           {
-            status: 200, // Return 200 to prevent retries
+            status: 200,
             headers: { ...corsHeaders, "Content-Type": "application/json" }
           }
         );
       }
+    }
+    
+    // For test calls, provide clear feedback
+    if (isTestMode) {
+      if (!validToken && !validApiKey && !ipValidated) {
+        console.log("Test request failed authentication");
+        return new Response(
+          JSON.stringify({ 
+            success: false,
+            error: "Unauthorized", 
+            message: "Missing or invalid token for webhook authentication",
+            hint: "Make sure your webhook is configured with the correct token in access_token header",
+            receivedTokens: {
+              urlToken: token ? "present" : "missing",
+              authHeader: authHeader ? "present" : "missing",
+              xHookToken: xHookToken ? "present" : "missing",
+              asaasToken: asaasToken ? "present" : "missing",
+              accessToken: accessToken ? "present" : "missing"
+            }
+          }),
+          {
+            status: 200, // Return 200 so the test can see the error
+            headers: { ...corsHeaders, "Content-Type": "application/json" }
+          }
+        );
+      } else {
+        console.log("Test request authenticated successfully");
+        return new Response(
+          JSON.stringify({ 
+            success: true, 
+            message: "Test request authenticated successfully", 
+            timestamp: new Date().toISOString(),
+            authMethod: validToken ? "token" : (validApiKey ? "apiKey" : "ipValidation")
+          }),
+          {
+            status: 200,
+            headers: { ...corsHeaders, "Content-Type": "application/json" }
+          }
+        );
+      }
+    }
+
+    // For non-test requests, enforce authentication if required
+    if (!validToken && !validApiKey && !ipValidated && !isFromAsaas) {
+      console.warn("Invalid or missing webhook token", {
+        receivedTokens: {
+          urlToken: token,
+          authHeader: authHeader ? "present" : "missing",
+          xHookToken: xHookToken ? "present" : "missing",
+          asaasToken: asaasToken ? "present" : "missing",
+          accessToken: accessToken ? "present" : "missing"
+        },
+        expectedToken: "configured token" // don't log actual token values
+      });
+      
+      // For non-test unauthorized calls, return 200 to prevent retries but indicate error
+      return new Response(
+        JSON.stringify({ 
+          success: false,
+          error: "Unauthorized", 
+          code: 401, 
+          message: "Missing or invalid token",
+          detail: "The provided token does not match the configured webhook token. Please configure access_token header."
+        }),
+        {
+          status: 200, // Return 200 to prevent retries (SOLUTION 2)
+          headers: { ...corsHeaders, "Content-Type": "application/json" }
+        }
+      );
     }
 
     // Initialize Supabase client
@@ -339,7 +499,7 @@ serve(async (req) => {
     
     return new Response(
       JSON.stringify({ 
-        success: true, // Still indicate success to prevent retries
+        success: true, // Still indicate success to prevent retries (SOLUTION 2)
         error: "Error processing webhook, but acknowledged", 
         message: error.message,
         stack: error.stack

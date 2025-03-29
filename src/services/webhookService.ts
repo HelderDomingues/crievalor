@@ -25,8 +25,18 @@ export const webhookService = {
       // Adicionar timestamp para evitar cache
       const timestamp = new Date().getTime();
       
+      // Add test flag to explicitly mark this as a test request
       const response = await supabase.functions.invoke("test-webhook", {
-        body: { timestamp },
+        body: { 
+          timestamp,
+          test: true,
+          // Send additional debug information to help with troubleshooting
+          userAgent: navigator.userAgent,
+          screenSize: {
+            width: window.innerWidth,
+            height: window.innerHeight
+          }
+        },
         headers: {
           Authorization: `Bearer ${session.access_token}`
         }

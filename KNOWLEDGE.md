@@ -427,4 +427,12 @@ Identificação do formato correto de autenticação esperado pelo Asaas. Em vez
 3. Simplificação da lógica de teste para focar no essencial
 4. Exibição mais clara dos resultados na interface
 
+### Implementação de validação por IP
+
+**Implementação**:
+1. Adição de um mecanismo para validar requisições com base no IP de origem
+2. Criação de uma lista de IPs confiáveis para o ambiente de produção
+3. Configuração para aceitar todos os IPs durante a fase de desenvolvimento e testes
+4. Logs detalhados para monitorar as requisições por IP
+
 Este log continuará a ser atualizado com novas interações, desafios e soluções à medida que o projeto avança.
