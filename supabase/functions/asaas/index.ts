@@ -262,7 +262,7 @@ async function generatePaymentLink(data: any): Promise<any> {
       name: data.description,
       description: `Pagamento ${data.description}`,
       endDate: data.endDate || null,
-      value: data.value,
+      value: data.value, // This should be the total value
       dueDateLimitDays: 1,
       subscriptionCycle: null,
       maxInstallmentCount: data.billingType === 'CREDIT_CARD' ? installments : 1,
@@ -334,7 +334,7 @@ async function createPayment(paymentData: any): Promise<any> {
       const linkData = {
         description: paymentData.description,
         billingType: paymentData.billingType,
-        value: paymentData.value,
+        value: paymentData.value, // Use total value here
         successUrl: paymentData.successUrl,
         cancelUrl: paymentData.cancelUrl,
         endDate: new Date(new Date().setDate(new Date().getDate() + 4)).toISOString().split('T')[0],
@@ -357,7 +357,7 @@ async function createPayment(paymentData: any): Promise<any> {
       const installmentRequestBody = {
         customer: paymentData.customerId,
         billingType: paymentData.billingType,
-        value: paymentData.value,
+        value: paymentData.value, // Total value for all installments
         description: paymentData.description,
         externalReference: paymentData.externalReference,
         postalService: paymentData.postalService || false,
@@ -393,7 +393,7 @@ async function createPayment(paymentData: any): Promise<any> {
         const linkData = {
           description: paymentData.description,
           billingType: paymentData.billingType,
-          value: paymentData.value,
+          value: paymentData.value, // Total value
           successUrl: paymentData.successUrl,
           cancelUrl: paymentData.cancelUrl,
           endDate: new Date(new Date().setDate(new Date().getDate() + 4)).toISOString().split('T')[0],
@@ -419,7 +419,7 @@ async function createPayment(paymentData: any): Promise<any> {
       const requestBody: any = {
         customer: paymentData.customerId,
         billingType: paymentData.billingType,
-        value: paymentData.value,
+        value: paymentData.value, // Total value
         dueDate: paymentData.dueDate,
         description: paymentData.description,
         externalReference: paymentData.externalReference,
@@ -450,7 +450,7 @@ async function createPayment(paymentData: any): Promise<any> {
       const linkData = {
         description: paymentData.description,
         billingType: paymentData.billingType,
-        value: paymentData.value,
+        value: paymentData.value, // Total value
         successUrl: paymentData.successUrl,
         cancelUrl: paymentData.cancelUrl,
         endDate: new Date(new Date().setDate(new Date().getDate() + 4)).toISOString().split('T')[0],

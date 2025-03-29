@@ -1,3 +1,4 @@
+
 import { supabase } from "@/integrations/supabase/client";
 import { Subscription, CreateCheckoutOptions } from "@/types/subscription";
 import { plansService } from "./plansService";
@@ -99,14 +100,14 @@ export const subscriptionService = {
       
       console.log(`Asaas customer ${isNew ? 'created' : 'retrieved'}: ${customerId}`);
       
-      // Calculate payment amount based on installments
-      const paymentValue = plansService.calculatePaymentAmount(regularPlan, installments);
+      // Calculate payment amount based on installments - using the TOTAL to be paid, not the per-installment value
+      const totalPaymentValue = installments === 1 ? regularPlan.cashPrice : regularPlan.totalPrice;
       
       // Generate a unique external reference to prevent duplicate payments
       const externalReference = await paymentsService.generateUniqueReference(user.id, planId);
       
       // Check if there's already a pending payment for this plan and user
-      const existingPaymentCheck = await paymentsService.checkExistingPayment(customerId, planId, user.id);
+      const existingPaymentCheck = await paymentsService.checkExistingPayment(customerId, planId, user.id, installments);
       
       // If we already have a pending payment with a link, return that link instead of creating a new one
       if (!existingPaymentCheck.needsCreation && existingPaymentCheck.paymentLink) {
@@ -136,7 +137,7 @@ export const subscriptionService = {
         customerId,
         planId,
         userId: user.id,
-        value: paymentValue,
+        value: totalPaymentValue, // We pass the total payment value, not per installment
         description: `Compra: ${regularPlan.name}`,
         successUrl,
         cancelUrl,

@@ -1,3 +1,4 @@
+
 import { supabase } from "@/integrations/supabase/client";
 import { v4 as uuidv4 } from "uuid";
 import { PaymentType } from "@/components/pricing/PaymentOptions";
@@ -47,7 +48,7 @@ export interface PaymentCreationOptions {
   customerId: string;
   planId: string;
   userId: string;
-  value: number;
+  value: number; // This should be the TOTAL payment amount
   description: string;
   successUrl: string;
   cancelUrl: string;

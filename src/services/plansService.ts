@@ -60,7 +60,10 @@ export const plansService = {
   },
   
   // Calculate payment amount based on plan and installments
+  // This function should return the total amount to be paid, not per installment
   calculatePaymentAmount(plan: RegularPlan, installments: number): number {
+    // If installments is 1, return cashPrice (with discount)
+    // If installments > 1, return totalPrice (full price)
     return installments === 1 ? plan.cashPrice : plan.totalPrice;
   }
 };

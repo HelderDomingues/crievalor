@@ -3,12 +3,14 @@ import React from "react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
 import { errorUtils } from "@/utils/errorUtils";
+import { Button } from "@/components/ui/button";
 
 interface CheckoutErrorProps {
   error: string;
+  onRetry?: () => void;
 }
 
-const CheckoutError = ({ error }: CheckoutErrorProps) => {
+const CheckoutError = ({ error, onRetry }: CheckoutErrorProps) => {
   if (!error) return null;
   
   // Use the error utils for consistent error mapping
@@ -31,7 +33,19 @@ const CheckoutError = ({ error }: CheckoutErrorProps) => {
     <Alert variant="destructive" className="mb-6">
       <AlertCircle className="h-4 w-4" />
       <AlertTitle>{errorTitle}</AlertTitle>
-      <AlertDescription>{displayError}</AlertDescription>
+      <AlertDescription className="flex flex-col gap-2">
+        <div>{displayError}</div>
+        {onRetry && (
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={onRetry}
+            className="mt-2 self-start"
+          >
+            Tentar novamente
+          </Button>
+        )}
+      </AlertDescription>
     </Alert>
   );
 };

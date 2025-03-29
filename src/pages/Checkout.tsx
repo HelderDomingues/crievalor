@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
@@ -410,13 +411,13 @@ const Checkout = () => {
                             const plan = subscriptionService.getPlanFromId(selectedPlanId);
                             if (!plan || !('price' in plan)) return "Sob consulta";
                             
-                            const price = selectedInstallments === 1 ? plan.cashPrice : plan.totalPrice;
+                            const totalPrice = selectedInstallments === 1 ? plan.cashPrice : plan.totalPrice;
                             
                             if (selectedInstallments > 1) {
-                              const installmentValue = price / selectedInstallments;
+                              const installmentValue = totalPrice / selectedInstallments;
                               return `${selectedInstallments}x de R$ ${installmentValue.toFixed(2).replace('.', ',')}`;
                             } else {
-                              return `R$ ${price.toFixed(2).replace('.', ',')}`;
+                              return `R$ ${totalPrice.toFixed(2).replace('.', ',')}`;
                             }
                           })()}
                         </span>
