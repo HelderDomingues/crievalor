@@ -13,6 +13,8 @@ import { subscriptionService, PLANS } from "@/services/subscriptionService";
 import { PaymentType } from "@/components/pricing/PaymentOptions";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
+import { checkoutRecoveryService } from "@/services/checkoutRecoveryService";
+import { errorUtils } from "@/utils/errorUtils";
 
 // Step types for the checkout process
 type CheckoutStep = "plan" | "payment" | "registration" | "processing";
@@ -34,6 +36,8 @@ const Checkout = () => {
   const [selectedPaymentType, setSelectedPaymentType] = useState<PaymentType>("credit");
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [processId, setProcessId] = useState<string>(`checkout_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`);
+  const [isRecovering, setIsRecovering] = useState(false);
   
   // Plan validation on load
   useEffect(() => {
@@ -59,7 +63,50 @@ const Checkout = () => {
     }
     
     setSelectedPlanId(planId);
-  }, [planId, navigate, toast]);
+    
+    // Check for a recovery state on initial load
+    const recoveryState = checkoutRecoveryService.getRecoveryState();
+    
+    if (recoveryState && checkoutRecoveryService.isStateValid(recoveryState, planId)) {
+      console.log(`[${processId}] Found valid recovery state:`, recoveryState);
+      
+      // Restore saved state
+      if (recoveryState.installments) {
+        setSelectedInstallments(recoveryState.installments);
+      }
+      
+      if (recoveryState.paymentType) {
+        setSelectedPaymentType(recoveryState.paymentType as PaymentType);
+      }
+      
+      if (recoveryState.paymentLink) {
+        // If we have a payment link, check if we're in a recent session
+        const isRecent = Date.now() - recoveryState.timestamp < 10 * 60 * 1000;
+        
+        if (isRecent) {
+          console.log(`[${processId}] Found recent payment link, will prompt user for recovery`);
+          
+          toast({
+            title: "Sessão de pagamento encontrada",
+            description: "Encontramos uma sessão de pagamento pendente. Deseja continuar de onde parou?",
+            variant: "default",
+            action: (
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={() => {
+                  setIsRecovering(true);
+                  window.location.href = recoveryState.paymentLink as string;
+                }}
+              >
+                Continuar
+              </Button>
+            ),
+          });
+        }
+      }
+    }
+  }, [planId, navigate, toast, processId]);
   
   // Recuperar valores do localStorage, se existirem
   useEffect(() => {
@@ -169,13 +216,24 @@ const Checkout = () => {
       // Get current domain for success/cancel URLs
       const baseUrl = window.location.origin;
       
+      // Save checkout state for recovery
+      const recoveryState = {
+        timestamp: Date.now(),
+        planId: selectedPlanId,
+        installments: selectedInstallments,
+        paymentType: selectedPaymentType,
+        processId: processId
+      };
+      
+      checkoutRecoveryService.saveRecoveryState(recoveryState);
+      
       // Salvar informações importantes na localStorage antes da tentativa
       localStorage.setItem('checkoutPlanId', selectedPlanId);
       localStorage.setItem('checkoutInstallments', String(selectedInstallments));
       localStorage.setItem('checkoutPaymentType', selectedPaymentType);
       localStorage.setItem('checkoutTimestamp', String(Date.now()));
       
-      console.log("Iniciando processo de pagamento com:", {
+      console.log(`[${processId}] Iniciando processo de pagamento com:`, {
         planId: selectedPlanId,
         installments: selectedInstallments,
         paymentType: selectedPaymentType
@@ -196,32 +254,61 @@ const Checkout = () => {
       }
       
       if (!result.url) {
-        throw new Error("Nenhum link de pagamento foi retornado");
+        throw new Error("Nenhum link de checkout foi retornado");
       }
       
-      console.log("Redirecting to payment page:", result.url);
+      console.log(`[${processId}] Redirecting to payment page:`, result.url);
+      
+      // Update recovery state with the payment link
+      checkoutRecoveryService.saveRecoveryState({
+        ...recoveryState,
+        paymentLink: result.url
+      });
+      
+      localStorage.setItem('lastPaymentUrl', result.url);
       
       // Salvar informações adicionais antes do redirecionamento
       if (result.payment) {
         // Ensure we're storing a string for payment ID
         const paymentId = typeof result.payment === 'object' ? result.payment.id : result.payment;
         localStorage.setItem('checkoutPaymentId', paymentId);
+        
+        // Update recovery state with payment ID
+        checkoutRecoveryService.saveRecoveryState({
+          ...recoveryState,
+          paymentId: paymentId
+        });
       }
       
       if (result.dbSubscription?.id) {
         localStorage.setItem('checkoutSubscriptionId', result.dbSubscription.id);
+        
+        // Update recovery state with subscription ID
+        checkoutRecoveryService.saveRecoveryState({
+          ...recoveryState,
+          subscriptionId: result.dbSubscription.id
+        });
       }
       
       // Usar window.location.href para garantir um redirecionamento completo
       window.location.href = result.url;
     } catch (error: any) {
-      console.error("Error creating checkout session:", error);
+      // Log the error with additional context
+      errorUtils.logError(error, {
+        planId: selectedPlanId,
+        installments: selectedInstallments,
+        paymentType: selectedPaymentType,
+        step: currentStep
+      }, processId);
+      
       setError(error.message || "Não foi possível iniciar o processo de pagamento.");
+      
       toast({
         title: "Erro ao processar pagamento",
-        description: "Não foi possível iniciar o processo de pagamento. Por favor, tente novamente.",
+        description: errorUtils.getUserFriendlyMessage(error),
         variant: "destructive",
       });
+      
       setIsProcessing(false);
     }
   };

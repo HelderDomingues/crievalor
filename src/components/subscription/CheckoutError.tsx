@@ -2,6 +2,7 @@
 import React from "react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
+import { errorUtils } from "@/utils/errorUtils";
 
 interface CheckoutErrorProps {
   error: string;
@@ -10,27 +11,20 @@ interface CheckoutErrorProps {
 const CheckoutError = ({ error }: CheckoutErrorProps) => {
   if (!error) return null;
   
-  // Improve error messages for common issues
-  let displayError = error;
+  // Use the error utils for consistent error mapping
+  const displayError = errorUtils.getUserFriendlyMessage(error);
+  
+  // Determine appropriate error title based on the error message
   let errorTitle = "Erro ao iniciar checkout";
   
-  if (error.includes("Edge Function")) {
-    displayError = "Erro na comunicação com a plataforma de pagamento. Por favor, tente novamente em alguns instantes.";
-  } else if (error.includes("CPF ou CNPJ é obrigatório")) {
+  if (error.includes("CPF ou CNPJ") || error.includes("Nome completo") || error.includes("Telefone")) {
     errorTitle = "Informações de perfil incompletas";
-    displayError = "CPF ou CNPJ é obrigatório para realizar pagamentos. Por favor, complete seu perfil antes de continuar.";
-  } else if (error.includes("Nome completo é obrigatório")) {
-    errorTitle = "Informações de perfil incompletas";
-    displayError = "Nome completo é obrigatório para realizar pagamentos. Por favor, complete seu perfil antes de continuar.";
-  } else if (error.includes("Telefone é obrigatório")) {
-    errorTitle = "Informações de perfil incompletas";
-    displayError = "Telefone é obrigatório para realizar pagamentos. Por favor, complete seu perfil antes de continuar.";
   } else if (error.includes("No payments were created") || error.includes("Nenhum pagamento foi criado")) {
     errorTitle = "Erro ao processar parcelas";
-    displayError = "Não foi possível criar o parcelamento do pagamento. Por favor, tente novamente ou escolha outro método de pagamento.";
-  } else if (error.includes("Nenhum link de checkout foi retornado")) {
+  } else if (error.includes("Edge Function") || error.includes("comunicação")) {
+    errorTitle = "Erro de comunicação";
+  } else if (error.includes("Nenhum link de checkout")) {
     errorTitle = "Erro ao processar pagamento";
-    displayError = "Não foi possível obter o link de pagamento. Por favor, tente novamente em alguns instantes.";
   }
   
   return (
