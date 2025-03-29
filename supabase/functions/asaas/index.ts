@@ -353,11 +353,15 @@ async function createPayment(paymentData: any): Promise<any> {
     if (installments > 1 && paymentData.billingType === 'CREDIT_CARD') {
       console.log(`Creating payment with ${installments} installments via API de parcelamento`);
       
+      // FIXED: Calculate per-installment value (divide total by number of installments)
+      const perInstallmentValue = Number((paymentData.value / installments).toFixed(2));
+      console.log(`Total value: ${paymentData.value}, Per installment value: ${perInstallmentValue}`);
+      
       // Criar um novo parcelamento usando a API específica
       const installmentRequestBody = {
         customer: paymentData.customerId,
         billingType: paymentData.billingType,
-        value: paymentData.value, // Total value for all installments
+        value: perInstallmentValue, // FIXED: Now using per-installment value here
         description: paymentData.description,
         externalReference: paymentData.externalReference,
         postalService: paymentData.postalService || false,
