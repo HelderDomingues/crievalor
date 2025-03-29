@@ -17,6 +17,22 @@
 
 ## Interaction Log {#interaction-log}
 
+### 2024-03-29 - Desabilitar verificação JWT para webhooks do Asaas
+
+**Discussão**:
+- Identificação do problema: após atualização das Edge Functions, a verificação JWT foi ativada por padrão
+- Essa verificação impede o funcionamento correto do webhook do Asaas
+- Necessidade de desabilitar especificamente a verificação JWT para as funções relacionadas ao Asaas
+
+**Implementação**:
+- Desativação da verificação JWT para as edge functions relacionadas ao Asaas
+- Confirmação de que o webhook voltou a funcionar corretamente após essa modificação
+
+**Ação planejada**:
+- Manter a verificação JWT desativada para essas funções específicas
+- Documentar claramente esta exceção para evitar problemas em atualizações futuras
+- Considerar mecanismos alternativos de segurança para essas funções
+
 ### 2024-03-29 - Aceitação de webhooks do Asaas sem token de acesso para o ambiente Sandbox
 
 **Discussão**:
@@ -186,6 +202,22 @@
 
 ## Problems and Solutions {#problems-and-solutions}
 
+### Problem: Verificação JWT impede o funcionamento do webhook do Asaas
+
+**Description**:
+A ativação da verificação JWT (padrão nas Edge Functions do Supabase) impede o recebimento correto de webhooks do Asaas.
+
+**Analysis**:
+O Asaas envia requisições que não contêm JWT válido do Supabase, portanto a verificação JWT precisa ser desativada especificamente para estas funções.
+
+**Solution**:
+- Desabilitar a verificação JWT para as edge functions relacionadas ao Asaas no painel do Supabase
+- Documentar essa exceção para evitar problemas em atualizações futuras
+- Manter mecanismos alternativos de autenticação como verificação de User-Agent, IP e tokens específicos do Asaas
+
+**Status Atual**:
+Implementado. O webhook do Asaas está funcionando corretamente com a verificação JWT desativada.
+
 ### Problem: Asaas Sandbox não envia header access_token
 
 **Description**:
@@ -304,6 +336,21 @@ Updated RLS policies and ensured proper user context was maintained during payme
 
 ## Architectural Decisions {#architectural-decisions}
 
+### Edge Function Security Exception
+
+**Decision**:
+Desativar a verificação JWT para edge functions que processam webhooks do Asaas
+
+**Justification**:
+- Asaas não envia JWTs compatíveis com o Supabase
+- Webhooks são essenciais para o processamento de eventos de pagamento
+- Segurança alternativa é implementada através de verificação de User-Agent e tokens específicos
+
+**Impact**:
+- Exceção controlada à regra de segurança padrão
+- Necessidade de monitoramento adicional
+- Documentação clara para evitar reativação acidental
+
 ### Edge Function Strategy
 
 **Decision**:
@@ -351,6 +398,7 @@ Use a combination of React Query and local state
 - Configurado no painel do Asaas
 - URL atualizada para:
   - `https://nmxfknwkhnengqqjtwru.supabase.co/functions/v1/asaas-webhook`
+- **IMPORTANTE**: Verificação JWT deve ser desativada para esta função no painel do Supabase
 - Ambiente de sandbox aceita requisições sem autenticação para facilitar testes
 - Ambiente de produção requer autenticação via header `access_token` contendo a chave API do Asaas
 - Identificação do tipo de ambiente via User-Agent (Java = requisição do Asaas)
