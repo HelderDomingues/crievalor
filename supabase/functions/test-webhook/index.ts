@@ -94,7 +94,7 @@ async function testWebhookEndpoint() {
           id: "test_payment_id",
           status: "PENDING",
           externalReference: "test_external_reference",
-          installmentCount: 3, // Add installment info in test data
+          installmentCount: 8, // Add installment info in test data
           billingType: "CREDIT_CARD"
         }
       })

@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
@@ -128,8 +129,19 @@ const CheckoutController: React.FC<CheckoutControllerProps> = ({
       console.log(`[${processId}] Starting checkout for plan: ${planId} with ${installments} installments, payment method: ${paymentType}`);
       
       localStorage.setItem('checkoutTimestamp', String(Date.now()));
+      localStorage.setItem('checkoutInstallments', String(installments));
+      localStorage.setItem('checkoutPaymentType', paymentType);
       
       const baseUrl = window.location.origin;
+      
+      // Log more details of the request
+      console.log(`[${processId}] Making checkout request with:`, {
+        planId,
+        installments,
+        paymentType,
+        successUrl: `${baseUrl}/checkout/success`,
+        cancelUrl: `${baseUrl}/checkout/canceled`
+      });
       
       const result = await subscriptionService.createCheckoutSession({
         planId,
@@ -138,6 +150,8 @@ const CheckoutController: React.FC<CheckoutControllerProps> = ({
         installments,
         paymentType
       });
+      
+      console.log(`[${processId}] Checkout result:`, result);
       
       if (result.isCustomPlan) {
         navigate(result.url);
@@ -152,8 +166,6 @@ const CheckoutController: React.FC<CheckoutControllerProps> = ({
       
       if (result.directRedirect) {
         localStorage.setItem('checkoutPlanId', planId);
-        localStorage.setItem('checkoutInstallments', String(installments));
-        localStorage.setItem('checkoutPaymentType', paymentType);
         
         window.location.href = result.url;
       } else {

@@ -1,3 +1,4 @@
+
 import { supabase } from "@/integrations/supabase/client";
 import { v4 as uuidv4 } from "uuid";
 import { PaymentType } from "@/components/pricing/PaymentOptions";
@@ -89,10 +90,11 @@ export const paymentsService = {
     return currentAttempt.count <= 3 && (currentAttempt.count === 1 || now - currentAttempt.timestamp > 15000);
   },
   
-  async checkExistingPayment(customerId: string, planId: string, userId: string): Promise<PaymentCheckResult> {
+  async checkExistingPayment(customerId: string, planId: string, userId: string, installments: number = 1): Promise<PaymentCheckResult> {
     try {
-      console.log(`Verificando pagamentos existentes - customerId: ${customerId}, planId: ${planId}, userId: ${userId}`);
+      console.log(`Verificando pagamentos existentes - customerId: ${customerId}, planId: ${planId}, userId: ${userId}, installments: ${installments}`);
       
+      // Buscar assinatura pendente no banco de dados
       const { data: existingSubscription } = await supabase
         .from("subscriptions")
         .select("*")
@@ -100,6 +102,17 @@ export const paymentsService = {
         .eq("plan_id", planId)
         .eq("status", "pending")
         .maybeSingle();
+      
+      // Se encontrou uma assinatura pendente com número de parcelas diferente, considere inválida
+      if (existingSubscription && existingSubscription.installments !== installments) {
+        console.log(`Assinatura pendente encontrada com parcelas diferentes: ${existingSubscription.installments} vs ${installments}`);
+        return { 
+          dbSubscription: existingSubscription,
+          payment: null,
+          paymentLink: null,
+          needsCreation: true
+        };
+      }
       
       if (existingSubscription && existingSubscription.asaas_payment_link) {
         console.log("Encontrada assinatura pendente com link de pagamento:", existingSubscription);
@@ -133,13 +146,15 @@ export const paymentsService = {
         console.log("Link de pagamento existente não é mais válido");
       }
       
+      // Verificar no Asaas
       const response = await supabase.functions.invoke("asaas", {
         body: {
           action: "check-existing-payments",
           data: {
             customerId,
             planId,
-            userId
+            userId,
+            installments
           },
         },
       });
@@ -230,7 +245,8 @@ export const paymentsService = {
       const existingPayment = await this.checkExistingPayment(
         options.customerId,
         options.planId,
-        options.userId
+        options.userId,
+        options.installments
       );
       
       if (!existingPayment.needsCreation && existingPayment.paymentLink) {
@@ -240,6 +256,8 @@ export const paymentsService = {
           paymentLink: existingPayment.paymentLink
         };
       }
+      
+      console.log("Criando novo pagamento com installments:", options.installments);
       
       const response = await supabase.functions.invoke("asaas", {
         body: {

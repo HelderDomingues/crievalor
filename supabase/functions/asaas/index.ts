@@ -163,9 +163,10 @@ async function generatePaymentLink(data: any) {
       }
     };
     
-    // Garantir que o maxInstallmentCount seja definido corretamente
-    if (paymentLinkData.billingType === "CREDIT_CARD" && !paymentLinkData.maxInstallmentCount && data.installmentCount) {
-      paymentLinkData.maxInstallmentCount = data.installmentCount;
+    // Garantir que o maxInstallmentCount seja definido corretamente para cartão de crédito
+    if (paymentLinkData.billingType === "CREDIT_CARD" && paymentLinkData.installmentCount > 1) {
+      paymentLinkData.maxInstallmentCount = paymentLinkData.installmentCount;
+      console.log(`Configurando maxInstallmentCount para ${paymentLinkData.installmentCount}`);
     }
     
     console.log("Gerando link de pagamento com dados:", JSON.stringify(paymentLinkData, null, 2));
@@ -283,30 +284,39 @@ async function createPayment(req: Request, data: any, userId: string, supabase: 
     if (existingPayment.status === "PENDING") {
       console.log("Pagamento pendente encontrado:", existingPayment);
       
-      // Gerar link de pagamento para o pagamento existente
-      const paymentLink = await generatePaymentLink({
-        name: description,
-        description: `Pagamento ${description}`,
-        endDate: "2025-04-02", // Data limite bem no futuro
-        value: value,
-        billingType,
-        chargeType: "DETACHED",
-        dueDateLimitDays: 1,
-        externalReference,
-        maxInstallmentCount: billingType === "CREDIT_CARD" ? installments : 1,
-        installmentCount: billingType === "CREDIT_CARD" ? installments : 1
-      });
-      
-      return new Response(
-        JSON.stringify({
-          payment: existingPayment,
-          paymentLink: paymentLink.url
-        }),
-        {
-          status: 200,
-          headers: { ...corsHeaders, "Content-Type": "application/json" }
-        }
-      );
+      // Verificar se os parâmetros de parcelamento são os mesmos
+      if (billingType === "CREDIT_CARD" && installments > 1 && 
+          (!existingPayment.installmentCount || existingPayment.installmentCount !== installments)) {
+        console.log(`Parcelamento diferente: existente=${existingPayment.installmentCount}, solicitado=${installments}`);
+        // Se o parcelamento mudou, vamos cancelar o pagamento existente e criar um novo
+        await asaasRequest(`/payments/${existingPayment.id}`, "DELETE");
+        console.log(`Pagamento anterior ${existingPayment.id} excluído para criar com novo parcelamento`);
+      } else {
+        // Gerar link de pagamento para o pagamento existente
+        const paymentLink = await generatePaymentLink({
+          name: description,
+          description: `Pagamento ${description}`,
+          endDate: "2025-04-02", // Data limite bem no futuro
+          value: value,
+          billingType,
+          chargeType: "DETACHED",
+          dueDateLimitDays: 1,
+          externalReference,
+          installmentCount: billingType === "CREDIT_CARD" && installments > 1 ? installments : 1,
+          maxInstallmentCount: billingType === "CREDIT_CARD" && installments > 1 ? installments : 1
+        });
+        
+        return new Response(
+          JSON.stringify({
+            payment: existingPayment,
+            paymentLink: paymentLink.url
+          }),
+          {
+            status: 200,
+            headers: { ...corsHeaders, "Content-Type": "application/json" }
+          }
+        );
+      }
     }
   }
   
@@ -319,16 +329,25 @@ async function createPayment(req: Request, data: any, userId: string, supabase: 
   if (existingLinks.data && existingLinks.data.length > 0) {
     const existingLink = existingLinks.data[0];
     if (existingLink.active) {
-      console.log("Link de pagamento ativo encontrado:", existingLink);
-      return new Response(
-        JSON.stringify({
-          paymentLink: existingLink.url
-        }),
-        {
-          status: 200,
-          headers: { ...corsHeaders, "Content-Type": "application/json" }
-        }
-      );
+      // Verificar se o parcelamento é o mesmo
+      if (billingType === "CREDIT_CARD" && installments > 1 && 
+          (!existingLink.maxInstallmentCount || existingLink.maxInstallmentCount !== installments)) {
+        console.log(`Link com parcelamento diferente: existente=${existingLink.maxInstallmentCount}, solicitado=${installments}`);
+        // Se o parcelamento é diferente, vamos desativar este link e criar um novo
+        await asaasRequest(`/paymentLinks/${existingLink.id}`, "DELETE");
+        console.log(`Link anterior ${existingLink.id} excluído para criar com novo parcelamento`);
+      } else {
+        console.log("Link de pagamento ativo encontrado:", existingLink);
+        return new Response(
+          JSON.stringify({
+            paymentLink: existingLink.url
+          }),
+          {
+            status: 200,
+            headers: { ...corsHeaders, "Content-Type": "application/json" }
+          }
+        );
+      }
     }
   }
   
@@ -344,6 +363,7 @@ async function createPayment(req: Request, data: any, userId: string, supabase: 
   
   // Adicionar configuração de parcelamento para cartão de crédito
   if (billingType === "CREDIT_CARD" && installments > 1) {
+    console.log(`Configurando parcelamento: ${installments}x`);
     paymentData.installmentCount = installments;
     paymentData.installmentValue = value / installments;
   }
@@ -368,8 +388,8 @@ async function createPayment(req: Request, data: any, userId: string, supabase: 
     chargeType: "DETACHED",
     dueDateLimitDays: 1,
     externalReference,
-    maxInstallmentCount: billingType === "CREDIT_CARD" ? installments : 1,
-    installmentCount: billingType === "CREDIT_CARD" ? installments : 1
+    installmentCount: billingType === "CREDIT_CARD" && installments > 1 ? installments : 1,
+    maxInstallmentCount: billingType === "CREDIT_CARD" && installments > 1 ? installments : 1
   });
   
   console.log("Link de pagamento criado:", paymentLink);
