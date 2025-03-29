@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
@@ -15,6 +14,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
 import { checkoutRecoveryService } from "@/services/checkoutRecoveryService";
 import { errorUtils } from "@/utils/errorUtils";
+import { Button } from "@/components/ui/button";
 
 // Step types for the checkout process
 type CheckoutStep = "plan" | "payment" | "registration" | "processing";
