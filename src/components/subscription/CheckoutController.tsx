@@ -1,12 +1,13 @@
+
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
-import { subscriptionService } from "@/services/subscriptionService";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 import CheckoutError from "./CheckoutError";
 import { PaymentType } from "@/components/pricing/PaymentOptions";
+import { paymentProcessor } from "@/services/paymentProcessor";
 
 interface CheckoutControllerProps {
   planId: string;
@@ -46,7 +47,6 @@ const CheckoutController: React.FC<CheckoutControllerProps> = ({
   const [isCheckingOut, setIsCheckingOut] = useState(false);
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
   const [checkoutProcessId, setCheckoutProcessId] = useState<string | null>(null);
-  const [checkoutAttempts, setCheckoutAttempts] = useState(0);
   const [isRecovering, setIsRecovering] = useState(false);
 
   // Check for any existing checkout session on component mount
@@ -220,38 +220,23 @@ const CheckoutController: React.FC<CheckoutControllerProps> = ({
       };
       localStorage.setItem('checkoutRecoveryState', JSON.stringify(recoveryState));
       
-      // Use the exact domain configured in Asaas
-      const domain = "https://crievalor.lovable.app";
-      
-      // Log more details of the request
-      console.log(`[${processId}] Making checkout request with:`, {
+      // Process the payment
+      const result = await paymentProcessor.processPayment({
         planId,
         installments,
         paymentType,
-        successUrl: `${domain}/checkout/success`,
-        cancelUrl: `${domain}/checkout/canceled`
+        processId,
+        recoveryState
       });
       
-      const result = await subscriptionService.createCheckoutSession({
-        planId,
-        successUrl: `${domain}/checkout/success`,
-        cancelUrl: `${domain}/checkout/canceled`,
-        installments,
-        paymentType
-      });
-      
-      console.log(`[${processId}] Checkout result:`, result);
+      if (!result.success) {
+        throw new Error(result.error || "Não foi possível iniciar o processo de assinatura");
+      }
       
       if (result.isCustomPlan) {
-        navigate(result.url);
+        navigate(result.url || "/");
         return;
       }
-      
-      if (!result.url) {
-        throw new Error("Nenhum link de checkout foi retornado");
-      }
-      
-      console.log(`[${processId}] Redirecting to checkout: ${result.url}`);
       
       // Update recovery state with payment link
       const updatedRecoveryState = {
@@ -259,21 +244,12 @@ const CheckoutController: React.FC<CheckoutControllerProps> = ({
         paymentLink: result.url
       };
       localStorage.setItem('checkoutRecoveryState', JSON.stringify(updatedRecoveryState));
-      localStorage.setItem('lastPaymentUrl', result.url);
       
-      // Save additional information before redirecting
-      if (result.payment) {
-        // Ensure we're storing a string for payment ID
-        const paymentId = typeof result.payment === 'object' ? result.payment.id : result.payment;
-        localStorage.setItem('checkoutPaymentId', paymentId);
-      }
-      
-      if (result.dbSubscription?.id) {
-        localStorage.setItem('checkoutSubscriptionId', result.dbSubscription.id);
-      }
+      // Store payment information
+      paymentProcessor.storePaymentState(result, updatedRecoveryState);
       
       // Use window.location.href to ensure a complete redirect
-      window.location.href = result.url;
+      window.location.href = result.url || "/";
     } catch (error: any) {
       console.error(`[${processId}] Error creating checkout session:`, error);
       

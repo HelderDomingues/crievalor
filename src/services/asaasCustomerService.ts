@@ -4,36 +4,79 @@ import { supabase } from "@/integrations/supabase/client";
 export const asaasCustomerService = {
   async createOrRetrieveCustomer(profileData: any) {
     try {
-      // Primeiro verifica se já existe um cliente para este usuário
-      const { data: existingCustomer, error: existingError } = await supabase
-        .from("asaas_customers")
-        .select("asaas_id")
-        .eq("user_id", profileData.id)
-        .maybeSingle();
-        
-      if (existingError) {
-        console.error("Erro ao verificar cliente existente:", existingError);
-      }
-      
-      // Se já existe, retorna o ID
-      if (existingCustomer?.asaas_id) {
-        console.log("Cliente existente encontrado:", existingCustomer.asaas_id);
+      // First check for existing customer
+      const existingCustomer = await this.findExistingCustomer(profileData.id);
+      if (existingCustomer) {
         return { 
           customerId: existingCustomer.asaas_id, 
           isNew: false 
         };
       }
       
-      // Preparar CPF/CNPJ - remove caracteres especiais
-      let cpfCnpj = profileData.cpf || profileData.cnpj || "";
-      cpfCnpj = cpfCnpj.replace(/[^\d]/g, '');
+      // Process CPF/CNPJ
+      const cpfCnpj = this.formatCpfCnpj(profileData.cpf || profileData.cnpj);
       
       if (!cpfCnpj) {
         throw new Error("CPF ou CNPJ é obrigatório");
       }
       
-      // Verifica se já existe um cliente com este CPF/CNPJ no Asaas
-      const checkResponse = await supabase.functions.invoke("asaas", {
+      // Check if customer exists by CPF/CNPJ
+      const existingAsaasCustomer = await this.findCustomerByCpfCnpj(cpfCnpj);
+      if (existingAsaasCustomer) {
+        // Register in local database
+        await this.registerLocalCustomer(profileData.id, existingAsaasCustomer);
+        
+        return { 
+          customerId: existingAsaasCustomer.id, 
+          isNew: false 
+        };
+      }
+      
+      // Create new customer
+      const newCustomer = await this.createNewCustomer(profileData, cpfCnpj);
+      
+      return { 
+        customerId: newCustomer.id, 
+        isNew: true 
+      };
+    } catch (error) {
+      console.error("Erro em createOrRetrieveCustomer:", error);
+      throw error;
+    }
+  },
+  
+  async findExistingCustomer(userId: string) {
+    try {
+      const { data: existingCustomer, error: existingError } = await supabase
+        .from("asaas_customers")
+        .select("asaas_id")
+        .eq("user_id", userId)
+        .maybeSingle();
+        
+      if (existingError) {
+        console.error("Erro ao verificar cliente existente:", existingError);
+      }
+      
+      if (existingCustomer?.asaas_id) {
+        console.log("Cliente existente encontrado:", existingCustomer.asaas_id);
+        return existingCustomer;
+      }
+      
+      return null;
+    } catch (error) {
+      console.error("Error finding existing customer:", error);
+      return null;
+    }
+  },
+  
+  formatCpfCnpj(value: string): string {
+    if (!value) return "";
+    return value.replace(/[^\d]/g, '');
+  },
+  
+  async findCustomerByCpfCnpj(cpfCnpj: string) {
+    try {
+      const response = await supabase.functions.invoke("asaas", {
         body: {
           action: "get-customer-by-cpf-cnpj",
           data: {
@@ -42,26 +85,20 @@ export const asaasCustomerService = {
         },
       });
       
-      if (checkResponse.error) {
-        console.error("Erro ao verificar cliente no Asaas:", checkResponse.error);
-        throw new Error(`Erro ao verificar cliente: ${checkResponse.error.message}`);
+      if (response.error) {
+        console.error("Erro ao verificar cliente no Asaas:", response.error);
+        throw new Error(`Erro ao verificar cliente: ${response.error.message}`);
       }
       
-      // Se encontrou cliente existente no Asaas
-      if (checkResponse.data?.customer) {
-        const customer = checkResponse.data.customer;
-        console.log("Cliente encontrado no Asaas:", customer);
-        
-        // Registrar no banco local
-        await this.registerLocalCustomer(profileData.id, customer);
-        
-        return { 
-          customerId: customer.id, 
-          isNew: false 
-        };
-      }
-      
-      // Se não existe, cria um novo cliente
+      return response.data?.customer || null;
+    } catch (error) {
+      console.error("Error finding customer by CPF/CNPJ:", error);
+      return null;
+    }
+  },
+  
+  async createNewCustomer(profileData: any, cpfCnpj: string) {
+    try {
       const createResponse = await supabase.functions.invoke("asaas", {
         body: {
           action: "create-customer",
@@ -90,25 +127,22 @@ export const asaasCustomerService = {
       
       console.log("Novo cliente criado no Asaas:", customer);
       
-      // Registrar no banco local
+      // Register in local database
       await this.registerLocalCustomer(profileData.id, customer);
       
-      // Atualizar flag no perfil
+      // Update flag in profile
       await this.updateProfileHasCustomer(profileData.id, true);
       
-      return { 
-        customerId: customer.id, 
-        isNew: true 
-      };
+      return customer;
     } catch (error) {
-      console.error("Erro em createOrRetrieveCustomer:", error);
+      console.error("Error creating new customer:", error);
       throw error;
     }
   },
   
   async registerLocalCustomer(userId: string, customer: any) {
     try {
-      // Verificar se já existe um registro para este usuário
+      // Check if a record already exists for this user
       const { data: existingCustomer, error: existingError } = await supabase
         .from("asaas_customers")
         .select("*")
@@ -119,7 +153,7 @@ export const asaasCustomerService = {
         console.error("Erro ao verificar cliente local existente:", existingError);
       }
       
-      // Preparar dados para inserção/atualização
+      // Prepare data for insertion/update
       const customerData = {
         user_id: userId,
         asaas_id: customer.id,
@@ -129,7 +163,7 @@ export const asaasCustomerService = {
       };
       
       if (existingCustomer) {
-        // Atualizar registro existente
+        // Update existing record
         const { error: updateError } = await supabase
           .from("asaas_customers")
           .update(customerData)
@@ -140,7 +174,7 @@ export const asaasCustomerService = {
           throw updateError;
         }
       } else {
-        // Criar novo registro
+        // Create new record
         const { error: insertError } = await supabase
           .from("asaas_customers")
           .insert({
@@ -187,23 +221,14 @@ export const asaasCustomerService = {
     try {
       console.log("Iniciando processo de exclusão de dados do cliente");
       
-      // Obter o usuário atual
+      // Get current user
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
         throw new Error("Usuário não autenticado");
       }
       
-      // Obter o ID do cliente Asaas
-      const { data: asaasCustomer, error: customerError } = await supabase
-        .from("asaas_customers")
-        .select("asaas_id")
-        .eq("user_id", user.id)
-        .maybeSingle();
-        
-      if (customerError) {
-        console.error("Erro ao buscar cliente Asaas:", customerError);
-        throw new Error("Erro ao buscar cliente Asaas");
-      }
+      // Get Asaas customer ID
+      const asaasCustomer = await this.findExistingCustomer(user.id);
       
       if (!asaasCustomer?.asaas_id) {
         console.log("Nenhum cliente Asaas encontrado para o usuário");
@@ -213,7 +238,7 @@ export const asaasCustomerService = {
         };
       }
       
-      // Chamar a função Edge para excluir o cliente no Asaas
+      // Call Edge function to delete customer in Asaas
       const response = await supabase.functions.invoke("asaas", {
         body: {
           action: "delete-customer",
@@ -228,39 +253,14 @@ export const asaasCustomerService = {
         throw new Error(`Erro ao excluir cliente no Asaas: ${response.error.message}`);
       }
       
-      // Verificar se a exclusão foi bem-sucedida
       if (!response.data?.success) {
         throw new Error(response.data?.error || "Erro ao excluir cliente no Asaas");
       }
       
       console.log("Cliente excluído no Asaas com sucesso");
       
-      // Excluir registro local do cliente
-      const { error: deleteCustomerError } = await supabase
-        .from("asaas_customers")
-        .delete()
-        .eq("user_id", user.id);
-        
-      if (deleteCustomerError) {
-        console.error("Erro ao excluir registro local do cliente:", deleteCustomerError);
-        // Continuar com o processo mesmo se houver erro aqui
-      }
-      
-      // Excluir registros de assinatura
-      const { error: deleteSubscriptionError } = await supabase
-        .from("subscriptions")
-        .delete()
-        .eq("user_id", user.id);
-        
-      if (deleteSubscriptionError) {
-        console.error("Erro ao excluir assinaturas:", deleteSubscriptionError);
-        // Continuar com o processo mesmo se houver erro aqui
-      }
-      
-      // Atualizar flag no perfil
-      await this.updateProfileHasCustomer(user.id, false);
-      
-      console.log("Todos os dados de pagamento foram excluídos com sucesso");
+      // Clean up local database
+      await this.cleanupLocalData(user.id);
       
       return { 
         success: true, 
@@ -272,6 +272,42 @@ export const asaasCustomerService = {
         success: false, 
         message: error.message || "Ocorreu um erro ao excluir dados de pagamento" 
       };
+    }
+  },
+  
+  async cleanupLocalData(userId: string) {
+    try {
+      // Delete local customer record
+      const { error: deleteCustomerError } = await supabase
+        .from("asaas_customers")
+        .delete()
+        .eq("user_id", userId);
+        
+      if (deleteCustomerError) {
+        console.error("Erro ao excluir registro local do cliente:", deleteCustomerError);
+        // Continue with the process even if there's an error here
+      }
+      
+      // Delete subscription records
+      const { error: deleteSubscriptionError } = await supabase
+        .from("subscriptions")
+        .delete()
+        .eq("user_id", userId);
+        
+      if (deleteSubscriptionError) {
+        console.error("Erro ao excluir assinaturas:", deleteSubscriptionError);
+        // Continue with the process even if there's an error here
+      }
+      
+      // Update flag in profile
+      await this.updateProfileHasCustomer(userId, false);
+      
+      console.log("Todos os dados de pagamento foram excluídos com sucesso");
+      
+      return true;
+    } catch (error) {
+      console.error("Error cleaning up local data:", error);
+      throw error;
     }
   }
 };

@@ -1,20 +1,19 @@
+
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import CheckoutSteps from "@/components/checkout/CheckoutSteps";
-import PlanSummary from "@/components/checkout/PlanSummary";
-import PaymentSelection from "@/components/checkout/PaymentSelection";
-import UserRegistration from "@/components/checkout/UserRegistration";
-import ProcessingPayment from "@/components/checkout/ProcessingPayment";
-import { subscriptionService, PLANS } from "@/services/subscriptionService";
+import { subscriptionService } from "@/services/subscriptionService";
 import { PaymentType } from "@/components/pricing/PaymentOptions";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
 import { checkoutRecoveryService } from "@/services/checkoutRecoveryService";
 import { errorUtils } from "@/utils/errorUtils";
 import { Button } from "@/components/ui/button";
+import CheckoutMain from "@/components/checkout/CheckoutMain";
+import { paymentProcessor } from "@/services/paymentProcessor";
 
 // Step types for the checkout process
 type CheckoutStep = "plan" | "payment" | "registration" | "processing";
@@ -213,9 +212,6 @@ const Checkout = () => {
     setError(null);
     
     try {
-      // Get configured domain for success/cancel URLs - use the exact domain configured in Asaas
-      const domain = "https://crievalor.lovable.app";
-      
       // Save checkout state for recovery
       const recoveryState = {
         timestamp: Date.now(),
@@ -233,66 +229,38 @@ const Checkout = () => {
       localStorage.setItem('checkoutPaymentType', selectedPaymentType);
       localStorage.setItem('checkoutTimestamp', String(Date.now()));
       
-      console.log(`[${processId}] Starting payment process with:`, {
+      // Process the payment
+      const result = await paymentProcessor.processPayment({
         planId: selectedPlanId,
         installments: selectedInstallments,
         paymentType: selectedPaymentType,
-        domain: domain
+        processId,
+        recoveryState
       });
       
-      const result = await subscriptionService.createCheckoutSession({
-        planId: selectedPlanId,
-        successUrl: `${domain}/checkout/success`,
-        cancelUrl: `${domain}/checkout/canceled`,
-        installments: selectedInstallments,
-        paymentType: selectedPaymentType
-      });
+      if (!result.success) {
+        throw new Error(result.error || "Failed to process payment");
+      }
       
       // If it's a custom price plan, redirect to contact page
       if (result.isCustomPlan) {
-        navigate(result.url);
+        navigate(result.url || "/");
         return;
       }
       
-      if (!result.url) {
-        throw new Error("No checkout link was returned");
-      }
-      
-      console.log(`[${processId}] Redirecting to payment page:`, result.url);
-      
       // Update recovery state with the payment link
-      checkoutRecoveryService.saveRecoveryState({
+      const updatedState = {
         ...recoveryState,
         paymentLink: result.url
-      });
+      };
       
-      localStorage.setItem('lastPaymentUrl', result.url);
+      checkoutRecoveryService.saveRecoveryState(updatedState);
       
-      // Save additional information before redirecting
-      if (result.payment) {
-        // Ensure we're storing a string for payment ID
-        const paymentId = typeof result.payment === 'object' ? result.payment.id : result.payment;
-        localStorage.setItem('checkoutPaymentId', paymentId);
-        
-        // Update recovery state with payment ID
-        checkoutRecoveryService.saveRecoveryState({
-          ...recoveryState,
-          paymentId: paymentId
-        });
-      }
+      // Store payment information
+      paymentProcessor.storePaymentState(result, updatedState);
       
-      if (result.dbSubscription?.id) {
-        localStorage.setItem('checkoutSubscriptionId', result.dbSubscription.id);
-        
-        // Update recovery state with subscription ID
-        checkoutRecoveryService.saveRecoveryState({
-          ...recoveryState,
-          subscriptionId: result.dbSubscription.id
-        });
-      }
-      
-      // Use window.location.href for complete redirect
-      window.location.href = result.url;
+      // Redirect to the payment page
+      window.location.href = result.url || "/";
     } catch (error: any) {
       // Log the error with additional context
       errorUtils.logError(error, {
@@ -338,96 +306,19 @@ const Checkout = () => {
         <div className="container mx-auto px-4 max-w-5xl">
           <CheckoutSteps currentStep={currentStep} />
           
-          <div className="mt-8 mb-12 grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div className="lg:col-span-2 order-2 lg:order-1">
-              {currentStep === "plan" && (
-                <PlanSummary 
-                  planId={selectedPlanId} 
-                  onContinue={goToNextStep} 
-                />
-              )}
-              
-              {currentStep === "payment" && (
-                <PaymentSelection
-                  onPaymentTypeChange={handlePaymentTypeChange}
-                  onInstallmentsChange={handleInstallmentsChange}
-                  selectedPaymentType={selectedPaymentType}
-                  selectedInstallments={selectedInstallments}
-                  onContinue={goToNextStep}
-                  onBack={goToPreviousStep}
-                />
-              )}
-              
-              {currentStep === "registration" && (
-                <UserRegistration 
-                  onContinue={goToNextStep} 
-                  onBack={goToPreviousStep}
-                />
-              )}
-              
-              {currentStep === "processing" && (
-                <ProcessingPayment 
-                  error={error} 
-                  onRetry={() => proceedToPayment()} 
-                />
-              )}
-            </div>
-            
-            <div className="lg:col-span-1 order-1 lg:order-2">
-              {selectedPlanId && (
-                <div className="bg-card border rounded-xl p-6 sticky top-24">
-                  <h3 className="text-lg font-semibold mb-4">Resumo do pedido</h3>
-                  
-                  <div className="space-y-4">
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Plano</span>
-                      <span className="font-medium">
-                        {subscriptionService.getPlanFromId(selectedPlanId)?.name || "Plano selecionado"}
-                      </span>
-                    </div>
-                    
-                    {selectedPaymentType === "credit" && selectedInstallments > 1 ? (
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">Pagamento</span>
-                        <span className="font-medium">
-                          {selectedInstallments}x no cartão
-                        </span>
-                      </div>
-                    ) : (
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">Pagamento</span>
-                        <span className="font-medium">
-                          {selectedPaymentType === "credit" ? "Cartão de crédito" : 
-                           selectedPaymentType === "pix" ? "PIX" : "Boleto bancário"}
-                        </span>
-                      </div>
-                    )}
-                    
-                    <div className="border-t pt-4 mt-4">
-                      <div className="flex justify-between font-semibold text-lg">
-                        <span>Total</span>
-                        <span className="text-primary">
-                          {(() => {
-                            const plan = subscriptionService.getPlanFromId(selectedPlanId);
-                            if (!plan || !('price' in plan)) return "Sob consulta";
-                            
-                            const totalPrice = selectedInstallments === 1 ? plan.cashPrice : plan.totalPrice;
-                            
-                            if (selectedInstallments > 1) {
-                              const installmentValue = totalPrice / selectedInstallments;
-                              return `${selectedInstallments}x de R$ ${installmentValue.toFixed(2).replace('.', ',')}`;
-                            } else {
-                              return `R$ ${totalPrice.toFixed(2).replace('.', ',')}`;
-                            }
-                          })()}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
+          <CheckoutMain 
+            currentStep={currentStep}
+            selectedPlanId={selectedPlanId}
+            selectedInstallments={selectedInstallments}
+            selectedPaymentType={selectedPaymentType}
+            error={error}
+            processId={processId}
+            goToNextStep={goToNextStep}
+            goToPreviousStep={goToPreviousStep}
+            onPaymentTypeChange={handlePaymentTypeChange}
+            onInstallmentsChange={handleInstallmentsChange}
+            proceedToPayment={proceedToPayment}
+          />
         </div>
       </main>
       

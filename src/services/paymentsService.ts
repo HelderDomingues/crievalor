@@ -67,27 +67,22 @@ export interface PaymentCheckResult {
   needsCreation: boolean;
 }
 
+// Import these functions from the new payment utils file
+import { 
+  generateUniqueReference,
+  trackPaymentAttempt,
+  checkPaymentLinkValidity
+} from "./paymentUtils";
+
 export const paymentsService = {
   _paymentAttempts: {} as Record<string, { count: number, timestamp: number }>,
   
   async generateUniqueReference(userId: string, planId: string): Promise<string> {
-    return `${userId}_${planId}_${Date.now()}_${uuidv4().substring(0, 8)}`;
+    return generateUniqueReference(userId, planId);
   },
   
   _trackPaymentAttempt(userId: string, planId: string): boolean {
-    const key = `${userId}_${planId}`;
-    const now = Date.now();
-    const currentAttempt = this._paymentAttempts[key] || { count: 0, timestamp: 0 };
-    
-    if (now - currentAttempt.timestamp > 5 * 60 * 1000) {
-      currentAttempt.count = 0;
-    }
-    
-    currentAttempt.count += 1;
-    currentAttempt.timestamp = now;
-    this._paymentAttempts[key] = currentAttempt;
-    
-    return currentAttempt.count <= 3 && (currentAttempt.count === 1 || now - currentAttempt.timestamp > 15000);
+    return trackPaymentAttempt(this._paymentAttempts, userId, planId);
   },
   
   async checkExistingPayment(customerId: string, planId: string, userId: string, installments: number = 1): Promise<PaymentCheckResult> {
@@ -132,7 +127,7 @@ export const paymentsService = {
           }
         }
         
-        const isValidLink = await this.checkPaymentLinkValidity(existingSubscription.asaas_payment_link);
+        const isValidLink = await checkPaymentLinkValidity(existingSubscription.asaas_payment_link);
         
         if (isValidLink) {
           return {
@@ -192,45 +187,7 @@ export const paymentsService = {
   },
   
   async checkPaymentLinkValidity(linkUrl: string): Promise<boolean> {
-    try {
-      const linkId = linkUrl.split('/').pop();
-      
-      if (!linkId) {
-        console.error("ID do link de pagamento não encontrado na URL:", linkUrl);
-        return false;
-      }
-      
-      console.log(`Verificando validade do link de pagamento: ${linkId}`);
-      
-      const response = await supabase.functions.invoke("asaas", {
-        body: {
-          action: "get-payment-link",
-          data: {
-            linkId
-          },
-        },
-      });
-      
-      if (response.error) {
-        console.error("Erro ao verificar link de pagamento:", response.error);
-        return false;
-      }
-      
-      const linkData = response.data?.paymentLink;
-      
-      if (!linkData) {
-        console.log("Link de pagamento não encontrado");
-        return false;
-      }
-      
-      const isValid = linkData.active === true;
-      
-      console.log(`Link de pagamento ${isValid ? 'é válido' : 'não é válido'}:`, linkData);
-      return isValid;
-    } catch (error) {
-      console.error("Erro ao verificar validade do link de pagamento:", error);
-      return false;
-    }
+    return checkPaymentLinkValidity(linkUrl);
   },
   
   async createPayment(options: PaymentCreationOptions): Promise<{ paymentId: string, paymentLink: string }> {
@@ -292,6 +249,7 @@ export const paymentsService = {
     }
   },
   
+  // Simple API methods
   async getPayments(): Promise<AsaasPayment[]> {
     try {
       console.log("Buscando pagamentos...");
