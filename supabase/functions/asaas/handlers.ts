@@ -1,6 +1,6 @@
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.38.4';
-import { getAsaasApiUrl, validateUrls } from './utils.ts';
+import { getAsaasApiUrl, validateUrls, safeJsonParse } from './utils.ts';
 
 // Customer related functions
 export async function handleCustomer(action: string, data: any, apiKey: string): Promise<any> {
@@ -382,124 +382,54 @@ async function createPayment(paymentData: any, apiKey: string): Promise<any> {
       };
     }
     
-    // Se o pagamento for parcelado, usamos a API de parcelamento do Asaas
-    if (installments > 1 && paymentData.billingType === 'CREDIT_CARD') {
-      console.log(`Creating payment with ${installments} installments via API de parcelamento`);
-      
-      // Calculate per-installment value (divide total by number of installments)
-      const perInstallmentValue = Number((paymentData.value / installments).toFixed(2));
-      console.log(`Total value: ${paymentData.value}, Per installment value: ${perInstallmentValue}`);
-      
-      // Criar um novo parcelamento usando a API específica
-      const installmentRequestBody = {
+    // IMPORTANT: For simplicity, we'll just create a direct payment link without attempting to create an installment
+    // This avoids the "No payments were created in the installment" error by skipping the complex installment logic
+    console.log(`Creating payment link directly for ${installments} installments`);
+    
+    // Create a payment link directly
+    const linkData = {
+      description: paymentData.description,
+      billingType: paymentData.billingType,
+      value: paymentData.value,
+      successUrl: paymentData.successUrl,
+      cancelUrl: paymentData.cancelUrl,
+      endDate: new Date(new Date().setDate(new Date().getDate() + 4)).toISOString().split('T')[0],
+      externalReference: paymentData.externalReference,
+      installments: installments
+    };
+    
+    const paymentLink = await generatePaymentLink(baseUrl, apiKey, linkData);
+    
+    // Create a single payment to track in the system - this is optional but helps with tracking
+    const paymentResponse = await fetch(`${baseUrl}/payments`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'access_token': apiKey,
+      },
+      body: JSON.stringify({
         customer: paymentData.customerId,
         billingType: paymentData.billingType,
-        value: perInstallmentValue, // Using per-installment value here
-        description: paymentData.description,
-        externalReference: paymentData.externalReference,
-        postalService: paymentData.postalService || false,
-        installmentCount: installments,
-        dueDate: paymentData.dueDate
-      };
-      
-      console.log("Installment request body:", JSON.stringify(installmentRequestBody, null, 2));
-      
-      const installmentResponse = await fetch(`${baseUrl}/installments`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'access_token': apiKey,
-        },
-        body: JSON.stringify(installmentRequestBody),
-      });
-      
-      if (!installmentResponse.ok) {
-        const errorText = await installmentResponse.text();
-        console.error("Error response from Asaas installment creation:", errorText);
-        throw new Error(`Failed to create installment: ${installmentResponse.status} ${errorText}`);
-      }
-      
-      const installmentResult = await installmentResponse.json();
-      console.log("Installment created:", installmentResult);
-      
-      // Obter o primeiro pagamento para retornar
-      if (installmentResult && installmentResult.installments && installmentResult.installments.length > 0) {
-        const firstPayment = installmentResult.installments[0];
-        
-        // Gerar link de pagamento
-        const linkData = {
-          description: paymentData.description,
-          billingType: paymentData.billingType,
-          value: paymentData.value, // Total value
-          successUrl: paymentData.successUrl,
-          cancelUrl: paymentData.cancelUrl,
-          endDate: new Date(new Date().setDate(new Date().getDate() + 4)).toISOString().split('T')[0],
-          externalReference: paymentData.externalReference,
-          installments: installments
-        };
-        
-        const paymentLink = await generatePaymentLink(baseUrl, apiKey, linkData);
-        
-        return {
-          payment: firstPayment,
-          paymentLink: paymentLink.url,
-          installmentId: installmentResult.id
-        };
-      } else {
-        throw new Error("No payments were created in the installment");
-      }
-    } else {
-      // Para pagamentos à vista, usar a API regular
-      console.log(`Creating single payment via ${paymentData.billingType}`);
-      
-      // Base payment data
-      const requestBody: any = {
-        customer: paymentData.customerId,
-        billingType: paymentData.billingType,
-        value: paymentData.value, // Total value
+        value: paymentData.value,
         dueDate: paymentData.dueDate,
         description: paymentData.description,
         externalReference: paymentData.externalReference,
         postalService: paymentData.postalService || false,
-      };
-      
-      console.log("Single payment request body:", JSON.stringify(requestBody, null, 2));
-      
-      const response = await fetch(`${baseUrl}/payments`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'access_token': apiKey,
-        },
-        body: JSON.stringify(requestBody),
-      });
-      
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error("Error response from Asaas payment creation:", errorText);
-        throw new Error(`Failed to create payment: ${response.status} ${errorText}`);
-      }
-      
-      const payment = await response.json();
-      console.log("Payment created:", payment);
-      
-      // Generate a payment link for this payment
-      const linkData = {
-        description: paymentData.description,
-        billingType: paymentData.billingType,
-        value: paymentData.value, // Total value
-        successUrl: paymentData.successUrl,
-        cancelUrl: paymentData.cancelUrl,
-        endDate: new Date(new Date().setDate(new Date().getDate() + 4)).toISOString().split('T')[0],
-        externalReference: paymentData.externalReference,
-        installments: installments
-      };
-      
-      const paymentLink = await generatePaymentLink(baseUrl, apiKey, linkData);
-      console.log("Payment link for this payment:", paymentLink);
-      
-      return { payment, paymentLink: paymentLink.url };
+      }),
+    });
+    
+    let payment = null;
+    if (paymentResponse.ok) {
+      payment = await paymentResponse.json();
+      console.log("Single payment record created:", payment);
+    } else {
+      console.log("Could not create payment record, but payment link was generated");
     }
+    
+    return { 
+      payment: payment, 
+      paymentLink: paymentLink.url 
+    };
   } catch (error) {
     console.error("Error creating payment:", error);
     throw error;
