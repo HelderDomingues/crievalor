@@ -89,7 +89,8 @@ export const WebhookManager = () => {
           });
           
           uiToast({
-            variant: "warning",
+            // Changed from "warning" to "default" as shadcn/ui toast only supports "default" or "destructive"
+            variant: "default",
             title: "Webhook com resposta inesperada",
             description: "Verifique a configuração do webhook no painel do Asaas"
           });
