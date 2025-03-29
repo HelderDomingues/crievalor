@@ -128,13 +128,15 @@ const CheckoutController: React.FC<CheckoutControllerProps> = ({
     try {
       console.log(`[${processId}] Starting checkout for plan: ${planId} with ${installments} installments, payment method: ${paymentType}`);
       
+      // Salvar informações importantes na localStorage
       localStorage.setItem('checkoutTimestamp', String(Date.now()));
       localStorage.setItem('checkoutInstallments', String(installments));
       localStorage.setItem('checkoutPaymentType', paymentType);
+      localStorage.setItem('checkoutPlanId', planId);
       
       const baseUrl = window.location.origin;
       
-      // Log more details of the request
+      // Log mais detalhes da requisição
       console.log(`[${processId}] Making checkout request with:`, {
         planId,
         installments,
@@ -165,9 +167,7 @@ const CheckoutController: React.FC<CheckoutControllerProps> = ({
       console.log(`[${processId}] Redirecting to checkout: ${result.url}`);
       
       if (result.directRedirect) {
-        localStorage.setItem('checkoutPlanId', planId);
-        localStorage.setItem('checkoutInstallments', String(installments));
-        
+        // Para outros navegadores, use window.location.href
         window.location.href = result.url;
       } else {
         navigate(result.url);

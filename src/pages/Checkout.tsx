@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
@@ -60,6 +61,33 @@ const Checkout = () => {
     setSelectedPlanId(planId);
   }, [planId, navigate, toast]);
   
+  // Atualiza a URL para manter o histórico de navegação correto
+  useEffect(() => {
+    // Só atualiza o histórico se não for a primeira carga da página
+    if (currentStep !== "plan" && planId) {
+      const newUrl = `/checkout?plan=${planId}&step=${currentStep}`;
+      window.history.pushState({ step: currentStep }, "", newUrl);
+    }
+  }, [currentStep, planId]);
+  
+  // Lida com o botão de voltar do navegador
+  useEffect(() => {
+    const handlePopState = (event: PopStateEvent) => {
+      if (event.state && event.state.step) {
+        setCurrentStep(event.state.step);
+      } else {
+        // Se não houver estado, assume-se que estamos voltando para o plano
+        setCurrentStep("plan");
+      }
+    };
+    
+    window.addEventListener("popstate", handlePopState);
+    
+    return () => {
+      window.removeEventListener("popstate", handlePopState);
+    };
+  }, []);
+  
   // Handle payment type change
   const handlePaymentTypeChange = (paymentType: PaymentType) => {
     setSelectedPaymentType(paymentType);
@@ -76,30 +104,43 @@ const Checkout = () => {
   
   // Navigate to next step
   const goToNextStep = () => {
-    if (currentStep === "plan") {
-      setCurrentStep("payment");
-    } else if (currentStep === "payment") {
-      if (user) {
-        // Skip registration if user is already logged in
-        setCurrentStep("processing");
-        proceedToPayment();
-      } else {
-        setCurrentStep("registration");
-      }
-    } else if (currentStep === "registration") {
-      setCurrentStep("processing");
+    const nextStep = getNextStep();
+    setCurrentStep(nextStep);
+    
+    // Atualiza a URL para manter o histórico de navegação correto
+    if (selectedPlanId) {
+      const newUrl = `/checkout?plan=${selectedPlanId}&step=${nextStep}`;
+      window.history.pushState({ step: nextStep }, "", newUrl);
+    }
+    
+    if (nextStep === "processing") {
       proceedToPayment();
     }
+  };
+  
+  // Determina o próximo passo com base no estado atual
+  const getNextStep = (): CheckoutStep => {
+    if (currentStep === "plan") {
+      return "payment";
+    } else if (currentStep === "payment") {
+      return user ? "processing" : "registration";
+    } else if (currentStep === "registration") {
+      return "processing";
+    }
+    return currentStep;
   };
   
   // Handle going back to previous step
   const goToPreviousStep = () => {
     if (currentStep === "payment") {
       setCurrentStep("plan");
+      window.history.back();
     } else if (currentStep === "registration") {
       setCurrentStep("payment");
+      window.history.back();
     } else if (currentStep === "processing") {
       setCurrentStep(user ? "payment" : "registration");
+      window.history.back();
     }
   };
   
@@ -138,6 +179,7 @@ const Checkout = () => {
       localStorage.setItem('checkoutPlanId', selectedPlanId);
       localStorage.setItem('checkoutInstallments', String(selectedInstallments));
       localStorage.setItem('checkoutPaymentType', selectedPaymentType);
+      localStorage.setItem('checkoutTimestamp', String(Date.now()));
       
       // Redirect to payment page
       window.location.href = result.url;

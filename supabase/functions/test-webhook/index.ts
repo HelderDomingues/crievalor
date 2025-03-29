@@ -1,3 +1,4 @@
+
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.38.4";
 
@@ -35,7 +36,8 @@ serve(async (req) => {
     const testResults = {
       webhookEndpoint: await testWebhookEndpoint(),
       asaasAccount: await testAsaasAccount(ASAAS_API_KEY),
-      webhookToken: Boolean(ASAAS_WEBHOOK_TOKEN)
+      webhookToken: Boolean(ASAAS_WEBHOOK_TOKEN),
+      installmentTest: await testInstallmentCreation()
     };
 
     return new Response(
@@ -179,6 +181,121 @@ async function testAsaasAccount(apiKey) {
       success: false,
       status: 0,
       error: error.message || "Failed to connect to Asaas API"
+    };
+  }
+}
+
+/**
+ * Test the creation of installments in Asaas
+ */
+async function testInstallmentCreation() {
+  if (!ASAAS_API_KEY) {
+    return {
+      success: false,
+      status: 0,
+      error: "No Asaas API key configured"
+    };
+  }
+  
+  try {
+    console.log("Testing Asaas installment creation...");
+    
+    // Criar um cliente de teste temporário para o parcelamento
+    const customerResponse = await fetch("https://sandbox.asaas.com/api/v3/customers", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "access_token": ASAAS_API_KEY
+      },
+      body: JSON.stringify({
+        name: "Cliente Teste Webhook",
+        email: "teste_webhook@example.com",
+        cpfCnpj: "11111111111",
+        mobilePhone: "67999999999"
+      })
+    });
+    
+    if (!customerResponse.ok) {
+      const errorText = await customerResponse.text();
+      throw new Error(`Failed to create test customer: ${errorText}`);
+    }
+    
+    const customer = await customerResponse.json();
+    console.log("Test customer created:", customer);
+    
+    // Criar um parcelamento de teste
+    const installmentResponse = await fetch("https://sandbox.asaas.com/api/v3/installments", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "access_token": ASAAS_API_KEY
+      },
+      body: JSON.stringify({
+        customer: customer.id,
+        billingType: "CREDIT_CARD",
+        value: 100,
+        description: "Teste de parcelamento via webhook",
+        externalReference: "test_installment_webhook_" + Date.now(),
+        installmentCount: 3,
+        dueDate: new Date(new Date().setDate(new Date().getDate() + 3)).toISOString().split('T')[0]
+      })
+    });
+    
+    if (!installmentResponse.ok) {
+      const errorText = await installmentResponse.text();
+      throw new Error(`Failed to create test installment: ${errorText}`);
+    }
+    
+    const installment = await installmentResponse.json();
+    console.log("Test installment created:", installment);
+    
+    // Agora, criar um link de pagamento que indica parcelamento
+    const linkResponse = await fetch("https://sandbox.asaas.com/api/v3/paymentLinks", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "access_token": ASAAS_API_KEY
+      },
+      body: JSON.stringify({
+        billingType: "CREDIT_CARD",
+        chargeType: "DETACHED",
+        name: "Teste de link parcelado",
+        description: "Teste de link parcelado",
+        endDate: new Date(new Date().setDate(new Date().getDate() + 5)).toISOString().split('T')[0],
+        value: 100,
+        dueDateLimitDays: 1,
+        installmentCount: 3,
+        maxInstallmentCount: 3,
+        externalReference: "test_link_installment_" + Date.now()
+      })
+    });
+    
+    if (!linkResponse.ok) {
+      const errorText = await linkResponse.text();
+      throw new Error(`Failed to create test payment link: ${errorText}`);
+    }
+    
+    const link = await linkResponse.json();
+    console.log("Test payment link created:", link);
+    
+    return {
+      success: true,
+      status: 200,
+      data: {
+        installmentId: installment.id,
+        installmentCount: installment.installmentCount,
+        paymentLinkId: link.id,
+        paymentLinkUrl: link.url,
+        maxInstallmentCount: link.maxInstallmentCount
+      }
+    };
+    
+  } catch (error) {
+    console.error("Error testing installment creation:", error);
+    return {
+      success: false,
+      status: 0,
+      error: error.message || "Failed to test installment creation"
     };
   }
 }
