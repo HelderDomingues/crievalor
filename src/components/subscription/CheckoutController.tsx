@@ -168,8 +168,11 @@ const CheckoutController: React.FC<CheckoutControllerProps> = ({
       
       // Salvar informações adicionais antes do redirecionamento
       if (result.payment) {
-        localStorage.setItem('checkoutPaymentId', result.payment);
+        // Ensure we're storing a string for payment ID
+        const paymentId = typeof result.payment === 'object' ? result.payment.id : result.payment;
+        localStorage.setItem('checkoutPaymentId', paymentId);
       }
+      
       if (result.dbSubscription?.id) {
         localStorage.setItem('checkoutSubscriptionId', result.dbSubscription.id);
       }

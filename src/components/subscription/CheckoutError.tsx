@@ -28,6 +28,9 @@ const CheckoutError = ({ error }: CheckoutErrorProps) => {
   } else if (error.includes("No payments were created") || error.includes("Nenhum pagamento foi criado")) {
     errorTitle = "Erro ao processar parcelas";
     displayError = "Não foi possível criar o parcelamento do pagamento. Por favor, tente novamente ou escolha outro método de pagamento.";
+  } else if (error.includes("Nenhum link de checkout foi retornado")) {
+    errorTitle = "Erro ao processar pagamento";
+    displayError = "Não foi possível obter o link de pagamento. Por favor, tente novamente em alguns instantes.";
   }
   
   return (
