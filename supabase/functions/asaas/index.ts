@@ -234,7 +234,24 @@ async function checkExistingPayments(data: any): Promise<any> {
       
       if (dbSubscription.asaas_payment_link) {
         console.log("Encontrada assinatura pendente com link de pagamento:", dbSubscription);
-        return { paymentLink: dbSubscription.asaas_payment_link, dbSubscription: dbSubscription };
+        
+        // Verificar se o link de pagamento ainda é válido
+        try {
+          if (dbSubscription.asaas_payment_link.includes('/') && dbSubscription.asaas_payment_link.split('/').pop()) {
+            const linkId = dbSubscription.asaas_payment_link.split('/').pop();
+            const linkData = await getPaymentLink(linkId);
+            
+            if (linkData && linkData.paymentLink && linkData.paymentLink.active !== false) {
+              console.log("Link de pagamento ainda válido:", dbSubscription.asaas_payment_link);
+              return { paymentLink: dbSubscription.asaas_payment_link, dbSubscription: dbSubscription };
+            } else {
+              console.log("Link de pagamento expirado ou inválido, gerando novo link");
+            }
+          }
+        } catch (e) {
+          console.error("Erro ao verificar link de pagamento:", e);
+          // Continue para criar um novo link
+        }
       }
     }
 
@@ -320,7 +337,8 @@ async function createPayment(paymentData: any): Promise<any> {
       const { data: dbSubscription } = await checkExistingPayments({
         customerId: paymentData.customerId,
         planId: paymentData.planId,
-        userId: paymentData.userId
+        userId: paymentData.userId,
+        installments: installments
       });
       
       if (dbSubscription && dbSubscription.asaas_payment_link) {
