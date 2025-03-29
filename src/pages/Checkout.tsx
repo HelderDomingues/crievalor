@@ -99,7 +99,7 @@ const Checkout = () => {
     } else if (currentStep === "registration") {
       setCurrentStep("payment");
     } else if (currentStep === "processing") {
-      setCurrentStep("registration");
+      setCurrentStep(user ? "payment" : "registration");
     }
   };
   

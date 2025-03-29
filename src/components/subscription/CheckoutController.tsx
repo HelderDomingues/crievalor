@@ -166,6 +166,7 @@ const CheckoutController: React.FC<CheckoutControllerProps> = ({
       
       if (result.directRedirect) {
         localStorage.setItem('checkoutPlanId', planId);
+        localStorage.setItem('checkoutInstallments', String(installments));
         
         window.location.href = result.url;
       } else {

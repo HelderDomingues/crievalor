@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { v4 as uuidv4 } from "uuid";
 import { PaymentType } from "@/components/pricing/PaymentOptions";
@@ -242,11 +241,13 @@ export const paymentsService = {
         throw new Error("Muitas tentativas de pagamento em um curto período. Aguarde alguns segundos e tente novamente.");
       }
       
+      const installments = Number(options.installments) || 1;
+      
       const existingPayment = await this.checkExistingPayment(
         options.customerId,
         options.planId,
         options.userId,
-        options.installments
+        installments
       );
       
       if (!existingPayment.needsCreation && existingPayment.paymentLink) {
@@ -257,12 +258,15 @@ export const paymentsService = {
         };
       }
       
-      console.log("Criando novo pagamento com installments:", options.installments);
+      console.log("Criando novo pagamento com installments:", installments);
       
       const response = await supabase.functions.invoke("asaas", {
         body: {
           action: "create-payment",
-          data: options,
+          data: {
+            ...options,
+            installments: installments
+          },
         },
       });
       
