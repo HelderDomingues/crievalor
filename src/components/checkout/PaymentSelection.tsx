@@ -1,7 +1,8 @@
 
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { PaymentType, PaymentOptions } from "@/components/pricing/PaymentOptions";
+import { PaymentType } from "@/components/pricing/PaymentOptions";
+import PaymentOptions from "@/components/pricing/PaymentOptions";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import DirectAsaasPayment from "./DirectAsaasPayment";
 import AlternativePaymentOptions from "./AlternativePaymentOptions";
