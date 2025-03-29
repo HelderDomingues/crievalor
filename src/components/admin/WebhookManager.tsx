@@ -125,8 +125,9 @@ export const WebhookManager = () => {
           <InfoIcon className="h-4 w-4 text-amber-600" />
           <AlertTitle className="text-amber-700">Informação importante sobre autenticação</AlertTitle>
           <AlertDescription className="text-sm text-amber-700">
-            <p>O Asaas envia requisições com o header <strong>access_token</strong> contendo a chave de API.</p>
-            <p className="mt-1">Certifique-se de que você configurou o webhook no painel do Asaas com a URL acima e está utilizando o header <strong>access_token</strong>.</p>
+            <p>O Asaas <strong>Sandbox</strong> envia requisições com um User-Agent "Java", mas pode não enviar o header <strong>access_token</strong>.</p>
+            <p className="mt-1">Para o ambiente de teste, o webhook foi configurado para aceitar requisições do Asaas Sandbox mesmo sem o token.</p>
+            <p className="mt-1">Para o ambiente de produção, será necessário configurar o <strong>access_token</strong> contendo a chave de API do Asaas.</p>
           </AlertDescription>
         </Alert>
         
@@ -146,8 +147,8 @@ export const WebhookManager = () => {
                 <span>Método HTTP: <code className="bg-blue-100 px-1 py-0.5 rounded text-blue-800">POST</code></span>
               </div>
               <div className="flex items-center">
-                <CheckCircle2 className="h-4 w-4 text-green-600 mr-2" />
-                <span>Header: <code className="bg-blue-100 px-1 py-0.5 rounded text-blue-800">access_token</code> contendo a Chave de API do Asaas</span>
+                <AlertTriangle className="h-4 w-4 text-amber-600 mr-2" />
+                <span>Header: <code className="bg-blue-100 px-1 py-0.5 rounded text-blue-800">access_token</code> contendo a Chave de API do Asaas (opcional no ambiente Sandbox)</span>
               </div>
             </div>
           </AlertDescription>
@@ -237,10 +238,9 @@ export const WebhookManager = () => {
               </p>
               <ul className="list-disc list-inside text-sm space-y-1">
                 <li>Você está logado como administrador</li>
-                <li>O Asaas está configurado corretamente</li>
-                <li>A API key do Asaas é válida e está atualizada</li>
                 <li>O webhook está registrado no painel do Asaas com a URL do Supabase</li>
-                <li>O header <strong>access_token</strong> está configurado com a API key do Asaas</li>
+                <li>A configuração no Asaas está correta (URL e método POST)</li>
+                <li>No ambiente de produção, a API key do Asaas deve ser configurada como header <strong>access_token</strong></li>
               </ul>
             </AlertDescription>
           </Alert>

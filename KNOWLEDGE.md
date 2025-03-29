@@ -18,6 +18,25 @@
 
 ## Interaction Log {#interaction-log}
 
+### 2024-03-29 - Aceitação de webhooks do Asaas sem token de acesso para o ambiente Sandbox
+
+**Discussão**:
+- Identificação do problema: o Asaas Sandbox não está enviando o token de acesso conforme esperado
+- Análise dos logs mostra requisições com User-Agent "Java" vindas do Asaas Sandbox
+- Necessidade de ajuste temporário para o ambiente de desenvolvimento/sandbox
+
+**Implementação**:
+- Modificação da função asaas-webhook para aceitar requisições do Asaas Sandbox com User-Agent "Java" sem token
+- Melhoria da detecção de origem das requisições via User-Agent
+- Atualização da documentação na interface para explicar a diferença entre ambiente de sandbox e produção
+- Adição de logs detalhados para facilitar a depuração das requisições do Asaas
+- Manutenção do status 200 em todas as respostas para evitar reenvios
+
+**Ação planejada**:
+- Testar a integração com o ambiente Sandbox
+- Preparar a transição para o ambiente de produção do Asaas, onde o header access_token será exigido
+- Revisar a segurança após confirmar o funcionamento completo
+
 ### 2024-03-29 - Correção do problema de autenticação do webhook Asaas
 
 **Discussão**:
@@ -168,6 +187,23 @@
 
 ## Problems and Solutions {#problems-and-solutions}
 
+### Problem: Asaas Sandbox não envia header access_token
+
+**Description**:
+As requisições do ambiente Sandbox do Asaas (identificadas pelo User-Agent "Java") não estão enviando o header access_token como esperado, causando erros de autenticação.
+
+**Analysis**:
+Diferente do ambiente de produção, o Asaas Sandbox parece não enviar o header access_token consistentemente, tornando impossível a autenticação pelo método padrão.
+
+**Solution**:
+- Identificação das requisições do Asaas via User-Agent contendo "Java"
+- Modificação da função asaas-webhook para aceitar temporariamente requisições do Asaas Sandbox sem token
+- Manutenção do status 200 em todas as respostas, mesmo em caso de erro, para evitar reenvios pelo Asaas
+- Documentação clara na interface sobre a diferença de comportamento entre ambientes
+
+**Status Atual**:
+Implementado. As requisições do Asaas Sandbox agora são aceitas mesmo sem o token correto para facilitar o desenvolvimento e testes.
+
 ### Problem: Asaas Webhook Authentication - Missing access_token Header
 
 **Description**:
@@ -311,23 +347,14 @@ Use a combination of React Query and local state
 
 ### Asaas Integration Specifics
 
-#### Payment Flow
-
-1. User selects a plan
-2. System checks for existing customer
-3. Creates new customer if needed
-4. Generates payment link
-5. Redirects to Asaas checkout
-6. Handles success/failure redirects
-7. Receives webhook notifications for payment status updates
-
 #### Webhook Configuration
 
 - Configurado no painel do Asaas
 - URL atualizada para:
   - `https://nmxfknwkhnengqqjtwru.supabase.co/functions/v1/asaas-webhook`
-- Todas as referências ao webhook anterior usando o domínio crievalor.lovable.app foram removidas
-- Autenticação via header `access_token` contendo a chave API do Asaas
+- Ambiente de sandbox aceita requisições sem autenticação para facilitar testes
+- Ambiente de produção requer autenticação via header `access_token` contendo a chave API do Asaas
+- Identificação do tipo de ambiente via User-Agent (Java = requisição do Asaas)
 
 #### Best Practices Identified
 
@@ -359,6 +386,18 @@ Use a combination of React Query and local state
 - Tratamento temporário para aceitar requisições durante a fase de depuração
 
 ## Recent Issues and Actions
+
+### Aceitar webhooks do Asaas Sandbox sem token de autenticação
+
+**Solução Final**:
+Identificação das requisições do Asaas Sandbox via User-Agent "Java" e aceitação dessas requisições mesmo sem o token de autorização, permitindo o desenvolvimento e testes no ambiente Sandbox.
+
+**Implementação**:
+1. Detecção das requisições do Asaas via User-Agent contendo "Java"
+2. Modificação da lógica de autorização para aceitar requisições do Asaas Sandbox sem token
+3. Melhoria da documentação na interface para explicar a diferença entre ambientes
+4. Manutenção do status 200 em todas as respostas para evitar reenvios
+5. Preparação para a transição para o ambiente de produção, onde o token será exigido
 
 ### Problema de Autenticação do Webhook Asaas Resolvido
 

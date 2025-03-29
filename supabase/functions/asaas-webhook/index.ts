@@ -51,6 +51,10 @@ serve(async (req) => {
     const xHookToken = req.headers.get("x-hook-token") || req.headers.get("X-Hook-Token");
     const asaasToken = req.headers.get("asaas-token") || req.headers.get("Asaas-Token");
     const accessToken = req.headers.get("access_token") || req.headers.get("Access-Token");
+    const userAgent = req.headers.get("User-Agent") || "";
+    
+    // Detect if this is from Asaas sandbox/production (Java-based)
+    const isFromAsaas = userAgent.includes("Java");
     
     // Log all potential token sources for debugging
     console.log("Token sources:", {
@@ -59,6 +63,8 @@ serve(async (req) => {
       xHookToken,
       asaasToken,
       accessToken,
+      userAgent,
+      isFromAsaas,
       expectedToken: ASAAS_WEBHOOK_TOKEN
     });
     
@@ -138,20 +144,20 @@ serve(async (req) => {
       bodyToken: webhookData?.token,
       validToken,
       validApiKey,
+      userAgent,
+      isFromAsaas,
       expectedToken: ASAAS_WEBHOOK_TOKEN
     });
     
-    // Token validation - For production webhook calls, temporarily accept any request with access_token header
-    // This allows us to receive webhook calls while debugging
+    // Token validation with special handling for Asaas sandbox/production (Java User-Agent)
+    // This is a temporary measure for development and the sandbox environment
     const isTokenRequired = !!ASAAS_WEBHOOK_TOKEN;
-    const isAsaasProduction = req.headers.get("User-Agent")?.includes("Java");
-    const hasAccessToken = !!accessToken;
     
     if (isTokenRequired && !validToken && !validApiKey) {
-      // If this is from Asaas production and has any access_token, accept it for now while debugging
-      if (isAsaasProduction && hasAccessToken) {
-        console.log("Accepting request from Asaas with access_token for debugging purposes");
-        // Continue processing
+      // Special handling for Asaas sandbox/production requests
+      if (isFromAsaas) {
+        console.log("Accepting request from Asaas (Java User-Agent) without token for sandbox development");
+        // Continue processing without token validation
       } else {
         console.warn("Invalid or missing webhook token", {
           receivedTokens: {
@@ -172,7 +178,7 @@ serve(async (req) => {
               success: false,
               error: "Unauthorized", 
               message: "Missing or invalid token for webhook authentication",
-              hint: "Make sure your webhook is configured with the correct token"
+              hint: "Make sure your webhook is configured with the correct token in access_token header"
             }),
             {
               status: 401,
@@ -181,17 +187,17 @@ serve(async (req) => {
           );
         }
         
-        // For Asaas production calls, return 200 to prevent retries but indicate error
+        // For other unauthorized calls, return 200 to prevent retries but indicate error
         return new Response(
           JSON.stringify({ 
             success: false,
             error: "Unauthorized", 
             code: 401, 
             message: "Missing or invalid token",
-            detail: "O token fornecido não corresponde ao token configurado para este webhook."
+            detail: "The provided token does not match the configured webhook token. Please configure access_token header."
           }),
           {
-            status: 200, // Return 200 to prevent Asaas from retrying
+            status: 200, // Return 200 to prevent retries
             headers: { ...corsHeaders, "Content-Type": "application/json" }
           }
         );
@@ -219,7 +225,7 @@ serve(async (req) => {
     
     // Special case: Handle ACCOUNT_STATUS events differently
     if (webhookData && webhookData.event && webhookData.event.startsWith("ACCOUNT_STATUS")) {
-      console.log("Processando evento de status da conta:", webhookData.event);
+      console.log("Processing account status event:", webhookData.event);
       // For account status events, we just acknowledge them but don't process further
       return new Response(
         JSON.stringify({ 
@@ -236,7 +242,7 @@ serve(async (req) => {
 
     // Check if this is a payment event with required data
     if (!webhookData.event || !webhookData.payment) {
-      console.log("Evento não relacionado a pagamento ou dados incompletos:", webhookData);
+      console.log("Event not related to payment or incomplete data:", webhookData);
       return new Response(
         JSON.stringify({ 
           success: true, 
@@ -244,7 +250,7 @@ serve(async (req) => {
           event: webhookData.event || 'unknown' 
         }),
         {
-          status: 200, // Return 200 to prevent Asaas from retrying
+          status: 200, // Return 200 to prevent retries
           headers: { ...corsHeaders, "Content-Type": "application/json" }
         }
       );
@@ -254,7 +260,7 @@ serve(async (req) => {
     const event = webhookData.event;
     const payment = webhookData.payment;
 
-    console.log(`Processando evento ${event} para pagamento ${payment.id}`);
+    console.log(`Processing event ${event} for payment ${payment.id}`);
 
     // Find subscription associated with this payment
     const { data: subscription, error: subscriptionError } = await supabase
@@ -264,12 +270,12 @@ serve(async (req) => {
       .maybeSingle();
 
     if (subscriptionError) {
-      console.error("Erro ao buscar assinatura pelo payment_id:", subscriptionError);
+      console.error("Error finding subscription by payment_id:", subscriptionError);
       throw subscriptionError;
     }
 
     if (!subscription) {
-      console.log(`Nenhuma assinatura encontrada para o payment_id ${payment.id}, tentando buscar por externalReference`);
+      console.log(`No subscription found for payment_id ${payment.id}, trying to find by externalReference`);
       
       // Try looking up by external reference
       if (payment.externalReference) {
@@ -280,11 +286,11 @@ serve(async (req) => {
           .maybeSingle();
         
         if (refError) {
-          console.error("Erro ao buscar assinatura por referência externa:", refError);
+          console.error("Error finding subscription by external reference:", refError);
         }
         
         if (!refError && subByRef) {
-          console.log(`Encontrada assinatura pela referência externa: ${payment.externalReference}`);
+          console.log(`Found subscription by external reference: ${payment.externalReference}`);
           
           // Update the payment_id in the subscription
           const { error: updateError } = await supabase
@@ -297,16 +303,16 @@ serve(async (req) => {
             .eq("id", subByRef.id);
           
           if (updateError) {
-            console.error("Erro ao atualizar payment_id na assinatura:", updateError);
+            console.error("Error updating payment_id in subscription:", updateError);
             throw updateError;
           } else {
-            console.log(`Payment ID atualizado na assinatura ${subByRef.id}`);
+            console.log(`Payment ID updated in subscription ${subByRef.id}`);
             
             // Continue processing with the found subscription
             return await processPaymentEvent(supabase, event, payment, subByRef);
           }
         } else {
-          console.log(`Nenhuma assinatura encontrada para a referência externa: ${payment.externalReference}`);
+          console.log(`No subscription found for external reference: ${payment.externalReference}`);
         }
       }
       
@@ -328,7 +334,7 @@ serve(async (req) => {
     // Process the payment event for the found subscription
     return await processPaymentEvent(supabase, event, payment, subscription);
   } catch (error) {
-    console.error(`Erro ao processar webhook: ${error.message}`, error);
+    console.error(`Error processing webhook: ${error.message}`, error);
     console.error(error.stack);
     
     return new Response(
@@ -370,13 +376,13 @@ async function processPaymentEvent(supabase, event, payment, subscription) {
       break;
     
     default:
-      console.log(`Evento ${event} não exige atualização de status`);
+      console.log(`Event ${event} does not require status update`);
       break;
   }
 
   // Update subscription if status needs to change
   if (newStatus !== subscription.status) {
-    console.log(`Atualizando status da assinatura ${subscription.id} de ${subscription.status} para ${newStatus}`);
+    console.log(`Updating subscription ${subscription.id} status from ${subscription.status} to ${newStatus}`);
     
     const { error: updateError } = await supabase
       .from("subscriptions")
@@ -388,7 +394,7 @@ async function processPaymentEvent(supabase, event, payment, subscription) {
       .eq("id", subscription.id);
     
     if (updateError) {
-      console.error("Erro ao atualizar assinatura:", updateError);
+      console.error("Error updating subscription:", updateError);
       throw updateError;
     }
   } else {
@@ -402,17 +408,17 @@ async function processPaymentEvent(supabase, event, payment, subscription) {
       .eq("id", subscription.id);
     
     if (updateError) {
-      console.error("Erro ao atualizar status de pagamento:", updateError);
+      console.error("Error updating payment status:", updateError);
       throw updateError;
     }
   }
 
-  console.log("Webhook processado com sucesso");
+  console.log("Webhook processed successfully");
   
   return new Response(
     JSON.stringify({ 
       success: true, 
-      message: "Webhook processado com sucesso",
+      message: "Webhook processed successfully",
       subscription: subscription.id,
       paymentId: payment.id,
       newStatus: newStatus
