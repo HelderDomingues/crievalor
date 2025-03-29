@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { AlertCircle, Loader2, ExternalLink, RotateCw, ShieldCheck, AlertTriangle, InfoIcon } from "lucide-react";
+import { AlertCircle, Loader2, ExternalLink, RotateCw, ShieldCheck, AlertTriangle, InfoIcon, CheckCircle2 } from "lucide-react";
 import { toast } from "sonner";
 import { webhookService } from '@/services/webhookService';
 import { Badge } from "@/components/ui/badge";
@@ -121,12 +121,35 @@ export const WebhookManager = () => {
           </p>
         </div>
         
+        <Alert className="bg-amber-50 border-amber-200">
+          <InfoIcon className="h-4 w-4 text-amber-600" />
+          <AlertTitle className="text-amber-700">Informação importante sobre autenticação</AlertTitle>
+          <AlertDescription className="text-sm text-amber-700">
+            <p>O Asaas envia requisições com o header <strong>access_token</strong> contendo a chave de API.</p>
+            <p className="mt-1">Certifique-se de que você configurou o webhook no painel do Asaas com a URL acima e está utilizando o header <strong>access_token</strong>.</p>
+          </AlertDescription>
+        </Alert>
+        
         <Alert className="bg-blue-50 border-blue-200">
           <InfoIcon className="h-4 w-4 text-blue-600" />
-          <AlertTitle className="text-blue-700">Importante</AlertTitle>
+          <AlertTitle className="text-blue-700">Configuração do Webhook</AlertTitle>
           <AlertDescription className="text-sm text-blue-700">
             <p>Certifique-se de que você configurou o webhook no painel do Asaas apontando para a URL acima.</p>
             <p className="mt-1">A API do Asaas usada é: <strong>Sandbox</strong> (ambiente de teste)</p>
+            <div className="mt-2 flex flex-col space-y-1">
+              <div className="flex items-center">
+                <CheckCircle2 className="h-4 w-4 text-green-600 mr-2" />
+                <span>URL do webhook: <code className="bg-blue-100 px-1 py-0.5 rounded text-blue-800">{webhookUrl}</code></span>
+              </div>
+              <div className="flex items-center">
+                <CheckCircle2 className="h-4 w-4 text-green-600 mr-2" />
+                <span>Método HTTP: <code className="bg-blue-100 px-1 py-0.5 rounded text-blue-800">POST</code></span>
+              </div>
+              <div className="flex items-center">
+                <CheckCircle2 className="h-4 w-4 text-green-600 mr-2" />
+                <span>Header: <code className="bg-blue-100 px-1 py-0.5 rounded text-blue-800">access_token</code> contendo a Chave de API do Asaas</span>
+              </div>
+            </div>
           </AlertDescription>
         </Alert>
         
@@ -217,6 +240,7 @@ export const WebhookManager = () => {
                 <li>O Asaas está configurado corretamente</li>
                 <li>A API key do Asaas é válida e está atualizada</li>
                 <li>O webhook está registrado no painel do Asaas com a URL do Supabase</li>
+                <li>O header <strong>access_token</strong> está configurado com a API key do Asaas</li>
               </ul>
             </AlertDescription>
           </Alert>
