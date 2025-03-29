@@ -6,6 +6,8 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Button } from '@/components/ui/button';
 import AdminAuth from '@/components/admin/AdminAuth';
+import ErrorBoundary from '@/components/ErrorBoundary';
+import { Toaster } from '@/components/ui/toaster';
 
 const WebhookAdmin = () => {
   const navigate = useNavigate();
@@ -38,14 +40,17 @@ const WebhookAdmin = () => {
             onAuthenticated={() => {}}
             redirectPath="/admin-setup"
           >
-            <div className="space-y-10">
-              <WebhookManager />
-            </div>
+            <ErrorBoundary>
+              <div className="space-y-10">
+                <WebhookManager />
+              </div>
+            </ErrorBoundary>
           </AdminAuth>
         </div>
       </main>
       
       <Footer />
+      <Toaster />
     </div>
   );
 };

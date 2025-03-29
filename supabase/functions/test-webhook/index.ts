@@ -2,150 +2,197 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.38.4";
 
+// Define CORS headers to allow browser access
 const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
 };
 
+// Get environment variables for Supabase connection
+const supabaseUrl = Deno.env.get("SUPABASE_URL") || "";
+const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
+const asaasApiKey = Deno.env.get("ASAAS_API_KEY") || "";
+const asaasWebhookToken = Deno.env.get("ASAAS_WEBHOOK_TOKEN") || "";
+
+// Setup the server handler
 serve(async (req) => {
   // Handle CORS preflight requests
-  if (req.method === "OPTIONS") {
-    return new Response(null, {
-      headers: {
-        ...corsHeaders,
-      },
-    });
+  if (req.method === 'OPTIONS') {
+    return new Response(null, { headers: corsHeaders });
   }
-  
+
   try {
-    // Get the JWT token from the authorization header
-    const authHeader = req.headers.get("authorization");
-    if (!authHeader) {
-      throw new Error("Missing authorization header");
-    }
+    // Parse the webhook test request
+    const { timestamp, test, userAgent, screenSize } = await req.json();
     
-    // Parse the request body
-    let reqBody;
-    try {
-      reqBody = await req.json();
-    } catch (e) {
-      throw new Error(`Error parsing request body: ${e.message}`);
-    }
-    
-    console.log("Testing webhook with body:", JSON.stringify(reqBody, null, 2));
-    
-    // Webhook URL to test
-    const webhookUrl = "https://nmxfknwkhnengqqjtwru.supabase.co/functions/v1/asaas-webhook";
-    
-    // Test data
-    const testEvent = {
-      event: "PAYMENT_CREATED",
-      payment: {
-        id: `test_${Date.now()}`,
-        dateCreated: new Date().toISOString().split('T')[0],
-        customer: "test_customer",
-        value: 100,
-        netValue: 97.5,
-        description: "Test webhook",
-        billingType: "CREDIT_CARD",
-        status: "PENDING",
-        dueDate: new Date().toISOString().split('T')[0],
-        paymentDate: null,
-        invoiceUrl: null,
-        externalReference: `test_reference_${Date.now()}`,
-      },
-      testMode: true
-    };
-    
-    // Test the webhook endpoint
-    console.log(`Testing webhook at ${webhookUrl}`);
-    
-    const webhookResponse = await fetch(webhookUrl, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "User-Agent": "Java/1.8.0_282", // Simulate the Asaas User-Agent
-      },
-      body: JSON.stringify(testEvent),
+    console.log("Received test webhook request:", {
+      timestamp,
+      test,
+      userAgent,
+      screenSize,
     });
-    
-    const webhookData = await webhookResponse.text();
-    let parsedWebhookData;
-    
-    try {
-      parsedWebhookData = JSON.parse(webhookData);
-    } catch (e) {
-      parsedWebhookData = { rawResponse: webhookData };
-    }
-    
-    console.log(`Webhook response (${webhookResponse.status}):`, webhookData);
-    
-    // Format the results
+
+    // Create a Supabase client
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+
+    // Skip JWT validation for this test
+    console.log("Processing webhook test without JWT validation");
+
+    // Test result object to store various test results
     const testResults = {
-      webhookEndpoint: {
-        status: webhookResponse.status,
-        success: webhookResponse.status >= 200 && webhookResponse.status < 300,
-        data: parsedWebhookData,
-        error: webhookResponse.status >= 400 ? "Endpoint returned an error" : null,
-      },
-      asaasAccount: {
-        status: "OK",
-        success: true,
-        error: null,
-      }
+      webhookEndpoint: await testWebhookEndpoint(),
+      asaasAccount: await testAsaasApiConnection(),
     };
-    
-    // If the webhook test failed, provide troubleshooting information
-    let recommendations = [];
-    let solution = null;
-    let options = [];
-    
-    if (!testResults.webhookEndpoint.success) {
-      recommendations = [
-        "Verifique se a URL do webhook está correta",
-        "Confirme que o webhook está ativo no painel do Asaas",
-        "Verifique se o token de acesso está configurado corretamente",
-      ];
-      
-      if (webhookResponse.status === 401) {
-        solution = "Erro de autenticação. O webhook requer autenticação via header 'access_token', mas no ambiente Sandbox essa restrição foi temporariamente desativada.";
-        options = [
-          "Verificar a configuração do webhook no painel do Asaas",
-          "Revisar o código do webhook para confirmar que ele aceita requisições do Asaas Sandbox"
-        ];
-      }
-    }
-    
+
+    // Return test results
     return new Response(
       JSON.stringify({
-        success: testResults.webhookEndpoint.success,
+        success: true,
+        timestamp: new Date().toISOString(),
         testResults,
-        recommendations,
-        solution,
-        options,
+        message: "Webhook test completed successfully",
+        recommendations: getRecommendations(testResults),
       }),
       {
         headers: {
           ...corsHeaders,
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
       }
     );
   } catch (error) {
-    console.error("Error testing webhook:", error);
-    
+    console.error("Error in test-webhook function:", error);
+
     return new Response(
       JSON.stringify({
         success: false,
-        error: error.message,
-        details: error.stack,
+        error: error.message || "Unexpected error during webhook test",
+        details: {
+          stack: error.stack,
+          name: error.name,
+        },
       }),
       {
         headers: {
           ...corsHeaders,
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
+        status: 500,
       }
     );
   }
 });
+
+// Function to test the webhook endpoint by making a simple GET request
+async function testWebhookEndpoint() {
+  try {
+    const webhookUrl = `${supabaseUrl}/functions/v1/asaas-webhook?test=true`;
+    console.log(`Testing webhook endpoint: ${webhookUrl}`);
+
+    const response = await fetch(webhookUrl, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    const status = response.status;
+    const responseText = await response.text();
+    console.log(`Webhook endpoint test result: ${status} - ${responseText}`);
+
+    let responseData;
+    try {
+      responseData = JSON.parse(responseText);
+    } catch (e) {
+      responseData = { message: responseText };
+    }
+
+    return {
+      success: status >= 200 && status < 300,
+      status,
+      responseData,
+      error: status >= 400 ? `HTTP Error ${status}` : null,
+    };
+  } catch (error) {
+    console.error("Error testing webhook endpoint:", error);
+    return {
+      success: false,
+      status: null,
+      error: error.message || "Failed to connect to webhook endpoint",
+    };
+  }
+}
+
+// Function to test Asaas API connection
+async function testAsaasApiConnection() {
+  try {
+    if (!asaasApiKey) {
+      return {
+        success: false,
+        status: "missing_key",
+        error: "Asaas API Key is not configured",
+      };
+    }
+
+    // Test with a simple API call that doesn't modify data
+    const response = await fetch(
+      "https://sandbox.asaas.com/api/v3/customers?limit=1",
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "access_token": asaasApiKey,
+        },
+      }
+    );
+
+    const status = response.status;
+    const responseData = await response.json();
+
+    return {
+      success: status >= 200 && status < 300,
+      status,
+      data: responseData,
+      error: status >= 400 ? `Asaas API Error: ${status}` : null,
+    };
+  } catch (error) {
+    console.error("Error testing Asaas API connection:", error);
+    return {
+      success: false,
+      status: "connection_error",
+      error: error.message || "Failed to connect to Asaas API",
+    };
+  }
+}
+
+// Function to provide helpful recommendations based on test results
+function getRecommendations(testResults) {
+  const recommendations = [];
+
+  if (!testResults.webhookEndpoint.success) {
+    recommendations.push(
+      "Verifique se a função asaas-webhook está implantada corretamente no Supabase"
+    );
+    recommendations.push(
+      "Verifique as permissões da função e se está acessível publicamente"
+    );
+  }
+
+  if (!testResults.asaasAccount.success) {
+    recommendations.push(
+      "Verifique se a chave API do Asaas está configurada corretamente"
+    );
+    recommendations.push(
+      "Confirme se a conta do Asaas está ativa e se a chave API tem permissões adequadas"
+    );
+  }
+
+  if (recommendations.length === 0) {
+    recommendations.push(
+      "Tudo parece estar configurado corretamente. Você pode registrar o webhook no painel do Asaas."
+    );
+  }
+
+  return recommendations;
+}

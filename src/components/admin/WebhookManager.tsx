@@ -10,10 +10,12 @@ import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { useAuth } from "@/context/AuthContext";
 import { useProfile } from "@/hooks/useProfile";
+import { useToast } from "@/hooks/use-toast";
 
 export const WebhookManager = () => {
   const { user } = useAuth();
   const { isAdmin } = useProfile();
+  const { toast: uiToast } = useToast(); // Use Shadcn toast for more consistent UI
   const [webhookUrl, setWebhookUrl] = useState(webhookService.getPreferredWebhookUrl());
   const [isTestLoading, setIsTestLoading] = useState(false);
   const [webhookStatus, setWebhookStatus] = useState<'active' | 'unknown'>('unknown');
@@ -31,12 +33,22 @@ export const WebhookManager = () => {
       // Check if user is authenticated and admin
       if (!user) {
         toast.error("Você precisa estar logado para testar o webhook");
+        uiToast({
+          variant: "destructive",
+          title: "Autenticação necessária",
+          description: "Você precisa estar logado para testar o webhook"
+        });
         setErrorDetails("Usuário não autenticado. Faça login antes de testar o webhook.");
         return;
       }
       
       if (!isAdmin) {
         toast.error("Você precisa ser administrador para testar o webhook");
+        uiToast({
+          variant: "destructive",
+          title: "Permissão negada",
+          description: "Você precisa ter privilégios de administrador para testar o webhook"
+        });
         setErrorDetails("Usuário não possui permissões de administrador.");
         return;
       }
@@ -51,6 +63,12 @@ export const WebhookManager = () => {
           description: "Conexão verificada com o endpoint do Supabase"
         });
         
+        uiToast({
+          variant: "default",
+          title: "Teste de webhook concluído",
+          description: "Conexão verificada com o endpoint do Supabase"
+        });
+        
         setTestResults(result.testResults);
         
         if (result.testResults?.webhookEndpoint?.success) {
@@ -58,9 +76,21 @@ export const WebhookManager = () => {
           toast.success("Webhook respondendo corretamente", {
             description: "O webhook está configurado e respondendo adequadamente"
           });
+          
+          uiToast({
+            variant: "default",
+            title: "Webhook respondendo corretamente",
+            description: "O webhook está configurado e respondendo adequadamente"
+          });
         } else {
           setErrorDetails("Webhook disponível, mas com resposta inesperada");
           toast.warning("Webhook com resposta inesperada", {
+            description: "Verifique a configuração do webhook no painel do Asaas"
+          });
+          
+          uiToast({
+            variant: "warning",
+            title: "Webhook com resposta inesperada",
             description: "Verifique a configuração do webhook no painel do Asaas"
           });
         }
@@ -71,6 +101,12 @@ export const WebhookManager = () => {
         toast.error("Falha ao testar webhook", {
           description: result.error || "Erro ao verificar a conexão com o Asaas"
         });
+        
+        uiToast({
+          variant: "destructive",
+          title: "Falha ao testar webhook",
+          description: result.error || "Erro ao verificar a conexão com o Asaas"
+        });
       }
       
     } catch (error: any) {
@@ -78,6 +114,12 @@ export const WebhookManager = () => {
       setErrorDetails(error.message || "Erro desconhecido");
       toast.error("Erro ao testar webhook", {
         description: error.message
+      });
+      
+      uiToast({
+        variant: "destructive",
+        title: "Erro ao testar webhook",
+        description: error.message || "Ocorreu um erro inesperado. Por favor, tente novamente mais tarde."
       });
     } finally {
       setIsTestLoading(false);
