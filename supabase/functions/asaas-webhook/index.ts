@@ -15,8 +15,19 @@ const corsHeaders = {
 };
 
 serve(async (req) => {
+  // Log all requests for debugging
+  console.log(`${req.method} request received at ${new Date().toISOString()}`);
+  console.log("URL:", req.url);
+  console.log("Headers:", JSON.stringify(Object.fromEntries(req.headers.entries()), null, 2));
+  
   try {
-    // Special handler for ping/test requests
+    // Handle OPTIONS requests for CORS preflight
+    if (req.method === "OPTIONS") {
+      console.log("Handling OPTIONS request for CORS preflight");
+      return new Response("ok", { headers: corsHeaders });
+    }
+    
+    // Special handler for GET requests (ping/test)
     if (req.method === "GET") {
       console.log("Received GET request to webhook - likely a test or ping");
       return new Response(
@@ -31,19 +42,7 @@ serve(async (req) => {
         }
       );
     }
-    
-    // Handle OPTIONS requests for CORS preflight
-    if (req.method === "OPTIONS") {
-      console.log("Handling OPTIONS request for CORS preflight");
-      return new Response("ok", { headers: corsHeaders });
-    }
 
-    // Log request details
-    console.log("Webhook received request:", req.url);
-    console.log("Method:", req.method);
-    console.log("Headers:", JSON.stringify(Object.fromEntries(req.headers.entries()), null, 2));
-    console.log("User-Agent:", req.headers.get("user-agent"));
-    
     // Extract token from various sources
     const requestUrl = new URL(req.url);
     const token = requestUrl.searchParams.get("token");
@@ -52,9 +51,11 @@ serve(async (req) => {
     const asaasToken = req.headers.get("asaas-token") || req.headers.get("Asaas-Token");
     const accessToken = req.headers.get("access_token") || req.headers.get("Access-Token");
     
-    let headerToken = null;
-    if (authHeader) {
-      // Handle different authorization header formats
+    // Authenticate the request
+    let validToken = null;
+    if (token === ASAAS_WEBHOOK_TOKEN) validToken = token;
+    else if (authHeader) {
+      let headerToken = authHeader;
       if (authHeader.startsWith("Bearer ")) {
         headerToken = authHeader.replace("Bearer ", "");
       } else if (authHeader.startsWith("Basic ")) {
@@ -64,80 +65,96 @@ serve(async (req) => {
         } catch (e) {
           console.log("Not base64 encoded");
         }
-      } else {
-        headerToken = authHeader;
       }
+      if (headerToken === ASAAS_WEBHOOK_TOKEN) validToken = headerToken;
     }
+    else if (xHookToken === ASAAS_WEBHOOK_TOKEN) validToken = xHookToken;
+    else if (asaasToken === ASAAS_WEBHOOK_TOKEN) validToken = asaasToken;
+    else if (accessToken === ASAAS_WEBHOOK_TOKEN) validToken = accessToken;
     
-    // Parse webhook data from body
+    // Parse webhook data
     let webhookData;
-    let bodyToken = null;
-    
     try {
       const clonedReq = req.clone();
       const bodyText = await clonedReq.text();
       console.log("Raw request body:", bodyText);
       
-      if (bodyText) {
+      if (bodyText && bodyText.trim() !== '') {
         try {
           webhookData = JSON.parse(bodyText);
           console.log("Parsed webhook data:", JSON.stringify(webhookData, null, 2));
           
-          if (webhookData && webhookData.token) {
-            bodyToken = webhookData.token;
+          // Check for token in body
+          if (webhookData && webhookData.token && webhookData.token === ASAAS_WEBHOOK_TOKEN) {
+            validToken = webhookData.token;
           }
         } catch (e) {
           console.error("Error parsing JSON payload:", e);
+          webhookData = { rawBody: bodyText };
         }
       } else {
         console.log("Request body is empty");
+        webhookData = {};
       }
     } catch (e) {
       console.error("Error reading request body:", e);
+      webhookData = {};
     }
     
-    // Log all potential token sources for debugging
+    // Log authentication check details
     console.log("Authentication check details:", {
       urlToken: token,
-      headerToken,
+      headerToken: authHeader,
       xHookToken,
       asaasToken,
       accessToken,
-      bodyToken,
+      bodyToken: webhookData?.token,
+      validToken,
       expectedToken: ASAAS_WEBHOOK_TOKEN
     });
     
-    // Accept token from any of the possible sources
-    const isValidToken = 
-      (token && token === ASAAS_WEBHOOK_TOKEN) || 
-      (headerToken && headerToken === ASAAS_WEBHOOK_TOKEN) ||
-      (xHookToken && xHookToken === ASAAS_WEBHOOK_TOKEN) ||
-      (asaasToken && asaasToken === ASAAS_WEBHOOK_TOKEN) ||
-      (accessToken && accessToken === ASAAS_WEBHOOK_TOKEN) ||
-      (bodyToken && bodyToken === ASAAS_WEBHOOK_TOKEN);
-    
-    // If no token validation is configured, accept the request (more permissive)
+    // Token validation - only if we have a token configured
     const isTokenRequired = !!ASAAS_WEBHOOK_TOKEN;
-    
-    if (isTokenRequired && !isValidToken) {
-      console.error("Token webhook inválido ou não encontrado.", {
-        urlToken: token,
-        headerToken,
-        xHookToken,
-        asaasToken,
-        accessToken,
-        bodyToken
+    if (isTokenRequired && !validToken) {
+      console.warn("Invalid or missing webhook token", {
+        receivedTokens: {
+          urlToken: token,
+          authHeader,
+          xHookToken,
+          asaasToken,
+          accessToken,
+          bodyToken: webhookData?.token
+        },
+        expectedToken: ASAAS_WEBHOOK_TOKEN
       });
+      
+      // For test calls, respond with clear error
+      if (webhookData && webhookData.testMode) {
+        return new Response(
+          JSON.stringify({ 
+            success: false,
+            error: "Unauthorized", 
+            message: "Missing or invalid token for webhook authentication",
+            hint: "Make sure your webhook is configured with the correct token"
+          }),
+          {
+            status: 401,
+            headers: { ...corsHeaders, "Content-Type": "application/json" }
+          }
+        );
+      }
+      
+      // For Asaas production calls, return 200 to prevent retries but indicate error
       return new Response(
         JSON.stringify({ 
           success: false,
-          error: "Não autorizado", 
+          error: "Unauthorized", 
           code: 401, 
           message: "Missing or invalid token",
           detail: "O token fornecido não corresponde ao token configurado para este webhook."
         }),
         {
-          status: 401,
+          status: 200, // Return 200 to prevent Asaas from retrying
           headers: { ...corsHeaders, "Content-Type": "application/json" }
         }
       );
@@ -162,60 +179,6 @@ serve(async (req) => {
       );
     }
     
-    // Parse webhook data if not already done
-    if (!webhookData) {
-      try {
-        const requestClone = req.clone();
-        const rawBody = await requestClone.text();
-        
-        if (!rawBody || rawBody.trim() === '') {
-          console.log("Empty request body received");
-          return new Response(
-            JSON.stringify({ 
-              success: true, 
-              message: "Received empty body", 
-              timestamp: new Date().toISOString() 
-            }),
-            {
-              status: 200,
-              headers: { ...corsHeaders, "Content-Type": "application/json" }
-            }
-          );
-        }
-        
-        try {
-          webhookData = JSON.parse(rawBody);
-          console.log("Webhook data parsed in second attempt:", JSON.stringify(webhookData, null, 2));
-        } catch (e) {
-          console.error("Error parsing JSON in second attempt:", e, "Raw body:", rawBody);
-          return new Response(
-            JSON.stringify({ 
-              success: true, 
-              message: "Received non-JSON data", 
-              rawData: rawBody.substring(0, 500) + (rawBody.length > 500 ? "..." : "") 
-            }),
-            {
-              status: 200, // Still return 200 to prevent retries
-              headers: { ...corsHeaders, "Content-Type": "application/json" }
-            }
-          );
-        }
-      } catch (e) {
-        console.error("Fatal error processing webhook payload:", e);
-        return new Response(
-          JSON.stringify({ 
-            success: true, // Still indicate success to prevent retries
-            error: "Invalid payload - could not process", 
-            code: 400 
-          }),
-          {
-            status: 200, // Return 200 to prevent Asaas from retrying
-            headers: { ...corsHeaders, "Content-Type": "application/json" }
-          }
-        );
-      }
-    }
-
     // Special case: Handle ACCOUNT_STATUS events differently
     if (webhookData && webhookData.event && webhookData.event.startsWith("ACCOUNT_STATUS")) {
       console.log("Processando evento de status da conta:", webhookData.event);
@@ -340,9 +303,9 @@ serve(async (req) => {
       {
         status: 200, // Return 200 even for errors to prevent Asaas from retrying
         headers: { ...corsHeaders, "Content-Type": "application/json" }
-        }
-      );
-    }
+      }
+    );
+  }
 });
 
 // Helper function to process payment events
