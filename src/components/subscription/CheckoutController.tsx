@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
@@ -221,21 +220,22 @@ const CheckoutController: React.FC<CheckoutControllerProps> = ({
       };
       localStorage.setItem('checkoutRecoveryState', JSON.stringify(recoveryState));
       
-      const baseUrl = window.location.origin;
+      // Use the exact domain configured in Asaas
+      const domain = "https://crievalor.lovable.app";
       
       // Log more details of the request
       console.log(`[${processId}] Making checkout request with:`, {
         planId,
         installments,
         paymentType,
-        successUrl: `${baseUrl}/checkout/success`,
-        cancelUrl: `${baseUrl}/checkout/canceled`
+        successUrl: `${domain}/checkout/success`,
+        cancelUrl: `${domain}/checkout/canceled`
       });
       
       const result = await subscriptionService.createCheckoutSession({
         planId,
-        successUrl: `${baseUrl}/checkout/success`,
-        cancelUrl: `${baseUrl}/checkout/canceled`,
+        successUrl: `${domain}/checkout/success`,
+        cancelUrl: `${domain}/checkout/canceled`,
         installments,
         paymentType
       });

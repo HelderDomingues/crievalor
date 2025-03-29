@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
@@ -214,8 +213,8 @@ const Checkout = () => {
     setError(null);
     
     try {
-      // Get current domain for success/cancel URLs
-      const baseUrl = window.location.origin;
+      // Get configured domain for success/cancel URLs - use the exact domain configured in Asaas
+      const domain = "https://crievalor.lovable.app";
       
       // Save checkout state for recovery
       const recoveryState = {
@@ -228,22 +227,23 @@ const Checkout = () => {
       
       checkoutRecoveryService.saveRecoveryState(recoveryState);
       
-      // Salvar informações importantes na localStorage antes da tentativa
+      // Save important information to localStorage before the attempt
       localStorage.setItem('checkoutPlanId', selectedPlanId);
       localStorage.setItem('checkoutInstallments', String(selectedInstallments));
       localStorage.setItem('checkoutPaymentType', selectedPaymentType);
       localStorage.setItem('checkoutTimestamp', String(Date.now()));
       
-      console.log(`[${processId}] Iniciando processo de pagamento com:`, {
+      console.log(`[${processId}] Starting payment process with:`, {
         planId: selectedPlanId,
         installments: selectedInstallments,
-        paymentType: selectedPaymentType
+        paymentType: selectedPaymentType,
+        domain: domain
       });
       
       const result = await subscriptionService.createCheckoutSession({
         planId: selectedPlanId,
-        successUrl: `${baseUrl}/checkout/success`,
-        cancelUrl: `${baseUrl}/checkout/canceled`,
+        successUrl: `${domain}/checkout/success`,
+        cancelUrl: `${domain}/checkout/canceled`,
         installments: selectedInstallments,
         paymentType: selectedPaymentType
       });
@@ -255,7 +255,7 @@ const Checkout = () => {
       }
       
       if (!result.url) {
-        throw new Error("Nenhum link de checkout foi retornado");
+        throw new Error("No checkout link was returned");
       }
       
       console.log(`[${processId}] Redirecting to payment page:`, result.url);
@@ -268,7 +268,7 @@ const Checkout = () => {
       
       localStorage.setItem('lastPaymentUrl', result.url);
       
-      // Salvar informações adicionais antes do redirecionamento
+      // Save additional information before redirecting
       if (result.payment) {
         // Ensure we're storing a string for payment ID
         const paymentId = typeof result.payment === 'object' ? result.payment.id : result.payment;
@@ -291,7 +291,7 @@ const Checkout = () => {
         });
       }
       
-      // Usar window.location.href para garantir um redirecionamento completo
+      // Use window.location.href for complete redirect
       window.location.href = result.url;
     } catch (error: any) {
       // Log the error with additional context
@@ -302,10 +302,10 @@ const Checkout = () => {
         step: currentStep
       }, processId);
       
-      setError(error.message || "Não foi possível iniciar o processo de pagamento.");
+      setError(error.message || "Could not start the payment process.");
       
       toast({
-        title: "Erro ao processar pagamento",
+        title: "Error processing payment",
         description: errorUtils.getUserFriendlyMessage(error),
         variant: "destructive",
       });

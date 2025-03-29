@@ -1,4 +1,3 @@
-
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.38.4';
 
@@ -603,3 +602,20 @@ async function getPaymentLink(linkId: string): Promise<any> {
     throw error;
   }
 }
+
+const validateUrls = (successUrl: string, cancelUrl: string) => {
+  const allowedDomain = "https://crievalor.lovable.app";
+  
+  if (!successUrl.startsWith(allowedDomain)) {
+    console.error(`Invalid success URL domain: ${successUrl}. Must use: ${allowedDomain}`);
+    throw new Error(`Invalid success URL domain. Must use: ${allowedDomain}`);
+  }
+  
+  if (!cancelUrl.startsWith(allowedDomain)) {
+    console.error(`Invalid cancel URL domain: ${cancelUrl}. Must use: ${allowedDomain}`);
+    throw new Error(`Invalid cancel URL domain. Must use: ${allowedDomain}`);
+  }
+  
+  console.log("URLs validated successfully for domain:", allowedDomain);
+  return true;
+};
