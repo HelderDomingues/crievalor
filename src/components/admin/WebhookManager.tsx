@@ -125,7 +125,7 @@ export const WebhookManager = () => {
           <InfoIcon className="h-4 w-4 text-amber-600" />
           <AlertTitle className="text-amber-700">Informação importante sobre autenticação</AlertTitle>
           <AlertDescription className="text-sm text-amber-700">
-            <p>O Asaas <strong>Sandbox</strong> envia requisições com um User-Agent "Java", mas pode não enviar o header <strong>access_token</strong>.</p>
+            <p>O Asaas <strong>Sandbox</strong> envia requisições com um User-Agent "Java", e <strong>não requer</strong> o header <strong>access_token</strong> neste ambiente.</p>
             <p className="mt-1">Para o ambiente de teste, o webhook foi configurado para aceitar requisições do Asaas Sandbox mesmo sem o token.</p>
             <p className="mt-1">Para o ambiente de produção, será necessário configurar o <strong>access_token</strong> contendo a chave de API do Asaas.</p>
           </AlertDescription>

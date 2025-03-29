@@ -1,4 +1,3 @@
-
 # Project Log - Crie Valor Estratégia
 
 ## Table of Contents
@@ -434,5 +433,31 @@ Identificação do formato correto de autenticação esperado pelo Asaas. Em vez
 2. Criação de uma lista de IPs confiáveis para o ambiente de produção
 3. Configuração para aceitar todos os IPs durante a fase de desenvolvimento e testes
 4. Logs detalhados para monitorar as requisições por IP
+
+### Corrigido problema de erro 401 no Webhook do Asaas
+
+**Problema:**
+Webhook do Asaas estava retornando erro 401 (Unauthorized) após funcionamento normal até as 14:55.
+
+**Análise:**
+As requisições do Asaas Sandbox estavam sendo rejeitadas devido a uma validação de autenticação que exigia o header access_token, mesmo sabendo que o ambiente Sandbox do Asaas pode não enviar esse header consistentemente.
+
+**Solução:**
+1. Modificação do webhook para identificar as requisições do Asaas Sandbox através do User-Agent "Java"
+2. Bypass da autenticação para requisições identificadas como vindas do Asaas Sandbox
+3. Manutenção da validação de token para outras requisições
+4. Atualização da documentação na interface para esclarecer que o ambiente Sandbox não requer token
+5. Melhoria dos logs para facilitar diagnóstico
+
+**Implementação:**
+- Atualizado `supabase/functions/asaas-webhook/index.ts` para identificar e aceitar requisições do Asaas Sandbox (User-Agent "Java")
+- Atualizado `WebhookManager.tsx` para explicar claramente a nova configuração
+- Melhorado `test-webhook` para fornecer resultados mais precisos e úteis para debugging
+
+**Status Atual:**
+Implementado. O webhook agora aceita requisições do Asaas Sandbox mesmo sem o header access_token.
+
+**Nota Importante:**
+Para o ambiente de produção, a configuração deverá ser revisada para exigir autenticação adequada via header access_token contendo a chave de API do Asaas.
 
 Este log continuará a ser atualizado com novas interações, desafios e soluções à medida que o projeto avança.
