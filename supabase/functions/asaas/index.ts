@@ -454,7 +454,8 @@ async function createPayment(paymentData: any): Promise<any> {
         successUrl: paymentData.successUrl,
         cancelUrl: paymentData.cancelUrl,
         endDate: new Date(new Date().setDate(new Date().getDate() + 4)).toISOString().split('T')[0],
-        externalReference: paymentData.externalReference
+        externalReference: paymentData.externalReference,
+        installments: installments
       };
       
       const paymentLink = await generatePaymentLink(linkData);
