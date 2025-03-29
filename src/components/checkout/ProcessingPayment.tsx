@@ -1,7 +1,8 @@
 
-import React from "react";
+import React, { useEffect } from "react";
 import { Loader2, AlertCircle, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
 
 interface ProcessingPaymentProps {
   error: string | null;
@@ -9,6 +10,18 @@ interface ProcessingPaymentProps {
 }
 
 const ProcessingPayment = ({ error, onRetry }: ProcessingPaymentProps) => {
+  const { toast } = useToast();
+  
+  useEffect(() => {
+    if (error) {
+      toast({
+        title: "Erro no processamento",
+        description: "Houve um problema ao processar o pagamento. Você pode tentar novamente.",
+        variant: "destructive",
+      });
+    }
+  }, [error, toast]);
+
   return (
     <div className="space-y-8 text-center">
       {error ? (

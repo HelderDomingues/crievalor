@@ -61,12 +61,26 @@ const Checkout = () => {
     setSelectedPlanId(planId);
   }, [planId, navigate, toast]);
   
+  // Recuperar valores do localStorage, se existirem
+  useEffect(() => {
+    const savedInstallments = localStorage.getItem('checkoutInstallments');
+    const savedPaymentType = localStorage.getItem('checkoutPaymentType');
+    
+    if (savedInstallments) {
+      setSelectedInstallments(Number(savedInstallments));
+    }
+    
+    if (savedPaymentType) {
+      setSelectedPaymentType(savedPaymentType as PaymentType);
+    }
+  }, []);
+  
   // Atualiza a URL para manter o histórico de navegação correto
   useEffect(() => {
     // Só atualiza o histórico se não for a primeira carga da página
     if (currentStep !== "plan" && planId) {
       const newUrl = `/checkout?plan=${planId}&step=${currentStep}`;
-      window.history.pushState({ step: currentStep }, "", newUrl);
+      window.history.replaceState({ step: currentStep }, "", newUrl);
     }
   }, [currentStep, planId]);
   
@@ -155,6 +169,18 @@ const Checkout = () => {
       // Get current domain for success/cancel URLs
       const baseUrl = window.location.origin;
       
+      // Salvar informações importantes na localStorage antes da tentativa
+      localStorage.setItem('checkoutPlanId', selectedPlanId);
+      localStorage.setItem('checkoutInstallments', String(selectedInstallments));
+      localStorage.setItem('checkoutPaymentType', selectedPaymentType);
+      localStorage.setItem('checkoutTimestamp', String(Date.now()));
+      
+      console.log("Iniciando processo de pagamento com:", {
+        planId: selectedPlanId,
+        installments: selectedInstallments,
+        paymentType: selectedPaymentType
+      });
+      
       const result = await subscriptionService.createCheckoutSession({
         planId: selectedPlanId,
         successUrl: `${baseUrl}/checkout/success`,
@@ -175,13 +201,15 @@ const Checkout = () => {
       
       console.log("Redirecting to payment page:", result.url);
       
-      // Save to localStorage before redirecting
-      localStorage.setItem('checkoutPlanId', selectedPlanId);
-      localStorage.setItem('checkoutInstallments', String(selectedInstallments));
-      localStorage.setItem('checkoutPaymentType', selectedPaymentType);
-      localStorage.setItem('checkoutTimestamp', String(Date.now()));
+      // Salvar informações adicionais antes do redirecionamento
+      if (result.payment) {
+        localStorage.setItem('checkoutPaymentId', result.payment);
+      }
+      if (result.dbSubscription?.id) {
+        localStorage.setItem('checkoutSubscriptionId', result.dbSubscription.id);
+      }
       
-      // Redirect to payment page
+      // Usar window.location.href para garantir um redirecionamento completo
       window.location.href = result.url;
     } catch (error: any) {
       console.error("Error creating checkout session:", error);
@@ -192,7 +220,6 @@ const Checkout = () => {
         variant: "destructive",
       });
       setIsProcessing(false);
-      setCurrentStep("payment");
     }
   };
   

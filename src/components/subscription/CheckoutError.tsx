@@ -25,6 +25,9 @@ const CheckoutError = ({ error }: CheckoutErrorProps) => {
   } else if (error.includes("Telefone é obrigatório")) {
     errorTitle = "Informações de perfil incompletas";
     displayError = "Telefone é obrigatório para realizar pagamentos. Por favor, complete seu perfil antes de continuar.";
+  } else if (error.includes("No payments were created") || error.includes("Nenhum pagamento foi criado")) {
+    errorTitle = "Erro ao processar parcelas";
+    displayError = "Não foi possível criar o parcelamento do pagamento. Por favor, tente novamente ou escolha outro método de pagamento.";
   }
   
   return (

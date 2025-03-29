@@ -161,17 +161,21 @@ const CheckoutController: React.FC<CheckoutControllerProps> = ({
       }
       
       if (!result.url) {
-        throw new Error("No checkout URL returned");
+        throw new Error("Nenhum link de checkout foi retornado");
       }
       
       console.log(`[${processId}] Redirecting to checkout: ${result.url}`);
       
-      if (result.directRedirect) {
-        // Para outros navegadores, use window.location.href
-        window.location.href = result.url;
-      } else {
-        navigate(result.url);
+      // Salvar informações adicionais antes do redirecionamento
+      if (result.payment) {
+        localStorage.setItem('checkoutPaymentId', result.payment);
       }
+      if (result.dbSubscription?.id) {
+        localStorage.setItem('checkoutSubscriptionId', result.dbSubscription.id);
+      }
+      
+      // Usar window.location.href para garantir um redirecionamento completo
+      window.location.href = result.url;
     } catch (error: any) {
       console.error(`[${processId}] Error creating checkout session:`, error);
       setCheckoutError(
