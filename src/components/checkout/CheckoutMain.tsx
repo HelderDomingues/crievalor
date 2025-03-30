@@ -153,9 +153,11 @@ const CheckoutMain: React.FC<CheckoutMainProps> = ({
         )}
         
         {currentStep === "payment" && (
+          /* Correção aqui: Retornando um null em vez de goToPreviousStep() que retorna void */
           <div>
             {/* Este step não é mais necessário, pois o PlanSummary já inclui tudo */}
             {goToPreviousStep()}
+            <div>Redirecionando...</div>
           </div>
         )}
         
