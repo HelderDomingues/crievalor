@@ -7,13 +7,10 @@ import { Card, CardContent } from "@/components/ui/card";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 
-// Updated PaymentSelectionType to include credit_cash
-type PaymentSelectionType = PaymentType | "credit_cash";
-
 interface PaymentSelectionProps {
   onBack?: () => void;
-  selectedPaymentType?: PaymentSelectionType;
-  onPaymentTypeChange?: (type: PaymentSelectionType) => void;
+  selectedPaymentType?: PaymentType;
+  onPaymentTypeChange?: (type: PaymentType) => void;
   onContinue?: () => void;
   planMonthlyPrice?: number;
   planTotalPrice?: number;
@@ -30,32 +27,28 @@ const PaymentSelection: React.FC<PaymentSelectionProps> = ({
   planId = "basic_plan"
 }) => {
   const creditFullPrice = planTotalPrice;
-  const creditCashPrice = planTotalPrice * 0.9; // 10% de desconto
-  const pixBoletoPrice = planTotalPrice * 0.9; // 10% de desconto (consolidado)
+  const cashPrice = planTotalPrice * 0.9; // 10% de desconto
 
   // Links de pagamento para cada plano
   const paymentLinks = {
     basic_plan: {
       creditInstallments: "https://sandbox.asaas.com/c/vydr3n77kew5fd4s", 
-      creditCash: "https://sandbox.asaas.com/c/fy15747uacorzbla",
-      pixBoleto: "https://sandbox.asaas.com/c/fgcvo6dvxv3s1cbm"
+      cashPayment: "https://sandbox.asaas.com/c/fy15747uacorzbla"
     },
     pro_plan: {
-      creditInstallments: "https://sandbox.asaas.com/c/847xkv4ifqblmxhf", 
-      creditCash: "https://sandbox.asaas.com/c/gvpg42m2zjn0oeaa",
-      pixBoleto: "https://sandbox.asaas.com/c/9yoxktsjgclz9ezz"
+      creditInstallments: "https://sandbox.asaas.com/c/4fcw2ezk4je61qon", 
+      cashPayment: "https://sandbox.asaas.com/c/pqnkhgvic7c25ufq"
     },
     enterprise_plan: {
-      creditInstallments: "https://sandbox.asaas.com/c/6gnw7yy0v4whgnqp", 
-      creditCash: "https://sandbox.asaas.com/c/32f2bm5e0c2m5b1j",
-      pixBoleto: "https://sandbox.asaas.com/c/zxgbdnx23yh48ioc"
+      creditInstallments: "https://sandbox.asaas.com/c/z4vate6zwonrwoft", 
+      cashPayment: "https://sandbox.asaas.com/c/3pdwf46bs80mpk0s"
     }
   };
 
   // Obter os links corretos com base no plano selecionado
   const currentPlanLinks = paymentLinks[planId as keyof typeof paymentLinks] || paymentLinks.basic_plan;
 
-  const handlePaymentMethodClick = (type: PaymentSelectionType) => {
+  const handlePaymentMethodClick = (type: PaymentType) => {
     onPaymentTypeChange(type);
   };
 
@@ -81,7 +74,7 @@ const PaymentSelection: React.FC<PaymentSelectionProps> = ({
       
       <RadioGroup 
         value={selectedPaymentType}
-        onValueChange={(value) => onPaymentTypeChange(value as PaymentSelectionType)}
+        onValueChange={(value) => onPaymentTypeChange(value as PaymentType)}
         className="space-y-4"
       >
         {/* Cartão de crédito em até 12x */}
@@ -116,45 +109,14 @@ const PaymentSelection: React.FC<PaymentSelectionProps> = ({
           </div>
         </a>
 
-        {/* Cartão de crédito à vista */}
+        {/* Pagamento à vista com 10% de desconto (qualquer método) */}
         <a 
-          href={currentPlanLinks.creditCash}
-          className="block"
-          onClick={(e) => { 
-            e.preventDefault(); 
-            handlePaymentMethodClick("credit_cash");
-            window.location.href = currentPlanLinks.creditCash;
-          }}
-        >
-          <div className={`
-            flex items-center justify-between border rounded-lg p-4 
-            ${selectedPaymentType === "credit_cash" ? "bg-primary/10 border-primary" : "border-input"}
-            hover:bg-primary/20 transition-colors group cursor-pointer
-          `}>
-            <div className="flex items-center space-x-3">
-              <RadioGroupItem value="credit_cash" id="payment-credit-cash" />
-              <Label htmlFor="payment-credit-cash" className="cursor-pointer flex items-center">
-                <CreditCard className="h-5 w-5 mr-3 text-primary group-hover:text-primary transition-colors" />
-                <div>
-                  <p className="font-medium text-foreground group-hover:text-primary transition-colors">
-                    Cartão de Crédito à Vista <span className="text-green-600 font-semibold">(10% de Desconto)</span>
-                  </p>
-                  <p className="text-sm text-muted-foreground group-hover:text-primary/80 transition-colors">Pagamento único com desconto</p>
-                </div>
-              </Label>
-            </div>
-            <p className="text-lg font-bold text-primary">{formatCurrency(creditCashPrice)}</p>
-          </div>
-        </a>
-
-        {/* PIX ou Boleto CONSOLIDADO com 10% de desconto */}
-        <a 
-          href={currentPlanLinks.pixBoleto}
+          href={currentPlanLinks.cashPayment}
           className="block"
           onClick={(e) => { 
             e.preventDefault(); 
             handlePaymentMethodClick("pix");
-            window.location.href = currentPlanLinks.pixBoleto;
+            window.location.href = currentPlanLinks.cashPayment;
           }}
         >
           <div className={`
@@ -163,18 +125,20 @@ const PaymentSelection: React.FC<PaymentSelectionProps> = ({
             hover:bg-primary/20 transition-colors group cursor-pointer
           `}>
             <div className="flex items-center space-x-3">
-              <RadioGroupItem value="pix" id="payment-pix-boleto" />
-              <Label htmlFor="payment-pix-boleto" className="cursor-pointer flex items-center">
+              <RadioGroupItem value="pix" id="payment-cash" />
+              <Label htmlFor="payment-cash" className="cursor-pointer flex items-center">
                 <BanknoteIcon className="h-5 w-5 mr-3 text-primary group-hover:text-primary transition-colors" />
                 <div>
                   <p className="font-medium text-foreground group-hover:text-primary transition-colors">
-                    PIX ou Boleto <span className="text-green-600 font-semibold">(10% de Desconto)</span>
+                    Pagamento à Vista <span className="text-green-600 font-semibold">(10% de Desconto)</span>
                   </p>
-                  <p className="text-sm text-muted-foreground group-hover:text-primary/80 transition-colors">Pagamento à vista com desconto</p>
+                  <p className="text-sm text-muted-foreground group-hover:text-primary/80 transition-colors">
+                    Cartão, PIX ou Boleto com desconto
+                  </p>
                 </div>
               </Label>
             </div>
-            <p className="text-lg font-bold text-primary">{formatCurrency(pixBoletoPrice)}</p>
+            <p className="text-lg font-bold text-primary">{formatCurrency(cashPrice)}</p>
           </div>
         </a>
       </RadioGroup>

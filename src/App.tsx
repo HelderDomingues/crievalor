@@ -3,8 +3,9 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import { AuthProvider } from "@/context/AuthContext";
+import { useEffect } from "react";
 import Index from "./pages/Index";
 import Mar from "./pages/Mar";
 import Sobre from "./pages/Sobre";
@@ -34,6 +35,17 @@ import AdminDashboard from "./pages/AdminDashboard";
 import AdminSettings from "./pages/AdminSettings";
 import Checkout from "./pages/Checkout";
 
+// Scroll to top component
+const ScrollToTop = () => {
+  const { pathname } = useLocation();
+  
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+  
+  return null;
+};
+
 const App = () => {
   const [queryClient] = useState(() => new QueryClient());
 
@@ -44,6 +56,7 @@ const App = () => {
         <Sonner />
         <AuthProvider>
           <Router>
+            <ScrollToTop />
             <div className="app">
               <Routes>
                 <Route path="/" element={<Index />} />

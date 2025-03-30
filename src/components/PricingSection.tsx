@@ -1,9 +1,14 @@
 
-import React from "react";
+import React, { useEffect } from "react";
 import { plans } from "./pricing/pricingData";
 import PricingGrid from "./pricing/PricingGrid";
 
 const PricingSection = () => {
+  // Add scroll to top effect when component mounts
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+  
   return (
     <section id="pricing" className="py-20 bg-gradient-to-b from-muted/30 to-background">
       <div className="container mx-auto px-4">
