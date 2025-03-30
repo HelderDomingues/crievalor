@@ -85,7 +85,7 @@ const PaymentSelection: React.FC<PaymentSelectionProps> = ({
             <div className="flex items-center space-x-3">
               <RadioGroupItem value="credit" id="payment-credit" />
               <Label htmlFor="payment-credit" className="cursor-pointer flex items-center">
-                <CreditCard className="h-5 w-5 mr-3 text-primary group-hover:text-primary/90 transition-colors" />
+                <CreditCard className="h-5 w-5 mr-3 text-primary group-hover:text-primary transition-colors" />
                 <div>
                   <p className="font-medium text-foreground group-hover:text-primary transition-colors">Cartão de Crédito Em Até 12X</p>
                   <p className="text-sm text-muted-foreground group-hover:text-primary/80 transition-colors">Parcele em até 12x sem juros</p>
@@ -117,10 +117,10 @@ const PaymentSelection: React.FC<PaymentSelectionProps> = ({
             <div className="flex items-center space-x-3">
               <RadioGroupItem value="credit_cash" id="payment-credit-cash" />
               <Label htmlFor="payment-credit-cash" className="cursor-pointer flex items-center">
-                <CreditCard className="h-5 w-5 mr-3 text-primary group-hover:text-primary/90 transition-colors" />
+                <CreditCard className="h-5 w-5 mr-3 text-primary group-hover:text-primary transition-colors" />
                 <div>
                   <p className="font-medium text-foreground group-hover:text-primary transition-colors">
-                    Cartão de Crédito à Vista <span className="text-green-600 font-semibold whitespace-nowrap">(-10%)</span>
+                    Cartão de Crédito à Vista <span className="text-green-600 font-semibold inline-block">(-10%)</span>
                   </p>
                   <p className="text-sm text-muted-foreground group-hover:text-primary/80 transition-colors">Pagamento único com desconto</p>
                 </div>
@@ -130,7 +130,7 @@ const PaymentSelection: React.FC<PaymentSelectionProps> = ({
           </div>
         </a>
 
-        {/* PIX ou Boleto (OPÇÃO CONSOLIDADA) */}
+        {/* PIX ou Boleto CONSOLIDADO com 10% de desconto */}
         <a 
           href={paymentLinks.pixBoleto}
           className="block"
@@ -142,18 +142,18 @@ const PaymentSelection: React.FC<PaymentSelectionProps> = ({
         >
           <div className={`
             flex items-center justify-between border rounded-lg p-4 
-            ${selectedPaymentType === "pix" || selectedPaymentType === "boleto" ? "bg-primary/10 border-primary" : "border-input"}
+            ${selectedPaymentType === "pix" ? "bg-primary/10 border-primary" : "border-input"}
             hover:bg-primary/20 transition-colors group cursor-pointer
           `}>
             <div className="flex items-center space-x-3">
               <RadioGroupItem value="pix" id="payment-pix-boleto" />
               <Label htmlFor="payment-pix-boleto" className="cursor-pointer flex items-center">
-                <div className="h-5 w-5 mr-3 text-primary font-bold text-center flex items-center justify-center group-hover:text-primary/90 transition-colors">
+                <div className="h-5 w-5 mr-3 text-primary font-bold text-center flex items-center justify-center group-hover:text-primary transition-colors">
                   <span className="text-sky-500 group-hover:text-sky-700">PIX</span>
                 </div>
                 <div>
                   <p className="font-medium text-foreground group-hover:text-primary transition-colors">
-                    PIX ou Boleto <span className="text-green-600 font-semibold whitespace-nowrap">(-10%)</span>
+                    PIX ou Boleto <span className="text-green-600 font-semibold inline-block">(-10%)</span>
                   </p>
                   <p className="text-sm text-muted-foreground group-hover:text-primary/80 transition-colors">Pagamento à vista com desconto</p>
                 </div>
