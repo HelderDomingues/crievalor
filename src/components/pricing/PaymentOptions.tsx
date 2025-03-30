@@ -1,11 +1,10 @@
-
 import React, { useState } from "react";
 import { BadgePercent, Calendar, CreditCard } from "lucide-react";
 import { Slider } from "@/components/ui/slider";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 
-export type PaymentType = "credit" | "pix" | "boleto";
+export type PaymentType = "credit" | "credit_cash" | "pix" | "boleto";
 
 interface PaymentOptionsProps {
   onInstallmentsChange?: (installments: number) => void;
@@ -79,6 +78,14 @@ const PaymentOptions = ({
             <Label htmlFor="credit" className="flex items-center cursor-pointer">
               <CreditCard className="h-4 w-4 mr-2" />
               <span>Cartão de crédito</span>
+            </Label>
+          </div>
+          
+          <div className="flex items-center space-x-2 border border-muted rounded-md p-4 hover:bg-muted/20 transition-colors">
+            <RadioGroupItem value="credit_cash" id="credit_cash" />
+            <Label htmlFor="credit_cash" className="flex items-center cursor-pointer">
+              <CreditCard className="h-4 w-4 mr-2" />
+              <span>Cartão de crédito à vista</span>
             </Label>
           </div>
           

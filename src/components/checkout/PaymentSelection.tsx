@@ -2,16 +2,18 @@
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { PaymentType } from "@/components/pricing/PaymentOptions";
-import { ArrowLeft, CreditCard, CheckCircle2 } from "lucide-react";
+import { ArrowLeft, CreditCard, CheckCircle2, ChevronDown } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
-import { ChevronDown } from "lucide-react";
+
+// Updated PaymentType to include credit_cash
+type PaymentSelectionType = PaymentType | "credit_cash";
 
 interface PaymentSelectionProps {
   onBack?: () => void;
-  selectedPaymentType?: PaymentType;
-  onPaymentTypeChange?: (type: PaymentType) => void;
+  selectedPaymentType?: PaymentSelectionType;
+  onPaymentTypeChange?: (type: PaymentSelectionType) => void;
   onContinue?: () => void;
   planMonthlyPrice?: number;
   planTotalPrice?: number;
@@ -37,7 +39,7 @@ const PaymentSelection: React.FC<PaymentSelectionProps> = ({
     pixBoleto: "https://sandbox.asaas.com/c/fgcvo6dvxv3s1cbm"
   };
 
-  const handlePaymentMethodClick = (type: PaymentType) => {
+  const handlePaymentMethodClick = (type: PaymentSelectionType) => {
     onPaymentTypeChange(type);
   };
 
@@ -63,7 +65,7 @@ const PaymentSelection: React.FC<PaymentSelectionProps> = ({
       
       <RadioGroup 
         value={selectedPaymentType}
-        onValueChange={(value) => onPaymentTypeChange(value as PaymentType)}
+        onValueChange={(value) => onPaymentTypeChange(value as PaymentSelectionType)}
         className="space-y-4"
       >
         {/* Cartão de crédito em até 12x */}
@@ -79,15 +81,15 @@ const PaymentSelection: React.FC<PaymentSelectionProps> = ({
           <div className={`
             flex items-center justify-between border rounded-lg p-4 
             ${selectedPaymentType === "credit" ? "bg-primary/10 border-primary" : "border-input"}
-            hover:bg-primary/5 transition-colors group cursor-pointer
+            hover:bg-primary/20 transition-colors group cursor-pointer
           `}>
             <div className="flex items-center space-x-3">
               <RadioGroupItem value="credit" id="payment-credit" />
               <Label htmlFor="payment-credit" className="cursor-pointer flex items-center">
                 <CreditCard className="h-5 w-5 mr-3 text-primary" />
                 <div>
-                  <p className="font-medium group-hover:text-primary">Cartão de Crédito Em Até 12X</p>
-                  <p className="text-sm text-muted-foreground">Parcele em até 12x sem juros</p>
+                  <p className="font-medium group-hover:text-primary transition-colors">Cartão de Crédito Em Até 12X</p>
+                  <p className="text-sm text-muted-foreground group-hover:text-primary/80 transition-colors">Parcele em até 12x sem juros</p>
                 </div>
               </Label>
             </div>
@@ -111,15 +113,15 @@ const PaymentSelection: React.FC<PaymentSelectionProps> = ({
           <div className={`
             flex items-center justify-between border rounded-lg p-4 
             ${selectedPaymentType === "credit_cash" ? "bg-primary/10 border-primary" : "border-input"}
-            hover:bg-primary/5 transition-colors group cursor-pointer
+            hover:bg-primary/20 transition-colors group cursor-pointer
           `}>
             <div className="flex items-center space-x-3">
               <RadioGroupItem value="credit_cash" id="payment-credit-cash" />
               <Label htmlFor="payment-credit-cash" className="cursor-pointer flex items-center">
                 <CreditCard className="h-5 w-5 mr-3 text-primary" />
                 <div>
-                  <p className="font-medium group-hover:text-primary">Cartão de Crédito à Vista <span className="text-green-600">(10% de Desconto)</span></p>
-                  <p className="text-sm text-muted-foreground">Pagamento único com desconto</p>
+                  <p className="font-medium group-hover:text-primary transition-colors">Cartão de Crédito à Vista <span className="text-green-600 font-semibold">(10% de Desconto)</span></p>
+                  <p className="text-sm text-muted-foreground group-hover:text-primary/80 transition-colors">Pagamento único com desconto</p>
                 </div>
               </Label>
             </div>
@@ -127,7 +129,7 @@ const PaymentSelection: React.FC<PaymentSelectionProps> = ({
           </div>
         </a>
 
-        {/* PIX (com desconto maior) */}
+        {/* PIX e Boleto consolidados */}
         <a 
           href={paymentLinks.pixBoleto}
           className="block"
@@ -140,27 +142,56 @@ const PaymentSelection: React.FC<PaymentSelectionProps> = ({
           <div className={`
             flex items-center justify-between border rounded-lg p-4 
             ${selectedPaymentType === "pix" ? "bg-primary/10 border-primary" : "border-input"}
-            hover:bg-primary/5 transition-colors group cursor-pointer
+            hover:bg-primary/20 transition-colors group cursor-pointer
           `}>
             <div className="flex items-center space-x-3">
               <RadioGroupItem value="pix" id="payment-pix" />
               <Label htmlFor="payment-pix" className="cursor-pointer flex items-center">
                 <div className="h-5 w-5 mr-3 text-sky-500 font-bold text-center">PIX</div>
                 <div>
-                  <p className="font-medium group-hover:text-primary">Pagamento instantâneo <span className="text-green-600">(15% de Desconto)</span></p>
-                  <p className="text-sm text-muted-foreground">Maior vantagem: PIX ou Boleto com desconto</p>
+                  <p className="font-medium group-hover:text-primary transition-colors">Pagamento instantâneo <span className="text-green-600 font-semibold">(15% de Desconto)</span></p>
+                  <p className="text-sm text-muted-foreground group-hover:text-primary/80 transition-colors">Maior vantagem: PIX com desconto</p>
                 </div>
               </Label>
             </div>
             <p className="text-lg font-bold text-primary">{formatCurrency(pixPrice)}</p>
           </div>
         </a>
+
+        {/* Boleto bancário */}
+        <a 
+          href={paymentLinks.pixBoleto}
+          className="block"
+          onClick={(e) => { 
+            e.preventDefault(); 
+            handlePaymentMethodClick("boleto");
+            window.location.href = paymentLinks.pixBoleto;
+          }}
+        >
+          <div className={`
+            flex items-center justify-between border rounded-lg p-4 
+            ${selectedPaymentType === "boleto" ? "bg-primary/10 border-primary" : "border-input"}
+            hover:bg-primary/20 transition-colors group cursor-pointer
+          `}>
+            <div className="flex items-center space-x-3">
+              <RadioGroupItem value="boleto" id="payment-boleto" />
+              <Label htmlFor="payment-boleto" className="cursor-pointer flex items-center">
+                <div className="h-5 w-5 mr-3 font-bold text-center">|||</div>
+                <div>
+                  <p className="font-medium group-hover:text-primary transition-colors">Boleto bancário <span className="text-green-600 font-semibold">(10% de Desconto)</span></p>
+                  <p className="text-sm text-muted-foreground group-hover:text-primary/80 transition-colors">Pagamento via boleto com desconto</p>
+                </div>
+              </Label>
+            </div>
+            <p className="text-lg font-bold text-primary">{formatCurrency(boletoPrice)}</p>
+          </div>
+        </a>
       </RadioGroup>
 
-      <div className="mt-8 flex justify-center">
-        <div className="animate-bounce text-primary">
+      <div className="mt-8 flex justify-center animate-bounce text-primary">
+        <div className="flex flex-col items-center">
+          <p className="text-sm text-center mb-1 font-medium">Preencha seus dados abaixo para continuar</p>
           <ChevronDown className="h-6 w-6" />
-          <p className="text-sm text-center">Role para baixo para continuar</p>
         </div>
       </div>
     </div>

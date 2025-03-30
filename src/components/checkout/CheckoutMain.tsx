@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { subscriptionService } from "@/services/subscriptionService";
@@ -17,16 +16,19 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 // Step types for the checkout process
 type CheckoutStep = "plan" | "payment" | "registration" | "processing";
 
+// Updated PaymentType to include credit_cash
+type CheckoutPaymentType = PaymentType | "credit_cash";
+
 interface CheckoutMainProps {
   currentStep: CheckoutStep;
   selectedPlanId: string | null;
   selectedInstallments: number;
-  selectedPaymentType: PaymentType;
+  selectedPaymentType: CheckoutPaymentType;
   error: string | null;
   processId: string;
   goToNextStep: () => void;
   goToPreviousStep: () => void;
-  onPaymentTypeChange: (type: PaymentType) => void;
+  onPaymentTypeChange: (type: CheckoutPaymentType) => void;
   onInstallmentsChange: (installments: number) => void;
   proceedToPayment: () => Promise<void>;
 }
@@ -55,7 +57,7 @@ const CheckoutMain: React.FC<CheckoutMainProps> = ({
   // Garantir que a página carregue pelo topo
   useEffect(() => {
     window.scrollTo(0, 0);
-  }, [currentStep]);
+  }, []);
   
   const handleContactFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
