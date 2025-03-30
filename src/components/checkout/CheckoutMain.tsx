@@ -51,7 +51,7 @@ const CheckoutMain: React.FC<CheckoutMainProps> = ({
   // Garantir que a página carregue pelo topo
   useEffect(() => {
     window.scrollTo(0, 0);
-  }, []);
+  }, [currentStep]);
 
   // Esconder o indicador de rolagem após um tempo ou quando o usuário rolar
   useEffect(() => {

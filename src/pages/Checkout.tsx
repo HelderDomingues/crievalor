@@ -38,10 +38,10 @@ const Checkout = () => {
   const [processId, setProcessId] = useState<string>(`checkout_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`);
   const [isRecovering, setIsRecovering] = useState(false);
   
-  // Scroll to top on initial load
+  // Scroll to top on initial load and when route changes
   useEffect(() => {
     window.scrollTo(0, 0);
-  }, []);
+  }, [location.pathname]);
   
   // Plan validation on load
   useEffect(() => {

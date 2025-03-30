@@ -29,7 +29,7 @@ const PlanSummary = ({
   const { toast } = useToast();
 
   // Estado para armazenar os dados do formulário
-  const [paymentMethod, setPaymentMethod] = useState<"credit_installment" | "credit_cash" | "pix_boleto">("credit_installment");
+  const [paymentMethod, setPaymentMethod] = useState<"credit_installment" | "cash_payment">("credit_installment");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -50,18 +50,15 @@ const PlanSummary = ({
   const paymentLinks = {
     basic_plan: {
       credit_installment: "https://sandbox.asaas.com/c/vydr3n77kew5fd4s",
-      credit_cash: "https://sandbox.asaas.com/c/fy15747uacorzbla",
-      pix_boleto: "https://sandbox.asaas.com/c/fgcvo6dvxv3s1cbm"
+      cash_payment: "https://sandbox.asaas.com/c/fy15747uacorzbla"
     },
     pro_plan: {
-      credit_installment: "https://sandbox.asaas.com/c/847xkv4ifqblmxhf",
-      credit_cash: "https://sandbox.asaas.com/c/gvpg42m2zjn0oeaa",
-      pix_boleto: "https://sandbox.asaas.com/c/9yoxktsjgclz9ezz"
+      credit_installment: "https://sandbox.asaas.com/c/4fcw2ezk4je61qon",
+      cash_payment: "https://sandbox.asaas.com/c/pqnkhgvic7c25ufq"
     },
     enterprise_plan: {
-      credit_installment: "https://sandbox.asaas.com/c/6gnw7yy0v4whgnqp",
-      credit_cash: "https://sandbox.asaas.com/c/32f2bm5e0c2m5b1j",
-      pix_boleto: "https://sandbox.asaas.com/c/zxgbdnx23yh48ioc"
+      credit_installment: "https://sandbox.asaas.com/c/z4vate6zwonrwoft",
+      cash_payment: "https://sandbox.asaas.com/c/3pdwf46bs80mpk0s"
     }
   };
 
@@ -120,8 +117,7 @@ const PlanSummary = ({
       // Atualizar o tipo de pagamento no estado do componente pai
       const paymentTypeMap: Record<string, PaymentSelectionType> = {
         credit_installment: "credit",
-        credit_cash: "credit_cash",
-        pix_boleto: "pix"
+        cash_payment: "pix"
       };
       onPaymentTypeChange(paymentTypeMap[paymentMethod]);
 
@@ -154,15 +150,10 @@ const PlanSummary = ({
   // Calcula o valor do pagamento com base no método de pagamento selecionado
   const getPaymentAmount = () => {
     if (!('price' in plan)) return 0;
-    switch (paymentMethod) {
-      case "credit_installment":
-        return plan.totalPrice;
-      case "credit_cash":
-        return plan.cashPrice;
-      case "pix_boleto":
-        return plan.cashPrice;
-      default:
-        return plan.totalPrice;
+    if (paymentMethod === "credit_installment") {
+      return plan.totalPrice;
+    } else {
+      return plan.cashPrice;
     }
   };
 
@@ -230,7 +221,7 @@ const PlanSummary = ({
             <CardContent>
               <RadioGroup 
                 value={paymentMethod} 
-                onValueChange={value => setPaymentMethod(value as "credit_installment" | "credit_cash" | "pix_boleto")} 
+                onValueChange={value => setPaymentMethod(value as "credit_installment" | "cash_payment")} 
                 className="space-y-4"
               >
                 <div className="flex items-center space-x-2 border rounded-md p-3 hover:bg-primary/10 dark:hover:bg-primary/20 cursor-pointer transition-colors">
@@ -249,24 +240,16 @@ const PlanSummary = ({
                 </div>
                 
                 <div className="flex items-center space-x-2 border rounded-md p-3 hover:bg-primary/10 dark:hover:bg-primary/20 cursor-pointer transition-colors">
-                  <RadioGroupItem value="credit_cash" id="payment-credit-cash" />
-                  <label htmlFor="payment-credit-cash" className="flex items-center cursor-pointer w-full">
-                    <CreditCard className="mr-2 h-4 w-4 text-primary" />
-                    <div className="flex-1">
-                      <p className="font-medium">Cartão de Crédito à Vista <span className="text-green-600 font-semibold whitespace-nowrap">(10% de Desconto)</span></p>
-                      <p className="text-sm text-muted-foreground">Pagamento único com desconto</p>
-                    </div>
-                    {'price' in plan && <p className="text-base font-bold text-primary whitespace-nowrap">R$ {formatCurrency(plan.cashPrice)}</p>}
-                  </label>
-                </div>
-                
-                <div className="flex items-center space-x-2 border rounded-md p-3 hover:bg-primary/10 dark:hover:bg-primary/20 cursor-pointer transition-colors">
-                  <RadioGroupItem value="pix_boleto" id="payment-pix-boleto" />
-                  <label htmlFor="payment-pix-boleto" className="flex items-center cursor-pointer w-full">
+                  <RadioGroupItem value="cash_payment" id="payment-cash" />
+                  <label htmlFor="payment-cash" className="flex items-center cursor-pointer w-full">
                     <BanknoteIcon className="mr-2 h-4 w-4 text-primary" />
                     <div className="flex-1">
-                      <p className="font-medium">PIX ou Boleto <span className="text-green-600 font-semibold whitespace-nowrap">(10% de Desconto)</span></p>
-                      <p className="text-sm text-muted-foreground">Pagamento à vista com desconto</p>
+                      <p className="font-medium">
+                        Pagamento à Vista <span className="text-green-600 font-semibold whitespace-nowrap">(10% de Desconto)</span>
+                      </p>
+                      <p className="text-sm text-muted-foreground">
+                        Cartão, PIX ou Boleto com desconto
+                      </p>
                     </div>
                     {'price' in plan && <p className="text-base font-bold text-primary whitespace-nowrap">R$ {formatCurrency(plan.cashPrice)}</p>}
                   </label>

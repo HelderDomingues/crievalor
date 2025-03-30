@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { BadgePercent, Calendar, CreditCard } from "lucide-react";
 import { Slider } from "@/components/ui/slider";
@@ -71,42 +72,21 @@ const PaymentOptions = ({
           defaultValue={selectedPaymentType}
           value={paymentType}
           onValueChange={handlePaymentTypeChange}
-          className="grid grid-cols-1 md:grid-cols-3 gap-4"
+          className="grid grid-cols-1 md:grid-cols-2 gap-4"
         >
           <div className="flex items-center space-x-2 border border-muted rounded-md p-4 hover:bg-muted/20 transition-colors">
             <RadioGroupItem value="credit" id="credit" />
             <Label htmlFor="credit" className="flex items-center cursor-pointer">
               <CreditCard className="h-4 w-4 mr-2" />
-              <span>Cartão de crédito</span>
-            </Label>
-          </div>
-          
-          <div className="flex items-center space-x-2 border border-muted rounded-md p-4 hover:bg-muted/20 transition-colors">
-            <RadioGroupItem value="credit_cash" id="credit_cash" />
-            <Label htmlFor="credit_cash" className="flex items-center cursor-pointer">
-              <CreditCard className="h-4 w-4 mr-2" />
-              <span>Cartão de crédito à vista</span>
+              <span>Cartão de crédito parcelado</span>
             </Label>
           </div>
           
           <div className="flex items-center space-x-2 border border-muted rounded-md p-4 hover:bg-muted/20 transition-colors">
             <RadioGroupItem value="pix" id="pix" />
             <Label htmlFor="pix" className="flex items-center cursor-pointer">
-              <svg className="h-4 w-4 mr-2" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M12 2L4 10l8 3 8-3-8-8z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                <path d="M4 22l8-4 8 4M4 16l8-4 8 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-              <span>PIX</span>
-            </Label>
-          </div>
-          
-          <div className="flex items-center space-x-2 border border-muted rounded-md p-4 hover:bg-muted/20 transition-colors">
-            <RadioGroupItem value="boleto" id="boleto" />
-            <Label htmlFor="boleto" className="flex items-center cursor-pointer">
-              <svg className="h-4 w-4 mr-2" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M3 14.25h18M3 18.75h13.5M3 9.75h18M7.5 5.25h9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-              <span>Boleto bancário</span>
+              <BadgePercent className="h-4 w-4 mr-2" />
+              <span>Pagamento à vista (10% de desconto)</span>
             </Label>
           </div>
         </RadioGroup>
@@ -162,7 +142,7 @@ const PaymentOptions = ({
           <p className="text-sm text-muted-foreground mb-3">
             {paymentType === "credit" && localInstallments > 1
               ? `Pague em ${localInstallments}x sem juros no cartão de crédito.`
-              : "Pague o valor integral em uma única parcela."}
+              : "Pague o valor integral em uma única parcela com desconto."}
           </p>
           
           <div className="flex flex-col space-y-2 text-sm text-muted-foreground">
@@ -173,22 +153,9 @@ const PaymentOptions = ({
               </div>
             )}
             
-            {paymentType === "boleto" && (
-              <div className="flex items-center">
-                <svg className="h-4 w-4 mr-1" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M3 14.25h18M3 18.75h13.5M3 9.75h18M7.5 5.25h9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-                <span>Boleto bancário</span>
-              </div>
-            )}
-            
             {paymentType === "pix" && (
               <div className="flex items-center">
-                <svg className="h-4 w-4 mr-1" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M12 2L4 10l8 3 8-3-8-8z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                  <path d="M4 22l8-4 8 4M4 16l8-4 8 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-                <span>PIX</span>
+                <span className="text-sm">Cartão, PIX ou Boleto com 10% de desconto</span>
               </div>
             )}
           </div>
