@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { subscriptionService } from "@/services/subscriptionService";
 import { PaymentType } from "@/components/pricing/PaymentOptions";
@@ -43,6 +43,11 @@ const CheckoutMain: React.FC<CheckoutMainProps> = ({
   const navigate = useNavigate();
   const { toast } = useToast();
   
+  // Efeito para garantir que a página carregue pelo topo
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [currentStep]);
+  
   if (!selectedPlanId) {
     toast({
       title: "Plano não selecionado",
@@ -66,6 +71,9 @@ const CheckoutMain: React.FC<CheckoutMainProps> = ({
         {currentStep === "payment" && (
           <PaymentSelection
             onBack={goToPreviousStep}
+            selectedPaymentType={selectedPaymentType}
+            onPaymentTypeChange={onPaymentTypeChange}
+            onContinue={goToNextStep}
           />
         )}
         

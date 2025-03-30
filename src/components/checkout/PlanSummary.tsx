@@ -2,10 +2,9 @@
 import React, { useState } from "react";
 import { subscriptionService } from "@/services/subscriptionService";
 import { Button } from "@/components/ui/button";
-import { Check, ArrowRight, ExternalLink, Mail, Phone, AlertCircle, Shield, Lock, CreditCard } from "lucide-react";
+import { Check, ExternalLink, Mail, Phone, AlertCircle, Shield, Lock, CreditCard } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useToast } from "@/hooks/use-toast";
 
@@ -18,7 +17,8 @@ const PlanSummary = ({ planId, onContinue }: PlanSummaryProps) => {
   const plan = subscriptionService.getPlanFromId(planId);
   const { toast } = useToast();
   
-  const [paymentMethod, setPaymentMethod] = useState<"credit" | "pix" | "boleto">("credit");
+  // Estado para armazenar a opção de pagamento selecionada
+  const [paymentMethod, setPaymentMethod] = useState<"credit_installment" | "credit_cash" | "pix" | "boleto">("credit_installment");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -73,7 +73,10 @@ const PlanSummary = ({ planId, onContinue }: PlanSummaryProps) => {
       localStorage.setItem('paymentMethod', paymentMethod);
       localStorage.setItem('paymentTimestamp', Date.now().toString());
       localStorage.setItem('planName', plan.name);
-      localStorage.setItem('planPrice', 'price' in plan ? plan.totalPrice.toString() : '0');
+      
+      if ('price' in plan) {
+        localStorage.setItem('planPrice', getPaymentAmount().toString());
+      }
       
       // Mostrar toast de sucesso
       toast({
@@ -95,8 +98,51 @@ const PlanSummary = ({ planId, onContinue }: PlanSummaryProps) => {
     }
   };
   
-  const planPrice = 'price' in plan ? plan.totalPrice : 0;
-  const planCashPrice = 'price' in plan ? plan.cashPrice : 0;
+  // Calcula o valor do pagamento com base no método de pagamento selecionado
+  const getPaymentAmount = () => {
+    if (!('price' in plan)) return 0;
+    
+    switch (paymentMethod) {
+      case "credit_installment":
+        return plan.totalPrice; // Preço total parcelado
+      case "credit_cash":
+        return plan.cashPrice; // 10% de desconto
+      case "pix":
+        // 15% de desconto para PIX
+        return plan.totalPrice * 0.85;
+      case "boleto":
+        return plan.cashPrice; // 10% de desconto, mesmo que cartão à vista
+      default:
+        return plan.totalPrice;
+    }
+  };
+  
+  // Formata o valor para exibição em reais
+  const formatCurrency = (value: number) => {
+    return value.toFixed(2).replace('.', ',');
+  };
+  
+  // Componente para exibir apenas se o plano tiver preço
+  const PriceDisplay = () => {
+    if (!('price' in plan)) return null;
+    
+    return (
+      <div className="mt-1">
+        <div className="flex items-baseline">
+          <span className="text-sm mr-1">até 12x de</span>
+          <span className="text-3xl font-bold">
+            R$ {formatCurrency(plan.price)}
+          </span>
+        </div>
+        <div className="text-sm text-muted-foreground">
+          <span>total a prazo: R$ {formatCurrency(plan.totalPrice)}</span>
+        </div>
+        <div className="text-sm mt-1">
+          Ou R$ {formatCurrency(plan.cashPrice)} à vista
+        </div>
+      </div>
+    );
+  };
   
   return (
     <div className="space-y-6">
@@ -112,16 +158,7 @@ const PlanSummary = ({ planId, onContinue }: PlanSummaryProps) => {
         <Card className="overflow-hidden border-primary/20">
           <div className="bg-primary/5 p-4 border-b border-primary/10">
             <h3 className="text-xl font-semibold">{plan.name}</h3>
-            {'price' in plan && (
-              <div className="mt-1">
-                <span className="text-2xl font-bold">
-                  R$ {plan.cashPrice.toFixed(2).replace('.', ',')}
-                </span>
-                <span className="text-sm text-muted-foreground ml-2">
-                  à vista ou em até 12x no cartão
-                </span>
-              </div>
-            )}
+            <PriceDisplay />
             {'customPrice' in plan && plan.customPrice && (
               <div className="text-lg font-medium mt-1">Sob Consulta</div>
             )}
@@ -152,31 +189,59 @@ const PlanSummary = ({ planId, onContinue }: PlanSummaryProps) => {
             <CardContent>
               <RadioGroup 
                 value={paymentMethod} 
-                onValueChange={(value) => setPaymentMethod(value as "credit" | "pix" | "boleto")}
+                onValueChange={(value) => setPaymentMethod(value as "credit_installment" | "credit_cash" | "pix" | "boleto")}
                 className="space-y-4"
               >
                 <div className="flex items-center space-x-2 border rounded-md p-3 hover:bg-slate-50 dark:hover:bg-slate-900 cursor-pointer">
-                  <RadioGroupItem value="credit" id="payment-credit" />
-                  <Label htmlFor="payment-credit" className="flex items-center cursor-pointer">
+                  <RadioGroupItem value="credit_installment" id="payment-credit-installment" />
+                  <label htmlFor="payment-credit-installment" className="flex items-center cursor-pointer w-full">
                     <CreditCard className="mr-2 h-4 w-4" />
-                    Cartão de crédito
-                  </Label>
+                    <span className="flex-1">Cartão de Crédito Em Até 12X</span>
+                    {'price' in plan && (
+                      <span className="font-semibold text-sm">
+                        12x R$ {formatCurrency(plan.price)}
+                      </span>
+                    )}
+                  </label>
+                </div>
+                
+                <div className="flex items-center space-x-2 border rounded-md p-3 hover:bg-slate-50 dark:hover:bg-slate-900 cursor-pointer">
+                  <RadioGroupItem value="credit_cash" id="payment-credit-cash" />
+                  <label htmlFor="payment-credit-cash" className="flex items-center cursor-pointer w-full">
+                    <CreditCard className="mr-2 h-4 w-4" />
+                    <span className="flex-1">Cartão de Crédito à Vista (10% de Desconto)</span>
+                    {'price' in plan && (
+                      <span className="font-semibold text-sm">
+                        R$ {formatCurrency(plan.cashPrice)}
+                      </span>
+                    )}
+                  </label>
                 </div>
                 
                 <div className="flex items-center space-x-2 border rounded-md p-3 hover:bg-slate-50 dark:hover:bg-slate-900 cursor-pointer">
                   <RadioGroupItem value="pix" id="payment-pix" />
-                  <Label htmlFor="payment-pix" className="flex items-center cursor-pointer">
+                  <label htmlFor="payment-pix" className="flex items-center cursor-pointer w-full">
                     <span className="font-mono mr-2 text-blue-500 font-bold">PIX</span>
-                    Pagamento instantâneo
-                  </Label>
+                    <span className="flex-1">Pagamento instantâneo (15% de Desconto)</span>
+                    {'price' in plan && (
+                      <span className="font-semibold text-sm">
+                        R$ {formatCurrency(plan.totalPrice * 0.85)}
+                      </span>
+                    )}
+                  </label>
                 </div>
                 
                 <div className="flex items-center space-x-2 border rounded-md p-3 hover:bg-slate-50 dark:hover:bg-slate-900 cursor-pointer">
                   <RadioGroupItem value="boleto" id="payment-boleto" />
-                  <Label htmlFor="payment-boleto" className="flex items-center cursor-pointer">
+                  <label htmlFor="payment-boleto" className="flex items-center cursor-pointer w-full">
                     <span className="font-mono mr-2">&#x2758;&#x2758;&#x2758;</span>
-                    Boleto bancário
-                  </Label>
+                    <span className="flex-1">Boleto bancário (10% de desconto)</span>
+                    {'price' in plan && (
+                      <span className="font-semibold text-sm">
+                        R$ {formatCurrency(plan.cashPrice)}
+                      </span>
+                    )}
+                  </label>
                 </div>
               </RadioGroup>
               
@@ -185,7 +250,7 @@ const PlanSummary = ({ planId, onContinue }: PlanSummaryProps) => {
                 <div className="flex justify-between items-center mt-2">
                   <span>Total:</span>
                   <span className="font-bold text-lg">
-                    R$ {paymentMethod === "credit" ? planPrice.toFixed(2).replace('.', ',') : planCashPrice.toFixed(2).replace('.', ',')}
+                    {'price' in plan ? `R$ ${formatCurrency(getPaymentAmount())}` : 'Sob consulta'}
                   </span>
                 </div>
               </div>
@@ -202,7 +267,7 @@ const PlanSummary = ({ planId, onContinue }: PlanSummaryProps) => {
             <CardContent>
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="email">Seu email para contato</Label>
+                  <label htmlFor="email">Seu email para contato</label>
                   <div className="flex relative">
                     <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                     <Input 
@@ -218,7 +283,7 @@ const PlanSummary = ({ planId, onContinue }: PlanSummaryProps) => {
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="phone">Seu telefone/WhatsApp</Label>
+                  <label htmlFor="phone">Seu telefone/WhatsApp</label>
                   <div className="flex relative">
                     <Phone className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                     <Input 
@@ -258,7 +323,11 @@ const PlanSummary = ({ planId, onContinue }: PlanSummaryProps) => {
                   <>Processando...</>
                 ) : (
                   <>
-                    Pagar R$ {(paymentMethod === "credit" ? planPrice : planCashPrice).toFixed(2).replace('.', ',')} no Asaas
+                    {'price' in plan ? (
+                      <>Pagar R$ {formatCurrency(getPaymentAmount())} no Asaas</>
+                    ) : (
+                      <>Prosseguir para contato</>
+                    )}
                     <ExternalLink className="ml-2 h-4 w-4" />
                   </>
                 )}
