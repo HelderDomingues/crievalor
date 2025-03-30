@@ -29,10 +29,9 @@ const PaymentSelection: React.FC<PaymentSelectionProps> = ({
 }) => {
   const creditFullPrice = planTotalPrice;
   const creditCashPrice = planTotalPrice * 0.9; // 10% de desconto
-  const pixPrice = planTotalPrice * 0.85; // 15% de desconto
-  const boletoPrice = planTotalPrice * 0.9; // 10% de desconto
+  const pixBoletoPrice = planTotalPrice * 0.9; // 10% de desconto (consolidado)
 
-  // Links estáticos das formas de pagamento - updated as requested
+  // Links estáticos das formas de pagamento
   const paymentLinks = {
     creditInstallments: "https://sandbox.asaas.com/c/123456", // Este será substituído dinamicamente pelo link correto
     creditCash: "https://sandbox.asaas.com/c/fy15747uacorzbla",
@@ -120,7 +119,9 @@ const PaymentSelection: React.FC<PaymentSelectionProps> = ({
               <Label htmlFor="payment-credit-cash" className="cursor-pointer flex items-center">
                 <CreditCard className="h-5 w-5 mr-3 text-primary group-hover:text-primary/90 transition-colors" />
                 <div>
-                  <p className="font-medium text-foreground group-hover:text-primary transition-colors">Cartão de Crédito à Vista <span className="text-green-600 font-semibold">(-10%)</span></p>
+                  <p className="font-medium text-foreground group-hover:text-primary transition-colors">
+                    Cartão de Crédito à Vista <span className="text-green-600 font-semibold whitespace-nowrap">(-10%)</span>
+                  </p>
                   <p className="text-sm text-muted-foreground group-hover:text-primary/80 transition-colors">Pagamento único com desconto</p>
                 </div>
               </Label>
@@ -129,7 +130,7 @@ const PaymentSelection: React.FC<PaymentSelectionProps> = ({
           </div>
         </a>
 
-        {/* PIX */}
+        {/* PIX ou Boleto (OPÇÃO CONSOLIDADA) */}
         <a 
           href={paymentLinks.pixBoleto}
           className="block"
@@ -141,55 +142,30 @@ const PaymentSelection: React.FC<PaymentSelectionProps> = ({
         >
           <div className={`
             flex items-center justify-between border rounded-lg p-4 
-            ${selectedPaymentType === "pix" ? "bg-primary/10 border-primary" : "border-input"}
+            ${selectedPaymentType === "pix" || selectedPaymentType === "boleto" ? "bg-primary/10 border-primary" : "border-input"}
             hover:bg-primary/20 transition-colors group cursor-pointer
           `}>
             <div className="flex items-center space-x-3">
-              <RadioGroupItem value="pix" id="payment-pix" />
-              <Label htmlFor="payment-pix" className="cursor-pointer flex items-center">
-                <div className="h-5 w-5 mr-3 text-sky-500 font-bold text-center group-hover:text-sky-600 transition-colors">PIX</div>
+              <RadioGroupItem value="pix" id="payment-pix-boleto" />
+              <Label htmlFor="payment-pix-boleto" className="cursor-pointer flex items-center">
+                <div className="h-5 w-5 mr-3 text-primary font-bold text-center flex items-center justify-center group-hover:text-primary/90 transition-colors">
+                  <span className="text-sky-500 group-hover:text-sky-700">PIX</span>
+                </div>
                 <div>
-                  <p className="font-medium text-foreground group-hover:text-primary transition-colors">Pagamento instantâneo <span className="text-green-600 font-semibold">(-15%)</span></p>
-                  <p className="text-sm text-muted-foreground group-hover:text-primary/80 transition-colors">Maior vantagem: PIX com desconto</p>
+                  <p className="font-medium text-foreground group-hover:text-primary transition-colors">
+                    PIX ou Boleto <span className="text-green-600 font-semibold whitespace-nowrap">(-10%)</span>
+                  </p>
+                  <p className="text-sm text-muted-foreground group-hover:text-primary/80 transition-colors">Pagamento à vista com desconto</p>
                 </div>
               </Label>
             </div>
-            <p className="text-lg font-bold text-primary">{formatCurrency(pixPrice)}</p>
-          </div>
-        </a>
-
-        {/* Boleto bancário */}
-        <a 
-          href={paymentLinks.pixBoleto}
-          className="block"
-          onClick={(e) => { 
-            e.preventDefault(); 
-            handlePaymentMethodClick("boleto");
-            window.location.href = paymentLinks.pixBoleto;
-          }}
-        >
-          <div className={`
-            flex items-center justify-between border rounded-lg p-4 
-            ${selectedPaymentType === "boleto" ? "bg-primary/10 border-primary" : "border-input"}
-            hover:bg-primary/20 transition-colors group cursor-pointer
-          `}>
-            <div className="flex items-center space-x-3">
-              <RadioGroupItem value="boleto" id="payment-boleto" />
-              <Label htmlFor="payment-boleto" className="cursor-pointer flex items-center">
-                <div className="h-5 w-5 mr-3 font-bold text-center group-hover:text-gray-700 transition-colors">|||</div>
-                <div>
-                  <p className="font-medium text-foreground group-hover:text-primary transition-colors">Boleto bancário <span className="text-green-600 font-semibold">(-10%)</span></p>
-                  <p className="text-sm text-muted-foreground group-hover:text-primary/80 transition-colors">Pagamento via boleto com desconto</p>
-                </div>
-              </Label>
-            </div>
-            <p className="text-lg font-bold text-primary">{formatCurrency(boletoPrice)}</p>
+            <p className="text-lg font-bold text-primary">{formatCurrency(pixBoletoPrice)}</p>
           </div>
         </a>
       </RadioGroup>
 
       <div className="mt-8 flex justify-center text-primary">
-        <div className="flex flex-col items-center animate-pulse-subtle">
+        <div className="flex flex-col items-center">
           <p className="text-sm text-center mb-1 font-medium">Preencha seus dados abaixo para continuar</p>
           <ChevronDown className="h-6 w-6 animate-bounce" />
         </div>

@@ -8,11 +8,12 @@ import PlanSummary from "./PlanSummary";
 import PaymentSelection from "./PaymentSelection";
 import ProcessingPayment from "./ProcessingPayment";
 import { errorUtils } from "@/utils/errorUtils";
-import { ArrowRight, Loader2 } from "lucide-react";
+import { ArrowRight, Loader2, Info } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import ScrollIndicator from "@/components/ScrollIndicator";
 
 // Step types for the checkout process
 type CheckoutStep = "plan" | "payment" | "registration" | "processing";
@@ -54,10 +55,31 @@ const CheckoutMain: React.FC<CheckoutMainProps> = ({
   const [phone, setPhone] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
+  const [showScrollIndicator, setShowScrollIndicator] = useState(true);
   
   // Garantir que a página carregue pelo topo
   useEffect(() => {
     window.scrollTo(0, 0);
+  }, []);
+
+  // Esconder o indicador de rolagem após um tempo ou quando o usuário rolar
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 100) {
+        setShowScrollIndicator(false);
+      }
+    };
+
+    const timeout = setTimeout(() => {
+      setShowScrollIndicator(false);
+    }, 8000);
+
+    window.addEventListener('scroll', handleScroll);
+    
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      clearTimeout(timeout);
+    };
   }, []);
   
   const handleContactFormSubmit = async (e: React.FormEvent) => {
@@ -111,13 +133,6 @@ const CheckoutMain: React.FC<CheckoutMainProps> = ({
   const planMonthlyPrice = plan?.price || 179.90;
   const planTotalPrice = planMonthlyPrice * 12;
   
-  // Links estáticos das formas de pagamento
-  const paymentLinks = {
-    creditInstallments: "https://sandbox.asaas.com/c/123456", // Este será substituído dinamicamente
-    creditCash: "https://sandbox.asaas.com/c/fy15747uacorzbla",
-    pixBoleto: "https://sandbox.asaas.com/c/fgcvo6dvxv3s1cbm"
-  };
-  
   return (
     <div className="mt-8 mb-12 grid grid-cols-1 gap-8">
       <div className="max-w-4xl mx-auto w-full">
@@ -147,8 +162,20 @@ const CheckoutMain: React.FC<CheckoutMainProps> = ({
               </CardContent>
             </Card>
             
+            {/* Aviso sobre a necessidade de preencher o formulário */}
+            <div className="bg-blue-50 border border-blue-200 rounded-md p-4 flex items-start">
+              <Info className="text-blue-500 h-5 w-5 mt-0.5 mr-3 flex-shrink-0" />
+              <div>
+                <h4 className="font-medium text-blue-800">Importante</h4>
+                <p className="text-sm text-blue-700 mt-1">
+                  Para prosseguir com o pagamento, preencha seus dados de contato no formulário abaixo.
+                  Precisamos dessas informações para completar seu pedido e enviar a confirmação.
+                </p>
+              </div>
+            </div>
+            
             {/* Formulário de Contato */}
-            <Card className="border-t-4 border-t-primary">
+            <Card className="border-t-4 border-t-primary" id="contact-form">
               <CardHeader>
                 <CardTitle>Seus dados de contato</CardTitle>
                 <CardDescription>
@@ -158,18 +185,25 @@ const CheckoutMain: React.FC<CheckoutMainProps> = ({
               <CardContent>
                 <form onSubmit={handleContactFormSubmit} className="space-y-4">
                   <div>
-                    <Label htmlFor="name">Nome completo</Label>
+                    <Label htmlFor="name" className="flex items-center">
+                      Nome completo 
+                      <span className="text-red-500 ml-1">*</span>
+                    </Label>
                     <Input 
                       id="name" 
                       value={name} 
                       onChange={(e) => setName(e.target.value)} 
                       placeholder="Digite seu nome completo"
                       required
+                      className="mt-1"
                     />
                   </div>
                   
                   <div>
-                    <Label htmlFor="email">Seu email para contato</Label>
+                    <Label htmlFor="email" className="flex items-center">
+                      Seu email para contato
+                      <span className="text-red-500 ml-1">*</span>
+                    </Label>
                     <Input 
                       id="email" 
                       type="email" 
@@ -177,6 +211,7 @@ const CheckoutMain: React.FC<CheckoutMainProps> = ({
                       onChange={(e) => setEmail(e.target.value)} 
                       placeholder="seu@email.com"
                       required
+                      className="mt-1"
                     />
                     <p className="text-sm text-muted-foreground mt-1">
                       Enviaremos a confirmação do pagamento para este email
@@ -184,13 +219,17 @@ const CheckoutMain: React.FC<CheckoutMainProps> = ({
                   </div>
                   
                   <div>
-                    <Label htmlFor="phone">Telefone</Label>
+                    <Label htmlFor="phone" className="flex items-center">
+                      Telefone/WhatsApp
+                      <span className="text-red-500 ml-1">*</span>
+                    </Label>
                     <Input 
                       id="phone" 
                       value={phone} 
                       onChange={(e) => setPhone(e.target.value)} 
                       placeholder="(00) 00000-0000"
                       required
+                      className="mt-1"
                     />
                   </div>
                   
@@ -243,6 +282,11 @@ const CheckoutMain: React.FC<CheckoutMainProps> = ({
           />
         )}
       </div>
+      
+      {/* Mostrar o indicador de rolagem apenas quando necessário */}
+      {showScrollIndicator && currentStep === "plan" && (
+        <ScrollIndicator />
+      )}
     </div>
   );
 };
