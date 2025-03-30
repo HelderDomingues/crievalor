@@ -46,6 +46,25 @@ const PlanSummary = ({
       </div>;
   }
 
+  // Links de pagamento para cada plano
+  const paymentLinks = {
+    basic_plan: {
+      credit_installment: "https://sandbox.asaas.com/c/vydr3n77kew5fd4s",
+      credit_cash: "https://sandbox.asaas.com/c/fy15747uacorzbla",
+      pix_boleto: "https://sandbox.asaas.com/c/fgcvo6dvxv3s1cbm"
+    },
+    pro_plan: {
+      credit_installment: "https://sandbox.asaas.com/c/847xkv4ifqblmxhf",
+      credit_cash: "https://sandbox.asaas.com/c/gvpg42m2zjn0oeaa",
+      pix_boleto: "https://sandbox.asaas.com/c/9yoxktsjgclz9ezz"
+    },
+    enterprise_plan: {
+      credit_installment: "https://sandbox.asaas.com/c/6gnw7yy0v4whgnqp",
+      credit_cash: "https://sandbox.asaas.com/c/32f2bm5e0c2m5b1j",
+      pix_boleto: "https://sandbox.asaas.com/c/zxgbdnx23yh48ioc"
+    }
+  };
+
   // Função para validar número de telefone brasileiro
   const isValidPhone = (phoneNumber: string) => {
     // Aceita formatos: (XX) XXXXX-XXXX ou XXXXXXXXXXX
@@ -113,22 +132,11 @@ const PlanSummary = ({
         variant: "default"
       });
 
-      // Definir qual link de pagamento usar com base no método selecionado
-      let paymentLink = "";
+      // Obter os links corretos com base no plano selecionado
+      const currentPlanLinks = paymentLinks[planId as keyof typeof paymentLinks] || paymentLinks.basic_plan;
       
-      switch(paymentMethod) {
-        case "credit_installment":
-          paymentLink = "https://sandbox.asaas.com/c/vydr3n77kew5fd4s";
-          break;
-        case "credit_cash":
-          paymentLink = "https://sandbox.asaas.com/c/fy15747uacorzbla";
-          break;
-        case "pix_boleto":
-          paymentLink = "https://sandbox.asaas.com/c/fgcvo6dvxv3s1cbm";
-          break;
-        default:
-          paymentLink = "https://sandbox.asaas.com/c/vydr3n77kew5fd4s";
-      }
+      // Definir qual link de pagamento usar com base no método selecionado
+      let paymentLink = currentPlanLinks[paymentMethod];
 
       // Abrir página de pagamento da Asaas em nova aba
       window.open(paymentLink, "_blank");

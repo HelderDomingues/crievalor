@@ -17,6 +17,7 @@ interface PaymentSelectionProps {
   onContinue?: () => void;
   planMonthlyPrice?: number;
   planTotalPrice?: number;
+  planId?: string;
 }
 
 const PaymentSelection: React.FC<PaymentSelectionProps> = ({
@@ -25,18 +26,34 @@ const PaymentSelection: React.FC<PaymentSelectionProps> = ({
   onPaymentTypeChange = () => {},
   onContinue = () => {},
   planMonthlyPrice = 179.90,
-  planTotalPrice = 2158.80
+  planTotalPrice = 2158.80,
+  planId = "basic_plan"
 }) => {
   const creditFullPrice = planTotalPrice;
   const creditCashPrice = planTotalPrice * 0.9; // 10% de desconto
   const pixBoletoPrice = planTotalPrice * 0.9; // 10% de desconto (consolidado)
 
-  // Links estáticos das formas de pagamento
+  // Links de pagamento para cada plano
   const paymentLinks = {
-    creditInstallments: "https://sandbox.asaas.com/c/vydr3n77kew5fd4s", 
-    creditCash: "https://sandbox.asaas.com/c/fy15747uacorzbla",
-    pixBoleto: "https://sandbox.asaas.com/c/fgcvo6dvxv3s1cbm"  // Link consolidado para PIX e Boleto
+    basic_plan: {
+      creditInstallments: "https://sandbox.asaas.com/c/vydr3n77kew5fd4s", 
+      creditCash: "https://sandbox.asaas.com/c/fy15747uacorzbla",
+      pixBoleto: "https://sandbox.asaas.com/c/fgcvo6dvxv3s1cbm"
+    },
+    pro_plan: {
+      creditInstallments: "https://sandbox.asaas.com/c/847xkv4ifqblmxhf", 
+      creditCash: "https://sandbox.asaas.com/c/gvpg42m2zjn0oeaa",
+      pixBoleto: "https://sandbox.asaas.com/c/9yoxktsjgclz9ezz"
+    },
+    enterprise_plan: {
+      creditInstallments: "https://sandbox.asaas.com/c/6gnw7yy0v4whgnqp", 
+      creditCash: "https://sandbox.asaas.com/c/32f2bm5e0c2m5b1j",
+      pixBoleto: "https://sandbox.asaas.com/c/zxgbdnx23yh48ioc"
+    }
   };
+
+  // Obter os links corretos com base no plano selecionado
+  const currentPlanLinks = paymentLinks[planId as keyof typeof paymentLinks] || paymentLinks.basic_plan;
 
   const handlePaymentMethodClick = (type: PaymentSelectionType) => {
     onPaymentTypeChange(type);
@@ -69,12 +86,12 @@ const PaymentSelection: React.FC<PaymentSelectionProps> = ({
       >
         {/* Cartão de crédito em até 12x */}
         <a 
-          href={paymentLinks.creditInstallments}
+          href={currentPlanLinks.creditInstallments}
           className="block"
           onClick={(e) => { 
             e.preventDefault(); 
             handlePaymentMethodClick("credit");
-            window.location.href = paymentLinks.creditInstallments;
+            window.location.href = currentPlanLinks.creditInstallments;
           }}
         >
           <div className={`
@@ -101,12 +118,12 @@ const PaymentSelection: React.FC<PaymentSelectionProps> = ({
 
         {/* Cartão de crédito à vista */}
         <a 
-          href={paymentLinks.creditCash}
+          href={currentPlanLinks.creditCash}
           className="block"
           onClick={(e) => { 
             e.preventDefault(); 
             handlePaymentMethodClick("credit_cash");
-            window.location.href = paymentLinks.creditCash;
+            window.location.href = currentPlanLinks.creditCash;
           }}
         >
           <div className={`
@@ -132,12 +149,12 @@ const PaymentSelection: React.FC<PaymentSelectionProps> = ({
 
         {/* PIX ou Boleto CONSOLIDADO com 10% de desconto */}
         <a 
-          href={paymentLinks.pixBoleto}
+          href={currentPlanLinks.pixBoleto}
           className="block"
           onClick={(e) => { 
             e.preventDefault(); 
             handlePaymentMethodClick("pix");
-            window.location.href = paymentLinks.pixBoleto;
+            window.location.href = currentPlanLinks.pixBoleto;
           }}
         >
           <div className={`
