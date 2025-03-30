@@ -1,10 +1,9 @@
 
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { PLANS, subscriptionService } from "@/services/subscriptionService";
+import { subscriptionService } from "@/services/subscriptionService";
 import { PaymentType } from "@/components/pricing/PaymentOptions";
 import { useToast } from "@/hooks/use-toast";
-import CheckoutSteps from "./CheckoutSteps";
 import PlanSummary from "./PlanSummary";
 import PaymentSelection from "./PaymentSelection";
 import UserRegistration from "./UserRegistration";
@@ -90,60 +89,62 @@ const CheckoutMain: React.FC<CheckoutMainProps> = ({
         )}
       </div>
       
-      <div className="lg:col-span-1 order-1 lg:order-2">
-        {selectedPlanId && (
-          <div className="bg-card border rounded-xl p-6 sticky top-24">
-            <h3 className="text-lg font-semibold mb-4">Resumo do pedido</h3>
-            
-            <div className="space-y-4">
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Plano</span>
-                <span className="font-medium">
-                  {subscriptionService.getPlanFromId(selectedPlanId)?.name || "Plano selecionado"}
-                </span>
-              </div>
+      {currentStep !== "plan" && (
+        <div className="lg:col-span-1 order-1 lg:order-2">
+          {selectedPlanId && (
+            <div className="bg-card border rounded-xl p-6 sticky top-24">
+              <h3 className="text-lg font-semibold mb-4">Resumo do pedido</h3>
               
-              {selectedPaymentType === "credit" && selectedInstallments > 1 ? (
+              <div className="space-y-4">
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Pagamento</span>
+                  <span className="text-muted-foreground">Plano</span>
                   <span className="font-medium">
-                    {selectedInstallments}x no cartão
+                    {subscriptionService.getPlanFromId(selectedPlanId)?.name || "Plano selecionado"}
                   </span>
                 </div>
-              ) : (
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Pagamento</span>
-                  <span className="font-medium">
-                    {selectedPaymentType === "credit" ? "Cartão de crédito" : 
-                     selectedPaymentType === "pix" ? "PIX" : "Boleto bancário"}
-                  </span>
-                </div>
-              )}
-              
-              <div className="border-t pt-4 mt-4">
-                <div className="flex justify-between font-semibold text-lg">
-                  <span>Total</span>
-                  <span className="text-primary">
-                    {(() => {
-                      const plan = subscriptionService.getPlanFromId(selectedPlanId);
-                      if (!plan || !('price' in plan)) return "Sob consulta";
-                      
-                      const totalPrice = selectedInstallments === 1 ? plan.cashPrice : plan.totalPrice;
-                      
-                      if (selectedInstallments > 1) {
-                        const installmentValue = totalPrice / selectedInstallments;
-                        return `${selectedInstallments}x de R$ ${installmentValue.toFixed(2).replace('.', ',')}`;
-                      } else {
-                        return `R$ ${totalPrice.toFixed(2).replace('.', ',')}`;
-                      }
-                    })()}
-                  </span>
+                
+                {selectedPaymentType === "credit" && selectedInstallments > 1 ? (
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Pagamento</span>
+                    <span className="font-medium">
+                      {selectedInstallments}x no cartão
+                    </span>
+                  </div>
+                ) : (
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Pagamento</span>
+                    <span className="font-medium">
+                      {selectedPaymentType === "credit" ? "Cartão de crédito" : 
+                      selectedPaymentType === "pix" ? "PIX" : "Boleto bancário"}
+                    </span>
+                  </div>
+                )}
+                
+                <div className="border-t pt-4 mt-4">
+                  <div className="flex justify-between font-semibold text-lg">
+                    <span>Total</span>
+                    <span className="text-primary">
+                      {(() => {
+                        const plan = subscriptionService.getPlanFromId(selectedPlanId);
+                        if (!plan || !('price' in plan)) return "Sob consulta";
+                        
+                        const totalPrice = selectedInstallments === 1 ? plan.cashPrice : plan.totalPrice;
+                        
+                        if (selectedInstallments > 1) {
+                          const installmentValue = totalPrice / selectedInstallments;
+                          return `${selectedInstallments}x de R$ ${installmentValue.toFixed(2).replace('.', ',')}`;
+                        } else {
+                          return `R$ ${totalPrice.toFixed(2).replace('.', ',')}`;
+                        }
+                      })()}
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        )}
-      </div>
+          )}
+        </div>
+      )}
     </div>
   );
 };
