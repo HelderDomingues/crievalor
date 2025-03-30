@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { PaymentType } from "@/components/pricing/PaymentOptions";
-import { ArrowLeft, CreditCard, CheckCircle2, ChevronDown } from "lucide-react";
+import { ArrowLeft, CreditCard, CheckCircle2, ChevronDown, BanknoteIcon } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
@@ -33,7 +33,7 @@ const PaymentSelection: React.FC<PaymentSelectionProps> = ({
 
   // Links estáticos das formas de pagamento
   const paymentLinks = {
-    creditInstallments: "https://sandbox.asaas.com/c/123456", // Este será substituído dinamicamente pelo link correto
+    creditInstallments: "https://sandbox.asaas.com/c/vydr3n77kew5fd4s", 
     creditCash: "https://sandbox.asaas.com/c/fy15747uacorzbla",
     pixBoleto: "https://sandbox.asaas.com/c/fgcvo6dvxv3s1cbm"  // Link consolidado para PIX e Boleto
   };
@@ -120,7 +120,7 @@ const PaymentSelection: React.FC<PaymentSelectionProps> = ({
                 <CreditCard className="h-5 w-5 mr-3 text-primary group-hover:text-primary transition-colors" />
                 <div>
                   <p className="font-medium text-foreground group-hover:text-primary transition-colors">
-                    Cartão de Crédito à Vista <span className="text-green-600 font-semibold inline-block">(-10%)</span>
+                    Cartão de Crédito à Vista <span className="text-green-600 font-semibold">(10% de Desconto)</span>
                   </p>
                   <p className="text-sm text-muted-foreground group-hover:text-primary/80 transition-colors">Pagamento único com desconto</p>
                 </div>
@@ -148,12 +148,10 @@ const PaymentSelection: React.FC<PaymentSelectionProps> = ({
             <div className="flex items-center space-x-3">
               <RadioGroupItem value="pix" id="payment-pix-boleto" />
               <Label htmlFor="payment-pix-boleto" className="cursor-pointer flex items-center">
-                <div className="h-5 w-5 mr-3 text-primary font-bold text-center flex items-center justify-center group-hover:text-primary transition-colors">
-                  <span className="text-sky-500 group-hover:text-sky-700">PIX</span>
-                </div>
+                <BanknoteIcon className="h-5 w-5 mr-3 text-primary group-hover:text-primary transition-colors" />
                 <div>
                   <p className="font-medium text-foreground group-hover:text-primary transition-colors">
-                    PIX ou Boleto <span className="text-green-600 font-semibold inline-block">(-10%)</span>
+                    PIX ou Boleto <span className="text-green-600 font-semibold">(10% de Desconto)</span>
                   </p>
                   <p className="text-sm text-muted-foreground group-hover:text-primary/80 transition-colors">Pagamento à vista com desconto</p>
                 </div>

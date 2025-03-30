@@ -1,29 +1,36 @@
-import React, { useState } from "react";
+
+import React, { useState, useEffect } from "react";
 import { subscriptionService } from "@/services/subscriptionService";
 import { Button } from "@/components/ui/button";
-import { Check, ExternalLink, Mail, Phone, AlertCircle, Shield, Lock, CreditCard } from "lucide-react";
+import { Check, ExternalLink, Mail, Phone, AlertCircle, Shield, Lock, CreditCard, BanknoteIcon, ChevronDown } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useToast } from "@/hooks/use-toast";
+
 interface PlanSummaryProps {
   planId: string;
   onContinue: () => void;
 }
+
 const PlanSummary = ({
   planId,
   onContinue
 }: PlanSummaryProps) => {
   const plan = subscriptionService.getPlanFromId(planId);
-  const {
-    toast
-  } = useToast();
+  const { toast } = useToast();
 
   // Estado para armazenar a opção de pagamento selecionada
-  const [paymentMethod, setPaymentMethod] = useState<"credit_installment" | "credit_cash" | "pix" | "boleto">("credit_installment");
+  const [paymentMethod, setPaymentMethod] = useState<"credit_installment" | "credit_cash" | "pix_boleto">("credit_installment");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  // Scroll to top on component mount
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   if (!plan) {
     return <div className="text-center p-8">
         <p className="text-muted-foreground">Plano não encontrado.</p>
@@ -42,6 +49,7 @@ const PlanSummary = ({
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   };
+  
   const handleRedirect = async () => {
     // Validar campos do formulário
     if (!isValidEmail(email)) {
@@ -79,8 +87,25 @@ const PlanSummary = ({
         variant: "default"
       });
 
+      // Definir qual link de pagamento usar com base no método selecionado
+      let paymentLink = "";
+      
+      switch(paymentMethod) {
+        case "credit_installment":
+          paymentLink = "https://sandbox.asaas.com/c/vydr3n77kew5fd4s";
+          break;
+        case "credit_cash":
+          paymentLink = "https://sandbox.asaas.com/c/fy15747uacorzbla";
+          break;
+        case "pix_boleto":
+          paymentLink = "https://sandbox.asaas.com/c/fgcvo6dvxv3s1cbm";
+          break;
+        default:
+          paymentLink = "https://sandbox.asaas.com/c/vydr3n77kew5fd4s";
+      }
+
       // Abrir página de pagamento da Asaas em nova aba
-      window.open("https://sandbox.asaas.com/c/vydr3n77kew5fd4s", "_blank");
+      window.open(paymentLink, "_blank");
     } catch (error) {
       toast({
         title: "Erro ao processar",
@@ -102,12 +127,9 @@ const PlanSummary = ({
       case "credit_cash":
         return plan.cashPrice;
       // 10% de desconto
-      case "pix":
-        // 15% de desconto para PIX
-        return plan.totalPrice * 0.85;
-      case "boleto":
+      case "pix_boleto":
+        // 10% de desconto para PIX/Boleto
         return plan.cashPrice;
-      // 10% de desconto, mesmo que cartão à vista
       default:
         return plan.totalPrice;
     }
@@ -136,6 +158,7 @@ const PlanSummary = ({
         </div>
       </div>;
   };
+  
   return <div className="space-y-6">
       <div className="text-center mb-8">
         <h1 className="text-3xl font-bold">Você escolheu o plano {plan.name}</h1>
@@ -174,40 +197,41 @@ const PlanSummary = ({
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <RadioGroup value={paymentMethod} onValueChange={value => setPaymentMethod(value as "credit_installment" | "credit_cash" | "pix" | "boleto")} className="space-y-4">
-                <div className="flex items-center space-x-2 border rounded-md p-3 hover:bg-slate-50 dark:hover:bg-slate-900 cursor-pointer">
+              <RadioGroup value={paymentMethod} onValueChange={value => setPaymentMethod(value as "credit_installment" | "credit_cash" | "pix_boleto")} className="space-y-4">
+                <div className="flex items-center space-x-2 border rounded-md p-3 hover:bg-primary/10 dark:hover:bg-primary/20 cursor-pointer transition-colors">
                   <RadioGroupItem value="credit_installment" id="payment-credit-installment" />
                   <label htmlFor="payment-credit-installment" className="flex items-center cursor-pointer w-full">
-                    <CreditCard className="mr-2 h-4 w-4" />
-                    <span className="flex-1">Cartão de Crédito
-Parcelado em Até 12X</span>
-                    {'price' in plan && <span className="font-semibold text-sm">
+                    <CreditCard className="mr-2 h-4 w-4 text-primary" />
+                    <span className="flex-1">Cartão de Crédito Parcelado em Até 12X</span>
+                    {'price' in plan && <span className="font-semibold text-sm text-primary">
                         12x R$ {formatCurrency(plan.price)}
                       </span>}
                   </label>
                 </div>
                 
-                <div className="flex items-center space-x-2 border rounded-md p-3 hover:bg-slate-50 dark:hover:bg-slate-900 cursor-pointer">
+                <div className="flex items-center space-x-2 border rounded-md p-3 hover:bg-primary/10 dark:hover:bg-primary/20 cursor-pointer transition-colors">
                   <RadioGroupItem value="credit_cash" id="payment-credit-cash" />
                   <label htmlFor="payment-credit-cash" className="flex items-center cursor-pointer w-full">
-                    <CreditCard className="mr-2 h-4 w-4" />
-                    <span className="flex-1">Cartão de Crédito à Vista       
-(10% de Desconto)</span>
-                    {'price' in plan && <span className="font-semibold text-sm">
+                    <CreditCard className="mr-2 h-4 w-4 text-primary" />
+                    <div className="flex-1">
+                      <span>Cartão de Crédito à Vista</span>
+                      <span className="text-green-600 font-semibold ml-1">(10% de Desconto)</span>
+                    </div>
+                    {'price' in plan && <span className="font-semibold text-sm text-primary">
                         R$ {formatCurrency(plan.cashPrice)}
                       </span>}
                   </label>
                 </div>
                 
-                
-                
-                <div className="flex items-center space-x-2 border rounded-md p-3 hover:bg-slate-50 dark:hover:bg-slate-900 cursor-pointer">
-                  <RadioGroupItem value="boleto" id="payment-boleto" />
-                  <label htmlFor="payment-boleto" className="flex items-center cursor-pointer w-full">
-                    <span className="font-mono mr-2">&#x2758;&#x2758;&#x2758;</span>
-                    <span className="flex-1">Pix ou Boleto bancário
-(10% de desconto)</span>
-                    {'price' in plan && <span className="font-semibold text-sm">
+                <div className="flex items-center space-x-2 border rounded-md p-3 hover:bg-primary/10 dark:hover:bg-primary/20 cursor-pointer transition-colors">
+                  <RadioGroupItem value="pix_boleto" id="payment-pix-boleto" />
+                  <label htmlFor="payment-pix-boleto" className="flex items-center cursor-pointer w-full">
+                    <BanknoteIcon className="mr-2 h-4 w-4 text-primary" />
+                    <div className="flex-1">
+                      <span>PIX ou Boleto</span>
+                      <span className="text-green-600 font-semibold ml-1">(10% de Desconto)</span>
+                    </div>
+                    {'price' in plan && <span className="font-semibold text-sm text-primary">
                         R$ {formatCurrency(plan.cashPrice)}
                       </span>}
                   </label>
@@ -288,8 +312,16 @@ Parcelado em Até 12X</span>
               <span className="text-sm font-medium">Dados Protegidos</span>
             </div>
           </div>
+          
+          <div className="mt-8 flex justify-center text-primary">
+            <div className="flex flex-col items-center">
+              <p className="text-sm text-center mb-1 font-medium">Preencha seus dados para prosseguir ao pagamento</p>
+              <ChevronDown className="h-6 w-6 animate-bounce" />
+            </div>
+          </div>
         </div>
       </div>
     </div>;
 };
+
 export default PlanSummary;
