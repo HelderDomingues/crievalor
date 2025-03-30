@@ -38,6 +38,11 @@ const Checkout = () => {
   const [processId, setProcessId] = useState<string>(`checkout_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`);
   const [isRecovering, setIsRecovering] = useState(false);
   
+  // Scroll to top on initial load
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+  
   // Plan validation on load
   useEffect(() => {
     if (!planId) {
@@ -47,6 +52,12 @@ const Checkout = () => {
         description: "Por favor, escolha um plano para continuar.",
         variant: "destructive",
       });
+      return;
+    }
+    
+    // Redirect to WhatsApp if corporate plan is selected
+    if (planId === "corporate_plan") {
+      window.location.href = "https://wa.me/+5547992152089";
       return;
     }
     

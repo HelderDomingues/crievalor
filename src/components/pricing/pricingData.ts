@@ -171,7 +171,7 @@ export const plans: PricingPlan[] = [
       documentTypes.revisao
     ],
     cta: "Falar com consultor",
-    ctaUrl: "/contato?assunto=plano-corporativo",
+    ctaUrl: "https://wa.me/+5547992152089",
     customPrice: true
   }
 ];

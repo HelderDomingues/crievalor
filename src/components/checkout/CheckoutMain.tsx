@@ -7,11 +7,8 @@ import { useToast } from "@/hooks/use-toast";
 import PlanSummary from "./PlanSummary";
 import ProcessingPayment from "./ProcessingPayment";
 import { errorUtils } from "@/utils/errorUtils";
-import { ArrowRight, Loader2, Info } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import ScrollIndicator from "@/components/ScrollIndicator";
 
 // Step types for the checkout process
@@ -49,11 +46,6 @@ const CheckoutMain: React.FC<CheckoutMainProps> = ({
 }) => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [formError, setFormError] = useState<string | null>(null);
   const [showScrollIndicator, setShowScrollIndicator] = useState(true);
   
   // Garantir que a página carregue pelo topo
@@ -80,42 +72,6 @@ const CheckoutMain: React.FC<CheckoutMainProps> = ({
       clearTimeout(timeout);
     };
   }, []);
-  
-  const handleContactFormSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setFormError(null);
-    
-    // Validação básica
-    if (!name.trim() || !email.trim() || !phone.trim()) {
-      setFormError("Por favor, preencha todos os campos obrigatórios.");
-      return;
-    }
-    
-    if (!email.includes('@') || !email.includes('.')) {
-      setFormError("Por favor, insira um e-mail válido.");
-      return;
-    }
-    
-    // Aqui você pode implementar a lógica para salvar os dados do cliente
-    // antes de redirecionar para o pagamento
-    
-    setIsSubmitting(true);
-    
-    try {
-      // Salvar os dados em localStorage ou em algum serviço
-      localStorage.setItem('checkoutCustomerName', name);
-      localStorage.setItem('checkoutCustomerEmail', email);
-      localStorage.setItem('checkoutCustomerPhone', phone);
-      
-      // Proceder com o pagamento
-      await proceedToPayment();
-    } catch (error) {
-      setFormError("Ocorreu um erro ao processar seus dados. Por favor, tente novamente.");
-      console.error("Error processing customer data:", error);
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
   
   if (!selectedPlanId) {
     toast({
