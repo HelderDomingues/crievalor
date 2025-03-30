@@ -179,7 +179,8 @@ const PlanSummary = ({
                   <RadioGroupItem value="credit_installment" id="payment-credit-installment" />
                   <label htmlFor="payment-credit-installment" className="flex items-center cursor-pointer w-full">
                     <CreditCard className="mr-2 h-4 w-4" />
-                    <span className="flex-1">Cartão de Crédito Em Até 12X</span>
+                    <span className="flex-1">Cartão de Crédito
+Parcelado em Até 12X</span>
                     {'price' in plan && <span className="font-semibold text-sm">
                         12x R$ {formatCurrency(plan.price)}
                       </span>}
