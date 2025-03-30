@@ -191,7 +191,7 @@ Parcelado em Até 12X</span>
                   <RadioGroupItem value="credit_cash" id="payment-credit-cash" />
                   <label htmlFor="payment-credit-cash" className="flex items-center cursor-pointer w-full">
                     <CreditCard className="mr-2 h-4 w-4" />
-                    <span className="flex-1">Cartão de Crédito à Vista
+                    <span className="flex-1">Cartão de Crédito à Vista       
 (10% de Desconto)</span>
                     {'price' in plan && <span className="font-semibold text-sm">
                         R$ {formatCurrency(plan.cashPrice)}
