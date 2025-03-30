@@ -2,26 +2,35 @@
 import React, { useState, useEffect } from "react";
 import { subscriptionService } from "@/services/subscriptionService";
 import { Button } from "@/components/ui/button";
-import { Check, ExternalLink, Mail, Phone, AlertCircle, Shield, Lock, CreditCard, BanknoteIcon, ChevronDown } from "lucide-react";
+import { Check, ExternalLink, Mail, Phone, AlertCircle, Shield, Lock, CreditCard, BanknoteIcon, ChevronDown, Info } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useToast } from "@/hooks/use-toast";
+import { PaymentType } from "@/components/pricing/PaymentOptions";
+
+// Updated PaymentSelectionType to include credit_cash
+type PaymentSelectionType = PaymentType | "credit_cash";
 
 interface PlanSummaryProps {
   planId: string;
   onContinue: () => void;
+  onPaymentTypeChange?: (type: PaymentSelectionType) => void;
+  selectedPaymentType?: PaymentSelectionType;
 }
 
 const PlanSummary = ({
   planId,
-  onContinue
+  onContinue,
+  onPaymentTypeChange = () => {},
+  selectedPaymentType = "credit"
 }: PlanSummaryProps) => {
   const plan = subscriptionService.getPlanFromId(planId);
   const { toast } = useToast();
 
-  // Estado para armazenar a opção de pagamento selecionada
+  // Estado para armazenar os dados do formulário
   const [paymentMethod, setPaymentMethod] = useState<"credit_installment" | "credit_cash" | "pix_boleto">("credit_installment");
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -52,6 +61,14 @@ const PlanSummary = ({
   
   const handleRedirect = async () => {
     // Validar campos do formulário
+    if (!name.trim()) {
+      toast({
+        title: "Nome inválido",
+        description: "Por favor, forneça seu nome completo para continuar.",
+        variant: "destructive"
+      });
+      return;
+    }
     if (!isValidEmail(email)) {
       toast({
         title: "Email inválido",
@@ -73,12 +90,21 @@ const PlanSummary = ({
       // Salvar informações no localStorage para recuperação posterior
       localStorage.setItem('customerEmail', email);
       localStorage.setItem('customerPhone', phone);
+      localStorage.setItem('customerName', name);
       localStorage.setItem('paymentMethod', paymentMethod);
       localStorage.setItem('paymentTimestamp', Date.now().toString());
       localStorage.setItem('planName', plan.name);
       if ('price' in plan) {
         localStorage.setItem('planPrice', getPaymentAmount().toString());
       }
+
+      // Atualizar o tipo de pagamento no estado do componente pai
+      const paymentTypeMap: Record<string, PaymentSelectionType> = {
+        credit_installment: "credit",
+        credit_cash: "credit_cash",
+        pix_boleto: "pix"
+      };
+      onPaymentTypeChange(paymentTypeMap[paymentMethod]);
 
       // Mostrar toast de sucesso
       toast({
@@ -123,12 +149,9 @@ const PlanSummary = ({
     switch (paymentMethod) {
       case "credit_installment":
         return plan.totalPrice;
-      // Preço total parcelado
       case "credit_cash":
         return plan.cashPrice;
-      // 10% de desconto
       case "pix_boleto":
-        // 10% de desconto para PIX/Boleto
         return plan.cashPrice;
       default:
         return plan.totalPrice;
@@ -187,25 +210,33 @@ const PlanSummary = ({
           </CardContent>
         </Card>
         
-        {/* Formulário de pagamento e contato */}
+        {/* Forma de pagamento */}
         <div className="space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle>Forma de pagamento</CardTitle>
+              <CardTitle>Escolha a forma de pagamento</CardTitle>
               <CardDescription>
-                Escolha como deseja efetuar o pagamento da sua assinatura
+                Selecione como você deseja efetuar o pagamento da sua assinatura
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <RadioGroup value={paymentMethod} onValueChange={value => setPaymentMethod(value as "credit_installment" | "credit_cash" | "pix_boleto")} className="space-y-4">
+              <RadioGroup 
+                value={paymentMethod} 
+                onValueChange={value => setPaymentMethod(value as "credit_installment" | "credit_cash" | "pix_boleto")} 
+                className="space-y-4"
+              >
                 <div className="flex items-center space-x-2 border rounded-md p-3 hover:bg-primary/10 dark:hover:bg-primary/20 cursor-pointer transition-colors">
                   <RadioGroupItem value="credit_installment" id="payment-credit-installment" />
                   <label htmlFor="payment-credit-installment" className="flex items-center cursor-pointer w-full">
                     <CreditCard className="mr-2 h-4 w-4 text-primary" />
-                    <span className="flex-1">Cartão de Crédito Parcelado em Até 12X</span>
-                    {'price' in plan && <span className="font-semibold text-sm text-primary">
-                        12x R$ {formatCurrency(plan.price)}
-                      </span>}
+                    <div className="flex-1">
+                      <p className="font-medium">Cartão de Crédito Em Até 12X</p>
+                      <p className="text-sm text-muted-foreground">Parcele em até 12x sem juros</p>
+                    </div>
+                    {'price' in plan && <div className="text-right">
+                        <p className="text-base font-bold text-primary">12x R$ {formatCurrency(plan.price)}</p>
+                        <p className="text-xs text-muted-foreground">total: R$ {formatCurrency(plan.totalPrice)}</p>
+                      </div>}
                   </label>
                 </div>
                 
@@ -214,12 +245,10 @@ const PlanSummary = ({
                   <label htmlFor="payment-credit-cash" className="flex items-center cursor-pointer w-full">
                     <CreditCard className="mr-2 h-4 w-4 text-primary" />
                     <div className="flex-1">
-                      <span>Cartão de Crédito à Vista</span>
-                      <span className="text-green-600 font-semibold ml-1">(10% de Desconto)</span>
+                      <p className="font-medium">Cartão de Crédito à Vista <span className="text-green-600 font-semibold whitespace-nowrap">(10% de Desconto)</span></p>
+                      <p className="text-sm text-muted-foreground">Pagamento único com desconto</p>
                     </div>
-                    {'price' in plan && <span className="font-semibold text-sm text-primary">
-                        R$ {formatCurrency(plan.cashPrice)}
-                      </span>}
+                    {'price' in plan && <p className="text-base font-bold text-primary whitespace-nowrap">R$ {formatCurrency(plan.cashPrice)}</p>}
                   </label>
                 </div>
                 
@@ -228,12 +257,10 @@ const PlanSummary = ({
                   <label htmlFor="payment-pix-boleto" className="flex items-center cursor-pointer w-full">
                     <BanknoteIcon className="mr-2 h-4 w-4 text-primary" />
                     <div className="flex-1">
-                      <span>PIX ou Boleto</span>
-                      <span className="text-green-600 font-semibold ml-1">(10% de Desconto)</span>
+                      <p className="font-medium">PIX ou Boleto <span className="text-green-600 font-semibold whitespace-nowrap">(10% de Desconto)</span></p>
+                      <p className="text-sm text-muted-foreground">Pagamento à vista com desconto</p>
                     </div>
-                    {'price' in plan && <span className="font-semibold text-sm text-primary">
-                        R$ {formatCurrency(plan.cashPrice)}
-                      </span>}
+                    {'price' in plan && <p className="text-base font-bold text-primary whitespace-nowrap">R$ {formatCurrency(plan.cashPrice)}</p>}
                   </label>
                 </div>
               </RadioGroup>
@@ -250,7 +277,20 @@ const PlanSummary = ({
             </CardContent>
           </Card>
           
-          <Card>
+          {/* Alerta de importância - dados de contato */}
+          <div className="bg-blue-50 border border-blue-200 rounded-md p-4 flex items-start">
+            <Info className="text-blue-500 h-5 w-5 mt-0.5 mr-3 flex-shrink-0" />
+            <div>
+              <h4 className="font-medium text-blue-800">Importante</h4>
+              <p className="text-sm text-blue-700 mt-1">
+                Para prosseguir com o pagamento, preencha seus dados de contato no formulário abaixo.
+                Precisamos dessas informações para completar seu pedido e enviar a confirmação.
+              </p>
+            </div>
+          </div>
+          
+          {/* Formulário de contato - ÚNICO FORMULÁRIO NA PÁGINA */}
+          <Card id="contact-form">
             <CardHeader>
               <CardTitle>Seus dados de contato</CardTitle>
               <CardDescription>
@@ -260,19 +300,58 @@ const PlanSummary = ({
             <CardContent>
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <label htmlFor="email">Seu email para contato</label>
+                  <label htmlFor="name" className="flex items-center font-medium">
+                    Nome completo
+                    <span className="text-red-500 ml-1">*</span>
+                  </label>
+                  <div className="flex relative">
+                    <Input 
+                      id="name" 
+                      placeholder="Digite seu nome completo"
+                      value={name} 
+                      onChange={e => setName(e.target.value)} 
+                      required
+                      className="w-full" 
+                    />
+                  </div>
+                </div>
+                
+                <div className="space-y-2">
+                  <label htmlFor="email" className="flex items-center font-medium">
+                    Seu email para contato
+                    <span className="text-red-500 ml-1">*</span>
+                  </label>
                   <div className="flex relative">
                     <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                    <Input id="email" type="email" placeholder="seuemail@exemplo.com" value={email} onChange={e => setEmail(e.target.value)} className="pl-10" />
+                    <Input 
+                      id="email" 
+                      type="email" 
+                      placeholder="seuemail@exemplo.com" 
+                      value={email} 
+                      onChange={e => setEmail(e.target.value)} 
+                      className="pl-10" 
+                      required
+                    />
                   </div>
                   <p className="text-xs text-muted-foreground">Enviaremos a confirmação do pagamento para este email</p>
                 </div>
                 
                 <div className="space-y-2">
-                  <label htmlFor="phone">Seu telefone/WhatsApp</label>
+                  <label htmlFor="phone" className="flex items-center font-medium">
+                    Seu telefone/WhatsApp
+                    <span className="text-red-500 ml-1">*</span>
+                  </label>
                   <div className="flex relative">
                     <Phone className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                    <Input id="phone" type="tel" placeholder="(XX) XXXXX-XXXX" value={phone} onChange={e => setPhone(e.target.value)} className="pl-10" />
+                    <Input 
+                      id="phone" 
+                      type="tel" 
+                      placeholder="(XX) XXXXX-XXXX" 
+                      value={phone} 
+                      onChange={e => setPhone(e.target.value)} 
+                      className="pl-10" 
+                      required
+                    />
                   </div>
                   <p className="text-xs text-muted-foreground">Para contato em caso de problemas com o pagamento</p>
                 </div>
@@ -310,13 +389,6 @@ const PlanSummary = ({
             <div className="flex items-center">
               <Shield className="mr-1 h-4 w-4 text-green-600" />
               <span className="text-sm font-medium">Dados Protegidos</span>
-            </div>
-          </div>
-          
-          <div className="mt-8 flex justify-center text-primary">
-            <div className="flex flex-col items-center">
-              <p className="text-sm text-center mb-1 font-medium">Preencha seus dados para prosseguir ao pagamento</p>
-              <ChevronDown className="h-6 w-6 animate-bounce" />
             </div>
           </div>
         </div>

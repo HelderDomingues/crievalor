@@ -1,9 +1,9 @@
 
-import React, { useState } from "react";
+import React from "react";
 import { Button } from "@/components/ui/button";
 import { PaymentType } from "@/components/pricing/PaymentOptions";
 import { ArrowLeft, CreditCard, CheckCircle2, ChevronDown, BanknoteIcon } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 
@@ -161,13 +161,6 @@ const PaymentSelection: React.FC<PaymentSelectionProps> = ({
           </div>
         </a>
       </RadioGroup>
-
-      <div className="mt-8 flex justify-center text-primary">
-        <div className="flex flex-col items-center">
-          <p className="text-sm text-center mb-1 font-medium">Preencha seus dados abaixo para continuar</p>
-          <ChevronDown className="h-6 w-6 animate-bounce" />
-        </div>
-      </div>
     </div>
   );
 };
