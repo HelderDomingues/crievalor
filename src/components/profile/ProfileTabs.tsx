@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import ProfileField from "./ProfileField";
@@ -56,6 +55,7 @@ const ProfileTabs: React.FC<ProfileTabsProps> = ({
             loading={loading}
             placeholder="Seu telefone com DDD"
             required
+            isPhoneNumber={true}
           />
           
           <ProfileField

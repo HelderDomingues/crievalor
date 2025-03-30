@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
+import { formatPhoneNumber, sanitizePhoneNumber, isValidPhoneNumber } from "@/utils/formatters";
 
 interface UserRegistrationProps {
   onContinue: () => void;
@@ -26,7 +27,10 @@ interface UserRegistrationProps {
 const formSchema = z.object({
   fullName: z.string().min(3, "Nome completo é obrigatório"),
   email: z.string().email("Email inválido"),
-  phone: z.string().min(10, "Telefone deve ter pelo menos 10 dígitos"),
+  phone: z.string()
+    .refine(val => isValidPhoneNumber(val), {
+      message: "Telefone deve ter 10 ou 11 dígitos incluindo DDD",
+    }),
   cpf: z.string().min(11, "CPF deve ter 11 dígitos"),
   password: z.string().min(6, "Senha deve ter pelo menos 6 caracteres"),
 });
@@ -49,6 +53,11 @@ const UserRegistration = ({ onContinue, onBack }: UserRegistrationProps) => {
     },
   });
   
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>, onChange: (value: string) => void) => {
+    const formatted = formatPhoneNumber(e.target.value);
+    onChange(formatted);
+  };
+  
   const onSubmit = async (data: FormData) => {
     setIsSubmitting(true);
     
@@ -70,13 +79,16 @@ const UserRegistration = ({ onContinue, onBack }: UserRegistrationProps) => {
       // Format CPF to remove any non-numeric characters
       const formattedCpf = data.cpf.replace(/\D/g, '');
       
+      // Sanitize phone number
+      const sanitizedPhone = sanitizePhoneNumber(data.phone);
+      
       // Update the profile
       const { error: profileError } = await supabase
         .from("profiles")
         .upsert({
           id: user.id,
           full_name: data.fullName,
-          phone: data.phone,
+          phone: sanitizedPhone,
           cpf: formattedCpf,
           updated_at: new Date().toISOString(),
         });
@@ -159,7 +171,11 @@ const UserRegistration = ({ onContinue, onBack }: UserRegistrationProps) => {
                   <FormItem>
                     <FormLabel>Telefone</FormLabel>
                     <FormControl>
-                      <Input placeholder="(00) 00000-0000" {...field} />
+                      <Input 
+                        placeholder="(00) 00000-0000" 
+                        {...field}
+                        onChange={(e) => handlePhoneChange(e, field.onChange)}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

@@ -5,7 +5,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Edit, Save, Trash2 } from "lucide-react";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
+import { formatPhoneNumber } from "@/utils/formatters";
 
 interface ProfileFieldProps {
   label: string;
@@ -16,6 +17,7 @@ interface ProfileFieldProps {
   isTextarea?: boolean;
   placeholder?: string;
   required?: boolean;
+  isPhoneNumber?: boolean;
 }
 
 const ProfileField: React.FC<ProfileFieldProps> = ({
@@ -26,7 +28,8 @@ const ProfileField: React.FC<ProfileFieldProps> = ({
   loading,
   isTextarea = false,
   placeholder = "",
-  required = false
+  required = false,
+  isPhoneNumber = false
 }) => {
   const [isEditing, setIsEditing] = useState(!value);
   const [fieldValue, setFieldValue] = useState(value || "");
@@ -36,6 +39,14 @@ const ProfileField: React.FC<ProfileFieldProps> = ({
   useEffect(() => {
     setFieldValue(value || "");
   }, [value]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    if (isPhoneNumber) {
+      setFieldValue(formatPhoneNumber(e.target.value));
+    } else {
+      setFieldValue(e.target.value);
+    }
+  };
 
   const handleSave = async () => {
     if (required && !fieldValue.trim()) {
@@ -116,7 +127,7 @@ const ProfileField: React.FC<ProfileFieldProps> = ({
         <Textarea
           id={fieldName}
           value={fieldValue}
-          onChange={(e) => setFieldValue(e.target.value)}
+          onChange={handleChange}
           disabled={!isEditing || isSaving || loading}
           className="w-full"
           placeholder={placeholder}
@@ -126,7 +137,7 @@ const ProfileField: React.FC<ProfileFieldProps> = ({
         <Input
           id={fieldName}
           value={fieldValue}
-          onChange={(e) => setFieldValue(e.target.value)}
+          onChange={handleChange}
           disabled={!isEditing || isSaving || loading}
           className="w-full"
           placeholder={placeholder}

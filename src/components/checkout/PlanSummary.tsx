@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { subscriptionService } from "@/services/subscriptionService";
 import { Button } from "@/components/ui/button";
@@ -8,8 +7,8 @@ import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useToast } from "@/hooks/use-toast";
 import { PaymentType } from "@/components/pricing/PaymentOptions";
+import { formatPhoneNumber, isValidPhoneNumber } from "@/utils/formatters";
 
-// Updated PaymentSelectionType to include credit_cash
 type PaymentSelectionType = PaymentType | "credit_cash";
 
 interface PlanSummaryProps {
@@ -28,14 +27,12 @@ const PlanSummary = ({
   const plan = subscriptionService.getPlanFromId(planId);
   const { toast } = useToast();
 
-  // Estado para armazenar os dados do formulário
   const [paymentMethod, setPaymentMethod] = useState<"credit_installment" | "cash_payment">("credit_installment");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  
-  // Scroll to top on component mount
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
@@ -46,7 +43,6 @@ const PlanSummary = ({
       </div>;
   }
 
-  // Links de pagamento para cada plano
   const paymentLinks = {
     basic_plan: {
       credit_installment: "https://sandbox.asaas.com/c/vydr3n77kew5fd4s",
@@ -62,21 +58,21 @@ const PlanSummary = ({
     }
   };
 
-  // Função para validar número de telefone brasileiro
   const isValidPhone = (phoneNumber: string) => {
-    // Aceita formatos: (XX) XXXXX-XXXX ou XXXXXXXXXXX
-    const phoneRegex = /^(\(\d{2}\)\s?)?\d{5}-?\d{4}$/;
-    return phoneRegex.test(phoneNumber);
+    return isValidPhoneNumber(phoneNumber);
   };
 
-  // Função para validar email
   const isValidEmail = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   };
-  
+
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formatted = formatPhoneNumber(e.target.value);
+    setPhone(formatted);
+  };
+
   const handleRedirect = async () => {
-    // Validar campos do formulário
     if (!name.trim()) {
       toast({
         title: "Nome inválido",
@@ -96,14 +92,13 @@ const PlanSummary = ({
     if (!isValidPhone(phone)) {
       toast({
         title: "Telefone/WhatsApp inválido",
-        description: "Por favor, forneça um número de telefone válido no formato (XX) XXXXX-XXXX.",
+        description: "Por favor, forneça um número de telefone válido com DDD no formato (XX) XXXXX-XXXX.",
         variant: "destructive"
       });
       return;
     }
     setIsSubmitting(true);
     try {
-      // Salvar informações no localStorage para recuperação posterior
       localStorage.setItem('customerEmail', email);
       localStorage.setItem('customerPhone', phone);
       localStorage.setItem('customerName', name);
@@ -114,27 +109,22 @@ const PlanSummary = ({
         localStorage.setItem('planPrice', getPaymentAmount().toString());
       }
 
-      // Atualizar o tipo de pagamento no estado do componente pai
       const paymentTypeMap: Record<string, PaymentSelectionType> = {
         credit_installment: "credit",
         cash_payment: "pix"
       };
       onPaymentTypeChange(paymentTypeMap[paymentMethod]);
 
-      // Mostrar toast de sucesso
       toast({
         title: "Redirecionando para pagamento",
         description: "Você será redirecionado para a página de pagamento da Asaas.",
         variant: "default"
       });
 
-      // Obter os links corretos com base no plano selecionado
       const currentPlanLinks = paymentLinks[planId as keyof typeof paymentLinks] || paymentLinks.basic_plan;
       
-      // Definir qual link de pagamento usar com base no método selecionado
       let paymentLink = currentPlanLinks[paymentMethod];
 
-      // Abrir página de pagamento da Asaas em nova aba
       window.open(paymentLink, "_blank");
     } catch (error) {
       toast({
@@ -147,7 +137,6 @@ const PlanSummary = ({
     }
   };
 
-  // Calcula o valor do pagamento com base no método de pagamento selecionado
   const getPaymentAmount = () => {
     if (!('price' in plan)) return 0;
     if (paymentMethod === "credit_installment") {
@@ -157,12 +146,10 @@ const PlanSummary = ({
     }
   };
 
-  // Formata o valor para exibição em reais
   const formatCurrency = (value: number) => {
     return value.toFixed(2).replace('.', ',');
   };
 
-  // Componente para exibir apenas se o plano tiver preço
   const PriceDisplay = () => {
     if (!('price' in plan)) return null;
     return <div className="mt-1">
@@ -180,7 +167,7 @@ const PlanSummary = ({
         </div>
       </div>;
   };
-  
+
   return <div className="space-y-6">
       <div className="text-center mb-8">
         <h1 className="text-3xl font-bold">Você escolheu o plano {plan.name}</h1>
@@ -190,7 +177,6 @@ const PlanSummary = ({
       </div>
       
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Detalhes do plano */}
         <Card className="overflow-hidden border-primary/20">
           <div className="bg-primary/5 p-4 border-b border-primary/10">
             <h3 className="text-xl font-semibold">{plan.name}</h3>
@@ -209,7 +195,6 @@ const PlanSummary = ({
           </CardContent>
         </Card>
         
-        {/* Forma de pagamento */}
         <div className="space-y-6">
           <Card>
             <CardHeader>
@@ -268,7 +253,6 @@ const PlanSummary = ({
             </CardContent>
           </Card>
           
-          {/* Alerta de importância - dados de contato */}
           <div className="bg-blue-50 border border-blue-200 rounded-md p-4 flex items-start">
             <Info className="text-blue-500 h-5 w-5 mt-0.5 mr-3 flex-shrink-0" />
             <div>
@@ -280,7 +264,6 @@ const PlanSummary = ({
             </div>
           </div>
           
-          {/* Formulário de contato - ÚNICO FORMULÁRIO NA PÁGINA */}
           <Card id="contact-form">
             <CardHeader>
               <CardTitle>Seus dados de contato</CardTitle>
@@ -339,7 +322,7 @@ const PlanSummary = ({
                       type="tel" 
                       placeholder="(XX) XXXXX-XXXX" 
                       value={phone} 
-                      onChange={e => setPhone(e.target.value)} 
+                      onChange={handlePhoneChange} 
                       className="pl-10" 
                       required
                     />

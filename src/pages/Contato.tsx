@@ -1,4 +1,3 @@
-
 import React from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -6,8 +5,24 @@ import ContactSection from "@/components/ContactSection";
 import { MapPin, Phone, Mail, Clock, MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
+import { formatPhoneNumber } from "@/utils/formatters";
 
 const Contato = () => {
+  const [contactName, setContactName] = React.useState("");
+  const [contactEmail, setContactEmail] = React.useState("");
+  const [contactSubject, setContactSubject] = React.useState("");
+  const [contactMessage, setContactMessage] = React.useState("");
+  const [contactPhone, setContactPhone] = React.useState("");
+
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setContactPhone(formatPhoneNumber(e.target.value));
+  };
+
+  const handleContactSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    console.log("Form submitted", { contactName, contactEmail, contactSubject, contactMessage, contactPhone });
+  };
+
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
@@ -125,7 +140,7 @@ const Contato = () => {
               <div className="bg-card rounded-xl border border-border p-8 shadow-lg">
                 <h2 className="text-2xl font-bold mb-6">Fale Conosco</h2>
                 
-                <form className="space-y-6">
+                <form className="space-y-6" onSubmit={handleContactSubmit}>
                   <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
                     <div>
                       <label htmlFor="name" className="block text-sm font-medium mb-2">
@@ -136,6 +151,8 @@ const Contato = () => {
                         id="name"
                         className="w-full px-4 py-2 bg-secondary/50 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
                         placeholder="Seu nome"
+                        value={contactName}
+                        onChange={(e) => setContactName(e.target.value)}
                       />
                     </div>
                     
@@ -148,8 +165,24 @@ const Contato = () => {
                         id="email"
                         className="w-full px-4 py-2 bg-secondary/50 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
                         placeholder="seu@email.com"
+                        value={contactEmail}
+                        onChange={(e) => setContactEmail(e.target.value)}
                       />
                     </div>
+                  </div>
+                  
+                  <div>
+                    <label htmlFor="phone" className="block text-sm font-medium mb-2">
+                      Telefone
+                    </label>
+                    <input
+                      type="tel"
+                      id="phone"
+                      className="w-full px-4 py-2 bg-secondary/50 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                      placeholder="(XX) XXXXX-XXXX"
+                      value={contactPhone}
+                      onChange={handlePhoneChange}
+                    />
                   </div>
                   
                   <div>
@@ -161,6 +194,8 @@ const Contato = () => {
                       id="subject"
                       className="w-full px-4 py-2 bg-secondary/50 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
                       placeholder="Assunto da mensagem"
+                      value={contactSubject}
+                      onChange={(e) => setContactSubject(e.target.value)}
                     />
                   </div>
                   
@@ -173,6 +208,8 @@ const Contato = () => {
                       rows={5}
                       className="w-full px-4 py-2 bg-secondary/50 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
                       placeholder="Sua mensagem"
+                      value={contactMessage}
+                      onChange={(e) => setContactMessage(e.target.value)}
                     ></textarea>
                   </div>
                   

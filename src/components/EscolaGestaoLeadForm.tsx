@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
@@ -16,6 +15,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
+import { formatPhoneNumber, isValidPhoneNumber } from "@/utils/formatters";
 
 // Form validation schema
 const formSchema = z.object({
@@ -23,8 +23,9 @@ const formSchema = z.object({
   email: z.string().email("Email inválido"),
   phone: z
     .string()
-    .min(10, "O telefone deve ter pelo menos 10 dígitos")
-    .regex(/^\d+$/, "O telefone deve conter apenas números"),
+    .refine(val => isValidPhoneNumber(val), {
+      message: "O telefone deve ter o formato correto com DDD"
+    }),
   company: z.string().optional(),
   message: z.string().optional(),
 });
@@ -46,6 +47,12 @@ const EscolaGestaoLeadForm = () => {
       message: "",
     },
   });
+
+  // Handle phone number formatting
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>, onChange: (value: string) => void) => {
+    const formatted = formatPhoneNumber(e.target.value);
+    onChange(formatted);
+  };
 
   // Handle form submission
   const onSubmit = async (data: FormValues) => {
@@ -117,7 +124,11 @@ const EscolaGestaoLeadForm = () => {
               <FormItem>
                 <FormLabel>Telefone*</FormLabel>
                 <FormControl>
-                  <Input placeholder="DDD + número" {...field} />
+                  <Input 
+                    placeholder="(XX) XXXXX-XXXX" 
+                    {...field} 
+                    onChange={(e) => handlePhoneChange(e, field.onChange)}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
