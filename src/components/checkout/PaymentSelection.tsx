@@ -3,14 +3,8 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import { PaymentType } from "@/components/pricing/PaymentOptions";
 import { ArrowLeft } from "lucide-react";
-import { useLocation } from "react-router-dom";
 
 interface PaymentSelectionProps {
-  onPaymentTypeChange: (type: PaymentType) => void;
-  onInstallmentsChange: (installments: number) => void;
-  selectedPaymentType: PaymentType;
-  selectedInstallments: number;
-  onContinue: () => void;
   onBack: () => void;
 }
 
