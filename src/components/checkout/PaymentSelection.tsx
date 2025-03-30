@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React from "react";
 import { Button } from "@/components/ui/button";
 import { PaymentType } from "@/components/pricing/PaymentOptions";
 import PaymentOptions from "@/components/pricing/PaymentOptions";
@@ -62,6 +62,7 @@ const PaymentSelection: React.FC<PaymentSelectionProps> = ({
         </div>
       </div>
       
+      {/* The contact information form for redirecting to Asaas */}
       <DirectAsaasPayment planName={planName} planPrice={planPrice} />
       
       <AlternativePaymentOptions planName={planName} planPrice={planPrice} />
