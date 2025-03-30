@@ -129,6 +129,19 @@ const CheckoutMain: React.FC<CheckoutMainProps> = ({
   
   // Obter detalhes do plano
   const plan = subscriptionService.getPlanFromId(selectedPlanId);
+
+  // If the current step is "payment", we should immediately redirect back to "plan"
+  // This is a side effect, so we handle it here
+  if (currentStep === "payment") {
+    // We need to use setTimeout to avoid modifying state during render
+    setTimeout(() => goToPreviousStep(), 0);
+    return (
+      <div className="text-center py-8">
+        <Loader2 className="h-8 w-8 animate-spin mx-auto" />
+        <p className="mt-2">Redirecionando...</p>
+      </div>
+    );
+  }
   
   return (
     <div className="mt-8 mb-12 grid grid-cols-1 gap-8">
@@ -149,15 +162,6 @@ const CheckoutMain: React.FC<CheckoutMainProps> = ({
                 <ScrollIndicator />
               </div>
             )}
-          </div>
-        )}
-        
-        {currentStep === "payment" && (
-          /* Correção aqui: Retornando um null em vez de goToPreviousStep() que retorna void */
-          <div>
-            {/* Este step não é mais necessário, pois o PlanSummary já inclui tudo */}
-            {goToPreviousStep()}
-            <div>Redirecionando...</div>
           </div>
         )}
         
