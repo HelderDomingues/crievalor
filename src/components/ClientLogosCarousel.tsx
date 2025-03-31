@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
 import { fetchClientLogos } from "@/services/clientLogosService";
+import { Skeleton } from "@/components/ui/skeleton";
 
 // Default client logos as fallback
 export const clientLogos = [

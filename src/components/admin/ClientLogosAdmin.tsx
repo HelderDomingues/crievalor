@@ -6,14 +6,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { clientLogos } from "@/components/ClientLogosCarousel";
 import { Trash2, Upload, Plus } from "lucide-react";
 import { toast } from "sonner";
-import { uploadLogoImage } from "@/services/clientLogosService";
-import { supabaseExtended } from "@/integrations/supabase/extendedClient";
-
-interface ClientLogo {
-  id?: string;
-  name: string;
-  logo: string;
-}
+import { 
+  uploadLogoImage, 
+  fetchClientLogos, 
+  saveClientLogos, 
+  ClientLogo 
+} from "@/services/clientLogosService";
 
 const ClientLogosAdmin = () => {
   const [logos, setLogos] = useState<ClientLogo[]>([]);
@@ -28,18 +26,11 @@ const ClientLogosAdmin = () => {
     try {
       setIsLoading(true);
       
-      // Try to fetch from Supabase first
-      const { data, error } = await supabaseExtended
-        .from('client_logos')
-        .select('*')
-        .order('name');
+      // Fetch from Supabase
+      const fetchedLogos = await fetchClientLogos();
       
-      if (error) {
-        console.error("Error fetching logos:", error);
-        // Fallback to local data
-        setLogos([...clientLogos]);
-      } else if (data && data.length > 0) {
-        setLogos(data);
+      if (fetchedLogos && fetchedLogos.length > 0) {
+        setLogos(fetchedLogos);
       } else {
         // No data in database yet, use the local data
         setLogos([...clientLogos]);
@@ -72,44 +63,10 @@ const ClientLogosAdmin = () => {
     try {
       setIsLoading(true);
       
-      // Create the table if it doesn't exist
-      const { error: tableError } = await supabaseExtended.rpc('create_table_if_not_exists', {
-        table_name: 'client_logos',
-        table_definition: `
-          id uuid primary key default uuid_generate_v4(),
-          name text not null,
-          logo text not null,
-          created_at timestamp with time zone default now(),
-          updated_at timestamp with time zone default now()
-        `
-      });
+      // Save logos to database
+      const result = await saveClientLogos(logos);
       
-      if (tableError) {
-        console.error("Error creating table:", tableError);
-        throw new Error("Erro ao criar tabela de logos");
-      }
-      
-      // Clear existing data
-      const { error: deleteError } = await supabaseExtended
-        .from('client_logos')
-        .delete()
-        .neq('id', '00000000-0000-0000-0000-000000000000'); // Delete all rows
-      
-      if (deleteError) {
-        console.error("Error deleting existing logos:", deleteError);
-        throw new Error("Erro ao limpar logos existentes");
-      }
-      
-      // Insert new data
-      const { error: insertError } = await supabaseExtended
-        .from('client_logos')
-        .insert(logos.map(logo => ({
-          name: logo.name,
-          logo: logo.logo
-        })));
-      
-      if (insertError) {
-        console.error("Error inserting logos:", insertError);
+      if (!result.success) {
         throw new Error("Erro ao salvar logos");
       }
       

@@ -45,6 +45,30 @@ export type Database = {
         }
         Relationships: []
       }
+      client_logos: {
+        Row: {
+          created_at: string
+          id: string
+          logo: string
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          logo: string
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          logo?: string
+          name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       material_accesses: {
         Row: {
           accessed_at: string | null
@@ -318,6 +342,13 @@ export type Database = {
           user_id: string
         }
         Returns: boolean
+      }
+      create_table_if_not_exists: {
+        Args: {
+          table_name: string
+          table_definition: string
+        }
+        Returns: undefined
       }
       get_system_setting: {
         Args: {

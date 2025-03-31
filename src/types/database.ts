@@ -44,6 +44,29 @@ export type ExtendedDatabase = OriginalDatabase & {
           updated_at?: string;
         };
       };
+      client_logos: {
+        Row: {
+          id: string;
+          name: string;
+          logo: string;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          name: string;
+          logo: string;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          name?: string;
+          logo?: string;
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
       material_accesses: {
         Row: {
           id: string;

@@ -6,6 +6,7 @@ import './index.css'
 import { createStorageBucketIfNotExists } from './services/storageService';
 import { supabase } from '@/integrations/supabase/client';
 import { upsertSystemSetting } from './services/systemSettingsService';
+import { createLogosBucketIfNotExists } from './services/clientLogosService';
 
 // Função para inicializar e configurar as políticas RLS
 async function setupRLSPolicies() {
@@ -45,6 +46,7 @@ async function setupSystemSettings() {
 
 // Inicializar storage bucket, configurar políticas RLS e system settings
 createStorageBucketIfNotExists();
+createLogosBucketIfNotExists();
 setupRLSPolicies();
 setupSystemSettings();
 

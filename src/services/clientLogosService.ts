@@ -66,7 +66,7 @@ export const fetchClientLogos = async (): Promise<ClientLogo[]> => {
       throw error;
     }
     
-    return data || [];
+    return data as ClientLogo[] || [];
   } catch (error) {
     console.error('Error fetching client logos:', error);
     return [];
