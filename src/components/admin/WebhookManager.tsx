@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { AlertCircle, Loader2, ExternalLink, RotateCw, ShieldCheck, AlertTriangle, InfoIcon, CheckCircle2 } from "lucide-react";
+import { AlertCircle, Loader2, ExternalLink, RotateCw, ShieldCheck, AlertTriangle, InfoIcon, CheckCircle2, User } from "lucide-react";
 import { toast } from "sonner";
 import { webhookService } from '@/services/webhookService';
 import { Badge } from "@/components/ui/badge";
@@ -11,6 +11,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { useAuth } from "@/context/AuthContext";
 import { useProfile } from "@/hooks/useProfile";
 import { useToast } from "@/hooks/use-toast";
+import { Separator } from "@/components/ui/separator";
 
 export const WebhookManager = () => {
   const { user } = useAuth();
@@ -18,10 +19,13 @@ export const WebhookManager = () => {
   const { toast: uiToast } = useToast(); // Use Shadcn toast for more consistent UI
   const [webhookUrl, setWebhookUrl] = useState(webhookService.getPreferredWebhookUrl());
   const [isTestLoading, setIsTestLoading] = useState(false);
+  const [isCustomerTestLoading, setIsCustomerTestLoading] = useState(false);
+  const [customerId, setCustomerId] = useState("cus_000006606255"); // Default para Pedro Gaudioso
   const [webhookStatus, setWebhookStatus] = useState<'active' | 'unknown'>('unknown');
   const [errorDetails, setErrorDetails] = useState<string | null>(null);
   const [fullError, setFullError] = useState<any>(null);
   const [testResults, setTestResults] = useState<any>(null);
+  const [customerTestResults, setCustomerTestResults] = useState<any>(null);
   
   const handleTestWebhook = async () => {
     try {
@@ -124,6 +128,77 @@ export const WebhookManager = () => {
       });
     } finally {
       setIsTestLoading(false);
+    }
+  };
+
+  const handleTestCustomerCreation = async () => {
+    try {
+      setIsCustomerTestLoading(true);
+      setCustomerTestResults(null);
+      
+      // Check if user is authenticated and admin
+      if (!user) {
+        toast.error("Você precisa estar logado para testar a criação do cliente");
+        uiToast({
+          variant: "destructive",
+          title: "Autenticação necessária",
+          description: "Você precisa estar logado para testar a criação do cliente"
+        });
+        return;
+      }
+      
+      if (!isAdmin) {
+        toast.error("Você precisa ser administrador para testar a criação do cliente");
+        uiToast({
+          variant: "destructive",
+          title: "Permissão negada",
+          description: "Você precisa ter privilégios de administrador para testar a criação do cliente"
+        });
+        return;
+      }
+      
+      console.log(`Iniciando teste de criação do cliente ${customerId}`);
+      const result = await webhookService.testCustomerCreation(customerId);
+      
+      console.log("Resultado do teste de criação do cliente:", result);
+      
+      if (result.success) {
+        toast.success("Teste de criação de cliente concluído", {
+          description: "Cliente processado com sucesso"
+        });
+        
+        uiToast({
+          variant: "default",
+          title: "Cliente processado com sucesso",
+          description: "Os dados do cliente foram recuperados e processados"
+        });
+        
+        setCustomerTestResults(result.data);
+      } else {
+        toast.error("Falha ao testar criação do cliente", {
+          description: result.error || "Erro ao processar o cliente"
+        });
+        
+        uiToast({
+          variant: "destructive",
+          title: "Falha ao testar criação do cliente",
+          description: result.error || "Erro ao processar o cliente"
+        });
+      }
+      
+    } catch (error: any) {
+      console.error("Erro ao testar criação do cliente:", error);
+      toast.error("Erro ao testar criação do cliente", {
+        description: error.message
+      });
+      
+      uiToast({
+        variant: "destructive",
+        title: "Erro ao testar criação do cliente",
+        description: error.message || "Ocorreu um erro inesperado"
+      });
+    } finally {
+      setIsCustomerTestLoading(false);
     }
   };
   
@@ -260,7 +335,7 @@ export const WebhookManager = () => {
             </div>
           </div>
         )}
-        
+
         {errorDetails && (
           <Alert variant="destructive" className="mt-4">
             <AlertTriangle className="h-4 w-4" />
@@ -312,6 +387,103 @@ export const WebhookManager = () => {
                 </Button>
               </div>
             </div>
+          </div>
+        </div>
+
+        {/* Separador para a seção de teste manual de cliente */}
+        <Separator className="my-6" />
+
+        {/* Componente de teste manual de cliente */}
+        <div>
+          <h3 className="text-lg font-medium mb-4">Teste Manual de Cliente</h3>
+          
+          <div className="p-4 border rounded-md bg-gray-50 space-y-4">
+            <div className="flex items-start gap-3">
+              <User className="h-5 w-5 text-blue-600 mt-1" />
+              <div>
+                <h4 className="font-medium text-blue-800">Recuperação e Criação de Cliente</h4>
+                <p className="text-sm text-muted-foreground">
+                  Recupere os dados de um cliente do Asaas e crie o usuário correspondente em nosso sistema.
+                </p>
+              </div>
+            </div>
+            
+            <div className="space-y-2">
+              <label htmlFor="customer-id" className="text-sm font-medium">
+                ID do Cliente no Asaas
+              </label>
+              <div className="flex items-center space-x-2">
+                <Input
+                  id="customer-id"
+                  value={customerId}
+                  onChange={(e) => setCustomerId(e.target.value)}
+                  placeholder="Ex: cus_000006606255"
+                  className="flex-1"
+                />
+                <Button
+                  onClick={handleTestCustomerCreation}
+                  disabled={isCustomerTestLoading || !user || !isAdmin}
+                  variant="default"
+                >
+                  {isCustomerTestLoading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Processando...
+                    </>
+                  ) : (
+                    'Testar Cliente'
+                  )}
+                </Button>
+              </div>
+              <p className="text-sm text-muted-foreground mt-1">
+                <InfoIcon className="inline-block w-4 h-4 mr-1" />
+                Este teste recupera os dados do cliente do Asaas, cria o usuário correspondente e envia um email de redefinição de senha.
+              </p>
+            </div>
+
+            {customerTestResults && (
+              <div className="mt-4 p-3 rounded-md bg-green-50 border border-green-200">
+                <h4 className="font-medium flex items-center gap-2">
+                  <CheckCircle2 className="h-4 w-4 text-green-600" />
+                  Resultado do Teste de Cliente
+                </h4>
+                
+                <div className="mt-2 space-y-2">
+                  {customerTestResults.message && (
+                    <p className="text-sm text-green-700">{customerTestResults.message}</p>
+                  )}
+                  
+                  {customerTestResults.customer && (
+                    <div>
+                      <p className="text-sm font-medium text-gray-700">Dados do cliente:</p>
+                      <div className="mt-1 p-2 bg-white rounded text-xs font-mono">
+                        <pre className="whitespace-pre-wrap overflow-auto">
+                          {JSON.stringify(customerTestResults.customer, null, 2)}
+                        </pre>
+                      </div>
+                    </div>
+                  )}
+                  
+                  {customerTestResults.newUser && (
+                    <div>
+                      <p className="text-sm font-medium text-gray-700">Novo usuário criado:</p>
+                      <div className="mt-1 p-2 bg-white rounded text-xs font-mono">
+                        <pre className="whitespace-pre-wrap overflow-auto">
+                          {JSON.stringify(customerTestResults.newUser, null, 2)}
+                        </pre>
+                      </div>
+                    </div>
+                  )}
+                  
+                  {customerTestResults.resetEmailSent && (
+                    <p className="text-sm text-green-700">
+                      <CheckCircle2 className="inline-block w-4 h-4 mr-1" />
+                      Email de redefinição de senha enviado com sucesso.
+                    </p>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </CardContent>
