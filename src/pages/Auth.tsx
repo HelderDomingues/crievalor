@@ -38,6 +38,7 @@ const Auth = () => {
   };
 
   const handleChoosePlan = () => {
+    // Explicitly navigate to subscription page with plans tab active
     navigate("/subscription?tab=plans");
   };
 
