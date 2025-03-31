@@ -247,7 +247,7 @@ const SubscriptionPage = () => {
                 isCheckingOut={isCheckingOut || processingPayment}
                 isPlanCurrent={isPlanCurrent}
                 onSubscribe={handleSubscribe}
-                selectedInstallments={selectedInstallments}
+                selectedInstallments={1}
                 onInstallmentsChange={handleInstallmentsChange}
               />
               
@@ -258,14 +258,14 @@ const SubscriptionPage = () => {
                   <PaymentOptions 
                     onInstallmentsChange={handleInstallmentsChange}
                     onPaymentTypeChange={handlePaymentTypeChange}
-                    selectedInstallments={selectedInstallments}
+                    selectedInstallments={1}
                     selectedPaymentType={selectedPaymentType}
                   />
                   
                   <div className="mt-6 text-center">
                     <CheckoutController 
                       planId={selectedPlanId}
-                      installments={selectedInstallments}
+                      installments={1}
                       paymentType={selectedPaymentType}
                       buttonText="Continuar com o pagamento"
                       className="px-8 py-3 text-lg"

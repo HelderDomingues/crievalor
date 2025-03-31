@@ -32,7 +32,7 @@ const ProfileSidebar: React.FC<ProfileSidebarProps> = ({
   const handleSubscriptionClick = () => {
     setActiveTab("subscription");
     // Use navigate instead of Link for programmatic navigation
-    navigate("/subscription");
+    navigate("/subscription?tab=plans");
   };
   
   return (

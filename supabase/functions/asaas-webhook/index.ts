@@ -69,7 +69,8 @@ serve(async (req) => {
           JSON.stringify({ 
             success: true, 
             message: "Event received but not processed (non-payment or incomplete data)", 
-            event: event || 'unknown' 
+            event: event || 'unknown',
+            payload: requestBody
           }),
           {
             status: 200, // Return 200 to prevent retries

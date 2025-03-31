@@ -23,6 +23,9 @@ export function logRequestDetails(req: Request): void {
 // Helper function to process payment events
 export async function handlePaymentEvent(supabase: any, event: string, payment: any, corsHeaders: any) {
   try {
+    // Log payment details for debugging
+    console.log("Processing payment with details:", JSON.stringify(payment, null, 2));
+    
     // Find subscription associated with this payment
     const { data: subscription, error: subscriptionError } = await supabase
       .from("subscriptions")
@@ -53,12 +56,41 @@ export async function handlePaymentEvent(supabase: any, event: string, payment: 
         if (!refError && subByRef) {
           console.log(`Found subscription by external reference: ${payment.externalReference}`);
           
-          // Update the payment_id in the subscription
+          // Extract additional payment info from metadata or description
+          let planInfo = {};
+          
+          // Try to extract plan information from payment description or metadata
+          if (payment.description) {
+            const planMatch = payment.description.match(/Compra: (.+)/);
+            if (planMatch && planMatch[1]) {
+              planInfo = {
+                ...planInfo,
+                plan_name: planMatch[1]
+              };
+            }
+          }
+          
+          // Capture payment method information
+          if (payment.billingType) {
+            planInfo = {
+              ...planInfo,
+              payment_method: payment.billingType,
+              payment_details: {
+                installments: payment.installmentCount || 1,
+                value: payment.value,
+                net_value: payment.netValue,
+                original_value: payment.originalValue
+              }
+            };
+          }
+          
+          // Update the payment_id in the subscription along with plan info
           const { error: updateError } = await supabase
             .from("subscriptions")
             .update({ 
               payment_id: payment.id,
               payment_status: payment.status,
+              payment_details: planInfo,
               updated_at: new Date().toISOString() 
             })
             .eq("id", subByRef.id);
@@ -67,7 +99,7 @@ export async function handlePaymentEvent(supabase: any, event: string, payment: 
             console.error("Error updating payment_id in subscription:", updateError);
             throw updateError;
           } else {
-            console.log(`Payment ID updated in subscription ${subByRef.id}`);
+            console.log(`Payment ID and details updated in subscription ${subByRef.id}`);
             
             // Continue processing with the found subscription
             return await processPaymentUpdate(supabase, event, payment, subByRef, corsHeaders);
@@ -106,6 +138,45 @@ async function processPaymentUpdate(supabase: any, event: string, payment: any, 
   // Update subscription status based on payment event
   let newStatus = subscription.status;
   
+  // Extract additional payment info from metadata or description
+  let paymentDetails = subscription.payment_details || {};
+  
+  // Try to extract plan information from payment description or metadata
+  if (payment.description) {
+    const planMatch = payment.description.match(/Compra: (.+)/);
+    if (planMatch && planMatch[1]) {
+      paymentDetails = {
+        ...paymentDetails,
+        plan_name: planMatch[1]
+      };
+    }
+  }
+  
+  // Capture payment method information
+  if (payment.billingType) {
+    paymentDetails = {
+      ...paymentDetails,
+      payment_method: payment.billingType,
+      installments: payment.installmentCount || 1,
+      value: payment.value,
+      net_value: payment.netValue,
+      original_value: payment.originalValue
+    };
+  }
+  
+  // Add customer information if available
+  if (payment.customer) {
+    paymentDetails = {
+      ...paymentDetails,
+      customer_info: {
+        name: payment.customer.name,
+        email: payment.customer.email,
+        cpfCnpj: payment.customer.cpfCnpj,
+        phone: payment.customer.phone || payment.customer.mobilePhone
+      }
+    };
+  }
+  
   switch (event) {
     case "PAYMENT_RECEIVED":
     case "PAYMENT_CONFIRMED":
@@ -130,14 +201,15 @@ async function processPaymentUpdate(supabase: any, event: string, payment: any, 
   }
 
   // Update subscription if status needs to change
-  if (newStatus !== subscription.status) {
-    console.log(`Updating subscription ${subscription.id} status from ${subscription.status} to ${newStatus}`);
+  if (newStatus !== subscription.status || Object.keys(paymentDetails).length > 0) {
+    console.log(`Updating subscription ${subscription.id} status from ${subscription.status} to ${newStatus} with payment details`);
     
     const { error: updateError } = await supabase
       .from("subscriptions")
       .update({ 
         status: newStatus, 
         payment_status: payment.status,
+        payment_details: paymentDetails,
         updated_at: new Date().toISOString() 
       })
       .eq("id", subscription.id);
@@ -171,6 +243,7 @@ async function processPaymentUpdate(supabase: any, event: string, payment: any, 
       subscription: subscription.id,
       paymentId: payment.id,
       newStatus: newStatus,
+      paymentDetails: paymentDetails,
       jwtVerificationDisabled: true
     }),
     {
