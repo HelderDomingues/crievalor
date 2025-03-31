@@ -6,7 +6,6 @@ import './index.css'
 import { createStorageBucketIfNotExists } from './services/storageService';
 import { supabase } from '@/integrations/supabase/client';
 import { upsertSystemSetting } from './services/systemSettingsService';
-import { createLogosBucketIfNotExists } from './services/clientLogosService';
 
 // Função para inicializar e configurar as políticas RLS
 async function setupRLSPolicies() {
@@ -45,8 +44,10 @@ async function setupSystemSettings() {
 }
 
 // Inicializar storage bucket, configurar políticas RLS e system settings
-createStorageBucketIfNotExists();
-createLogosBucketIfNotExists('logos');
+createStorageBucketIfNotExists('materials');
+
+// Note: No need to create logos bucket since it's already created in Supabase
+// We're removing this line that was causing the error
 setupRLSPolicies();
 setupSystemSettings();
 
