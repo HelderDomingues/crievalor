@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from "react";
 import { 
   Carousel, 
@@ -9,15 +8,15 @@ import {
 } from "@/components/ui/carousel";
 import { fetchClientLogos } from "@/services/clientLogosService";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { toast } from "sonner";
 
 // Fallback logos in case of error
 const fallbackLogos = [
-  { name: "Client 1", logo: "/placeholder.svg" },
-  { name: "Client 2", logo: "/placeholder.svg" },
-  { name: "Client 3", logo: "/placeholder.svg" },
-  { name: "Client 4", logo: "/placeholder.svg" },
-  { name: "Client 5", logo: "/placeholder.svg" },
+  { name: "Cliente 1", logo: "/placeholder.svg" },
+  { name: "Cliente 2", logo: "/placeholder.svg" },
+  { name: "Cliente 3", logo: "/placeholder.svg" },
+  { name: "Cliente 4", logo: "/placeholder.svg" },
+  { name: "Cliente 5", logo: "/placeholder.svg" },
 ];
 
 const ClientLogosCarousel = () => {
@@ -32,17 +31,19 @@ const ClientLogosCarousel = () => {
       try {
         setIsLoading(true);
         const fetchedLogos = await fetchClientLogos();
-        console.log("Fetched logos in component:", fetchedLogos);
+        console.log("Logos obtidos no componente:", fetchedLogos);
         
         if (fetchedLogos && fetchedLogos.length > 0) {
           setLogos(fetchedLogos);
         } else {
-          console.warn("No logos fetched from service, using fallbacks");
+          console.warn("Nenhum logo encontrado, usando fallbacks");
+          // Keep using fallback logos
         }
         setError(null);
       } catch (err) {
-        console.error("Error fetching client logos:", err);
-        setError("Failed to load client logos");
+        console.error("Erro ao buscar logos dos clientes:", err);
+        toast.error("Não foi possível carregar os logos dos clientes");
+        setError("Falha ao carregar logos dos clientes");
       } finally {
         setIsLoading(false);
       }
@@ -77,7 +78,7 @@ const ClientLogosCarousel = () => {
   }, [api]);
 
   const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>, index: number) => {
-    console.error(`Error loading logo image at index ${index}`);
+    console.error(`Erro ao carregar imagem do logo ${index}`);
     e.currentTarget.src = "/placeholder.svg"; 
   };
 
@@ -105,7 +106,7 @@ const ClientLogosCarousel = () => {
           Empresas que confiam em nossa estratégia
         </h3>
         
-        <div className="relative px-10 md:px-12"> {/* Add padding for arrows */}
+        <div className="relative mx-10"> {/* Espaço para as setas de navegação */}
           <Carousel
             setApi={setApi}
             opts={{
@@ -118,7 +119,7 @@ const ClientLogosCarousel = () => {
             <CarouselContent className="py-4">
               {logos.map((client, index) => (
                 <CarouselItem key={index} className="basis-1/3 md:basis-1/4 lg:basis-1/5 pl-4">
-                  <div className="h-20 flex items-center justify-center p-2 hover:opacity-100 transition-opacity duration-300 hover:scale-105">
+                  <div className="h-20 flex items-center justify-center p-2 transition-all duration-300 hover:scale-105 border border-transparent hover:border-gray-200 rounded-md">
                     <img
                       src={client.logo}
                       alt={`${client.name} logo`}
@@ -130,9 +131,9 @@ const ClientLogosCarousel = () => {
               ))}
             </CarouselContent>
             
-            {/* Make arrows visible and position them properly */}
-            <CarouselPrevious className="absolute left-0 top-1/2 -translate-y-1/2 bg-background/70 hover:bg-background border border-border shadow-md" />
-            <CarouselNext className="absolute right-0 top-1/2 -translate-y-1/2 bg-background/70 hover:bg-background border border-border shadow-md" />
+            {/* Setas de navegação visíveis */}
+            <CarouselPrevious className="absolute -left-5 top-1/2 -translate-y-1/2 bg-white hover:bg-gray-100 shadow-md" />
+            <CarouselNext className="absolute -right-5 top-1/2 -translate-y-1/2 bg-white hover:bg-gray-100 shadow-md" />
           </Carousel>
         </div>
         
