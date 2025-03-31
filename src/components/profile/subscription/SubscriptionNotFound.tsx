@@ -3,7 +3,6 @@ import React from "react";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
 
 const SubscriptionNotFound = () => {
   const handleConsultant = () => {
@@ -16,13 +15,9 @@ const SubscriptionNotFound = () => {
       <AlertCircle className="h-4 w-4" />
       <AlertTitle>Nenhuma assinatura encontrada</AlertTitle>
       <AlertDescription className="space-y-4">
-        <p>Você ainda não possui uma assinatura ativa. Visite nossa página de planos para conhecer nossas opções e potencializar seus resultados.</p>
+        <p>Você ainda não possui uma assinatura ativa. Entre em contato com nosso consultor para conhecer nossas opções e potencializar seus resultados.</p>
         
         <div className="flex gap-3 mt-4">
-          <Button asChild>
-            <Link to="/subscription?tab=plans">Ver planos</Link>
-          </Button>
-          
           <Button variant="outline" onClick={handleConsultant}>
             Falar com consultor
           </Button>

@@ -16,6 +16,7 @@ const PricingSection = () => {
   
   const handleSubscribe = (planId: string) => {
     if (planId === "corporate_plan") {
+      // Abrir diretamente o WhatsApp com mensagem predefinida
       const message = encodeURIComponent("Olá, gostaria de obter mais informações sobre o Plano Corporativo.");
       window.open(`https://wa.me/5547992150289?text=${message}`, '_blank');
       return;

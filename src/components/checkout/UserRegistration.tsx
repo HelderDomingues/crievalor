@@ -7,6 +7,8 @@ import { sanitizePhoneNumber } from "@/utils/formatters";
 import { RegistrationForm } from "./form/RegistrationForm";
 import { RegistrationFormData } from "./form/RegistrationFormSchema";
 import { useNavigate } from "react-router-dom";
+import { AlertCircle } from "lucide-react";
+import { Alert } from "@/components/ui/alert";
 
 interface UserRegistrationProps {
   onContinue: () => void;
@@ -20,14 +22,29 @@ const UserRegistration = ({ onContinue, onBack, planId }: UserRegistrationProps)
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
   
-  // If user came from the pricing page, they must have a plan selected
+  // Se o usuário chegou aqui sem escolher um plano, redirecione-o
   useEffect(() => {
     if (!planId) {
-      navigate("/");
+      toast({
+        title: "Plano não selecionado",
+        description: "É necessário escolher um plano antes de se cadastrar.",
+        variant: "destructive",
+      });
+      navigate("/subscription?tab=plans");
     }
-  }, [planId, navigate]);
+  }, [planId, navigate, toast]);
   
   const onSubmit = async (data: RegistrationFormData) => {
+    if (!planId) {
+      toast({
+        title: "Plano não selecionado",
+        description: "É necessário escolher um plano antes de se cadastrar.",
+        variant: "destructive",
+      });
+      navigate("/subscription?tab=plans");
+      return;
+    }
+    
     setIsSubmitting(true);
     
     try {
@@ -75,7 +92,7 @@ const UserRegistration = ({ onContinue, onBack, planId }: UserRegistrationProps)
       if (planId) {
         navigate(`/checkout?plan=${planId}`);
       } else {
-        // This path should not be reachable with the new logic
+        // Este caminho não deve mais ser acessível com a nova lógica
         onContinue();
       }
     } catch (error: any) {
@@ -96,6 +113,18 @@ const UserRegistration = ({ onContinue, onBack, planId }: UserRegistrationProps)
       setIsSubmitting(false);
     }
   };
+  
+  // Se não tiver planId, mostre uma mensagem e redirecione
+  if (!planId) {
+    return (
+      <div className="space-y-6">
+        <Alert variant="destructive" className="mb-4">
+          <AlertCircle className="h-4 w-4 mr-2" />
+          É necessário escolher um plano antes de se cadastrar.
+        </Alert>
+      </div>
+    );
+  }
   
   return (
     <div className="space-y-6">

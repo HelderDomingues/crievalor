@@ -1,5 +1,6 @@
+
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -12,48 +13,35 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const Auth = () => {
   const navigate = useNavigate();
-  const {
-    user,
-    signIn,
-    signUp
-  } = useAuth();
+  const location = useLocation();
+  const { user, signIn } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [username, setUsername] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [activeTab, setActiveTab] = useState("login");
 
+  // Check if the user is already signed in, redirect to home
   useEffect(() => {
     if (user) {
       navigate("/");
     }
   }, [user, navigate]);
 
+  // Redirect to subscription/pricing page for registration
+  useEffect(() => {
+    if (activeTab === "register" && !location.search.includes("fromCheckout")) {
+      navigate("/subscription?tab=plans");
+    }
+  }, [activeTab, navigate, location]);
+
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setError(null);
-    const {
-      error
-    } = await signIn(email, password);
+    const { error } = await signIn(email, password);
     if (error) {
       setError(error.message);
-    }
-    setIsLoading(false);
-  };
-
-  const handleSignUp = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setError(null);
-    const {
-      error
-    } = await signUp(email, password, username);
-    if (error) {
-      setError(error.message);
-    } else {
-      setError("Cadastro realizado com sucesso! Você pode fazer login agora.");
     }
     setIsLoading(false);
   };
@@ -61,9 +49,15 @@ const Auth = () => {
   const switchTab = (tab: string) => {
     setActiveTab(tab);
     setError(null);
+    
+    // If switching to register tab, redirect to plans page
+    if (tab === "register" && !location.search.includes("fromCheckout")) {
+      navigate("/subscription?tab=plans");
+    }
   };
 
-  return <div className="min-h-screen flex flex-col">
+  return (
+    <div className="min-h-screen flex flex-col">
       <Header />
       
       <main className="flex-grow py-16">
@@ -82,8 +76,11 @@ const Auth = () => {
               <div className="bg-[#1a2e4c] border-l-4 border-primary p-6 mb-8 shadow-md rounded-2xl">
                 <p className="text-center">
                   <span className="block text-lg mb-2 font-medium text-white">Não tem uma conta ainda?</span>
-                  <Button onClick={() => switchTab("register")} className="mt-2 font-semibold bg-primary hover:bg-primary/90 text-white">
-                    Comece pelo cadastro
+                  <Button 
+                    onClick={() => navigate("/subscription?tab=plans")} 
+                    className="mt-2 font-semibold bg-primary hover:bg-primary/90 text-white"
+                  >
+                    Escolha um plano para começar
                   </Button>
                 </p>
               </div>
@@ -111,38 +108,27 @@ const Auth = () => {
             </TabsContent>
             
             <TabsContent value="register">
-              <form onSubmit={handleSignUp} className="space-y-6">
-                <div className="space-y-2">
-                  <Label htmlFor="username">Nome de usuário</Label>
-                  <Input id="username" type="text" placeholder="Seu nome de usuário" value={username} onChange={e => setUsername(e.target.value)} required />
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="registerEmail">Email</Label>
-                  <Input id="registerEmail" type="email" placeholder="seu@email.com" value={email} onChange={e => setEmail(e.target.value)} required />
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="registerPassword">Senha</Label>
-                  <Input id="registerPassword" type="password" placeholder="Sua senha" value={password} onChange={e => setPassword(e.target.value)} required />
-                </div>
-                
-                {error && <Alert variant={error.includes("sucesso") ? "default" : "destructive"}>
-                    <AlertCircle className="h-4 w-4" />
-                    <AlertDescription>{error}</AlertDescription>
-                  </Alert>}
-                
-                <Button type="submit" className="w-full" disabled={isLoading}>
-                  {isLoading ? "Cadastrando..." : "Cadastrar"}
+              <div className="text-center p-8">
+                <AlertCircle className="h-12 w-12 mx-auto text-primary mb-4" />
+                <h3 className="text-xl font-semibold mb-2">Cadastro requer escolha de plano</h3>
+                <p className="text-muted-foreground mb-6">
+                  Para criar uma conta, você precisa primeiro escolher um plano e realizar o pagamento.
+                </p>
+                <Button
+                  onClick={() => navigate("/subscription?tab=plans")}
+                  className="w-full bg-primary hover:bg-primary/90"
+                >
+                  Ver planos disponíveis
                 </Button>
-              </form>
+              </div>
             </TabsContent>
           </Tabs>
         </div>
       </main>
       
       <Footer />
-    </div>;
+    </div>
+  );
 };
 
 export default Auth;

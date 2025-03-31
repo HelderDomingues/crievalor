@@ -1,7 +1,8 @@
 
 import React from "react";
-import { Check, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Check } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface SubscriptionPlanProps {
   id: string;
@@ -14,6 +15,7 @@ interface SubscriptionPlanProps {
   onSubscribe: (planId: string) => Promise<void>;
   installments?: number;
   buttonLabel?: string;
+  priceFormat?: string;
 }
 
 const SubscriptionPlan = ({
@@ -26,61 +28,69 @@ const SubscriptionPlan = ({
   isCheckingOut,
   onSubscribe,
   installments = 1,
-  buttonLabel = "Assinar"
+  buttonLabel = "Assinar",
+  priceFormat = ""
 }: SubscriptionPlanProps) => {
+  const handleSubscribe = () => {
+    onSubscribe(id);
+  };
+  
+  const isHighlighted = id === "pro_plan";
+  
   return (
     <div 
-      className={`bg-card border rounded-xl p-6 flex flex-col transition-all h-full
-        ${isCurrentPlan ? "border-primary/50 shadow-md shadow-primary/10" : "border-border hover:border-primary/30 hover:shadow-sm"}`}
+      className={cn(
+        "flex flex-col p-6 bg-white border rounded-lg shadow-sm hover:shadow-md transition-all",
+        isHighlighted ? "border-primary" : "border-gray-200"
+      )}
     >
-      <div className="mb-4">
-        {isCurrentPlan && (
-          <span className="inline-block bg-primary/10 text-primary text-xs px-2 py-1 rounded-full mb-2">
-            Seu plano atual
-          </span>
-        )}
-        <h3 className="text-xl font-semibold mb-1">{name}</h3>
-        <div className="flex items-baseline mb-4">
-          {price && (
-            <>
-              {price === "Sob Consulta" ? (
-                <span className="text-2xl font-bold">{price}</span>
-              ) : (
-                <>
-                  <span className="text-2xl font-bold">{price}</span>
-                </>
+      <div className="flex-1">
+        <h3 className={cn(
+          "text-xl font-bold mb-1",
+          isHighlighted ? "text-primary" : "text-gray-900"
+        )}>
+          {name}
+        </h3>
+        
+        {price && (
+          <div className="mb-4">
+            <div className="flex items-baseline">
+              <span className="text-3xl font-bold">{price}</span>
+              {priceFormat && (
+                <span className="ml-1 text-sm text-muted-foreground">{priceFormat}</span>
               )}
-            </>
-          )}
-        </div>
-      </div>
-      
-      <div className="flex-grow">
+            </div>
+            
+            {basePrice && (
+              <div className="mt-1 text-sm text-muted-foreground">
+                Total: R$ {basePrice.toFixed(2).replace('.', ',')}
+              </div>
+            )}
+          </div>
+        )}
+        
         <ul className="space-y-3 mb-6">
           {features.map((feature, index) => (
             <li key={index} className="flex items-start">
-              <Check className="h-4 w-4 text-primary mr-2 mt-1 flex-shrink-0" />
-              <span className="text-sm">{feature}</span>
+              <Check className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
+              <span className="text-sm text-gray-700">{feature}</span>
             </li>
           ))}
         </ul>
       </div>
       
-      <div>
-        {isCurrentPlan ? (
-          <Button variant="outline" disabled className="w-full">
-            Plano Atual
-          </Button>
-        ) : (
-          <Button
-            onClick={() => onSubscribe(id)}
-            disabled={isCheckingOut}
-            className="w-full"
-          >
-            {isCheckingOut ? "Processando..." : buttonLabel}
-          </Button>
+      <Button
+        onClick={handleSubscribe}
+        className={cn(
+          "w-full mt-auto",
+          isHighlighted ? "bg-primary hover:bg-primary/90" : "",
+          isCurrentPlan ? "bg-green-600 hover:bg-green-700" : ""
         )}
-      </div>
+        variant={isHighlighted ? "default" : "outline"}
+        disabled={isCurrentPlan}
+      >
+        {isCurrentPlan ? "Plano Atual" : buttonLabel}
+      </Button>
     </div>
   );
 };

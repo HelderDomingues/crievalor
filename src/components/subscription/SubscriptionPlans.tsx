@@ -21,15 +21,15 @@ const SubscriptionPlans = ({
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
       {Object.values(PLANS).map((plan) => {
-        // Always show installment prices
+        // Show monthly installment price (12x) as main price
         let priceLabel: string | undefined = undefined;
         
         if ('customPrice' in plan && plan.customPrice) {
           priceLabel = "Sob Consulta";
         } else if ('price' in plan) {
-          // Monthly installment price
+          // Monthly installment price (12x)
           const installmentPrice = plan.price / 12;
-          priceLabel = `12x de R$ ${installmentPrice.toFixed(2).replace('.', ',')}`;
+          priceLabel = `R$ ${installmentPrice.toFixed(2).replace('.', ',')}`;
         }
         
         // Determine base price for calculations
@@ -56,6 +56,8 @@ const SubscriptionPlans = ({
             onSubscribe={onSubscribe}
             installments={12} // Set default to 12
             buttonLabel={buttonLabel}
+            // Nova propriedade para exibir o formato
+            priceFormat="mensais em 12x"
           />
         );
       })}
