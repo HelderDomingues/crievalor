@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,11 +11,16 @@ import { useAuth } from "@/context/AuthContext";
 import { useProfile } from "@/hooks/useProfile";
 import { useToast } from "@/hooks/use-toast";
 import { Separator } from "@/components/ui/separator";
-
 export const WebhookManager = () => {
-  const { user } = useAuth();
-  const { isAdmin } = useProfile();
-  const { toast: uiToast } = useToast(); // Use Shadcn toast for more consistent UI
+  const {
+    user
+  } = useAuth();
+  const {
+    isAdmin
+  } = useProfile();
+  const {
+    toast: uiToast
+  } = useToast(); // Use Shadcn toast for more consistent UI
   const [webhookUrl, setWebhookUrl] = useState(webhookService.getPreferredWebhookUrl());
   const [isTestLoading, setIsTestLoading] = useState(false);
   const [isCustomerTestLoading, setIsCustomerTestLoading] = useState(false);
@@ -26,14 +30,13 @@ export const WebhookManager = () => {
   const [fullError, setFullError] = useState<any>(null);
   const [testResults, setTestResults] = useState<any>(null);
   const [customerTestResults, setCustomerTestResults] = useState<any>(null);
-  
   const handleTestWebhook = async () => {
     try {
       setIsTestLoading(true);
       setErrorDetails(null);
       setFullError(null);
       setTestResults(null);
-      
+
       // Check if user is authenticated and admin
       if (!user) {
         toast.error("Você precisa estar logado para testar o webhook");
@@ -45,7 +48,6 @@ export const WebhookManager = () => {
         setErrorDetails("Usuário não autenticado. Faça login antes de testar o webhook.");
         return;
       }
-      
       if (!isAdmin) {
         toast.error("Você precisa ser administrador para testar o webhook");
         uiToast({
@@ -56,31 +58,24 @@ export const WebhookManager = () => {
         setErrorDetails("Usuário não possui permissões de administrador.");
         return;
       }
-      
       console.log("Iniciando teste de webhook com usuário:", user.id);
       const result = await webhookService.testWebhook();
-      
       console.log("Resultado do teste de webhook:", result);
-      
       if (result.success) {
         toast.success("Teste de webhook concluído", {
           description: "Conexão verificada com o endpoint do Supabase"
         });
-        
         uiToast({
           variant: "default",
           title: "Teste de webhook concluído",
           description: "Conexão verificada com o endpoint do Supabase"
         });
-        
         setTestResults(result.testResults);
-        
         if (result.testResults?.webhookEndpoint?.success) {
           setWebhookStatus('active');
           toast.success("Webhook respondendo corretamente", {
             description: "O webhook está configurado e respondendo adequadamente"
           });
-          
           uiToast({
             variant: "default",
             title: "Webhook respondendo corretamente",
@@ -91,7 +86,6 @@ export const WebhookManager = () => {
           toast.warning("Webhook com resposta inesperada", {
             description: "Verifique a configuração do webhook no painel do Asaas"
           });
-          
           uiToast({
             // Changed from "warning" to "default" as shadcn/ui toast only supports "default" or "destructive"
             variant: "default",
@@ -102,25 +96,21 @@ export const WebhookManager = () => {
       } else {
         setErrorDetails(result.error || "Erro ao verificar a conexão com o Asaas");
         setFullError(result.details || null);
-        
         toast.error("Falha ao testar webhook", {
           description: result.error || "Erro ao verificar a conexão com o Asaas"
         });
-        
         uiToast({
           variant: "destructive",
           title: "Falha ao testar webhook",
           description: result.error || "Erro ao verificar a conexão com o Asaas"
         });
       }
-      
     } catch (error: any) {
       console.error("Erro ao testar webhook:", error);
       setErrorDetails(error.message || "Erro desconhecido");
       toast.error("Erro ao testar webhook", {
         description: error.message
       });
-      
       uiToast({
         variant: "destructive",
         title: "Erro ao testar webhook",
@@ -130,12 +120,11 @@ export const WebhookManager = () => {
       setIsTestLoading(false);
     }
   };
-
   const handleTestCustomerCreation = async () => {
     try {
       setIsCustomerTestLoading(true);
       setCustomerTestResults(null);
-      
+
       // Check if user is authenticated and admin
       if (!user) {
         toast.error("Você precisa estar logado para testar a criação do cliente");
@@ -146,7 +135,6 @@ export const WebhookManager = () => {
         });
         return;
       }
-      
       if (!isAdmin) {
         toast.error("Você precisa ser administrador para testar a criação do cliente");
         uiToast({
@@ -156,42 +144,34 @@ export const WebhookManager = () => {
         });
         return;
       }
-      
       console.log(`Iniciando teste de criação do cliente ${customerId}`);
       const result = await webhookService.testCustomerCreation(customerId);
-      
       console.log("Resultado do teste de criação do cliente:", result);
-      
       if (result.success) {
         toast.success("Teste de criação de cliente concluído", {
           description: "Cliente processado com sucesso"
         });
-        
         uiToast({
           variant: "default",
           title: "Cliente processado com sucesso",
           description: "Os dados do cliente foram recuperados e processados"
         });
-        
         setCustomerTestResults(result.data);
       } else {
         toast.error("Falha ao testar criação do cliente", {
           description: result.error || "Erro ao processar o cliente"
         });
-        
         uiToast({
           variant: "destructive",
           title: "Falha ao testar criação do cliente",
           description: result.error || "Erro ao processar o cliente"
         });
       }
-      
     } catch (error: any) {
       console.error("Erro ao testar criação do cliente:", error);
       toast.error("Erro ao testar criação do cliente", {
         description: error.message
       });
-      
       uiToast({
         variant: "destructive",
         title: "Erro ao testar criação do cliente",
@@ -201,9 +181,7 @@ export const WebhookManager = () => {
       setIsCustomerTestLoading(false);
     }
   };
-  
-  return (
-    <Card className="w-full max-w-3xl">
+  return <Card className="w-full max-w-3xl">
       <CardHeader>
         <div className="flex justify-between items-start">
           <div>
@@ -212,12 +190,10 @@ export const WebhookManager = () => {
               Gerenciamento do webhook para receber notificações de pagamentos
             </CardDescription>
           </div>
-          {webhookStatus === 'active' && (
-            <Badge variant="success" className="bg-green-500 text-white flex items-center gap-1">
+          {webhookStatus === 'active' && <Badge variant="success" className="bg-green-500 text-white flex items-center gap-1">
               <ShieldCheck className="h-3 w-3" />
               Ativo
-            </Badge>
-          )}
+            </Badge>}
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -226,12 +202,7 @@ export const WebhookManager = () => {
             URL do Webhook (Supabase)
           </label>
           <div className="flex items-center space-x-2">
-            <Input
-              id="webhook-url"
-              value={webhookUrl}
-              readOnly
-              className="flex-1"
-            />
+            <Input id="webhook-url" value={webhookUrl} readOnly className="flex-1" />
           </div>
           <p className="text-sm text-muted-foreground mt-1">
             <AlertCircle className="inline-block w-4 h-4 mr-1" />
@@ -272,84 +243,63 @@ export const WebhookManager = () => {
           </AlertDescription>
         </Alert>
         
-        {!user && (
-          <Alert variant="destructive">
+        {!user && <Alert variant="destructive">
             <AlertCircle className="h-4 w-4" />
             <AlertTitle>Autenticação necessária</AlertTitle>
             <AlertDescription>
               Você precisa estar logado como administrador para testar o webhook.
             </AlertDescription>
-          </Alert>
-        )}
+          </Alert>}
         
-        {user && !isAdmin && (
-          <Alert variant="destructive">
+        {user && !isAdmin && <Alert variant="destructive">
             <AlertCircle className="h-4 w-4" />
             <AlertTitle>Permissão negada</AlertTitle>
             <AlertDescription>
               Você precisa ter privilégios de administrador para testar o webhook.
             </AlertDescription>
-          </Alert>
-        )}
+          </Alert>}
         
-        {testResults && (
-          <div className="space-y-4">
+        {testResults && <div className="space-y-4">
             <h3 className="text-lg font-medium">Resultados do teste</h3>
             
             <div className="space-y-3">
               <div className={`p-3 rounded-md ${testResults.webhookEndpoint?.success ? 'bg-green-50 border border-green-200' : 'bg-amber-50 border border-amber-200'}`}>
                 <h4 className="font-medium flex items-center gap-2">
-                  {testResults.webhookEndpoint?.success ? (
-                    <ShieldCheck className="h-4 w-4 text-green-600" />
-                  ) : (
-                    <AlertTriangle className="h-4 w-4 text-amber-600" />
-                  )}
+                  {testResults.webhookEndpoint?.success ? <ShieldCheck className="h-4 w-4 text-green-600" /> : <AlertTriangle className="h-4 w-4 text-amber-600" />}
                   Endpoint do Webhook
                 </h4>
                 <p className="text-sm mt-1">
                   Status: {testResults.webhookEndpoint?.status} 
                   ({testResults.webhookEndpoint?.success ? 'Sucesso' : 'Falha'})
                 </p>
-                {testResults.webhookEndpoint?.error && (
-                  <p className="text-sm text-red-600 mt-1">{testResults.webhookEndpoint.error}</p>
-                )}
+                {testResults.webhookEndpoint?.error && <p className="text-sm text-red-600 mt-1">{testResults.webhookEndpoint.error}</p>}
               </div>
               
               <div className={`p-3 rounded-md ${testResults.asaasAccount?.success ? 'bg-green-50 border border-green-200' : 'bg-amber-50 border border-amber-200'}`}>
                 <h4 className="font-medium flex items-center gap-2">
-                  {testResults.asaasAccount?.success ? (
-                    <ShieldCheck className="h-4 w-4 text-green-600" />
-                  ) : (
-                    <AlertTriangle className="h-4 w-4 text-amber-600" />
-                  )}
+                  {testResults.asaasAccount?.success ? <ShieldCheck className="h-4 w-4 text-green-600" /> : <AlertTriangle className="h-4 w-4 text-amber-600" />}
                   Conta Asaas
                 </h4>
                 <p className="text-sm mt-1">
                   Status: {testResults.asaasAccount?.status}
                   ({testResults.asaasAccount?.success ? 'Válida' : 'Inválida'})
                 </p>
-                {testResults.asaasAccount?.error && (
-                  <p className="text-sm text-red-600 mt-1">{testResults.asaasAccount.error}</p>
-                )}
+                {testResults.asaasAccount?.error && <p className="text-sm text-red-600 mt-1">{testResults.asaasAccount.error}</p>}
               </div>
             </div>
-          </div>
-        )}
+          </div>}
 
-        {errorDetails && (
-          <Alert variant="destructive" className="mt-4">
+        {errorDetails && <Alert variant="destructive" className="mt-4">
             <AlertTriangle className="h-4 w-4" />
             <AlertDescription className="space-y-2">
               <p className="font-medium">Erro ao testar webhook:</p>
               <p className="text-sm">{errorDetails}</p>
               
-              {fullError && (
-                <div className="mt-2 p-2 bg-red-950/10 rounded text-xs font-mono">
+              {fullError && <div className="mt-2 p-2 bg-red-950/10 rounded text-xs font-mono">
                   <pre className="whitespace-pre-wrap overflow-auto">
                     {JSON.stringify(fullError, null, 2)}
                   </pre>
-                </div>
-              )}
+                </div>}
               
               <p className="text-sm mt-2">
                 Certifique-se de que:
@@ -361,8 +311,7 @@ export const WebhookManager = () => {
                 <li>No ambiente de produção, a API key do Asaas deve ser configurada como header <strong>access_token</strong></li>
               </ul>
             </AlertDescription>
-          </Alert>
-        )}
+          </Alert>}
         
         <div className="rounded-md bg-blue-50 p-4">
           <div className="flex">
@@ -376,12 +325,7 @@ export const WebhookManager = () => {
               </div>
               
               <div className="mt-4">
-                <Button
-                  size="sm"
-                  variant="outline"
-                  className="bg-white border-blue-300 text-blue-700 hover:bg-blue-50"
-                  onClick={() => window.open('https://sandbox.asaas.com/customerConfigIntegrations/webhooks', '_blank')}
-                >
+                <Button size="sm" variant="outline" className="bg-white border-blue-300 text-blue-700 hover:bg-blue-50" onClick={() => window.open('https://sandbox.asaas.com/customerConfigIntegrations/webhooks', '_blank')}>
                   <ExternalLink className="mr-2 h-4 w-4" />
                   Acessar Webhooks no Asaas
                 </Button>
@@ -416,96 +360,62 @@ export const WebhookManager = () => {
                 ID do Cliente no Asaas
               </label>
               <div className="flex items-center space-x-2">
-                <Input
-                  id="customer-id"
-                  value={customerId}
-                  onChange={(e) => setCustomerId(e.target.value)}
-                  placeholder="Ex: cus_000006606255"
-                  className="flex-1"
-                />
-                <Button
-                  onClick={handleTestCustomerCreation}
-                  disabled={isCustomerTestLoading || !user || !isAdmin}
-                  variant="default"
-                >
-                  {isCustomerTestLoading ? (
-                    <>
+                <Input id="customer-id" value={customerId} onChange={e => setCustomerId(e.target.value)} placeholder="Ex: cus_000006606255" className="flex-1" />
+                <Button onClick={handleTestCustomerCreation} disabled={isCustomerTestLoading || !user || !isAdmin} variant="default">
+                  {isCustomerTestLoading ? <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                       Processando...
-                    </>
-                  ) : (
-                    'Testar Cliente'
-                  )}
+                    </> : 'Testar Cliente'}
                 </Button>
               </div>
             </div>
 
-            {customerTestResults && (
-              <div className="mt-4 p-3 rounded-md bg-green-50 border border-green-200">
+            {customerTestResults && <div className="mt-4 p-3 rounded-md bg-green-50 border border-green-200">
                 <h4 className="font-medium flex items-center gap-2">
                   <CheckCircle2 className="h-4 w-4 text-green-600" />
                   Resultado do Teste de Cliente
                 </h4>
                 
                 <div className="mt-2 space-y-2">
-                  {customerTestResults.message && (
-                    <p className="text-sm text-green-700">{customerTestResults.message}</p>
-                  )}
+                  {customerTestResults.message && <p className="text-sm text-green-700">{customerTestResults.message}</p>}
                   
-                  {customerTestResults.customer && (
-                    <div>
+                  {customerTestResults.customer && <div>
                       <p className="text-sm font-medium text-gray-700">Dados do cliente:</p>
-                      <div className="mt-1 p-2 bg-white rounded text-xs font-mono">
+                      <div className="mt-1 p-2 rounded text-xs font-mono bg-zinc-800">
                         <pre className="whitespace-pre-wrap overflow-auto">
                           {JSON.stringify(customerTestResults.customer, null, 2)}
                         </pre>
                       </div>
-                    </div>
-                  )}
+                    </div>}
                   
-                  {customerTestResults.newUser && (
-                    <div>
+                  {customerTestResults.newUser && <div>
                       <p className="text-sm font-medium text-gray-700">Novo usuário criado:</p>
                       <div className="mt-1 p-2 bg-white rounded text-xs font-mono">
                         <pre className="whitespace-pre-wrap overflow-auto">
                           {JSON.stringify(customerTestResults.newUser, null, 2)}
                         </pre>
                       </div>
-                    </div>
-                  )}
+                    </div>}
                   
-                  {customerTestResults.resetEmailSent && (
-                    <p className="text-sm text-green-700">
+                  {customerTestResults.resetEmailSent && <p className="text-sm text-green-700">
                       <CheckCircle2 className="inline-block w-4 h-4 mr-1" />
                       Email de redefinição de senha enviado com sucesso.
-                    </p>
-                  )}
+                    </p>}
                 </div>
-              </div>
-            )}
+              </div>}
           </div>
         </div>
       </CardContent>
       <CardFooter className="flex flex-col space-y-4 items-stretch sm:flex-row sm:space-y-0 sm:space-x-2 sm:items-center">
-        <Button
-          variant="outline"
-          onClick={handleTestWebhook}
-          disabled={isTestLoading || !user || !isAdmin}
-          className="flex-1"
-        >
-          {isTestLoading ? (
-            <>
+        <Button variant="outline" onClick={handleTestWebhook} disabled={isTestLoading || !user || !isAdmin} className="flex-1">
+          {isTestLoading ? <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               Testando...
-            </>
-          ) : (
-            <>
+            </> : <>
               <RotateCw className="mr-2 h-4 w-4" />
               Testar Webhook
-            </>
-          )}
+            </>}
         </Button>
       </CardFooter>
-    </Card>
-  );
+    </Card>;
 };
