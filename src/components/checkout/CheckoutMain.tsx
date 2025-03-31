@@ -10,6 +10,7 @@ import { errorUtils } from "@/utils/errorUtils";
 import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import ScrollIndicator from "@/components/ScrollIndicator";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 // Step types for the checkout process - simplificado
 type CheckoutStep = "plan" | "processing";
@@ -47,6 +48,7 @@ const CheckoutMain: React.FC<CheckoutMainProps> = ({
   const navigate = useNavigate();
   const { toast } = useToast();
   const [showScrollIndicator, setShowScrollIndicator] = useState(true);
+  const isMobile = useIsMobile();
   
   // Garantir que a página carregue pelo topo
   useEffect(() => {
@@ -63,7 +65,7 @@ const CheckoutMain: React.FC<CheckoutMainProps> = ({
 
     const timeout = setTimeout(() => {
       setShowScrollIndicator(false);
-    }, 8000);
+    }, isMobile ? 5000 : 8000); // Tempo reduzido para dispositivos móveis
 
     window.addEventListener('scroll', handleScroll);
     
@@ -71,7 +73,7 @@ const CheckoutMain: React.FC<CheckoutMainProps> = ({
       window.removeEventListener('scroll', handleScroll);
       clearTimeout(timeout);
     };
-  }, []);
+  }, [isMobile]);
   
   if (!selectedPlanId) {
     toast({
@@ -87,10 +89,10 @@ const CheckoutMain: React.FC<CheckoutMainProps> = ({
   const plan = subscriptionService.getPlanFromId(selectedPlanId);
   
   return (
-    <div className="mt-8 mb-12 grid grid-cols-1 gap-8">
-      <div className="max-w-4xl mx-auto w-full">
+    <div className={`mt-4 md:mt-8 mb-8 md:mb-12 grid grid-cols-1 gap-6 md:gap-8`}>
+      <div className="max-w-4xl mx-auto w-full px-4">
         {currentStep === "plan" && (
-          <div className="space-y-8">
+          <div className="space-y-6 md:space-y-8">
             {/* PlanSummary agora inclui o formulário unificado */}
             <PlanSummary 
               planId={selectedPlanId} 
