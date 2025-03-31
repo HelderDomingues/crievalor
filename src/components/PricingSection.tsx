@@ -22,8 +22,9 @@ const PricingSection = () => {
       return;
     }
     
-    // Direct all users to subscription page with plan selected
-    navigate(`/subscription?tab=plans&plan=${planId}`);
+    // Direct all users straight to checkout with plan selected, regardless of auth status
+    // The checkout flow will handle authentication if needed
+    navigate(`/checkout?plan=${planId}`);
   };
   
   return (

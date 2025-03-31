@@ -38,7 +38,8 @@ const PricingCard = ({
       return;
     }
 
-    // Direct users to the new checkout flow
+    // Direct users to the checkout flow with the plan ID
+    // The checkout page will handle authentication if needed
     navigate(`/checkout?plan=${plan.id}`);
   };
 

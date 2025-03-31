@@ -19,10 +19,17 @@ const Auth = () => {
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Check if the user is already signed in, redirect to home
+  // Check if the user is already signed in, redirect to home or checkout if there's a selected plan
   useEffect(() => {
     if (user) {
-      navigate("/");
+      const selectedPlanId = localStorage.getItem('selectedPlanId');
+      if (selectedPlanId) {
+        // Se tiver um plano selecionado, redirecionar para checkout
+        localStorage.removeItem('selectedPlanId'); // Limpar após usar
+        navigate(`/checkout?plan=${selectedPlanId}`);
+      } else {
+        navigate("/");
+      }
     }
   }, [user, navigate]);
 
