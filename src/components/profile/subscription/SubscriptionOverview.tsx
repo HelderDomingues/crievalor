@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { AlertCircle, Calendar, CheckCircle, CreditCard, Download, ExternalLink, FileText, Receipt } from "lucide-react";
 import { Subscription, PaymentDetails } from "@/types/subscription";
 import { subscriptionService } from "@/services/subscriptionService";
-import { formatCurrency } from "@/lib/utils";
+import { formatCurrency } from "@/utils/formatters";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
