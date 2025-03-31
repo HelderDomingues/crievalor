@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
@@ -16,6 +15,7 @@ import CheckoutMain from "@/components/checkout/CheckoutMain";
 import { paymentProcessor } from "@/services/paymentProcessor";
 import { RegistrationFormData } from "@/components/checkout/form/RegistrationFormSchema";
 import { asaasCustomerService } from "@/services/asaasCustomerService";
+import { checkoutTestUtils } from "@/utils/checkoutTestUtils";
 
 // Step types for the checkout process - simplified to 2 steps
 type CheckoutStep = "plan" | "processing";
@@ -326,6 +326,26 @@ const Checkout = () => {
       </div>
     );
   }
+  
+  // Check if we're in test mode
+  useEffect(() => {
+    // Verificar se há um parâmetro de teste na URL
+    const testParam = searchParams.get("test");
+    if (testParam) {
+      console.log(`📋 Detectado modo de teste: ${testParam}`);
+      try {
+        // Tentar configurar o cenário de teste
+        const scenario = testParam as 'new-user' | 'existing-user' | 'recovery' | 'abandoned' | 'clear';
+        checkoutTestUtils.simulateCheckoutState(scenario, { planId });
+        console.log(`✅ Cenário de teste "${testParam}" configurado com sucesso`);
+        
+        // Verificar consistência dos dados após configuração
+        checkoutTestUtils.verifyDataConsistency();
+      } catch (error) {
+        console.error("❌ Erro ao configurar cenário de teste:", error);
+      }
+    }
+  }, [planId, searchParams]);
   
   return (
     <div className="min-h-screen flex flex-col">

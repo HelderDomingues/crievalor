@@ -5,7 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import { AuthProvider } from "@/context/AuthContext";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Index from "./pages/Index";
 import Mar from "./pages/Mar";
 import Sobre from "./pages/Sobre";
@@ -24,7 +24,6 @@ import PortfolioAdmin from "./pages/PortfolioAdmin";
 import Auth from "./pages/Auth";
 import Profile from "./pages/Profile";
 import Subscription from "./pages/Subscription";
-import { useState } from "react";
 import CheckoutSuccess from "./pages/CheckoutSuccess";
 import CheckoutCanceled from "./pages/CheckoutCanceled";
 import MaterialExclusivo from "./pages/MaterialExclusivo";
@@ -34,6 +33,7 @@ import AdminSetup from "./pages/AdminSetup";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminSettings from "./pages/AdminSettings";
 import Checkout from "./pages/Checkout";
+import CheckoutDebugPanel from "./components/debug/CheckoutDebugPanel";
 
 // Scroll to top component
 const ScrollToTop = () => {
@@ -48,6 +48,8 @@ const ScrollToTop = () => {
 
 const App = () => {
   const [queryClient] = useState(() => new QueryClient());
+  // Mostrar painel de depuração apenas em ambiente de desenvolvimento
+  const isDebugMode = process.env.NODE_ENV === 'development';
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -87,6 +89,7 @@ const App = () => {
                 <Route path="*" element={<NotFound />} />
               </Routes>
               <Chatbot />
+              <CheckoutDebugPanel isVisible={isDebugMode} />
             </div>
           </Router>
         </AuthProvider>
