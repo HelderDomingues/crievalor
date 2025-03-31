@@ -3,7 +3,6 @@ import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { clientLogos } from "@/components/ClientLogosCarousel";
 import { Trash2, Upload, Plus } from "lucide-react";
 import { toast } from "sonner";
 import { fetchClientLogos, ClientLogo } from "@/services/clientLogosService";
@@ -21,19 +20,14 @@ const ClientLogosAdmin = () => {
   const fetchLogos = async () => {
     try {
       setIsLoading(true);
-      
-      // Fetch from Supabase
       const fetchedLogos = await fetchClientLogos();
       
       if (fetchedLogos && fetchedLogos.length > 0) {
         setLogos(fetchedLogos);
-      } else {
-        // No data in database yet, use the local data
-        setLogos([...clientLogos]);
       }
     } catch (error) {
       console.error("Error in fetchLogos:", error);
-      setLogos([...clientLogos]);
+      toast.error("Erro ao carregar logos dos clientes");
     } finally {
       setIsLoading(false);
     }
@@ -49,47 +43,44 @@ const ClientLogosAdmin = () => {
     setLogos([...logos, { name: `Cliente ${logos.length + 1}`, logo: "/placeholder.svg" }]);
   };
 
-  const handleRemoveLogo = (index: number) => {
-    const updatedLogos = [...logos];
-    updatedLogos.splice(index, 1);
-    setLogos(updatedLogos);
+  const handleRemoveLogo = async (index: number) => {
+    try {
+      setIsLoading(true);
+      const logoToRemove = logos[index];
+      
+      // Extract the filename from the URL
+      const fileName = logoToRemove.logo.split('/').pop();
+      
+      if (fileName) {
+        // Delete file from Supabase storage
+        const { error } = await supabaseExtended.storage
+          .from('clientlogos')
+          .remove([fileName]);
+        
+        if (error) {
+          throw error;
+        }
+        
+        toast.success("Logo removido com sucesso");
+      }
+      
+      // Update local state
+      const updatedLogos = [...logos];
+      updatedLogos.splice(index, 1);
+      setLogos(updatedLogos);
+    } catch (error) {
+      console.error("Error removing logo:", error);
+      toast.error("Erro ao remover logo");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleSave = async () => {
-    try {
-      setIsLoading(true);
-      
-      // Clear existing logos first
-      const { error: deleteError } = await supabaseExtended
-        .from('client_logos')
-        .delete()
-        .neq('id', '00000000-0000-0000-0000-000000000000');
-      
-      if (deleteError) {
-        throw new Error(`Error deleting existing logos: ${deleteError.message}`);
-      }
-      
-      // Insert new logos
-      const { error: insertError } = await supabaseExtended
-        .from('client_logos')
-        .insert(logos.map(logo => ({
-          name: logo.name,
-          logo: logo.logo
-        })));
-      
-      if (insertError) {
-        throw new Error(`Error inserting logos: ${insertError.message}`);
-      }
-      
-      toast.success("Logos dos clientes atualizados com sucesso");
-      setIsEditing(false);
-    } catch (error) {
-      console.error("Error saving client logos:", error);
-      toast.error("Erro ao salvar logos dos clientes");
-    } finally {
-      setIsLoading(false);
-      fetchLogos(); // Refresh logos after save
-    }
+    // In this refactored version, we don't need to save anything to the database
+    // as we're directly managing files in the storage bucket
+    setIsEditing(false);
+    toast.success("Alterações salvas com sucesso");
   };
 
   const handleUploadImage = async (index: number) => {
@@ -106,31 +97,35 @@ const ClientLogosAdmin = () => {
       try {
         setIsLoading(true);
         
-        // Create a unique filename
+        // Create a sanitized filename
+        // Use the configured name as the filename, replacing spaces with underscores
+        const sanitizedName = logos[index].name.trim().replace(/\s+/g, '_').toLowerCase();
         const fileExt = file.name.split('.').pop();
-        const fileName = `${Date.now()}.${fileExt}`;
-        const filePath = `${fileName}`;
+        const fileName = `${sanitizedName}.${fileExt}`;
         
-        // Upload the file directly
+        // Upload the file
         const { error: uploadError } = await supabaseExtended.storage
-          .from('logos')
-          .upload(filePath, file);
+          .from('clientlogos')
+          .upload(fileName, file, { upsert: true });
         
         if (uploadError) {
           throw uploadError;
         }
         
-        // Get the public URL
+        // Get public URL
         const { data: urlData } = supabaseExtended.storage
-          .from('logos')
-          .getPublicUrl(filePath);
+          .from('clientlogos')
+          .getPublicUrl(fileName);
         
-        // Update the logo URL in state
+        // Update logo URL in state
         handleLogoChange(index, 'logo', urlData.publicUrl);
-        toast.success("Imagem carregada com sucesso");
+        toast.success("Logo carregado com sucesso");
+        
+        // Refresh logos after upload
+        fetchLogos();
       } catch (error) {
-        console.error("Error in handleUploadImage:", error);
-        toast.error("Erro ao processar imagem");
+        console.error("Error uploading image:", error);
+        toast.error("Erro ao fazer upload do logo");
       } finally {
         setIsLoading(false);
       }
@@ -196,22 +191,15 @@ const ClientLogosAdmin = () => {
                     onChange={(e) => handleLogoChange(index, 'name', e.target.value)}
                     placeholder="Nome do cliente"
                   />
-                  <div className="flex items-center gap-2">
-                    <Input
-                      value={logo.logo}
-                      onChange={(e) => handleLogoChange(index, 'logo', e.target.value)}
-                      placeholder="URL do logo"
-                    />
-                    <Button 
-                      variant="outline" 
-                      size="icon" 
-                      onClick={() => handleUploadImage(index)}
-                      title="Fazer upload de imagem"
-                      disabled={isLoading}
-                    >
-                      <Upload className="h-4 w-4" />
-                    </Button>
-                  </div>
+                  <Button 
+                    variant="outline" 
+                    onClick={() => handleUploadImage(index)}
+                    title="Fazer upload de imagem"
+                    disabled={isLoading}
+                    className="w-full"
+                  >
+                    <Upload className="h-4 w-4 mr-2" /> Fazer upload de logo
+                  </Button>
                 </div>
                 <Button
                   variant="ghost"

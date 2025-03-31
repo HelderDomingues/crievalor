@@ -4,18 +4,17 @@ import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carouse
 import { fetchClientLogos } from "@/services/clientLogosService";
 import { Skeleton } from "@/components/ui/skeleton";
 
-// Default client logos as fallback
-export const clientLogos = [
-  { name: "Client 1", logo: "/lovable-uploads/client1.png" },
-  { name: "Client 2", logo: "/lovable-uploads/client2.png" },
-  { name: "Client 3", logo: "/lovable-uploads/client3.png" },
-  { name: "Client 4", logo: "/lovable-uploads/client4.png" },
-  { name: "Client 5", logo: "/lovable-uploads/client5.png" },
-  { name: "Client 6", logo: "/lovable-uploads/client6.png" },
+// Fallback logos in case of error
+const fallbackLogos = [
+  { name: "Client 1", logo: "/placeholder.svg" },
+  { name: "Client 2", logo: "/placeholder.svg" },
+  { name: "Client 3", logo: "/placeholder.svg" },
+  { name: "Client 4", logo: "/placeholder.svg" },
+  { name: "Client 5", logo: "/placeholder.svg" },
 ];
 
 const ClientLogosCarousel = () => {
-  const [logos, setLogos] = useState(clientLogos);
+  const [logos, setLogos] = useState(fallbackLogos);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
