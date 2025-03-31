@@ -72,6 +72,10 @@ const Checkout = () => {
     
     setSelectedPlanId(planId);
     
+    if (!user) {
+      localStorage.setItem('selectedPlanId', planId);
+    }
+    
     const recoveryState = checkoutRecoveryService.getRecoveryState();
     
     if (recoveryState && checkoutRecoveryService.isStateValid(recoveryState, planId)) {
@@ -115,7 +119,7 @@ const Checkout = () => {
         }
       }
     }
-  }, [planId, navigate, toast, processId]);
+  }, [planId, navigate, toast, processId, user]);
   
   useEffect(() => {
     const savedInstallments = localStorage.getItem('checkoutInstallments');

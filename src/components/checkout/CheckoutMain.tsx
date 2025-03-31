@@ -52,26 +52,6 @@ const CheckoutMain: React.FC<CheckoutMainProps> = ({
   const isMobile = useIsMobile();
   const { user } = useAuth();
   
-  // Verificar se o usuário não está autenticado e redirecionar para a página de registro
-  useEffect(() => {
-    if (!user && selectedPlanId) {
-      // Se não estiver autenticado, salvar o plano selecionado no localStorage
-      // para poder recuperá-lo após o login/registro
-      localStorage.setItem('selectedPlanId', selectedPlanId);
-      
-      // Redirecionar para a página de autenticação
-      toast({
-        title: "Autenticação necessária",
-        description: "Por favor, crie uma conta ou faça login para continuar com a assinatura.",
-      });
-      
-      // Dar um pequeno atraso para o toast ser exibido
-      setTimeout(() => {
-        navigate("/auth");
-      }, 1500);
-    }
-  }, [user, selectedPlanId, navigate, toast]);
-  
   // Garantir que a página carregue pelo topo
   useEffect(() => {
     window.scrollTo(0, 0);
