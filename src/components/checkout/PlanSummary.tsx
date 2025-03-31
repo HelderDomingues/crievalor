@@ -9,7 +9,6 @@ import { PaymentType } from "@/components/pricing/PaymentOptions";
 import { PaymentMethodSection } from "./payment/PaymentMethodSection";
 import { PlanCard } from "./plan/PlanCard";
 import { UnifiedCheckoutForm } from "./form/UnifiedCheckoutForm";
-import { RegistrationFormData } from "./form/RegistrationFormSchema";
 import { useAuth } from "@/context/AuthContext";
 import { paymentProcessor } from "@/services/paymentProcessor";
 import { checkoutRecoveryService } from "@/services/checkoutRecoveryService";
@@ -98,34 +97,22 @@ const PlanSummary = ({
     onPaymentTypeChange(paymentTypeMap[method]);
   };
   
-  const handleFormSubmit = async (data: RegistrationFormData) => {
+  const handlePaymentRedirect = async () => {
     setIsSubmitting(true);
     try {
-      // Log the form data to debug
-      console.log("Form data being processed:", data);
-      
-      // Set a timestamp to verify data freshness
-      const formTimestamp = Date.now();
-      
-      // Salvar o recoveryState para possibilitar recuperação futura
+      // Definir algumas informações mínimas para o estado de recuperação
       const recoveryState = {
-        timestamp: formTimestamp,
+        timestamp: Date.now(),
         planId: planId,
-        formData: data,
         paymentMethod,
         processId
       };
       
       checkoutRecoveryService.saveRecoveryState(recoveryState);
       
-      // Explicitly save form data to localStorage with timestamp
-      localStorage.setItem('customerEmail', data.email);
-      localStorage.setItem('customerPhone', data.phone);
-      localStorage.setItem('customerName', data.fullName);
-      localStorage.setItem('customerCPF', data.cpf);
-      localStorage.setItem('formDataTimestamp', formTimestamp.toString());
+      // Armazenar informações sobre o plano selecionado
       localStorage.setItem('paymentMethod', paymentMethod);
-      localStorage.setItem('paymentTimestamp', formTimestamp.toString());
+      localStorage.setItem('paymentTimestamp', Date.now().toString());
       localStorage.setItem('planName', plan.name);
       
       if ('price' in plan) {
@@ -139,65 +126,43 @@ const PlanSummary = ({
         variant: "default"
       });
       
-      // Processar o pagamento diretamente se for um usuário existente
-      if (user) {
-        // Processar pagamento para usuário existente
-        const result = await paymentProcessor.processPayment({
-          planId,
-          installments: 1, // Ou outro valor conforme necessário
-          paymentType: paymentMethod === "credit_installment" ? "credit" : "pix",
-          formData: data,
-          processId
+      // Processar pagamento para redirecionar para Asaas
+      const result = await paymentProcessor.processPayment({
+        planId,
+        installments: 1,
+        paymentType: paymentMethod === "credit_installment" ? "credit" : "pix",
+        processId
+      });
+      
+      if (result.success && result.url) {
+        // Atualizar o recoveryState com o link de pagamento
+        const updatedState = {
+          ...recoveryState,
+          paymentLink: result.url
+        };
+        checkoutRecoveryService.saveRecoveryState(updatedState);
+        
+        // Mostrar toast de sucesso
+        toast({
+          title: "Sucesso!",
+          description: "Redirecionando para o pagamento...",
+          variant: "default"
         });
         
-        if (result.success && result.url) {
-          // Atualizar o recoveryState com o link de pagamento
-          const updatedState = {
-            ...recoveryState,
-            paymentLink: result.url
-          };
-          checkoutRecoveryService.saveRecoveryState(updatedState);
-          
-          // Mostrar toast de sucesso
-          toast({
-            title: "Sucesso!",
-            description: "Redirecionando para o pagamento...",
-            variant: "default"
-          });
-          
-          // Adicionar uma pequena espera para a animação
-          setTimeout(() => {
-            // Redirecionar para o link de pagamento
-            window.location.href = result.url;
-          }, 1000);
-          
-          return;
-        } else {
-          throw new Error(result.error || "Não foi possível gerar o link de pagamento");
-        }
+        // Adicionar uma pequena espera para a animação
+        setTimeout(() => {
+          // Redirecionar para o link de pagamento
+          window.location.href = result.url;
+        }, 1000);
+        
+        return;
+      } else {
+        throw new Error(result.error || "Não foi possível gerar o link de pagamento");
       }
-      
-      // Avançar para a próxima etapa (a lógica de registro/pagamento será tratada lá)
-      onContinue();
     } catch (error: any) {
       toast({
         title: "Erro ao processar",
         description: error.message || "Ocorreu um erro ao processar sua solicitação. Por favor, tente novamente.",
-        variant: "destructive"
-      });
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-  
-  const handlePaymentRedirect = async () => {
-    setIsSubmitting(true);
-    try {
-      onContinue();
-    } catch (error: any) {
-      toast({
-        title: "Erro ao redirecionar",
-        description: error.message || "Ocorreu um erro ao redirecionar para o pagamento. Por favor, tente novamente.",
         variant: "destructive"
       });
     } finally {
@@ -231,7 +196,6 @@ const PlanSummary = ({
           
           <div className="slide-up" style={{ animationDelay: '0.2s' }}>
             <UnifiedCheckoutForm
-              onSubmit={handleFormSubmit}
               onPaymentRedirect={handlePaymentRedirect}
               isSubmitting={isSubmitting}
               plan={plan}

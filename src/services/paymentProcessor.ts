@@ -2,14 +2,12 @@
 import { PaymentType } from "@/components/pricing/PaymentOptions";
 import { subscriptionService } from "@/services/subscriptionService";
 import { paymentsService } from "@/services/paymentsService";
-import { RegistrationFormData } from "@/components/checkout/form/RegistrationFormSchema";
-import { asaasCustomerService } from "@/services/asaasCustomerService";
 
 export interface PaymentProcessingOptions {
   planId: string;
   installments: number;
   paymentType: PaymentType;
-  formData?: RegistrationFormData;
+  formData?: any;
   domain?: string;
   processId?: string;
   recoveryState?: any;
@@ -28,7 +26,7 @@ export interface PaymentResult {
 export const paymentProcessor = {
   async processPayment(options: PaymentProcessingOptions): Promise<PaymentResult> {
     try {
-      const { planId, installments, paymentType, formData, domain } = options;
+      const { planId, installments, paymentType, domain } = options;
       const processId = options.processId || `checkout_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
       
       // Use the exact domain configured in Asaas
@@ -48,24 +46,6 @@ export const paymentProcessor = {
         localStorage.removeItem('lastFormSubmission');
       }
       
-      // Store form data for later retrieval (if needed)
-      let customerId = null;
-      
-      if (formData) {
-        console.log(`[${processId}] Processing with form data:`, {
-          name: formData.fullName,
-          email: formData.email
-        });
-        
-        // Store fresh form data locally for later use with a timestamp
-        const timestamp = Date.now();
-        localStorage.setItem('customerEmail', formData.email);
-        localStorage.setItem('customerPhone', formData.phone);
-        localStorage.setItem('customerName', formData.fullName);
-        localStorage.setItem('customerCPF', formData.cpf);
-        localStorage.setItem('formDataTimestamp', timestamp.toString());
-      }
-      
       // Simplified approach: Generate checkout session with static link
       const result = await subscriptionService.createCheckoutSession({
         planId,
@@ -73,7 +53,7 @@ export const paymentProcessor = {
         cancelUrl: `${paymentDomain}/checkout/canceled`,
         installments,
         paymentType,
-        customerId, // This can be null, we'll get customer data from Asaas after payment
+        customerId: null, // We'll get customer data from Asaas after payment
         timestamp: Date.now()
       });
       
