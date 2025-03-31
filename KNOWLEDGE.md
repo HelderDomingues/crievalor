@@ -3,7 +3,10 @@
 
 ## Table of Contents
 1. [Project Metadata](#project-metadata)
-2. [Interaction Log](#interaction-log)
+2. [Interaction Log by Period](#interaction-log)
+   - [March 29, 2024](#march-29-2024)
+   - [March 30, 2024](#march-30-2024)
+   - [March 31, 2024](#march-31-2024)
 3. [Problems and Solutions](#problems-and-solutions)
 4. [Architectural Decisions](#architectural-decisions)
 5. [Payment Integration](#payment-integration)
@@ -16,9 +19,11 @@
 - **Primary Goals**: Create a professional website for Crie Valor showcasing their services, with subscription and payment functionality
 - **Technologies**: React, TypeScript, Tailwind CSS, shadcn/ui, Supabase, Asaas Payment Integration
 
-## Interaction Log {#interaction-log}
+## Interaction Log by Period {#interaction-log}
 
-### 2024-03-31 - Problema na Criação de Usuários via Webhook
+### March 31, 2024 {#march-31-2024}
+
+#### Problema na Criação de Usuários via Webhook
 
 **Discussão**:
 - Identificação de problemas na criação de usuários e subscriptions após pagamentos no Asaas
@@ -35,7 +40,9 @@
 - Implementar verificação mais robusta de usuários existentes no webhook
 - Melhorar sistema de notificação e logs para facilitar o diagnóstico de falhas
 
-### 2024-03-30 - Ajustes no Sistema de Webhook e Criação de Usuários
+### March 30, 2024 {#march-30-2024}
+
+#### Ajustes no Sistema de Webhook e Criação de Usuários
 
 **Discussão**:
 - Continuação dos testes com a integração Asaas
@@ -52,116 +59,7 @@
 - Adicionar tratamentos específicos para cada caso
 - Implementar sistema de notificação para administradores quando um webhook falhar
 
-### 2024-03-29 - Desabilitar verificação JWT para webhooks do Asaas
-
-**Discussão**:
-- Identificação do problema: após atualização das Edge Functions, a verificação JWT foi ativada por padrão
-- Essa verificação impede o funcionamento correto do webhook do Asaas
-- Necessidade de desabilitar especificamente a verificação JWT para as funções relacionadas ao Asaas
-
-**Implementação**:
-- Desativação da verificação JWT para as edge functions relacionadas ao Asaas
-- Confirmação de que o webhook voltou a funcionar corretamente após essa modificação
-
-**Ação planejada**:
-- Manter a verificação JWT desativada para essas funções específicas
-- Documentar claramente esta exceção para evitar problemas em atualizações futuras
-- Considerar mecanismos alternativos de segurança para essas funções
-
-### 2024-03-29 - Aceitação de webhooks do Asaas sem token de acesso para o ambiente Sandbox
-
-**Discussão**:
-- Identificação do problema: o Asaas Sandbox não está enviando o token de acesso conforme esperado
-- Análise dos logs mostra requisições com User-Agent "Java" vindas do Asaas Sandbox
-- Necessidade de ajuste temporário para o ambiente de desenvolvimento/sandbox
-
-**Implementação**:
-- Modificação da função asaas-webhook para aceitar requisições do Asaas Sandbox com User-Agent "Java" sem token
-- Melhoria da detecção de origem das requisições via User-Agent
-- Atualização da documentação na interface para explicar a diferença entre ambiente de sandbox e produção
-- Adição de logs detalhados para facilitar a depuração das requisições do Asaas
-- Manutenção do status 200 em todas as respostas para evitar reenvios
-
-**Ação planejada**:
-- Testar a integração com o ambiente Sandbox
-- Preparar a transição para o ambiente de produção do Asaas, onde o header access_token será exigido
-- Revisar a segurança após confirmar o funcionamento completo
-
-### 2024-03-29 - Correção do problema de autenticação do webhook Asaas
-
-**Discussão**:
-- Erro 401 "Missing authorization header" nas requisições do Asaas para o webhook
-- Webhook do Asaas espera um header de autorização específico com a chave de API
-- Identificação da necessidade do header "access_token" em vez de outros formatos de autorização
-- Melhorias na documentação e interface para facilitar a configuração correta
-
-**Implementação**:
-- Atualização da função asaas-webhook para aceitar o header access_token e validá-lo
-- Adição de mais logs detalhados para depuração
-- Modificação temporária para aceitar requisições do Asaas contendo qualquer access_token enquanto depuramos
-- Atualização da função test-webhook para enviar o header access_token no formato correto
-- Melhoria na interface do WebhookManager para explicar a necessidade do header access_token
-- Documentação detalhada na interface sobre como configurar corretamente o webhook no painel do Asaas
-
-**Ação planejada**:
-- Testar a conexão com as novas configurações
-- Confirmar que o Asaas está recebendo os webhooks corretamente
-- Rever as configurações de segurança após confirmar o funcionamento
-
-### 2024-03-28 - Correção do erro 500 no teste de webhook e problemas de autorização
-
-**Discussão**:
-- Erro 500 nas requisições de teste do webhook
-- "Missing authorization header" retornado pelo Asaas
-- Necessidade de adicionar o header `access_token` nas requisições para o Asaas
-- Expansão dos CORS headers para aceitar headers adicionais
-
-**Implementação**:
-- Atualização do `test-webhook` com melhor tratamento de erros
-- Adição do header `access_token` nas requisições de teste para o endpoint do Asaas
-- Atualização dos CORS headers no `asaas-webhook` para aceitar o header `access_token`
-- Melhoria no tratamento de requisições de teste no `asaas-webhook`
-- Simplificação do `webhookService.ts` para usar exclusivamente a URL do Supabase
-
-**Ação planejada**:
-- Testar a conexão com as novas configurações
-- Confirmar que o Asaas está recebendo os webhooks corretamente
-
-### 2024-05-31 - Correção do webhook e erros 500
-
-**Discussão**:
-- Correção de erro 500 no teste de webhook
-- Ajuste da função de teste para tratar corretamente o endpoint do Supabase
-- Verificação de problemas de autenticação e log detalhado 
-
-**Implementação**:
-- Simplificação da função test-webhook para testar apenas o endpoint do Supabase
-- Correção de erros na leitura de respostas e tratamento de erros
-- Melhoria na exibição de resultados no componente WebhookManager
-- Garantia de que o URL correto seja utilizado em todas as funções
-
-**Ação planejada**:
-- Testar a conexão com a nova configuração
-- Verificar logs para identificar possíveis erros restantes
-
-### 2024-05-31 - Migração para URL de Webhook do Supabase
-
-**Discussão**:
-- Decisão de migrar completamente para a URL de webhook do Supabase
-- Remoção de todas as referências ao webhook anterior
-- Configuração do novo sistema para usar exclusivamente a função Supabase
-
-**Implementação**:
-- Atualização do `webhookService.ts` para retornar apenas a URL do Supabase
-- Modificação da função `test-webhook` para testar apenas o endpoint do Supabase
-- Atualização do componente `WebhookManager` para mostrar a nova configuração
-- Simplificação da função `register-webhook` para usar apenas a URL do Supabase
-
-**Ação planejada**:
-- Atualizar a configuração do webhook no painel do Asaas para apontar para a URL do Supabase
-- Testar a conexão com a nova configuração
-
-### 2024-05-30 - Initial Implementation of Project Log
+#### Initial Implementation of Project Log
 
 **Discussion**:
 - Requirement to create a comprehensive log of all interactions
@@ -176,7 +74,7 @@
 - Continue to update this log with all past and future interactions
 - Document challenges faced with Asaas integration and their solutions
 
-### 2024-05-30 to Current - Asaas Webhook Integration Challenges
+#### Asaas Webhook Integration Challenges
 
 **Discussion**:
 - Primary focus has been on getting Asaas webhook integration working properly
@@ -215,25 +113,116 @@
 - Correção de erros 500 no teste de webhook
 - Melhoria na autorização através do header access_token
 
-### Past Interactions: Asaas Integration Challenges
+### March 29, 2024 {#march-29-2024}
 
-**Payment Integration Issues**:
-- Initially faced challenges with Asaas API integration
-- Encountered issues with duplicate customer creation
-- Problems with checkout session management and payment confirmations
-- Row-level security policy violations in Supabase
+#### Desabilitar verificação JWT para webhooks do Asaas
 
-**Solutions Implemented**:
-- Created dedicated services for Asaas customer management
-- Implemented payment tracking and verification
-- Added success and canceled checkout pages for better user experience
-- Enhanced error handling in checkout flow
+**Discussão**:
+- Identificação do problema: após atualização das Edge Functions, a verificação JWT foi ativada por padrão
+- Essa verificação impede o funcionamento correto do webhook do Asaas
+- Necessidade de desabilitar especificamente a verificação JWT para as funções relacionadas ao Asaas
 
-**Lessons Learned**:
-- Need for careful tracking of external payment provider references
-- Importance of proper error handling in payment flows
-- Value of clear user feedback during payment processes
-- Critical importance of webhook configuration for payment notifications
+**Implementação**:
+- Desativação da verificação JWT para as edge functions relacionadas ao Asaas
+- Confirmação de que o webhook voltou a funcionar corretamente após essa modificação
+
+**Ação planejada**:
+- Manter a verificação JWT desativada para essas funções específicas
+- Documentar claramente esta exceção para evitar problemas em atualizações futuras
+- Considerar mecanismos alternativos de segurança para essas funções
+
+#### Aceitação de webhooks do Asaas sem token de acesso para o ambiente Sandbox
+
+**Discussão**:
+- Identificação do problema: o Asaas Sandbox não está enviando o token de acesso conforme esperado
+- Análise dos logs mostra requisições com User-Agent "Java" vindas do Asaas Sandbox
+- Necessidade de ajuste temporário para o ambiente de desenvolvimento/sandbox
+
+**Implementação**:
+- Modificação da função asaas-webhook para aceitar requisições do Asaas Sandbox com User-Agent "Java" sem token
+- Melhoria da detecção de origem das requisições via User-Agent
+- Atualização da documentação na interface para explicar a diferença entre ambiente de sandbox e produção
+- Adição de logs detalhados para facilitar a depuração das requisições do Asaas
+- Manutenção do status 200 em todas as respostas para evitar reenvios
+
+**Ação planejada**:
+- Testar a integração com o ambiente Sandbox
+- Preparar a transição para o ambiente de produção do Asaas, onde o header access_token será exigido
+- Revisar a segurança após confirmar o funcionamento completo
+
+#### Correção do problema de autenticação do webhook Asaas
+
+**Discussão**:
+- Erro 401 "Missing authorization header" nas requisições do Asaas para o webhook
+- Webhook do Asaas espera um header de autorização específico com a chave de API
+- Identificação da necessidade do header "access_token" em vez de outros formatos de autorização
+- Melhorias na documentação e interface para facilitar a configuração correta
+
+**Implementação**:
+- Atualização da função asaas-webhook para aceitar o header access_token e validá-lo
+- Adição de mais logs detalhados para depuração
+- Modificação temporária para aceitar requisições do Asaas contendo qualquer access_token enquanto depuramos
+- Atualização da função test-webhook para enviar o header access_token no formato correto
+- Melhoria na interface do WebhookManager para explicar a necessidade do header access_token
+- Documentação detalhada na interface sobre como configurar corretamente o webhook no painel do Asaas
+
+**Ação planejada**:
+- Testar a conexão com as novas configurações
+- Confirmar que o Asaas está recebendo os webhooks corretamente
+- Rever as configurações de segurança após confirmar o funcionamento
+
+#### Correção do erro 500 no teste de webhook e problemas de autorização
+
+**Discussão**:
+- Erro 500 nas requisições de teste do webhook
+- "Missing authorization header" retornado pelo Asaas
+- Necessidade de adicionar o header `access_token` nas requisições para o Asaas
+- Expansão dos CORS headers para aceitar headers adicionais
+
+**Implementação**:
+- Atualização do `test-webhook` com melhor tratamento de erros
+- Adição do header `access_token` nas requisições de teste para o endpoint do Asaas
+- Atualização dos CORS headers no `asaas-webhook` para aceitar o header `access_token`
+- Melhoria no tratamento de requisições de teste no `asaas-webhook`
+- Simplificação do `webhookService.ts` para usar exclusivamente a URL do Supabase
+
+**Ação planejada**:
+- Testar a conexão com as novas configurações
+- Confirmar que o Asaas está recebendo os webhooks corretamente
+
+#### Correção do webhook e erros 500
+
+**Discussão**:
+- Correção de erro 500 no teste de webhook
+- Ajuste da função de teste para tratar corretamente o endpoint do Supabase
+- Verificação de problemas de autenticação e log detalhado 
+
+**Implementação**:
+- Simplificação da função test-webhook para testar apenas o endpoint do Supabase
+- Correção de erros na leitura de respostas e tratamento de erros
+- Melhoria na exibição de resultados no componente WebhookManager
+- Garantia de que o URL correto seja utilizado em todas as funções
+
+**Ação planejada**:
+- Testar a conexão com a nova configuração
+- Verificar logs para identificar possíveis erros restantes
+
+#### Migração para URL de Webhook do Supabase
+
+**Discussão**:
+- Decisão de migrar completamente para a URL de webhook do Supabase
+- Remoção de todas as referências ao webhook anterior
+- Configuração do novo sistema para usar exclusivamente a função Supabase
+
+**Implementação**:
+- Atualização do `webhookService.ts` para retornar apenas a URL do Supabase
+- Modificação da função `test-webhook` para testar apenas o endpoint do Supabase
+- Atualização do componente `WebhookManager` para mostrar a nova configuração
+- Simplificação da função `register-webhook` para usar apenas a URL do Supabase
+
+**Ação planejada**:
+- Atualizar a configuração do webhook no painel do Asaas para apontar para a URL do Supabase
+- Testar a conexão com a nova configuração
 
 ## Problems and Solutions {#problems-and-solutions}
 
