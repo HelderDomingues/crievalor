@@ -12,32 +12,10 @@ export interface ClientLogo {
  * Creates the logos storage bucket if it doesn't exist
  */
 export const createLogosBucketIfNotExists = async () => {
-  try {
-    // Check if the bucket exists
-    const { data: buckets, error: listError } = await supabaseExtended.storage.listBuckets();
-    
-    if (listError) {
-      throw listError;
-    }
-
-    const logosBucketExists = buckets?.some(bucket => bucket.name === 'logos');
-    
-    if (!logosBucketExists) {
-      // Create the logos bucket
-      const { error: createError } = await supabaseExtended.storage.createBucket('logos', {
-        public: true,
-        fileSizeLimit: 5242880 // 5MB
-      });
-      
-      if (createError) {
-        throw createError;
-      }
-      
-      console.log('Logos storage bucket created');
-    }
-  } catch (error) {
-    console.error('Error setting up logos storage bucket:', error);
-  }
+  return createStorageBucketIfNotExists('logos', {
+    public: true,
+    fileSizeLimit: 5242880 // 5MB
+  });
 };
 
 /**
@@ -75,14 +53,56 @@ export const uploadLogoImage = async (file: File) => {
 };
 
 /**
+ * Fetches client logos from the database
+ */
+export const fetchClientLogos = async (): Promise<ClientLogo[]> => {
+  try {
+    const { data, error } = await supabaseExtended
+      .from('client_logos')
+      .select('*')
+      .order('name');
+    
+    if (error) {
+      throw error;
+    }
+    
+    return data || [];
+  } catch (error) {
+    console.error('Error fetching client logos:', error);
+    return [];
+  }
+};
+
+/**
  * Saves client logos to the database
- * Note: In a real implementation, this would save to a database table
  */
 export const saveClientLogos = async (logos: ClientLogo[]) => {
-  // In a real implementation, this would save to a database
-  // For this example, we'll just log the logos
-  console.log('Saving client logos:', logos);
-  
-  // Return a success response
-  return { success: true, error: null };
+  try {
+    // Clear existing logos
+    const { error: deleteError } = await supabaseExtended
+      .from('client_logos')
+      .delete()
+      .neq('id', '00000000-0000-0000-0000-000000000000');
+    
+    if (deleteError) {
+      throw deleteError;
+    }
+    
+    // Insert new logos
+    const { error: insertError } = await supabaseExtended
+      .from('client_logos')
+      .insert(logos.map(logo => ({
+        name: logo.name,
+        logo: logo.logo
+      })));
+    
+    if (insertError) {
+      throw insertError;
+    }
+    
+    return { success: true, error: null };
+  } catch (error) {
+    console.error('Error saving client logos:', error);
+    return { success: false, error };
+  }
 };

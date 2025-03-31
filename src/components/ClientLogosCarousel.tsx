@@ -1,8 +1,9 @@
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
+import { fetchClientLogos } from "@/services/clientLogosService";
 
-// Client logos with editable fields
+// Default client logos as fallback
 export const clientLogos = [
   { name: "Client 1", logo: "/lovable-uploads/client1.png" },
   { name: "Client 2", logo: "/lovable-uploads/client2.png" },
@@ -13,6 +14,43 @@ export const clientLogos = [
 ];
 
 const ClientLogosCarousel = () => {
+  const [logos, setLogos] = useState(clientLogos);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const getLogos = async () => {
+      try {
+        const fetchedLogos = await fetchClientLogos();
+        if (fetchedLogos && fetchedLogos.length > 0) {
+          setLogos(fetchedLogos);
+        }
+      } catch (error) {
+        console.error("Error fetching client logos:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    getLogos();
+  }, []);
+
+  if (isLoading) {
+    return (
+      <div className="py-12 bg-background/50 relative overflow-hidden">
+        <div className="container mx-auto px-4 text-center">
+          <h3 className="text-xl md:text-2xl font-medium mb-8">
+            Empresas que confiam em nossa estratégia
+          </h3>
+          <div className="animate-pulse flex justify-center space-x-8">
+            {[1, 2, 3, 4, 5].map((item) => (
+              <div key={item} className="h-12 w-24 bg-gray-200 rounded"></div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="py-12 bg-background/50 relative overflow-hidden">
       <div className="container mx-auto px-4">
@@ -34,7 +72,7 @@ const ClientLogosCarousel = () => {
             className="w-full"
           >
             <CarouselContent className="py-4">
-              {clientLogos.map((client, index) => (
+              {logos.map((client, index) => (
                 <CarouselItem key={index} className="basis-1/2 md:basis-1/3 lg:basis-1/5 pl-4">
                   <div className="h-16 flex items-center justify-center p-2 opacity-70 hover:opacity-100 transition-opacity duration-300 transform hover:scale-105">
                     <img

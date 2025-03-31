@@ -1,14 +1,56 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { clientLogos } from "@/components/ClientLogosCarousel";
 import { Trash2, Upload, Plus } from "lucide-react";
+import { toast } from "sonner";
+import { uploadLogoImage } from "@/services/clientLogosService";
+import { supabaseExtended } from "@/integrations/supabase/extendedClient";
+
+interface ClientLogo {
+  id?: string;
+  name: string;
+  logo: string;
+}
 
 const ClientLogosAdmin = () => {
-  const [logos, setLogos] = useState([...clientLogos]);
+  const [logos, setLogos] = useState<ClientLogo[]>([]);
   const [isEditing, setIsEditing] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    fetchLogos();
+  }, []);
+
+  const fetchLogos = async () => {
+    try {
+      setIsLoading(true);
+      
+      // Try to fetch from Supabase first
+      const { data, error } = await supabaseExtended
+        .from('client_logos')
+        .select('*')
+        .order('name');
+      
+      if (error) {
+        console.error("Error fetching logos:", error);
+        // Fallback to local data
+        setLogos([...clientLogos]);
+      } else if (data && data.length > 0) {
+        setLogos(data);
+      } else {
+        // No data in database yet, use the local data
+        setLogos([...clientLogos]);
+      }
+    } catch (error) {
+      console.error("Error in fetchLogos:", error);
+      setLogos([...clientLogos]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleLogoChange = (index: number, field: 'name' | 'logo', value: string) => {
     const updatedLogos = [...logos];
@@ -17,7 +59,7 @@ const ClientLogosAdmin = () => {
   };
 
   const handleAddLogo = () => {
-    setLogos([...logos, { name: `Client ${logos.length + 1}`, logo: "/placeholder.svg" }]);
+    setLogos([...logos, { name: `Cliente ${logos.length + 1}`, logo: "/placeholder.svg" }]);
   };
 
   const handleRemoveLogo = (index: number) => {
@@ -28,21 +70,92 @@ const ClientLogosAdmin = () => {
 
   const handleSave = async () => {
     try {
-      // Here you would typically save to a database
-      // For now, we'll just show a success message
-      alert("Client logos updated successfully");
+      setIsLoading(true);
+      
+      // Create the table if it doesn't exist
+      const { error: tableError } = await supabaseExtended.rpc('create_table_if_not_exists', {
+        table_name: 'client_logos',
+        table_definition: `
+          id uuid primary key default uuid_generate_v4(),
+          name text not null,
+          logo text not null,
+          created_at timestamp with time zone default now(),
+          updated_at timestamp with time zone default now()
+        `
+      });
+      
+      if (tableError) {
+        console.error("Error creating table:", tableError);
+        throw new Error("Erro ao criar tabela de logos");
+      }
+      
+      // Clear existing data
+      const { error: deleteError } = await supabaseExtended
+        .from('client_logos')
+        .delete()
+        .neq('id', '00000000-0000-0000-0000-000000000000'); // Delete all rows
+      
+      if (deleteError) {
+        console.error("Error deleting existing logos:", deleteError);
+        throw new Error("Erro ao limpar logos existentes");
+      }
+      
+      // Insert new data
+      const { error: insertError } = await supabaseExtended
+        .from('client_logos')
+        .insert(logos.map(logo => ({
+          name: logo.name,
+          logo: logo.logo
+        })));
+      
+      if (insertError) {
+        console.error("Error inserting logos:", insertError);
+        throw new Error("Erro ao salvar logos");
+      }
+      
+      toast.success("Logos dos clientes atualizados com sucesso");
       setIsEditing(false);
     } catch (error) {
       console.error("Error saving client logos:", error);
-      alert("Error saving client logos");
+      toast.error("Erro ao salvar logos dos clientes");
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const handleUploadImage = async (index: number) => {
-    // In a real implementation, this would open a file dialog and upload the image
-    // For demonstration purposes, we'll just update with a placeholder
-    const newImageUrl = `/lovable-uploads/new-client-${index + 1}.png`;
-    handleLogoChange(index, 'logo', newImageUrl);
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    
+    input.onchange = async (e: Event) => {
+      const target = e.target as HTMLInputElement;
+      if (!target.files || target.files.length === 0) return;
+      
+      const file = target.files[0];
+      
+      try {
+        setIsLoading(true);
+        const { url, error } = await uploadLogoImage(file);
+        
+        if (error || !url) {
+          console.error("Error uploading image:", error);
+          toast.error("Erro ao fazer upload da imagem");
+          return;
+        }
+        
+        // Update the logo URL in state
+        handleLogoChange(index, 'logo', url);
+        toast.success("Imagem carregada com sucesso");
+      } catch (error) {
+        console.error("Error in handleUploadImage:", error);
+        toast.error("Erro ao processar imagem");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    input.click();
   };
 
   return (
@@ -53,17 +166,39 @@ const ClientLogosAdmin = () => {
           <div>
             {isEditing ? (
               <div className="space-x-2">
-                <Button onClick={handleSave} variant="default">Salvar</Button>
-                <Button onClick={() => setIsEditing(false)} variant="outline">Cancelar</Button>
+                <Button 
+                  onClick={handleSave} 
+                  variant="default"
+                  disabled={isLoading}
+                >
+                  {isLoading ? "Salvando..." : "Salvar"}
+                </Button>
+                <Button 
+                  onClick={() => setIsEditing(false)} 
+                  variant="outline"
+                  disabled={isLoading}
+                >
+                  Cancelar
+                </Button>
               </div>
             ) : (
-              <Button onClick={() => setIsEditing(true)} variant="outline">Editar</Button>
+              <Button 
+                onClick={() => setIsEditing(true)} 
+                variant="outline"
+                disabled={isLoading}
+              >
+                {isLoading ? "Carregando..." : "Editar"}
+              </Button>
             )}
           </div>
         </CardTitle>
       </CardHeader>
       <CardContent>
-        {isEditing ? (
+        {isLoading && !isEditing ? (
+          <div className="flex justify-center items-center p-8">
+            Carregando logos dos clientes...
+          </div>
+        ) : isEditing ? (
           <div className="space-y-4">
             {logos.map((logo, index) => (
               <div key={index} className="flex items-center gap-4 p-2 border rounded-md">
@@ -91,6 +226,7 @@ const ClientLogosAdmin = () => {
                       size="icon" 
                       onClick={() => handleUploadImage(index)}
                       title="Fazer upload de imagem"
+                      disabled={isLoading}
                     >
                       <Upload className="h-4 w-4" />
                     </Button>
@@ -101,12 +237,18 @@ const ClientLogosAdmin = () => {
                   size="icon"
                   onClick={() => handleRemoveLogo(index)}
                   className="text-destructive"
+                  disabled={isLoading}
                 >
                   <Trash2 className="h-4 w-4" />
                 </Button>
               </div>
             ))}
-            <Button onClick={handleAddLogo} variant="outline" className="w-full">
+            <Button 
+              onClick={handleAddLogo} 
+              variant="outline" 
+              className="w-full"
+              disabled={isLoading}
+            >
               <Plus className="mr-2 h-4 w-4" /> Adicionar Novo Logo
             </Button>
           </div>
