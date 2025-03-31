@@ -1,3 +1,4 @@
+
 # Project Log - Crie Valor Estratégia
 
 ## Table of Contents
@@ -16,6 +17,40 @@
 - **Technologies**: React, TypeScript, Tailwind CSS, shadcn/ui, Supabase, Asaas Payment Integration
 
 ## Interaction Log {#interaction-log}
+
+### 2024-03-31 - Problema na Criação de Usuários via Webhook
+
+**Discussão**:
+- Identificação de problemas na criação de usuários e subscriptions após pagamentos no Asaas
+- Conflitos ao tentar criar usuários duplicados (emails já existentes no sistema)
+- Erros na lógica de criação de assinaturas para pagamentos à vista
+
+**Implementação**:
+- Atualização da função de teste para identificar corretamente usuários existentes
+- Melhoria na lógica de tratamento de webhooks para verificar existência de usuários por email
+- Documentação de procedimento manual para criação de usuários no caso de falhas
+
+**Ação planejada**:
+- Criar documentação passo-a-passo para o procedimento manual de criação de usuários
+- Implementar verificação mais robusta de usuários existentes no webhook
+- Melhorar sistema de notificação e logs para facilitar o diagnóstico de falhas
+
+### 2024-03-30 - Ajustes no Sistema de Webhook e Criação de Usuários
+
+**Discussão**:
+- Continuação dos testes com a integração Asaas
+- Verificação de erros no console: "A user with this email address has already been registered"
+- Necessidade de ajustar o webhook para lidar com usuários já existentes
+
+**Implementação**:
+- Refinamento do componente WebhookManager para testes mais claros
+- Melhoria na detecção e tratamento de usuários existentes
+- Correção de erros na criação de assinaturas para compras de parcela única
+
+**Ação planejada**:
+- Listar todos os possíveis cenários de erro no webhook
+- Adicionar tratamentos específicos para cada caso
+- Implementar sistema de notificação para administradores quando um webhook falhar
 
 ### 2024-03-29 - Desabilitar verificação JWT para webhooks do Asaas
 
@@ -202,6 +237,40 @@
 
 ## Problems and Solutions {#problems-and-solutions}
 
+### Problem: Falha na Criação de Usuários Após Pagamentos Confirmados
+
+**Description**:
+Após pagamentos confirmados no Asaas, o sistema falha ao criar usuários devido a conflitos com emails já existentes.
+
+**Analysis**:
+Quando um cliente faz um pagamento, o sistema tenta criar um novo usuário no Supabase sem verificar adequadamente se o email já existe. Isso gera erros `AuthApiError: A user with this email address has already been registered` nos logs.
+
+**Solution**:
+- Implementar verificação robusta por email antes de tentar criar um novo usuário
+- Adicionar lógica para recuperar o usuário existente caso o email já esteja registrado
+- Melhorar os logs para identificar claramente a origem do problema
+- Criar documentação para procedimento manual de criação de usuários como fallback
+
+**Status Atual**:
+Implementado parcialmente. Necessários mais testes para validar a solução em todos os cenários.
+
+### Problem: Webhooks do Asaas não estão criando assinaturas corretamente
+
+**Description**:
+Para pagamentos confirmados à vista, o sistema não está criando os registros de assinatura corretamente.
+
+**Analysis**:
+A lógica de criação de assinaturas estava focada apenas em pagamentos parcelados, sem tratamento adequado para pagamentos únicos à vista com desconto.
+
+**Solution**:
+- Atualizar a lógica de processamento de webhooks para tratar adequadamente pagamentos únicos
+- Implementar verificação do tipo de pagamento (parcelado vs. à vista)
+- Melhorar o mapeamento entre pagamentos e planos de assinatura
+- Criar testes para todos os tipos de pagamento
+
+**Status Atual**:
+Em implementação. Necessário validar as mudanças com testes em ambiente real.
+
 ### Problem: Verificação JWT impede o funcionamento do webhook do Asaas
 
 **Description**:
@@ -336,6 +405,21 @@ Updated RLS policies and ensured proper user context was maintained during payme
 
 ## Architectural Decisions {#architectural-decisions}
 
+### Processo Manual de Criação de Usuários como Fallback
+
+**Decision**:
+Implementar um processo manual documentado para criação de usuários e assinaturas quando o webhook falhar.
+
+**Justification**:
+- Garantir que clientes que pagaram tenham acesso mesmo em caso de falhas do webhook
+- Fornecer um procedimento claro para administradores em casos de exceção
+- Permitir recuperação de situações de erro sem intervenção técnica complexa
+
+**Impact**:
+- Maior confiabilidade do sistema como um todo
+- Redução do impacto de falhas nos webhooks
+- Melhor experiência para o cliente final, mesmo em situações de erro técnico
+
 ### Edge Function Security Exception
 
 **Decision**:
@@ -423,16 +507,34 @@ Use a combination of React Query and local state
 - Payment integration
 - Success/failure handling
 - Webhook testing interface
+- Procedimento manual para criação de usuários como fallback
 
 **Recent Improvements**:
+- Melhoria na lógica de criação de usuários para verificar existência prévia por email
+- Correção na criação de assinaturas para pagamentos à vista
+- Atualização do componente WebhookManager com instruções mais claras
+- Documentação de procedimento manual para administradores em caso de falhas
 - Correção do erro 401 "Missing authorization header" no webhook do Asaas
 - Adicionado suporte para o header access_token para autenticação com Asaas
 - Melhorias na documentação e interface de usuário para explicar a configuração correta
 - Atualização dos CORS headers para permitir todos os cabeçalhos necessários
-- Melhoria no componente WebhookManager com instruções claras de configuração
-- Tratamento temporário para aceitar requisições durante a fase de depuração
 
 ## Recent Issues and Actions
+
+### Correção de problemas na criação de usuários após pagamentos
+
+**Solução Final em Implementação**:
+Desenvolvimento de um processo robusto que: 
+1. Verifica se um usuário já existe no sistema pelo email antes de tentar criar
+2. Se existir, associa o pagamento a este usuário
+3. Se não existir, cria um novo usuário com os dados do cliente
+4. Documenta procedimento manual para administradores caso o processo automatizado falhe
+
+**Implementação**:
+1. Adição de verificação por email antes da criação de usuários
+2. Melhoria na lógica de tratamento de webhooks para pagamentos diferentes
+3. Criação de documentação detalhada para procedimento manual
+4. Melhoria nos logs para facilitar a identificação e resolução de problemas
 
 ### Aceitar webhooks do Asaas Sandbox sem token de autenticação
 
