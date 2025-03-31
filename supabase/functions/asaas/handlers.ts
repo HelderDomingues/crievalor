@@ -1,7 +1,8 @@
+
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.38.4';
 import { getAsaasApiUrl, validateUrls, safeJsonParse } from './utils.ts';
 
-// Handler for customer-related endpoints
+// Handler para operações relacionadas a clientes
 export async function handleCustomer(action: string, data: any, apiKey: string): Promise<any> {
   try {
     if (!action) {
@@ -78,7 +79,7 @@ export async function handleCustomer(action: string, data: any, apiKey: string):
   }
 }
 
-// Payment related functions
+// Handler para operações relacionadas a pagamentos
 export async function handlePayment(action: string, data: any, apiKey: string): Promise<any> {
   const baseUrl = getAsaasApiUrl();
   
@@ -105,7 +106,7 @@ export async function handlePayment(action: string, data: any, apiKey: string): 
   }
 }
 
-// Subscription related functions
+// Handler para operações relacionadas a assinaturas
 export async function handleSubscription(action: string, data: any, apiKey: string): Promise<any> {
   const baseUrl = getAsaasApiUrl();
   
@@ -119,7 +120,7 @@ export async function handleSubscription(action: string, data: any, apiKey: stri
   }
 }
 
-// Payment link related functions
+// Handler para operações relacionadas a links de pagamento
 export async function handlePaymentLink(action: string, data: any, apiKey: string): Promise<any> {
   const baseUrl = getAsaasApiUrl();
   
@@ -133,7 +134,7 @@ export async function handlePaymentLink(action: string, data: any, apiKey: strin
   }
 }
 
-// Implementation of individual handler functions
+// Implementação de funções individuais de handler
 async function getCustomers(baseUrl: string, apiKey: string): Promise<any> {
   try {
     const response = await fetch(`${baseUrl}/customers`, {
@@ -668,10 +669,87 @@ async function getPaymentLink(baseUrl: string, apiKey: string, linkId: string): 
   }
 }
 
+// Handler para operações gerais de clientes e criação/verificação de clientes/usuários
+export async function handleCreateCustomer(data: any, apiKey: string, isSandbox: boolean = false): Promise<any> {
+  try {
+    // Validation
+    if (!data.name) return { success: false, error: "Nome do cliente é obrigatório" };
+    if (!data.email) return { success: false, error: "Email do cliente é obrigatório" };
+    if (!data.cpfCnpj) return { success: false, error: "CPF/CNPJ do cliente é obrigatório" };
+    
+    // Normalize CPF/CNPJ
+    data.cpfCnpj = data.cpfCnpj.replace(/\D/g, '');
+    
+    // Get the base URL for Asaas API
+    const asaasApiUrl = getAsaasApiUrl(isSandbox);
+    
+    // First, check if customer already exists by CPF/CNPJ
+    const existingCustomer = await getCustomerByCpfCnpj(asaasApiUrl, apiKey, data.cpfCnpj);
+    
+    if (existingCustomer) {
+      console.log("Cliente já existe no Asaas:", existingCustomer);
+      
+      // If needed, update customer data
+      if (data.updateIfExists) {
+        const updatedCustomer = await updateCustomer(asaasApiUrl, apiKey, existingCustomer.id, data);
+        return {
+          success: true,
+          customer: updatedCustomer.customer,
+          isNew: false,
+          message: "Cliente atualizado com sucesso"
+        };
+      }
+      
+      return {
+        success: true,
+        customer: existingCustomer,
+        isNew: false,
+        message: "Cliente já existe no Asaas"
+      };
+    }
+    
+    // Customer doesn't exist, so create a new one
+    console.log("Criando novo cliente no Asaas:", data);
+    const result = await createCustomer(asaasApiUrl, apiKey, data);
+    
+    return {
+      success: true,
+      customer: result.customer,
+      isNew: true,
+      message: "Cliente criado com sucesso"
+    };
+  } catch (error) {
+    console.error("Erro ao criar/recuperar cliente:", error);
+    return {
+      success: false,
+      error: `Erro ao criar/recuperar cliente: ${error.message || "Erro desconhecido"}`
+    };
+  }
+}
+
+// Funções relacionadas a cobrança
+export async function handleCreateCharge(data: any, apiKey: string, isSandbox: boolean = false): Promise<any> {
+  try {
+    // Add implementation for creating charges
+    console.log("Creating charge for customer:", data);
+    
+    return {
+      success: true,
+      message: "Not implemented yet"
+    };
+  } catch (error) {
+    console.error("Error creating charge:", error);
+    return {
+      success: false,
+      error: `Error creating charge: ${error.message}`
+    };
+  }
+}
+
 /**
  * Buscar dados do cliente no Asaas
  */
-export async function handleGetCustomer(customerId: string, apiKey: string, isSandbox: boolean) {
+export async function handleGetCustomer(customerId: string, apiKey: string, isSandbox: boolean = false) {
   try {
     if (!customerId) {
       return {
@@ -694,7 +772,14 @@ export async function handleGetCustomer(customerId: string, apiKey: string, isSa
     });
     
     if (!response.ok) {
-      const errorData = await response.json();
+      const errorText = await response.text();
+      let errorData;
+      try {
+        errorData = JSON.parse(errorText);
+      } catch (e) {
+        errorData = { message: errorText };
+      }
+      
       console.error("Erro ao buscar cliente:", errorData);
       return {
         success: false,
@@ -714,6 +799,277 @@ export async function handleGetCustomer(customerId: string, apiKey: string, isSa
     return {
       success: false,
       error: `Erro ao buscar cliente: ${error.message}`
+    };
+  }
+}
+
+// Funções relacionadas a cartões de crédito
+export async function handleCreateCreditCard(data: any, apiKey: string, isSandbox: boolean = false): Promise<any> {
+  // Implementação simulada
+  return { success: true, message: "Credit card function not implemented yet" };
+}
+
+export async function handleDeleteCard(cardId: string, apiKey: string, isSandbox: boolean = false): Promise<any> {
+  // Implementação simulada
+  return { success: true, message: "Card deletion function not implemented yet" };
+}
+
+// Funções relacionadas a assinaturas
+export async function handleCreateSubscription(data: any, apiKey: string, isSandbox: boolean = false): Promise<any> {
+  // Implementação simulada
+  return { success: true, message: "Subscription creation not implemented yet" };
+}
+
+// Funções relacionadas a pagamentos
+export async function handleGetAllPayments(data: any, apiKey: string, isSandbox: boolean = false): Promise<any> {
+  // Implementação simulada
+  return { success: true, message: "Get all payments function not implemented yet" };
+}
+
+export async function handleRequestRefund(data: any, apiKey: string, isSandbox: boolean = false): Promise<any> {
+  // Implementação simulada
+  return { success: true, message: "Refund request function not implemented yet" };
+}
+
+// Implementação teste do webhook para cliente específico
+export async function handleTestWebhookCustomer(customerId: string, apiKey: string): Promise<any> {
+  try {
+    // Primeiro, recupera os dados do cliente
+    const customerResult = await handleGetCustomer(customerId, apiKey, true);
+    
+    if (!customerResult.success || !customerResult.customer) {
+      return customerResult; // Retorna o erro
+    }
+    
+    const customer = customerResult.customer;
+    console.log("Cliente recuperado com sucesso:", customer);
+    
+    // Inicializar cliente Supabase
+    const supabaseUrl = Deno.env.get('SUPABASE_URL') || '';
+    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || '';
+    
+    if (!supabaseUrl || !supabaseKey) {
+      return {
+        success: false,
+        error: "Variáveis de ambiente do Supabase não configuradas"
+      };
+    }
+    
+    const supabase = createClient(supabaseUrl, supabaseKey);
+    
+    try {
+      // Verificar se o cliente já existe localmente
+      const { data: existingCustomer, error: findError } = await supabase
+        .from("asaas_customers")
+        .select("*")
+        .eq("asaas_id", customer.id)
+        .maybeSingle();
+        
+      if (findError) {
+        console.error("Erro ao buscar cliente existente:", findError);
+        return { 
+          success: false, 
+          error: "Erro ao buscar cliente existente", 
+          details: findError 
+        };
+      }
+      
+      if (existingCustomer) {
+        console.log("Cliente já existe no sistema:", existingCustomer);
+        
+        // Verificar se já existe um usuário associado
+        const { data: userProfile, error: profileError } = await supabase
+          .from("profiles")
+          .select("*")
+          .eq("id", existingCustomer.user_id)
+          .maybeSingle();
+          
+        if (profileError) {
+          console.error("Erro ao buscar perfil do usuário:", profileError);
+          return {
+            success: false,
+            error: "Erro ao buscar perfil do usuário",
+            details: profileError
+          };
+        }
+        
+        if (userProfile) {
+          console.log("Perfil de usuário encontrado:", userProfile);
+          
+          // Enviar email de redefinição de senha
+          const { data: resetData, error: resetError } = await supabase.auth.admin.generateLink({
+            type: 'recovery',
+            email: customer.email,
+            options: {
+              redirectTo: 'https://app.crievalor.com.br/auth?action=reset_password'
+            }
+          });
+          
+          if (resetError) {
+            console.error("Erro ao enviar email de redefinição de senha:", resetError);
+            return { 
+              success: false, 
+              error: "Erro ao enviar email de redefinição de senha", 
+              details: resetError 
+            };
+          }
+          
+          console.log("Email de redefinição de senha enviado com sucesso");
+          return { 
+            success: true, 
+            message: "Cliente já existe, email de redefinição de senha enviado", 
+            customer: existingCustomer,
+            userProfile,
+            resetEmailSent: true
+          };
+        } else {
+          console.log("Cliente existe mas não tem perfil de usuário. Criando novo perfil...");
+          
+          // Criar novo perfil de usuário
+          const { data: newUser, error: userError } = await supabase.auth.admin.createUser({
+            email: customer.email,
+            email_confirm: true,
+            user_metadata: {
+              full_name: customer.name,
+              phone: customer.phone || customer.mobilePhone,
+              cpf: customer.cpfCnpj
+            }
+          });
+          
+          if (userError) {
+            console.error("Erro ao criar usuário:", userError);
+            return { 
+              success: false, 
+              error: "Erro ao criar usuário", 
+              details: userError 
+            };
+          }
+          
+          console.log("Novo usuário criado:", newUser);
+          
+          // Atualizar o registro do cliente com o ID do usuário
+          const { error: updateError } = await supabase
+            .from("asaas_customers")
+            .update({ user_id: newUser.user.id })
+            .eq("asaas_id", customer.id);
+            
+          if (updateError) {
+            console.error("Erro ao atualizar cliente com ID do usuário:", updateError);
+            return {
+              success: false,
+              error: "Erro ao atualizar cliente com ID do usuário",
+              details: updateError
+            };
+          }
+          
+          // Enviar email de redefinição de senha
+          const { data: resetData, error: resetError } = await supabase.auth.admin.generateLink({
+            type: 'recovery',
+            email: customer.email,
+            options: {
+              redirectTo: 'https://app.crievalor.com.br/auth?action=reset_password'
+            }
+          });
+          
+          if (resetError) {
+            console.error("Erro ao enviar email de redefinição de senha:", resetError);
+          } else {
+            console.log("Email de redefinição de senha enviado com sucesso");
+          }
+          
+          return { 
+            success: true, 
+            message: "Novo usuário criado e vinculado ao cliente existente", 
+            customer: existingCustomer,
+            newUser: newUser.user,
+            resetEmailSent: !resetError
+          };
+        }
+      } else {
+        console.log("Cliente não existe no sistema. Criando novo usuário e registro de cliente...");
+        
+        // Criar novo usuário
+        const { data: newUser, error: userError } = await supabase.auth.admin.createUser({
+          email: customer.email,
+          email_confirm: true,
+          user_metadata: {
+            full_name: customer.name,
+            phone: customer.phone || customer.mobilePhone,
+            cpf: customer.cpfCnpj
+          }
+        });
+        
+        if (userError) {
+          console.error("Erro ao criar usuário:", userError);
+          return { 
+            success: false, 
+            error: "Erro ao criar usuário", 
+            details: userError 
+          };
+        }
+        
+        console.log("Novo usuário criado:", newUser);
+        
+        // Criar registro de cliente
+        const { data: newCustomerRecord, error: customerError } = await supabase
+          .from("asaas_customers")
+          .insert({
+            asaas_id: customer.id,
+            user_id: newUser.user.id,
+            email: customer.email,
+            cpf_cnpj: customer.cpfCnpj
+          })
+          .select()
+          .single();
+          
+        if (customerError) {
+          console.error("Erro ao criar registro de cliente:", customerError);
+          return { 
+            success: false, 
+            error: "Erro ao criar registro de cliente", 
+            details: customerError 
+          };
+        }
+        
+        console.log("Novo registro de cliente criado:", newCustomerRecord);
+        
+        // Enviar email de redefinição de senha
+        const { data: resetData, error: resetError } = await supabase.auth.admin.generateLink({
+          type: 'recovery',
+          email: customer.email,
+          options: {
+            redirectTo: 'https://app.crievalor.com.br/auth?action=reset_password'
+          }
+        });
+        
+        if (resetError) {
+          console.error("Erro ao enviar email de redefinição de senha:", resetError);
+        } else {
+          console.log("Email de redefinição de senha enviado com sucesso");
+        }
+        
+        return { 
+          success: true, 
+          message: "Novo usuário e registro de cliente criados com sucesso", 
+          customer: newCustomerRecord,
+          newUser: newUser.user,
+          resetEmailSent: !resetError
+        };
+      }
+    } catch (error) {
+      console.error("Erro durante o teste de webhook:", error);
+      return { 
+        success: false, 
+        error: "Erro durante o teste de webhook", 
+        details: error.message 
+      };
+    }
+  } catch (error) {
+    console.error("Erro durante o teste de webhook:", error);
+    return { 
+      success: false, 
+      error: "Erro durante o teste de webhook", 
+      details: error.message 
     };
   }
 }

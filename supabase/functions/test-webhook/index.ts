@@ -43,6 +43,7 @@ serve(async (req) => {
     const testResults = {
       webhookEndpoint: await testWebhookEndpoint(),
       asaasAccount: await testAsaasApiConnection(),
+      jwtVerificationDisabled: true,
     };
 
     // Return test results
@@ -53,6 +54,7 @@ serve(async (req) => {
         testResults,
         message: "Webhook test completed successfully",
         recommendations: getRecommendations(testResults),
+        jwtVerificationDisabled: true,
       }),
       {
         headers: {

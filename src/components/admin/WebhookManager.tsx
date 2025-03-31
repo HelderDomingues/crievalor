@@ -395,15 +395,18 @@ export const WebhookManager = () => {
 
         {/* Componente de teste manual de cliente */}
         <div>
-          <h3 className="text-lg font-medium mb-4">Teste Manual de Cliente</h3>
+          <h3 className="text-lg font-medium mb-4">Recuperação e Criação de Cliente</h3>
+          <p className="text-sm text-muted-foreground mb-4">
+            Recupere os dados de um cliente do Asaas e crie o usuário correspondente em nosso sistema.
+          </p>
           
           <div className="p-4 border rounded-md bg-gray-50 space-y-4">
             <div className="flex items-start gap-3">
               <User className="h-5 w-5 text-blue-600 mt-1" />
               <div>
-                <h4 className="font-medium text-blue-800">Recuperação e Criação de Cliente</h4>
+                <h4 className="font-medium text-blue-800">Teste Manual de Cliente</h4>
                 <p className="text-sm text-muted-foreground">
-                  Recupere os dados de um cliente do Asaas e crie o usuário correspondente em nosso sistema.
+                  Este teste recupera os dados do cliente do Asaas, cria o usuário correspondente e envia um email de redefinição de senha.
                 </p>
               </div>
             </div>
@@ -435,10 +438,6 @@ export const WebhookManager = () => {
                   )}
                 </Button>
               </div>
-              <p className="text-sm text-muted-foreground mt-1">
-                <InfoIcon className="inline-block w-4 h-4 mr-1" />
-                Este teste recupera os dados do cliente do Asaas, cria o usuário correspondente e envia um email de redefinição de senha.
-              </p>
             </div>
 
             {customerTestResults && (

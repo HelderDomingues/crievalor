@@ -1,22 +1,24 @@
 
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.38.4';
+import { corsHeaders, getAsaasApiUrl } from './utils.ts';
 import { 
-  handleCreateCharge, 
+  handleCustomer,
+  handlePayment,
+  handleSubscription,
+  handlePaymentLink,
   handleCreateCustomer, 
+  handleCreateCharge, 
   handleCreateCreditCard, 
   handleDeleteCard,
   handleCreateSubscription,
   handleGetAllPayments,
   handleGetPayment,
-  handleCancelSubscription,
+  handleGetCustomer,
   handleRequestRefund,
-  handleGetCustomer
+  handleTestWebhookCustomer
 } from "./handlers.ts";
-import { corsHeaders, getAsaasApiUrl } from './utils.ts';
 
 const ASAAS_API_KEY = Deno.env.get('ASAAS_API_KEY') || '';
-const ASAAS_WEBHOOK_TOKEN = Deno.env.get('ASAAS_WEBHOOK_TOKEN') || '';
 
 serve(async (req) => {
   try {
@@ -43,14 +45,33 @@ serve(async (req) => {
     
     // Switch between different actions
     switch (action) {
+      // Customer actions
+      case "get-customers":
+      case "get-customer":
+      case "get-customer-by-cpf-cnpj":
+      case "update-customer":
+      case "delete-customer":
+        result = await handleCustomer(action, data, apiKey);
+        break;
+        
       case "create-customer":
         result = await handleCreateCustomer(data, apiKey, isSandbox);
         break;
         
+      // Payment actions
       case "create-charge":
         result = await handleCreateCharge(data, apiKey, isSandbox);
         break;
+        
+      case "get-payments":
+      case "get-payment":
+      case "get-payment-by-reference":
+      case "check-existing-payments":
+      case "create-payment":
+        result = await handlePayment(action, data, apiKey);
+        break;
 
+      // Card actions
       case "create-credit-card":
         result = await handleCreateCreditCard(data, apiKey, isSandbox);
         break;
@@ -59,28 +80,35 @@ serve(async (req) => {
         result = await handleDeleteCard(data.cardId, apiKey, isSandbox);
         break;
         
+      // Subscription actions
       case "create-subscription":
         result = await handleCreateSubscription(data, apiKey, isSandbox);
         break;
         
-      case "get-payments":
-        result = await handleGetAllPayments(data, apiKey, isSandbox);
-        break;
-        
-      case "get-payment":
-        result = await handleGetPayment(data.paymentId, apiKey, isSandbox);
-        break;
-        
       case "cancel-subscription":
-        result = await handleCancelSubscription(data, apiKey, isSandbox);
+        result = await handleSubscription(action, data, apiKey);
         break;
         
+      // Payment link actions
+      case "get-payment-link":
+        result = await handlePaymentLink(action, data, apiKey);
+        break;
+        
+      // Refund actions
       case "request-refund":
         result = await handleRequestRefund(data, apiKey, isSandbox);
         break;
         
+      // Direct customer access
       case "get-customer":
         result = await handleGetCustomer(data.customerId, apiKey, isSandbox);
+        break;
+      
+      // Special test case for webhook customer processing  
+      case "test-webhook-customer":
+        console.log("Testando recuperação de cliente específico e criação de usuário");
+        const customerId = data.customerId || "cus_000006606255"; // Use o ID fornecido ou o default Pedro Gaudioso
+        result = await handleTestWebhookCustomer(customerId, apiKey);
         break;
         
       default:
