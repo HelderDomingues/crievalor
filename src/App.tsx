@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useEffect } from "react";
 import {
   createBrowserRouter,
   RouterProvider,
@@ -13,6 +13,8 @@ import AdminMaterialsPage from "./pages/AdminMaterials";
 import ClientLogosAdminPage from "./pages/ClientLogosAdminPage";
 import TestimonialsAdmin from "./pages/TestimonialsAdmin";
 import Auth from "./pages/Auth";
+// Import setup service to initialize application
+import "@/services/setupService";
 
 const router = createBrowserRouter([
   {
@@ -51,6 +53,11 @@ const router = createBrowserRouter([
 ]);
 
 function App() {
+  useEffect(() => {
+    // Log initialization message
+    console.log("Aplicação inicializada com sucesso");
+  }, []);
+
   return (
     <React.StrictMode>
       <RouterProvider router={router} />

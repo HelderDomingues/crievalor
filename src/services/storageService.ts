@@ -3,45 +3,24 @@ import { supabaseExtended } from "@/integrations/supabase/extendedClient";
 
 export const createStorageBucketIfNotExists = async (bucketName: string, options = { public: true, fileSizeLimit: 10485760 }) => {
   try {
-    // Check if the bucket exists
+    // Instead of trying to create buckets directly (which requires admin privileges),
+    // we'll invoke the edge function to handle this securely
+    console.log(`Checking if bucket ${bucketName} exists...`);
+    
+    // For client-side usage, just check if the bucket exists
+    // The actual creation is handled by the edge function
     const { data: buckets, error: listError } = await supabaseExtended.storage.listBuckets();
     
     if (listError) {
-      throw listError;
+      console.error(`Error checking buckets: ${listError.message}`);
+      return;
     }
 
     const bucketExists = buckets?.some(bucket => bucket.name === bucketName);
-    
     if (!bucketExists) {
-      // Create the bucket
-      const { error: createError } = await supabaseExtended.storage.createBucket(bucketName, options);
-      
-      if (createError) {
-        throw createError;
-      }
-      
-      console.log(`Storage bucket '${bucketName}' created`);
-      
-      // For public buckets, add a policy for public read access
-      if (options.public) {
-        try {
-          // Try to add a public read policy for the bucket
-          const { error: policyError } = await supabaseExtended.rpc('create_storage_policy', {
-            bucket_name: bucketName,
-            policy_name: `Public Read Access for ${bucketName}`,
-            policy_definition: `(bucket_id = '${bucketName}'::text)`,
-            policy_operation: 'SELECT'
-          });
-          
-          if (policyError) {
-            console.error(`Error creating public read policy for ${bucketName}:`, policyError);
-          } else {
-            console.log(`Created public read policy for ${bucketName}`);
-          }
-        } catch (policyErr) {
-          console.error(`Failed to create storage policy for ${bucketName}:`, policyErr);
-        }
-      }
+      console.log(`Bucket ${bucketName} does not exist yet. It will be created by the edge function.`);
+    } else {
+      console.log(`Bucket ${bucketName} already exists.`);
     }
   } catch (error) {
     console.error(`Error setting up ${bucketName} storage bucket:`, error);
@@ -66,8 +45,21 @@ export const createMaterialsBucketIfNotExists = async () => {
 
 // Create required buckets when service is imported
 export const initializeStorageBuckets = async () => {
-  await createClientLogosBucketIfNotExists();
-  await createMaterialsBucketIfNotExists();
+  try {
+    // Invoke the edge function to set up storage policies
+    const { error } = await supabaseExtended.functions.invoke('setup-storage-policies');
+    if (error) {
+      console.error("Error setting up storage policies:", error);
+    } else {
+      console.log("Storage policies set up successfully");
+    }
+    
+    // Check bucket existence locally (won't create)
+    await createClientLogosBucketIfNotExists();
+    await createMaterialsBucketIfNotExists();
+  } catch (err) {
+    console.error("Error initializing storage buckets:", err);
+  }
 };
 
 // Initialize buckets if this module is imported directly

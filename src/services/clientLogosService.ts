@@ -1,3 +1,4 @@
+
 import { supabaseExtended } from "@/integrations/supabase/extendedClient";
 
 export interface ClientLogo {
@@ -103,9 +104,12 @@ export const uploadClientLogo = async (file: File, name: string): Promise<{url: 
       .from('clientlogos')
       .getPublicUrl(fileName);
     
-    console.log("Upload concluído com sucesso. URL:", urlData.publicUrl);
+    // Add cache-busting query parameter
+    const publicUrl = `${urlData.publicUrl}?t=${new Date().getTime()}`;
     
-    return { url: urlData.publicUrl, error: null };
+    console.log("Upload concluído com sucesso. URL:", publicUrl);
+    
+    return { url: publicUrl, error: null };
   } catch (error) {
     console.error("Erro inesperado durante upload:", error);
     return { url: null, error: error instanceof Error ? error : new Error(String(error)) };
@@ -121,7 +125,7 @@ export const deleteClientLogo = async (fileName: string): Promise<{success: bool
     
     // Extract the filename from a URL if needed
     const fileNameOnly = fileName.includes('/') 
-      ? fileName.split('/').pop() 
+      ? fileName.split('/').pop()?.split('?')[0] // Also remove query params if present
       : fileName;
     
     if (!fileNameOnly) {

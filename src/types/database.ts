@@ -1,9 +1,10 @@
 
 import { Database as OriginalDatabase } from '@/integrations/supabase/types';
 import { Json } from '@/integrations/supabase/types';
+import { SupabaseClient } from '@supabase/supabase-js';
 
 // Extend the original Database type with our new tables
-export type ExtendedDatabase = OriginalDatabase & {
+type ExtendedDatabaseTables = OriginalDatabase & {
   public: {
     Tables: {
       materials: {
@@ -169,3 +170,6 @@ export type ExtendedDatabase = OriginalDatabase & {
     } & OriginalDatabase['public']['Tables'];
   };
 };
+
+// Export the full type that includes all methods from the original SupabaseClient
+export type ExtendedDatabase = SupabaseClient<ExtendedDatabaseTables>;
