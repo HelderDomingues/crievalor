@@ -31,7 +31,7 @@ export const fetchClientLogos = async (): Promise<ClientLogo[]> => {
     }
     
     // Filter out folders and only keep actual files
-    const logoFiles = files.filter(file => !file.name.endsWith('/') && file.name !== '.emptyFolderPlaceholder');
+    const logoFiles = files.filter(file => !file.name.endsWith('/') && !file.name.startsWith('.'));
     
     console.log("Filtered logo files:", logoFiles);
     
