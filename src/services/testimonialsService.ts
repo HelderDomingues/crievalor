@@ -28,7 +28,7 @@ export const fetchActiveTestimonials = async (): Promise<Testimonial[]> => {
       throw error;
     }
 
-    return data || [];
+    return data as Testimonial[] || [];
   } catch (error) {
     console.error('Erro ao buscar depoimentos:', error);
     return [];
@@ -50,7 +50,7 @@ export const fetchAllTestimonials = async (): Promise<Testimonial[]> => {
       throw error;
     }
 
-    return data || [];
+    return data as Testimonial[] || [];
   } catch (error) {
     console.error('Erro ao buscar depoimentos:', error);
     return [];
@@ -73,7 +73,7 @@ export const createTestimonial = async (testimonial: Omit<Testimonial, 'id' | 'c
       throw error;
     }
 
-    return data;
+    return data as Testimonial;
   } catch (error) {
     console.error('Erro ao criar depoimento:', error);
     return null;
@@ -100,7 +100,7 @@ export const updateTestimonial = async (id: string, testimonial: Partial<Testimo
       throw error;
     }
 
-    return data;
+    return data as Testimonial;
   } catch (error) {
     console.error('Erro ao atualizar depoimento:', error);
     return null;

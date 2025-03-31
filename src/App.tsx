@@ -1,3 +1,4 @@
+
 import React from "react";
 import {
   createBrowserRouter,
@@ -8,7 +9,7 @@ import NotFound from "./pages/NotFound";
 import AdminSetup from "./pages/AdminSetup";
 import WebhookAdmin from "./pages/WebhookAdmin";
 import PortfolioAdmin from "./pages/PortfolioAdmin";
-import MaterialsAdmin from "./pages/MaterialsAdmin";
+import AdminMaterialsPage from "./pages/AdminMaterials";
 import ClientLogosAdminPage from "./pages/ClientLogosAdminPage";
 import TestimonialsAdmin from "./pages/TestimonialsAdmin";
 
@@ -32,7 +33,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/admin-materials",
-    element: <MaterialsAdmin />,
+    element: <AdminMaterialsPage />,
   },
   {
     path: "/admin-logos",

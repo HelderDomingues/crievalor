@@ -1,3 +1,4 @@
+
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "@/components/Header";
@@ -6,7 +7,6 @@ import AdminAuth from "@/components/admin/AdminAuth";
 import { Button } from "@/components/ui/button";
 import { FileText, Image, MessageSquareQuote, Settings } from "lucide-react";
 import AdminCard from "@/components/admin/AdminCard";
-import WebhookAdmin from "./WebhookAdmin";
 
 const AdminSetup = () => {
   const navigate = useNavigate();
@@ -44,7 +44,7 @@ const AdminSetup = () => {
                   <AdminCard 
                     title="Configurações do Sistema" 
                     icon={<Settings className="h-10 w-10" />}
-                    to="/webhooks"
+                    to="/admin-webhooks"
                     description="Gerenciar webhooks e outras configurações do sistema"
                   />
                   
