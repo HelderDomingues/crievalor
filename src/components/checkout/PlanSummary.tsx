@@ -36,6 +36,7 @@ const PlanSummary = ({
   const [paymentMethod, setPaymentMethod] = useState<"credit_installment" | "cash_payment">("credit_installment");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [processId, setProcessId] = useState<string>(`checkout_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`);
+  const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -46,6 +47,13 @@ const PlanSummary = ({
     } else {
       setPaymentMethod("credit_installment");
     }
+    
+    // Adicionar animação de fade-in após montagem do componente
+    const timer = setTimeout(() => {
+      setIsVisible(true);
+    }, 100);
+    
+    return () => clearTimeout(timer);
   }, [selectedPaymentType]);
 
   if (!plan) {
@@ -93,6 +101,13 @@ const PlanSummary = ({
       
       checkoutRecoveryService.saveRecoveryState(recoveryState);
       
+      // Mostrar toast de processamento
+      toast({
+        title: "Processando",
+        description: "Estamos preparando tudo para você...",
+        variant: "default"
+      });
+      
       // Processar o pagamento diretamente se for um usuário existente
       if (user) {
         // Processar pagamento para usuário existente
@@ -105,8 +120,26 @@ const PlanSummary = ({
         });
         
         if (result.success && result.url) {
-          // Redirecionar para o link de pagamento
-          window.location.href = result.url;
+          // Atualizar o recoveryState com o link de pagamento
+          const updatedState = {
+            ...recoveryState,
+            paymentLink: result.url
+          };
+          checkoutRecoveryService.saveRecoveryState(updatedState);
+          
+          // Mostrar toast de sucesso
+          toast({
+            title: "Sucesso!",
+            description: "Redirecionando para o pagamento...",
+            variant: "default"
+          });
+          
+          // Adicionar uma pequena espera para a animação
+          setTimeout(() => {
+            // Redirecionar para o link de pagamento
+            window.location.href = result.url;
+          }, 1000);
+          
           return;
         } else {
           throw new Error(result.error || "Não foi possível gerar o link de pagamento");
@@ -153,8 +186,8 @@ const PlanSummary = ({
     }
   };
 
-  return <div className="space-y-6">
-      <div className="text-center mb-8">
+  return <div className={`space-y-6 transition-opacity duration-500 ${isVisible ? 'opacity-100' : 'opacity-0'}`}>
+      <div className="text-center mb-8 slide-up">
         <h1 className="text-3xl font-bold">Você escolheu o plano {plan.name}</h1>
         <p className="text-muted-foreground mt-2">
           Confirme os detalhes do seu plano e escolha a forma de pagamento.
@@ -162,12 +195,12 @@ const PlanSummary = ({
       </div>
       
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <Card className="overflow-hidden border-primary/20">
+        <Card className="overflow-hidden border-primary/20 hover-raise transition-all duration-300 slide-up">
           <PlanCard plan={plan} formatCurrency={formatCurrency} />
         </Card>
         
         <div className="space-y-6">
-          <Card>
+          <Card className="hover-raise transition-all duration-300 slide-up" style={{ animationDelay: '0.1s' }}>
             <PaymentMethodSection 
               paymentMethod={paymentMethod}
               onPaymentMethodChange={handlePaymentMethodChange}
@@ -177,15 +210,17 @@ const PlanSummary = ({
             />
           </Card>
           
-          <UnifiedCheckoutForm
-            onSubmit={handleFormSubmit}
-            onPaymentRedirect={handlePaymentRedirect}
-            isSubmitting={isSubmitting}
-            plan={plan}
-            getPaymentAmount={getPaymentAmount}
-            formatCurrency={formatCurrency}
-            selectedPaymentMethod={paymentMethod}
-          />
+          <div className="slide-up" style={{ animationDelay: '0.2s' }}>
+            <UnifiedCheckoutForm
+              onSubmit={handleFormSubmit}
+              onPaymentRedirect={handlePaymentRedirect}
+              isSubmitting={isSubmitting}
+              plan={plan}
+              getPaymentAmount={getPaymentAmount}
+              formatCurrency={formatCurrency}
+              selectedPaymentMethod={paymentMethod}
+            />
+          </div>
         </div>
       </div>
     </div>;

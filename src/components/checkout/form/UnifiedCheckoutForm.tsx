@@ -36,6 +36,7 @@ export const UnifiedCheckoutForm: React.FC<UnifiedCheckoutFormProps> = ({
   const [savedEmail, setSavedEmail] = useState<string>("");
   const [savedPhone, setSavedPhone] = useState<string>("");
   const [savedName, setSavedName] = useState<string>("");
+  const [isFormVisible, setIsFormVisible] = useState(false);
   
   const form = useForm<RegistrationFormData>({
     resolver: zodResolver(registrationFormSchema),
@@ -73,6 +74,13 @@ export const UnifiedCheckoutForm: React.FC<UnifiedCheckoutFormProps> = ({
     if (user) {
       form.setValue("email", user.email || "");
     }
+    
+    // Adicionar animação de fade-in
+    const timer = setTimeout(() => {
+      setIsFormVisible(true);
+    }, 200);
+    
+    return () => clearTimeout(timer);
   }, [form, user]);
 
   // Determinar se é um novo usuário ou existente
@@ -89,8 +97,8 @@ export const UnifiedCheckoutForm: React.FC<UnifiedCheckoutFormProps> = ({
   };
   
   return (
-    <Card className="w-full">
-      <CardHeader>
+    <Card className={`w-full transition-all duration-500 ${isFormVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+      <CardHeader className="slide-up">
         <CardTitle>
           {isNewUser ? "Complete seu cadastro" : "Confirme seus dados para pagamento"}
         </CardTitle>
@@ -103,7 +111,7 @@ export const UnifiedCheckoutForm: React.FC<UnifiedCheckoutFormProps> = ({
       </CardHeader>
       
       <CardContent>
-        <div className="bg-blue-50 border border-blue-200 rounded-md p-4 flex items-start mb-6">
+        <div className="bg-blue-50 border border-blue-200 rounded-md p-4 flex items-start mb-6 bounce-in">
           <Info className="text-blue-500 h-5 w-5 mt-0.5 mr-3 flex-shrink-0" />
           <div>
             <h4 className="font-medium text-blue-800">Importante</h4>
@@ -118,23 +126,27 @@ export const UnifiedCheckoutForm: React.FC<UnifiedCheckoutFormProps> = ({
         
         <Form {...form}>
           <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-4">
-            <FormField
-              form={form}
-              name="fullName"
-              label="Nome completo"
-              placeholder="Digite seu nome completo"
-            />
+            <div className="slide-up" style={{ animationDelay: '0.1s' }}>
+              <FormField
+                form={form}
+                name="fullName"
+                label="Nome completo"
+                placeholder="Digite seu nome completo"
+              />
+            </div>
             
-            <FormField
-              form={form}
-              name="email"
-              label="E-mail"
-              placeholder="seu@email.com"
-              type="email"
-              disabled={!!user}
-            />
+            <div className="slide-up" style={{ animationDelay: '0.15s' }}>
+              <FormField
+                form={form}
+                name="email"
+                label="E-mail"
+                placeholder="seu@email.com"
+                type="email"
+                disabled={!!user}
+              />
+            </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 slide-up" style={{ animationDelay: '0.2s' }}>
               <FormField
                 form={form}
                 name="phone"
@@ -151,17 +163,19 @@ export const UnifiedCheckoutForm: React.FC<UnifiedCheckoutFormProps> = ({
             </div>
             
             {isNewUser && (
-              <FormField
-                form={form}
-                name="password"
-                label="Senha"
-                placeholder="******"
-                type="password"
-              />
+              <div className="slide-up" style={{ animationDelay: '0.25s' }}>
+                <FormField
+                  form={form}
+                  name="password"
+                  label="Senha"
+                  placeholder="******"
+                  type="password"
+                />
+              </div>
             )}
             
             {/* Resumo do pedido */}
-            <div className="mt-6 pt-4 border-t border-gray-200">
+            <div className="mt-6 pt-4 border-t border-gray-200 slide-up" style={{ animationDelay: '0.3s' }}>
               <h3 className="font-medium text-lg mb-2">Resumo do Pedido</h3>
               <div className="flex justify-between mb-2">
                 <span className="text-muted-foreground">Plano</span>
@@ -181,16 +195,16 @@ export const UnifiedCheckoutForm: React.FC<UnifiedCheckoutFormProps> = ({
               </div>
             </div>
             
-            <div className="pt-4 mt-4">
+            <div className="pt-4 mt-4 slide-up" style={{ animationDelay: '0.35s' }}>
               <Button 
                 type="submit" 
-                className="w-full" 
+                className="w-full hover-raise payment-button-transition"
                 disabled={isSubmitting}
               >
                 {isSubmitting ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Processando...
+                    <span className="typing-dots">Processando</span>
                   </>
                 ) : (
                   <>
@@ -205,7 +219,7 @@ export const UnifiedCheckoutForm: React.FC<UnifiedCheckoutFormProps> = ({
                   type="button" 
                   variant="outline" 
                   onClick={onBack} 
-                  className="w-full mt-2"
+                  className="w-full mt-2 hover-raise"
                 >
                   <ArrowLeft className="mr-2 h-4 w-4" />
                   Voltar para seleção de plano
@@ -216,7 +230,7 @@ export const UnifiedCheckoutForm: React.FC<UnifiedCheckoutFormProps> = ({
         </Form>
       </CardContent>
       
-      <CardFooter className="flex flex-col space-y-2">
+      <CardFooter className="flex flex-col space-y-2 fade-in" style={{ animationDelay: '0.4s' }}>
         <div className="flex items-center justify-center space-x-4 text-sm text-muted-foreground">
           <div className="flex items-center">
             <Lock className="mr-1 h-4 w-4 text-green-600" />

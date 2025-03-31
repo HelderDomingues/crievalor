@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
-import { Loader2 } from "lucide-react";
+import { Loader2, CheckCircle2, XCircle } from "lucide-react";
 import CheckoutError from "./CheckoutError";
 import { PaymentType } from "@/components/pricing/PaymentOptions";
 import { paymentProcessor } from "@/services/paymentProcessor";
@@ -49,6 +49,7 @@ const CheckoutController: React.FC<CheckoutControllerProps> = ({
   const [checkoutProcessId, setCheckoutProcessId] = useState<string | null>(null);
   const [isRecovering, setIsRecovering] = useState(false);
   const [processingStep, setProcessingStep] = useState<string | null>(null);
+  const [buttonAnimation, setButtonAnimation] = useState<string>("");
 
   // Check for any existing checkout session on component mount
   useEffect(() => {
@@ -100,6 +101,34 @@ const CheckoutController: React.FC<CheckoutControllerProps> = ({
       }
     }
   }, [planId]);
+
+  // Efeito para aplicar a animação adequada com base no estado do processamento
+  useEffect(() => {
+    if (!isCheckingOut) {
+      setButtonAnimation("");
+      return;
+    }
+
+    switch (processingStep) {
+      case "initializing":
+        setButtonAnimation("payment-button-transition payment-button-processing");
+        break;
+      case "processing":
+        setButtonAnimation("payment-button-transition payment-button-processing");
+        break;
+      case "success":
+        setButtonAnimation("payment-button-transition payment-button-success success-animation");
+        break;
+      case "error":
+        setButtonAnimation("payment-button-transition payment-button-error error-animation");
+        break;
+      case "redirect":
+        setButtonAnimation("payment-button-transition payment-button-success");
+        break;
+      default:
+        setButtonAnimation("payment-button-transition");
+    }
+  }, [processingStep, isCheckingOut]);
 
   const canAttemptCheckout = () => {
     const now = Date.now();
@@ -157,9 +186,17 @@ const CheckoutController: React.FC<CheckoutControllerProps> = ({
         
         // Added a subtle delay and animation before redirecting
         setProcessingStep("redirect");
+        
+        // Mostrar toast informando a recuperação
+        toast({
+          title: "Recuperando sessão",
+          description: "Redirecionando para sua sessão de pagamento anterior...",
+          variant: "default",
+        });
+        
         setTimeout(() => {
           window.location.href = recoveryData.paymentLink;
-        }, 1000);
+        }, 1500);
         
         return true;
       }
@@ -221,10 +258,17 @@ const CheckoutController: React.FC<CheckoutControllerProps> = ({
       localStorage.setItem('checkoutPlanId', planId);
       
       // Add a slight delay for better UX
-      await new Promise(resolve => setTimeout(resolve, 300));
+      await new Promise(resolve => setTimeout(resolve, 600));
       
       // Visual feedback for user - show processing step
       setProcessingStep("processing");
+      
+      // Mostrar toast informando o início do processamento
+      toast({
+        title: "Iniciando processamento",
+        description: "Estamos preparando seu pagamento, aguarde um momento...",
+        variant: "default",
+      });
       
       // Save recovery state
       const recoveryState = {
@@ -252,8 +296,15 @@ const CheckoutController: React.FC<CheckoutControllerProps> = ({
       // Visual feedback for user - show success step
       setProcessingStep("success");
       
+      // Mostrar toast de sucesso
+      toast({
+        title: "Pagamento iniciado com sucesso",
+        description: "Você será redirecionado para a página de pagamento.",
+        variant: "default",
+      });
+      
       // Add a slight delay before redirecting for better UX
-      await new Promise(resolve => setTimeout(resolve, 500));
+      await new Promise(resolve => setTimeout(resolve, 800));
       
       if (result.isCustomPlan) {
         navigate(result.url || "/");
@@ -277,7 +328,7 @@ const CheckoutController: React.FC<CheckoutControllerProps> = ({
       // Add a slight delay for the animation
       setTimeout(() => {
         window.location.href = result.url || "/";
-      }, 1000);
+      }, 1200);
       
     } catch (error: any) {
       console.error(`[${processId}] Error creating checkout session:`, error);
@@ -307,7 +358,7 @@ const CheckoutController: React.FC<CheckoutControllerProps> = ({
       setTimeout(() => {
         setIsCheckingOut(false);
         setProcessingStep(null);
-      }, 1000);
+      }, 1500);
       
       // Clear recovery state on error
       localStorage.setItem('checkoutRecoveryAttempted', 'true');
@@ -340,40 +391,42 @@ const CheckoutController: React.FC<CheckoutControllerProps> = ({
     return buttonText;
   };
 
-  // Get the appropriate CSS class for animation based on processing step
-  const getAnimationClass = () => {
-    if (!isCheckingOut) return "";
+  // Get the appropriate icon based on processing state
+  const getButtonIcon = () => {
+    if (!isCheckingOut) return null;
     
     switch (processingStep) {
       case "success":
-        return "bg-green-500 hover:bg-green-600";
+        return <CheckCircle2 className="mr-2 h-4 w-4 animate-bounce" />;
       case "error":
-        return "bg-red-500 hover:bg-red-600";
+        return <XCircle className="mr-2 h-4 w-4" />;
       default:
-        return "";
+        return <Loader2 className="mr-2 h-4 w-4 animate-spin" />;
     }
   };
 
   return (
     <div className="checkout-controller">
-      <CheckoutError error={checkoutError || ""} />
+      {checkoutError && <CheckoutError error={checkoutError} className="slide-up" />}
       
       <Button
         onClick={handleCheckout}
         disabled={isCheckingOut}
-        className={`transition-all duration-300 ${className} ${getAnimationClass()}`}
+        className={`transition-all duration-300 ${className} ${buttonAnimation}`}
         variant={variant}
         size={size}
       >
         {isCheckingOut && (
           <>
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            <span className={processingStep === "success" ? "animate-fade-in" : ""}>
+            {getButtonIcon()}
+            <span className={processingStep === "success" ? "fade-in" : ""}>
               {getButtonText()}
             </span>
           </>
         )}
-        {!isCheckingOut && buttonText}
+        {!isCheckingOut && (
+          <span className="hover-raise inline-block">{buttonText}</span>
+        )}
       </Button>
     </div>
   );
