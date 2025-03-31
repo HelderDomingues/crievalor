@@ -15,7 +15,7 @@ import ProfileTabs from "@/components/profile/ProfileTabs";
 const Profile = () => {
   const navigate = useNavigate();
   const { user, signOut } = useAuth();
-  const { profile, loading, updateProfileField } = useProfile();
+  const { profile, isLoading, updateProfileField } = useProfile();
   const { toast } = useToast();
   
   const [activeTab, setActiveTab] = useState("personal");
@@ -23,10 +23,10 @@ const Profile = () => {
   const [subscriptionLoading, setSubscriptionLoading] = useState(true);
   
   useEffect(() => {
-    if (!user && !loading) {
+    if (!user && !isLoading) {
       navigate("/auth");
     }
-  }, [user, loading, navigate]);
+  }, [user, isLoading, navigate]);
 
   useEffect(() => {
     const loadSubscription = async () => {
@@ -72,7 +72,7 @@ const Profile = () => {
     window.open(`https://wa.me/5547992150289?text=${message}`, '_blank');
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="min-h-screen flex flex-col bg-background">
         <Header />
@@ -140,7 +140,7 @@ const Profile = () => {
                   <ProfileTabs 
                     activeTab={activeTab} 
                     profile={profile} 
-                    loading={loading} 
+                    loading={isLoading} 
                     handleSaveField={handleSaveField} 
                     openWhatsApp={openWhatsApp} 
                   />

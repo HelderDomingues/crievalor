@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/context/AuthContext";
 import { UserProfile } from "@/types/auth";
 import { formatProfileData } from "@/utils/profileFormatter";
+import { uploadUserAvatar, updateUserProfile } from "@/services/profileService";
 
 export const useProfile = () => {
   const { user } = useAuth();
@@ -12,6 +13,7 @@ export const useProfile = () => {
   const [error, setError] = useState<Error | null>(null);
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const [rolesLoading, setRolesLoading] = useState<boolean>(true);
+  const [avatarUploading, setAvatarUploading] = useState<boolean>(false);
 
   // Fetch user profile
   useEffect(() => {
@@ -91,5 +93,93 @@ export const useProfile = () => {
     checkAdmin();
   }, [user, profile]);
 
-  return { profile, isLoading, error, isAdmin, rolesLoading };
+  // Update a specific profile field
+  const updateProfileField = async (fieldName: string, value: string) => {
+    if (!user) {
+      return { error: new Error("No user logged in") };
+    }
+
+    try {
+      let updates: Partial<UserProfile> = {};
+
+      // Handle special case for social media fields
+      if (fieldName.startsWith("social_media.")) {
+        const platform = fieldName.split(".")[1];
+        const currentSocialMedia = profile?.social_media || {
+          linkedin: "",
+          twitter: "",
+          instagram: "",
+          facebook: ""
+        };
+        
+        updates = {
+          social_media: {
+            ...currentSocialMedia,
+            [platform]: value
+          }
+        };
+      } else {
+        updates = { [fieldName]: value };
+      }
+
+      const { data, error } = await updateUserProfile(user.id, updates, user.email);
+      
+      if (error) {
+        console.error(`Error updating ${fieldName}:`, error);
+        return { error };
+      }
+
+      if (data) {
+        setProfile(data);
+      }
+      
+      return { error: null };
+    } catch (err) {
+      console.error(`Unexpected error updating ${fieldName}:`, err);
+      return { error: err as Error };
+    }
+  };
+
+  // Upload avatar
+  const uploadAvatar = async (file: File) => {
+    if (!user) {
+      return { error: new Error("No user logged in"), url: null };
+    }
+
+    try {
+      setAvatarUploading(true);
+      const result = await uploadUserAvatar(user.id, file);
+
+      if (result.error) {
+        console.error("Error uploading avatar:", result.error);
+        return { error: result.error, url: null };
+      }
+
+      if (result.url && profile) {
+        // Update local profile state with new avatar URL
+        setProfile({
+          ...profile,
+          avatar_url: result.url
+        });
+      }
+
+      return { error: null, url: result.url };
+    } catch (err) {
+      console.error("Unexpected error uploading avatar:", err);
+      return { error: err as Error, url: null };
+    } finally {
+      setAvatarUploading(false);
+    }
+  };
+
+  return { 
+    profile, 
+    isLoading, 
+    error, 
+    isAdmin, 
+    rolesLoading,
+    uploadAvatar,
+    avatarUploading,
+    updateProfileField
+  };
 };

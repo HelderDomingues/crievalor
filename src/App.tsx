@@ -13,7 +13,7 @@ import AdminMaterialsPage from "./pages/AdminMaterials";
 import ClientLogosAdminPage from "./pages/ClientLogosAdminPage";
 import TestimonialsAdmin from "./pages/TestimonialsAdmin";
 import Auth from "./pages/Auth";
-import { AuthProvider } from "./context/AuthContext";
+import Profile from "./pages/Profile";
 // Import setup service to initialize application
 import "@/services/setupService";
 
@@ -50,6 +50,10 @@ const router = createBrowserRouter([
   {
     path: "/auth",
     element: <Auth />,
+  },
+  {
+    path: "/profile",
+    element: <Profile />,
   },
 ]);
 
