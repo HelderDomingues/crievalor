@@ -1,7 +1,7 @@
 
 import { supabase } from '@/integrations/supabase/client';
-import { ExtendedDatabase } from '@/types/database';
+import { Database } from '@/integrations/supabase/types';
+import { SupabaseClient } from '@supabase/supabase-js';
 
-// Re-export the existing Supabase client with the extended database type
-// This solves the multiple GoTrueClient instances issue
-export const supabaseExtended = supabase as unknown as ExtendedDatabase;
+// Use the existing Supabase client instance to prevent duplicate GoTrueClient instances
+export const supabaseExtended = supabase as SupabaseClient<Database>;

@@ -1,214 +1,95 @@
 
 import { useState, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/context/AuthContext";
 import { UserProfile } from "@/types/auth";
-import { fetchUserProfile, updateUserProfile, uploadUserAvatar } from "@/services/profileService";
-import { formatProfileData, formatSocialMedia } from "@/utils/profileFormatter";
-import { checkUserRole, assignUserRole, removeUserRole } from "@/services/roleService";
+import { formatProfileData } from "@/utils/profileFormatter";
 
-export function useProfile() {
+export const useProfile = () => {
   const { user } = useAuth();
   const [profile, setProfile] = useState<UserProfile | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<Error | null>(null);
-  const [avatarUploading, setAvatarUploading] = useState(false);
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [rolesLoading, setRolesLoading] = useState(true);
+  const [isAdmin, setIsAdmin] = useState<boolean>(false);
+  const [rolesLoading, setRolesLoading] = useState<boolean>(true);
 
+  // Fetch user profile
   useEffect(() => {
-    async function loadProfile() {
+    const fetchProfile = async () => {
       if (!user) {
         setProfile(null);
-        setLoading(false);
-        setRolesLoading(false);
-        setIsAdmin(false);
+        setIsLoading(false);
         return;
       }
 
       try {
-        setLoading(true);
-        setRolesLoading(true); // Ensure roles loading is set to true
-
-        const { data, error } = await fetchUserProfile(user.id);
+        const { data, error } = await supabase
+          .from("profiles")
+          .select("*")
+          .eq("id", user.id)
+          .single();
 
         if (error) {
-          throw error;
+          console.error("Error fetching profile:", error);
+          setError(error);
+        } else {
+          const formattedProfile = formatProfileData(data, user.email);
+          setProfile(formattedProfile);
+        }
+      } catch (err) {
+        console.error("Unexpected error fetching profile:", err);
+        setError(err as Error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchProfile();
+  }, [user]);
+
+  // Check if user is admin
+  useEffect(() => {
+    const checkAdmin = async () => {
+      if (!user) {
+        setIsAdmin(false);
+        setRolesLoading(false);
+        return;
+      }
+
+      try {
+        setRolesLoading(true);
+
+        // First, check if user has admin role in user_roles table
+        const { data: roleData, error: roleError } = await supabase
+          .from("user_roles")
+          .select("role")
+          .eq("user_id", user.id)
+          .eq("role", "admin")
+          .maybeSingle();
+
+        if (roleError) {
+          console.error("Error checking admin role:", roleError);
+        } else if (roleData) {
+          setIsAdmin(true);
+          setRolesLoading(false);
+          return;
         }
 
-        const formattedData = formatProfileData(data, user.email);
-        setProfile(formattedData);
-        
-        // Add more extensive logging to debug the admin role
-        console.log("loadProfile - Raw profile data:", data);
-        console.log("loadProfile - Formatted profile data:", formattedData);
-        console.log("loadProfile - Role value:", data?.role);
-        
-        // Important: directly check the raw data.role value, not the formatted data
-        if (data?.role === 'admin') {
-          console.log("User is admin - setting isAdmin to true");
+        // If no explicit role, check if user's profile has admin role
+        if (profile?.role === "admin") {
           setIsAdmin(true);
         } else {
-          console.log("User is NOT admin - setting isAdmin to false");
           setIsAdmin(false);
         }
       } catch (err) {
-        console.error("Error fetching profile:", err);
-        setError(err as Error);
+        console.error("Error checking admin status:", err);
       } finally {
-        setLoading(false);
         setRolesLoading(false);
       }
-    }
+    };
 
-    loadProfile();
-  }, [user]);
+    checkAdmin();
+  }, [user, profile]);
 
-  async function updateProfile(updates: Partial<UserProfile>) {
-    if (!user) return { error: new Error("No user logged in") };
-
-    try {
-      console.log("Original updates:", updates);
-      
-      let updatesToSend = { ...updates };
-      
-      if ('social_media' in updates) {
-        updatesToSend.social_media = {
-          linkedin: updates.social_media?.linkedin || profile?.social_media?.linkedin || "",
-          twitter: updates.social_media?.twitter || profile?.social_media?.twitter || "",
-          instagram: updates.social_media?.instagram || profile?.social_media?.instagram || "",
-          facebook: updates.social_media?.facebook || profile?.social_media?.facebook || ""
-        };
-      }
-      
-      console.log("Sending updates to Supabase:", updatesToSend);
-
-      const { data, error } = await updateUserProfile(user.id, updatesToSend, user.email);
-
-      if (error) {
-        throw error;
-      }
-
-      setProfile(data);
-      
-      // Update isAdmin if role was changed
-      if (updatesToSend.role !== undefined) {
-        setIsAdmin(updatesToSend.role === 'admin');
-      }
-      
-      return { data, error: null };
-    } catch (error) {
-      console.error("Error updating profile:", error);
-      return { data: null, error: error as Error };
-    }
-  }
-
-  async function updateProfileField(field: string, value: any) {
-    if (!user) return { error: new Error("No user logged in") };
-    
-    try {
-      if (field.startsWith('social_media.')) {
-        const socialField = field.split('.')[1];
-        
-        const updatedSocialMedia = {
-          ...(profile?.social_media || {
-            linkedin: "",
-            twitter: "",
-            instagram: "",
-            facebook: ""
-          }),
-          [socialField]: value
-        };
-        
-        return updateProfile({ social_media: updatedSocialMedia });
-      }
-      
-      const updates = { [field]: value };
-      return updateProfile(updates);
-    } catch (error) {
-      console.error(`Error updating ${field}:`, error);
-      return { data: null, error: error as Error };
-    }
-  }
-
-  async function grantAdminRole() {
-    if (!user) return { error: new Error("No user logged in") };
-    
-    try {
-      console.log("useProfile: Attempting to grant admin role to user:", user.id);
-      const { success, error } = await assignUserRole(user.id, 'admin');
-      
-      if (error) {
-        console.error("useProfile: Error from assignUserRole:", error);
-        return { error };
-      }
-      
-      if (success) {
-        console.log("useProfile: Successfully granted admin role");
-        setIsAdmin(true);
-        setProfile(prev => prev ? { ...prev, role: 'admin' } : null);
-        return { error: null };
-      } else {
-        console.error("useProfile: Failed to grant admin role (no success reported)");
-        return { error: new Error("Falha ao conceder privilégios de administrador") };
-      }
-    } catch (error) {
-      console.error("useProfile: Exception in grantAdminRole:", error);
-      return { error: error as Error };
-    }
-  }
-
-  async function removeAdminRole() {
-    if (!user) return { error: new Error("No user logged in") };
-    
-    try {
-      const { success, error } = await removeUserRole(user.id, 'admin');
-      
-      if (error) throw error;
-      
-      if (success) {
-        setIsAdmin(false);
-        setProfile(prev => prev ? { ...prev, role: 'user' } : null);
-        return { error: null };
-      } else {
-        return { error: new Error("Failed to remove admin role") };
-      }
-    } catch (error) {
-      console.error("Error removing admin role:", error);
-      return { error: error as Error };
-    }
-  }
-
-  async function uploadAvatar(file: File) {
-    if (!user) return { error: new Error("No user logged in"), url: null };
-    
-    try {
-      setAvatarUploading(true);
-      const result = await uploadUserAvatar(user.id, file);
-      
-      if (result.url) {
-        setProfile(prev => prev ? { ...prev, avatar_url: result.url } : null);
-      }
-      
-      return result;
-    } catch (error) {
-      console.error("Error in uploadAvatar:", error);
-      return { error: error as Error, url: null };
-    } finally {
-      setAvatarUploading(false);
-    }
-  }
-
-  return {
-    profile,
-    loading,
-    error,
-    isAdmin,
-    rolesLoading,
-    updateProfile,
-    updateProfileField,
-    uploadAvatar,
-    avatarUploading,
-    grantAdminRole,
-    removeAdminRole
-  };
-}
+  return { profile, isLoading, error, isAdmin, rolesLoading };
+};

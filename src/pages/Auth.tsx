@@ -37,11 +37,19 @@ const Auth = () => {
     e.preventDefault();
     setIsLoading(true);
     setError(null);
-    const { error } = await signIn(email, password);
-    if (error) {
-      setError(error.message);
+    
+    try {
+      const { error } = await signIn(email, password);
+      if (error) {
+        console.error("Login error:", error);
+        setError(error.message);
+      }
+    } catch (err) {
+      console.error("Unexpected error during login:", err);
+      setError("Ocorreu um erro inesperado durante o login. Por favor, tente novamente.");
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
   };
 
   const handleChoosePlan = () => {
@@ -86,10 +94,10 @@ const Auth = () => {
               <Input id="password" type="password" placeholder="Sua senha" value={password} onChange={e => setPassword(e.target.value)} required />
             </div>
             
-            {error && <Alert variant={error.includes("sucesso") ? "default" : "destructive"}>
-                <AlertCircle className="h-4 w-4" />
-                <AlertDescription>{error}</AlertDescription>
-              </Alert>}
+            {error && <Alert variant="destructive">
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>}
             
             <Button type="submit" className="w-full" disabled={isLoading}>
               {isLoading ? "Entrando..." : "Entrar"}

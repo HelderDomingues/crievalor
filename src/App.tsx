@@ -13,6 +13,7 @@ import AdminMaterialsPage from "./pages/AdminMaterials";
 import ClientLogosAdminPage from "./pages/ClientLogosAdminPage";
 import TestimonialsAdmin from "./pages/TestimonialsAdmin";
 import Auth from "./pages/Auth";
+import { AuthProvider } from "./context/AuthContext";
 // Import setup service to initialize application
 import "@/services/setupService";
 
@@ -60,7 +61,9 @@ function App() {
 
   return (
     <React.StrictMode>
-      <RouterProvider router={router} />
+      <AuthProvider>
+        <RouterProvider router={router} />
+      </AuthProvider>
     </React.StrictMode>
   );
 }
