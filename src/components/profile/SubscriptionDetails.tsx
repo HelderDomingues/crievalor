@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect } from "react";
-import { Subscription, PLANS, subscriptionService } from "@/services/subscriptionService";
+import { Subscription } from "@/types/subscription";
+import { subscriptionService } from "@/services/subscriptionService";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/components/ui/use-toast";
 import SubscriptionOverview from "./subscription/SubscriptionOverview";
@@ -95,64 +96,6 @@ export const SubscriptionDetails = () => {
     }
   };
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "active":
-        return "bg-green-100 text-green-800 border-green-300";
-      case "trialing":
-        return "bg-blue-100 text-blue-800 border-blue-300";
-      case "past_due":
-        return "bg-yellow-100 text-yellow-800 border-yellow-300";
-      case "canceled":
-        return "bg-red-100 text-red-800 border-red-300";
-      default:
-        return "bg-gray-100 text-gray-800 border-gray-300";
-    }
-  };
-
-  const getStatusText = (status: string) => {
-    switch (status) {
-      case "active":
-        return "Ativa";
-      case "trialing":
-        return "Período de teste";
-      case "past_due":
-        return "Pagamento pendente";
-      case "canceled":
-        return "Cancelada";
-      default:
-        return status;
-    }
-  };
-
-  const getPlanDetails = (planId: string) => {
-    const plan = Object.values(PLANS).find(p => p.id === planId);
-    
-    if (!plan) {
-      return { name: "Plano não identificado", features: [] };
-    }
-    
-    if ('customPrice' in plan && plan.customPrice) {
-      return {
-        name: plan.name,
-        price: "Sob Consulta",
-        features: plan.features
-      };
-    } else if ('price' in plan) {
-      return {
-        name: plan.name,
-        price: plan.priceLabel,
-        features: plan.features
-      };
-    }
-    
-    return {
-      name: plan.name,
-      price: "N/A",
-      features: plan.features
-    };
-  };
-
   if (isLoading) {
     return <div className="flex justify-center items-center p-8">Carregando informações...</div>;
   }
@@ -160,8 +103,6 @@ export const SubscriptionDetails = () => {
   if (!subscription) {
     return <SubscriptionNotFound />;
   }
-
-  const planDetails = getPlanDetails(subscription.plan_id);
 
   return (
     <Tabs defaultValue="overview" className="w-full">
@@ -174,9 +115,7 @@ export const SubscriptionDetails = () => {
       <TabsContent value="overview">
         <SubscriptionOverview 
           subscription={subscription}
-          planDetails={planDetails}
-          getStatusColor={getStatusColor}
-          getStatusText={getStatusText}
+          onCancelSubscription={undefined}
         />
       </TabsContent>
 

@@ -4,9 +4,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { AlertCircle, Calendar, CheckCircle, CreditCard, Download, ExternalLink, FileText, Receipt } from "lucide-react";
-import { Subscription } from "@/types/subscription";
+import { Subscription, PaymentDetails } from "@/types/subscription";
 import { subscriptionService } from "@/services/subscriptionService";
-import { formatCurrency } from "@/utils/formatters";
+import { formatCurrency } from "@/lib/utils";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
@@ -24,7 +24,7 @@ const SubscriptionOverview: React.FC<SubscriptionOverviewProps> = ({
   const plan = subscriptionService.getPlanFromId(subscription.plan_id);
   
   // Extract payment method from payment details
-  const paymentDetails = subscription.payment_details;
+  const paymentDetails = subscription.payment_details as PaymentDetails | null;
   const paymentMethod = paymentDetails?.billing_type || "N/A";
   const installments = paymentDetails?.total_installments || subscription.installments || 1;
   const currentInstallment = paymentDetails?.installment_count || 1;
@@ -148,7 +148,7 @@ const SubscriptionOverview: React.FC<SubscriptionOverviewProps> = ({
       } else {
         toast({
           title: "Erro ao solicitar recibo",
-          description: result.message || "Não foi possível solicitar o recibo.",
+          description: result.error || "Não foi possível solicitar o recibo.",
           variant: "destructive",
         });
       }
@@ -242,7 +242,7 @@ const SubscriptionOverview: React.FC<SubscriptionOverviewProps> = ({
       
       <CardContent className="space-y-6">
         {subscription.status === "pending" && (
-          <Alert variant="warning">
+          <Alert variant="default" className="bg-amber-100 border-amber-400 text-amber-800">
             <AlertCircle className="h-4 w-4" />
             <AlertDescription>
               Sua assinatura está pendente de confirmação de pagamento. O acesso será liberado assim que o pagamento for aprovado.

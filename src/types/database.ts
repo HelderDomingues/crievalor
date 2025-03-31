@@ -1,5 +1,6 @@
 
 import { Database as OriginalDatabase } from '@/integrations/supabase/types';
+import { Json } from '@/integrations/supabase/types';
 
 // Extend the original Database type with our new tables
 export type ExtendedDatabase = OriginalDatabase & {

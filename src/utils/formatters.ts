@@ -34,3 +34,14 @@ export function isValidPhoneNumber(value: string): boolean {
   // Valid phone has 10 or 11 digits (with area code)
   return digits.length >= 10 && digits.length <= 11;
 }
+
+/**
+ * Formats a number as Brazilian currency (BRL)
+ * @param value The number to format as currency
+ */
+export function formatCurrency(value: number): string {
+  return value.toLocaleString('pt-BR', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  });
+}
