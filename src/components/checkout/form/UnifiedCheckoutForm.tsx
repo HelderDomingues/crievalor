@@ -49,11 +49,23 @@ export const UnifiedCheckoutForm: React.FC<UnifiedCheckoutFormProps> = ({
     },
   });
   
+  // Clear localStorage cached data to ensure fresh form
+  useEffect(() => {
+    // Only clear specific checkout-related items, not everything
+    const itemsToClear = [
+      'cachedCustomerData',
+      'lastCheckoutFormData'
+    ];
+    
+    itemsToClear.forEach(item => localStorage.removeItem(item));
+  }, []);
+  
   // Recuperar valores do localStorage, se existirem
   useEffect(() => {
     const storedEmail = localStorage.getItem('customerEmail');
     const storedPhone = localStorage.getItem('customerPhone');
     const storedName = localStorage.getItem('customerName');
+    const storedCPF = localStorage.getItem('customerCPF');
     
     if (storedEmail) {
       setSavedEmail(storedEmail);
@@ -68,6 +80,10 @@ export const UnifiedCheckoutForm: React.FC<UnifiedCheckoutFormProps> = ({
     if (storedName) {
       setSavedName(storedName);
       form.setValue("fullName", storedName);
+    }
+    
+    if (storedCPF) {
+      form.setValue("cpf", storedCPF);
     }
     
     // Se o usuário já estiver autenticado, preencher alguns campos automaticamente
@@ -87,6 +103,15 @@ export const UnifiedCheckoutForm: React.FC<UnifiedCheckoutFormProps> = ({
   const isNewUser = !user;
   
   const handleFormSubmit = async (data: RegistrationFormData) => {
+    // Ensure data is saved to localStorage with current timestamp to avoid stale data
+    localStorage.setItem('customerEmail', data.email);
+    localStorage.setItem('customerPhone', data.phone);
+    localStorage.setItem('customerName', data.fullName);
+    localStorage.setItem('customerCPF', data.cpf);
+    localStorage.setItem('formTimestamp', Date.now().toString());
+    
+    console.log("Form submitted with data:", data);
+    
     if (isNewUser) {
       // Caso seja um novo usuário, precisamos registrá-lo
       await onSubmit(data);

@@ -41,26 +41,38 @@ export const paymentProcessor = {
         cancelUrl: `${paymentDomain}/checkout/canceled`
       });
       
-      // Se temos dados do formulário, processá-los para o cliente Asaas
+      // Verify form data freshness
+      if (formData) {
+        console.log(`[${processId}] Processing customer with form data:`, {
+          name: formData.fullName,
+          email: formData.email,
+          phone: formData.phone,
+          cpf: formData.cpf
+        });
+      }
+      
+      // If form data is provided, first process the Asaas customer
       let customerId = null;
       if (formData) {
         try {
-          // Preparar dados do perfil para o serviço Asaas
+          // Prepare profile data for Asaas service
           const profileData = {
-            id: null, // Será preenchido após o registro do usuário
+            id: null, // Will be filled after user registration
             full_name: formData.fullName,
             email: formData.email,
             phone: formData.phone,
             cpf: formData.cpf
           };
           
-          // Armazenar dados do formulário localmente para uso posterior
+          // Store form data locally for later use with a timestamp
+          const timestamp = Date.now();
           localStorage.setItem('customerEmail', formData.email);
           localStorage.setItem('customerPhone', formData.phone);
           localStorage.setItem('customerName', formData.fullName);
           localStorage.setItem('customerCPF', formData.cpf);
+          localStorage.setItem('formDataTimestamp', timestamp.toString());
           
-          // Criar ou recuperar o cliente Asaas com os dados do formulário
+          // Create or retrieve Asaas customer with form data
           const customerResult = await asaasCustomerService.createOrRetrieveCustomer(profileData);
           customerId = customerResult.customerId;
           
@@ -140,5 +152,8 @@ export const paymentProcessor = {
         state.subscriptionId = result.dbSubscription.id;
       }
     }
+    
+    // Store timestamp for data freshness tracking
+    localStorage.setItem('paymentStateTimestamp', Date.now().toString());
   }
 };

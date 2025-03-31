@@ -41,6 +41,17 @@ const PlanSummary = ({
   useEffect(() => {
     window.scrollTo(0, 0);
     
+    // Clear any stale data in localStorage
+    if (typeof window !== "undefined") {
+      const staleDataKeys = [
+        'cachedCustomerData',
+        'lastPaymentAttempt',
+        'lastFormSubmission'
+      ];
+      
+      staleDataKeys.forEach(key => localStorage.removeItem(key));
+    }
+    
     // Definir o tipo de pagamento inicial com base no valor selecionado previamente
     if (selectedPaymentType === "pix") {
       setPaymentMethod("cash_payment");
@@ -90,9 +101,15 @@ const PlanSummary = ({
   const handleFormSubmit = async (data: RegistrationFormData) => {
     setIsSubmitting(true);
     try {
+      // Log the form data to debug
+      console.log("Form data being processed:", data);
+      
+      // Set a timestamp to verify data freshness
+      const formTimestamp = Date.now();
+      
       // Salvar o recoveryState para possibilitar recuperação futura
       const recoveryState = {
-        timestamp: Date.now(),
+        timestamp: formTimestamp,
         planId: planId,
         formData: data,
         paymentMethod,
@@ -100,6 +117,20 @@ const PlanSummary = ({
       };
       
       checkoutRecoveryService.saveRecoveryState(recoveryState);
+      
+      // Explicitly save form data to localStorage with timestamp
+      localStorage.setItem('customerEmail', data.email);
+      localStorage.setItem('customerPhone', data.phone);
+      localStorage.setItem('customerName', data.fullName);
+      localStorage.setItem('customerCPF', data.cpf);
+      localStorage.setItem('formDataTimestamp', formTimestamp.toString());
+      localStorage.setItem('paymentMethod', paymentMethod);
+      localStorage.setItem('paymentTimestamp', formTimestamp.toString());
+      localStorage.setItem('planName', plan.name);
+      
+      if ('price' in plan) {
+        localStorage.setItem('planPrice', getPaymentAmount().toString());
+      }
       
       // Mostrar toast de processamento
       toast({
@@ -146,18 +177,6 @@ const PlanSummary = ({
         }
       }
       
-      // Para novos usuários, precisamos primeiro criar a conta e então solicitar o pagamento
-      localStorage.setItem('customerEmail', data.email);
-      localStorage.setItem('customerPhone', data.phone);
-      localStorage.setItem('customerName', data.fullName);
-      localStorage.setItem('customerCPF', data.cpf);
-      localStorage.setItem('paymentMethod', paymentMethod);
-      localStorage.setItem('paymentTimestamp', Date.now().toString());
-      localStorage.setItem('planName', plan.name);
-      if ('price' in plan) {
-        localStorage.setItem('planPrice', getPaymentAmount().toString());
-      }
-
       // Avançar para a próxima etapa (a lógica de registro/pagamento será tratada lá)
       onContinue();
     } catch (error: any) {

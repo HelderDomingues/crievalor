@@ -5,6 +5,8 @@ import { RegistrationFormData } from "@/components/checkout/form/RegistrationFor
 export const asaasCustomerService = {
   async createOrRetrieveCustomer(profileData: any) {
     try {
+      console.log("Creating or retrieving customer with data:", profileData);
+      
       // First check for existing customer
       const existingCustomer = await this.findExistingCustomer(profileData.id);
       if (existingCustomer) {
@@ -50,6 +52,11 @@ export const asaasCustomerService = {
   
   async registerCustomerFromForm(formData: RegistrationFormData, userId?: string) {
     try {
+      console.log("Registering customer from form data:", formData);
+      
+      // Clear any cached customer data to ensure fresh data is used
+      localStorage.removeItem('cachedCustomerData');
+      
       const profileData = {
         id: userId || null,
         full_name: formData.fullName,
@@ -128,8 +135,31 @@ export const asaasCustomerService = {
   
   async createNewCustomer(profileData: any, cpfCnpj: string) {
     try {
+      // Log the raw input data for debugging
+      console.log("Raw input for customer creation:", {
+        fullName: profileData.full_name,
+        email: profileData.email, 
+        phone: profileData.phone,
+        cpf: cpfCnpj
+      });
+      
+      // Ensure we have fresh data, not cached values
+      if (typeof localStorage !== 'undefined') {
+        localStorage.removeItem('cachedCustomerData');
+      }
+      
       // Normalize phone number - remove any non-numeric characters
       const phone = profileData.phone ? profileData.phone.replace(/\D/g, '') : '';
+      
+      // Double check if data looks reasonable
+      if (!profileData.full_name || !profileData.email || !phone || !cpfCnpj) {
+        console.error("Missing required customer data:", {
+          name: profileData.full_name,
+          email: profileData.email,
+          phone,
+          cpfCnpj
+        });
+      }
       
       // Prepare customer data with formatted data
       const customerData = {
@@ -149,6 +179,7 @@ export const asaasCustomerService = {
         body: {
           action: "create-customer",
           data: customerData,
+          timestamp: Date.now() // Add timestamp to prevent caching
         },
       });
       

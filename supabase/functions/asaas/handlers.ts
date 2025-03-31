@@ -1,37 +1,84 @@
-
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.38.4';
 import { getAsaasApiUrl, validateUrls, safeJsonParse } from './utils.ts';
 
-// Customer related functions
-export async function handleCustomer(action: string, data: any, apiKey: string): Promise<any> {
-  const baseUrl = getAsaasApiUrl();
-  
-  switch (action) {
-    case 'get-customers': 
-      return await getCustomers(baseUrl, apiKey);
-    
-    case 'get-customer':
-      if (!data.customerId) throw new Error('Customer ID is required');
-      return await getCustomer(baseUrl, apiKey, data.customerId);
-    
-    case 'get-customer-by-cpf-cnpj':
-      if (!data.cpfCnpj) throw new Error('CPF/CNPJ is required');
-      return await getCustomerByCpfCnpj(baseUrl, apiKey, data.cpfCnpj);
-    
-    case 'create-customer':
-      console.log("Creating customer with data:", data);
-      return await createCustomer(baseUrl, apiKey, data);
-    
-    case 'update-customer':
-      if (!data.customerId) throw new Error('Customer ID is required');
-      return await updateCustomer(baseUrl, apiKey, data.customerId, data);
-    
-    case 'delete-customer':
-      if (!data.customerId) throw new Error('Customer ID is required');
-      return await deleteCustomer(baseUrl, apiKey, data.customerId);
+// Handler for customer-related endpoints
+export async function handleCustomer(req: Request, baseUrl: string, apiKey: string): Promise<Response> {
+  try {
+    const { action, data } = await req.json();
+
+    if (!action) {
+      return new Response(JSON.stringify({
+        error: "No action specified"
+      }), { status: 400 });
+    }
+
+    switch (action) {
+      case 'get-customers':
+        return new Response(JSON.stringify(await getCustomers(baseUrl, apiKey)));
       
-    default:
-      throw new Error(`Unknown customer action: ${action}`);
+      case 'get-customer':
+        if (!data?.customerId) {
+          return new Response(JSON.stringify({
+            error: "Customer ID is required"
+          }), { status: 400 });
+        }
+        return new Response(JSON.stringify(await getCustomer(baseUrl, apiKey, data.customerId)));
+      
+      case 'get-customer-by-cpf-cnpj':
+        if (!data?.cpfCnpj) {
+          return new Response(JSON.stringify({
+            error: "CPF/CNPJ is required"
+          }), { status: 400 });
+        }
+        
+        // Normalize and sanitize input
+        const formattedCpfCnpj = data.cpfCnpj.replace(/\D/g, '');
+        console.log(`Searching for customer with CPF/CNPJ: ${formattedCpfCnpj}`);
+        
+        const customer = await getCustomerByCpfCnpj(baseUrl, apiKey, formattedCpfCnpj);
+        return new Response(JSON.stringify({ customer }));
+      
+      case 'create-customer':
+        // Validate and sanitize input data
+        if (!data?.name) {
+          return new Response(JSON.stringify({
+            error: "Customer name is required"
+          }), { status: 400 });
+        }
+        
+        // Add a request timestamp to help debug potential caching issues
+        const timestamp = new Date().toISOString();
+        console.log(`Processing create-customer request at ${timestamp}`);
+        
+        const result = await createCustomer(baseUrl, apiKey, data);
+        return new Response(JSON.stringify(result));
+      
+      case 'update-customer':
+        if (!data?.customerId) {
+          return new Response(JSON.stringify({
+            error: "Customer ID is required"
+          }), { status: 400 });
+        }
+        return new Response(JSON.stringify(await updateCustomer(baseUrl, apiKey, data.customerId, data)));
+      
+      case 'delete-customer':
+        if (!data?.customerId) {
+          return new Response(JSON.stringify({
+            error: "Customer ID is required"
+          }), { status: 400 });
+        }
+        return new Response(JSON.stringify(await deleteCustomer(baseUrl, apiKey, data.customerId)));
+      
+      default:
+        return new Response(JSON.stringify({
+          error: `Unknown action: ${action}`
+        }), { status: 400 });
+    }
+  } catch (error) {
+    console.error('Error handling customer request:', error);
+    return new Response(JSON.stringify({
+      error: error.message || "An error occurred processing the customer request"
+    }), { status: 500 });
   }
 }
 
@@ -94,19 +141,22 @@ export async function handlePaymentLink(action: string, data: any, apiKey: strin
 async function getCustomers(baseUrl: string, apiKey: string): Promise<any> {
   try {
     const response = await fetch(`${baseUrl}/customers`, {
+      method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        'access_token': apiKey,
-      },
+        'access_token': apiKey
+      }
     });
 
     if (!response.ok) {
-      throw new Error(`Failed to fetch customers: ${response.status}`);
+      const errorText = await response.text();
+      throw new Error(`Failed to get customers: ${response.status} ${errorText}`);
     }
 
-    return await response.json();
+    const data = await response.json();
+    return { customers: data.data || [] };
   } catch (error) {
-    console.error('Error fetching customers:', error);
+    console.error('Error getting customers:', error);
     throw error;
   }
 }
@@ -114,55 +164,57 @@ async function getCustomers(baseUrl: string, apiKey: string): Promise<any> {
 async function getCustomer(baseUrl: string, apiKey: string, customerId: string): Promise<any> {
   try {
     const response = await fetch(`${baseUrl}/customers/${customerId}`, {
+      method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        'access_token': apiKey,
-      },
+        'access_token': apiKey
+      }
     });
 
     if (!response.ok) {
-      throw new Error(`Failed to fetch customer: ${response.status}`);
+      const errorText = await response.text();
+      throw new Error(`Failed to get customer: ${response.status} ${errorText}`);
     }
 
-    return await response.json();
+    const customer = await response.json();
+    return { customer };
   } catch (error) {
-    console.error('Error fetching customer:', error);
+    console.error('Error getting customer:', error);
     throw error;
   }
 }
 
 async function getCustomerByCpfCnpj(baseUrl: string, apiKey: string, cpfCnpj: string): Promise<any> {
   try {
-    console.log(`Searching for customer with CPF/CNPJ: ${cpfCnpj}`);
+    // Format CPF/CNPJ (remove non-numeric characters)
+    const formattedCpfCnpj = cpfCnpj.replace(/\D/g, '');
     
-    // Format CPF/CNPJ to remove any non-numeric characters
-    const formattedCpfCnpj = cpfCnpj.replace(/[^0-9]/g, '');
-    
-    // Query Asaas API to search customers by CPF/CNPJ
     const response = await fetch(`${baseUrl}/customers?cpfCnpj=${formattedCpfCnpj}`, {
+      method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        'access_token': apiKey,
-      },
+        'access_token': apiKey
+      }
     });
 
     if (!response.ok) {
-      throw new Error(`Failed to fetch customer by CPF/CNPJ: ${response.status}`);
+      const errorText = await response.text();
+      console.error(`Failed to get customer by CPF/CNPJ: ${response.status} ${errorText}`);
+      return null;
     }
 
-    const result = await response.json();
+    const data = await response.json();
     
-    // Check if any customers were found
-    if (result.data && result.data.length > 0) {
-      console.log(`Found existing customer for CPF/CNPJ ${cpfCnpj}:`, result.data[0]);
-      return { customer: result.data[0] };
-    } else {
-      console.log(`No customer found for CPF/CNPJ ${cpfCnpj}`);
-      return { customer: null };
+    if (data && data.data && data.data.length > 0) {
+      const customer = data.data[0];
+      console.log(`Found existing customer for CPF/CNPJ ${formattedCpfCnpj}:`, customer);
+      return customer;
     }
+    
+    return null;
   } catch (error) {
-    console.error(`Error finding customer by CPF/CNPJ ${cpfCnpj}:`, error);
-    throw error;
+    console.error('Error getting customer by CPF/CNPJ:', error);
+    return null;
   }
 }
 
@@ -182,13 +234,18 @@ async function createCustomer(baseUrl: string, apiKey: string, customerData: any
       customerData.cpfCnpj = customerData.cpfCnpj.replace(/\D/g, '');
     }
     
+    // Validate required fields
+    if (!customerData.name || !customerData.email || !customerData.cpfCnpj) {
+      throw new Error("Missing required fields: name, email, and cpfCnpj are required");
+    }
+    
     console.log("Creating customer with cleaned data:", customerData);
     
     const response = await fetch(`${baseUrl}/customers`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'access_token': apiKey,
+        'access_token': apiKey
       },
       body: JSON.stringify(customerData),
     });
@@ -216,21 +273,30 @@ async function createCustomer(baseUrl: string, apiKey: string, customerData: any
 
 async function updateCustomer(baseUrl: string, apiKey: string, customerId: string, customerData: any): Promise<any> {
   try {
-    console.log(`Updating customer ${customerId} with data:`, customerData);
+    // Clean up phone numbers if present
+    if (customerData.phone) {
+      customerData.phone = customerData.phone.replace(/\D/g, '');
+    }
+    
+    if (customerData.mobilePhone) {
+      customerData.mobilePhone = customerData.mobilePhone.replace(/\D/g, '');
+    }
+    
     const response = await fetch(`${baseUrl}/customers/${customerId}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'access_token': apiKey,
+        'access_token': apiKey
       },
       body: JSON.stringify(customerData),
     });
 
     if (!response.ok) {
-      throw new Error(`Failed to update customer: ${response.status}`);
+      const errorText = await response.text();
+      throw new Error(`Failed to update customer: ${response.status} ${errorText}`);
     }
 
-    return await response.json();
+    return { customer: await response.json() };
   } catch (error) {
     console.error('Error updating customer:', error);
     throw error;
@@ -239,20 +305,20 @@ async function updateCustomer(baseUrl: string, apiKey: string, customerId: strin
 
 async function deleteCustomer(baseUrl: string, apiKey: string, customerId: string): Promise<any> {
   try {
-    console.log(`Deleting customer: ${customerId}`);
     const response = await fetch(`${baseUrl}/customers/${customerId}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
-        'access_token': apiKey,
-      },
+        'access_token': apiKey
+      }
     });
 
     if (!response.ok) {
-      throw new Error(`Failed to delete customer: ${response.status}`);
+      const errorText = await response.text();
+      throw new Error(`Failed to delete customer: ${response.status} ${errorText}`);
     }
 
-    return { success: true, message: `Customer ${customerId} deleted successfully` };
+    return { success: true, message: "Customer deleted successfully" };
   } catch (error) {
     console.error('Error deleting customer:', error);
     throw error;
