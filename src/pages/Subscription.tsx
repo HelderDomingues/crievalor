@@ -1,6 +1,5 @@
-
 import React, { useState, useEffect } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams, useLocation } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -19,6 +18,7 @@ import CheckoutController from "@/components/subscription/CheckoutController";
 
 const SubscriptionPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [searchParams] = useSearchParams();
   const { user } = useAuth();
   const { toast } = useToast();
@@ -54,8 +54,14 @@ const SubscriptionPage = () => {
   }, [success, canceled, toast]);
 
   useEffect(() => {
+    if (selectedTab && selectedTab !== "overview" && selectedTab !== "plans" && selectedTab !== "details") {
+      navigate("/subscription?tab=overview", { replace: true });
+    }
+  }, [selectedTab, navigate]);
+
+  useEffect(() => {
     if (!user) {
-      navigate("/auth", { state: { returnUrl: "/subscription" } });
+      navigate("/auth", { state: { returnUrl: location.pathname + location.search } });
       return;
     }
 
@@ -82,7 +88,11 @@ const SubscriptionPage = () => {
     }
 
     loadSubscription();
-  }, [user, navigate, toast, planIdParam]);
+  }, [user, navigate, toast, planIdParam, location]);
+
+  const handleTabChange = (value: string) => {
+    navigate(`/subscription?tab=${value}`, { replace: true });
+  };
 
   const handleSubscribe = async (planId: string) => {
     if (!user) {
@@ -90,10 +100,8 @@ const SubscriptionPage = () => {
       return;
     }
 
-    // Instead of proceeding to checkout directly, set the selected plan ID
     setSelectedPlanId(planId);
     
-    // Scroll to payment options
     const paymentOptionsElement = document.getElementById('payment-options');
     if (paymentOptionsElement) {
       paymentOptionsElement.scrollIntoView({ behavior: 'smooth' });
@@ -142,7 +150,6 @@ const SubscriptionPage = () => {
 
   const handlePaymentTypeChange = (paymentType: PaymentType) => {
     setSelectedPaymentType(paymentType);
-    // Reset installments to 1 for non-credit payment types
     if (paymentType !== "credit") {
       setSelectedInstallments(1);
     }
@@ -170,7 +177,7 @@ const SubscriptionPage = () => {
           
           <CheckoutError error={checkoutError || ""} />
           
-          <Tabs defaultValue={selectedTab} className="space-y-8">
+          <Tabs value={selectedTab} onValueChange={handleTabChange} className="space-y-8">
             <TabsList>
               <TabsTrigger value="overview">Visão Geral</TabsTrigger>
               <TabsTrigger value="plans">Planos</TabsTrigger>

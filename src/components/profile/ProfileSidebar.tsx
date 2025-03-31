@@ -7,7 +7,7 @@ import { AlertCircle, User, Briefcase, Globe, CreditCard } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import AvatarUpload from "@/components/AvatarUpload";
 import { UserProfile } from "@/types/auth";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 interface ProfileSidebarProps {
   profile: UserProfile | null;
@@ -26,6 +26,15 @@ const ProfileSidebar: React.FC<ProfileSidebarProps> = ({
   isProfileComplete,
   handleSignOut
 }) => {
+  const navigate = useNavigate();
+  
+  // Handle subscription tab click with navigation
+  const handleSubscriptionClick = () => {
+    setActiveTab("subscription");
+    // Use navigate instead of Link for programmatic navigation
+    navigate("/subscription");
+  };
+  
   return (
     <Card>
       <CardContent className="pt-6">
@@ -80,7 +89,7 @@ const ProfileSidebar: React.FC<ProfileSidebarProps> = ({
           <Button 
             variant={activeTab === "subscription" ? "default" : "ghost"} 
             className="justify-start" 
-            onClick={() => setActiveTab("subscription")}
+            onClick={handleSubscriptionClick}
           >
             <CreditCard className="mr-2 h-4 w-4" />
             Assinatura
