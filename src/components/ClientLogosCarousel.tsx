@@ -111,7 +111,7 @@ const ClientLogosCarousel = () => {
             </CarouselContent>
             
             {/* Setas de navegação visíveis */}
-            <CarouselPrevious className="absolute -left-5 top-1/2 -translate-y-1/2 bg-white hover:bg-gray-100 shadow-md" />
+            <CarouselPrevious className="absolute -left-5 top-1/2 -translate-y-1/2 bg-white hover:bg-gray-100 shadow-md text-gray-800" />
             <CarouselNext className="absolute -right-5 top-1/2 -translate-y-1/2 bg-white hover:bg-gray-100 shadow-md text-base text-gray-800" />
           </Carousel>
         </div>
