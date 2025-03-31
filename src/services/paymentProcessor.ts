@@ -22,6 +22,7 @@ export interface PaymentResult {
   dbSubscription?: any;
   isCustomPlan?: boolean;
   error?: string;
+  asaasCustomerId?: string;
 }
 
 export const paymentProcessor = {
@@ -47,69 +48,33 @@ export const paymentProcessor = {
         localStorage.removeItem('lastFormSubmission');
       }
       
-      // Verify form data freshness
-      if (formData) {
-        console.log(`[${processId}] Processing customer with form data:`, {
-          name: formData.fullName,
-          email: formData.email,
-          phone: formData.phone,
-          cpf: formData.cpf
-        });
-      } else {
-        console.error(`[${processId}] No form data provided, cannot process customer`);
-        throw new Error('Dados do formulário ausentes. Por favor, preencha os dados do cliente.');
-      }
-      
-      // If form data is provided, first process the Asaas customer
+      // Store form data for later retrieval (if needed)
       let customerId = null;
+      
       if (formData) {
-        try {
-          // Clear any stale cached data
-          localStorage.removeItem('cachedCustomerData');
-          
-          // Prepare profile data for Asaas service with a unique timestamp to prevent caching
-          const profileData = {
-            id: null, // Will be filled after user registration
-            full_name: formData.fullName,
-            email: formData.email,
-            phone: formData.phone,
-            cpf: formData.cpf,
-            timestamp: Date.now() // Add timestamp to ensure freshness
-          };
-          
-          // Add debugging information
-          console.log(`[${processId}] Preparing customer data for Asaas:`, JSON.stringify(profileData));
-          
-          // Store fresh form data locally for later use with a timestamp
-          const timestamp = Date.now();
-          localStorage.setItem('customerEmail', formData.email);
-          localStorage.setItem('customerPhone', formData.phone);
-          localStorage.setItem('customerName', formData.fullName);
-          localStorage.setItem('customerCPF', formData.cpf);
-          localStorage.setItem('formDataTimestamp', timestamp.toString());
-          
-          // Create or retrieve Asaas customer with form data
-          const customerResult = await asaasCustomerService.createOrRetrieveCustomer(profileData);
-          customerId = customerResult.customerId;
-          
-          console.log(`[${processId}] Customer processed:`, {
-            customerId,
-            isNew: customerResult.isNew
-          });
-        } catch (customerError: any) {
-          console.error(`[${processId}] Error processing customer:`, customerError);
-          throw new Error(`Erro ao processar dados do cliente: ${customerError.message}`);
-        }
+        console.log(`[${processId}] Processing with form data:`, {
+          name: formData.fullName,
+          email: formData.email
+        });
+        
+        // Store fresh form data locally for later use with a timestamp
+        const timestamp = Date.now();
+        localStorage.setItem('customerEmail', formData.email);
+        localStorage.setItem('customerPhone', formData.phone);
+        localStorage.setItem('customerName', formData.fullName);
+        localStorage.setItem('customerCPF', formData.cpf);
+        localStorage.setItem('formDataTimestamp', timestamp.toString());
       }
       
+      // Simplified approach: Generate checkout session with static link
       const result = await subscriptionService.createCheckoutSession({
         planId,
         successUrl: `${paymentDomain}/checkout/success`,
         cancelUrl: `${paymentDomain}/checkout/canceled`,
         installments,
         paymentType,
-        customerId,
-        timestamp: Date.now() // This is the line causing the TypeScript error, now fixed
+        customerId, // This can be null, we'll get customer data from Asaas after payment
+        timestamp: Date.now()
       });
       
       console.log(`[${processId}] Checkout result:`, result);
@@ -167,6 +132,15 @@ export const paymentProcessor = {
       
       if (state) {
         state.subscriptionId = result.dbSubscription.id;
+      }
+    }
+    
+    // Save Asaas customer ID if available
+    if (result.asaasCustomerId) {
+      localStorage.setItem('asaasCustomerId', result.asaasCustomerId);
+      
+      if (state) {
+        state.asaasCustomerId = result.asaasCustomerId;
       }
     }
     

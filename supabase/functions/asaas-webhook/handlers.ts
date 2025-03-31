@@ -1,3 +1,4 @@
+
 // CORS headers for all responses
 export const corsHeaders = {
   "Access-Control-Allow-Origin": "*", // Allow requests from any origin
@@ -31,32 +32,156 @@ export async function handlePaymentEvent(supabase: any, event: string, payment: 
     if (payment.customer) {
       if (typeof payment.customer === 'string') {
         console.log(`Customer ID provided: ${payment.customer}`);
-        // Try to get customer details from our database
-        const { data: customerData, error: customerError } = await supabase
-          .from("asaas_customers")
-          .select("*")
-          .eq("asaas_id", payment.customer)
-          .maybeSingle();
+        // First, try to get customer details from Asaas
+        try {
+          const { data, error } = await supabase.functions.invoke("asaas", {
+            body: {
+              action: "get-customer",
+              data: {
+                customerId: payment.customer
+              }
+            }
+          });
           
-        if (customerError) {
-          console.error("Error fetching customer data:", customerError);
-        } else if (customerData) {
-          console.log("Found customer data in database:", customerData);
-          customerInfo = {
-            asaas_id: customerData.asaas_id,
-            name: customerData.name,
-            email: customerData.email,
-            cpf_cnpj: customerData.cpf_cnpj
-          };
+          if (!error && data?.customer) {
+            console.log("Retrieved customer data from Asaas:", data.customer);
+            customerInfo = {
+              asaas_id: data.customer.id,
+              name: data.customer.name,
+              email: data.customer.email,
+              cpf_cnpj: data.customer.cpfCnpj,
+              phone: data.customer.phone || data.customer.mobilePhone
+            };
+            
+            // Check if this customer exists in our database
+            const { data: existingCustomer, error: customerError } = await supabase
+              .from("asaas_customers")
+              .select("*")
+              .eq("asaas_id", data.customer.id)
+              .maybeSingle();
+              
+            if (customerError) {
+              console.error("Error checking for existing customer:", customerError);
+            } else if (!existingCustomer) {
+              console.log("Customer not found in database, creating new record");
+              
+              // Create profile first if it doesn't exist
+              const { data: userProfile, error: profileError } = await supabase.auth.admin.createUser({
+                email: data.customer.email,
+                email_confirm: true,
+                user_metadata: {
+                  full_name: data.customer.name,
+                  phone: data.customer.phone || data.customer.mobilePhone,
+                  cpf: data.customer.cpfCnpj
+                },
+                password: Math.random().toString(36).substring(2, 10) + Math.random().toString(36).substring(2, 10)
+              });
+              
+              if (profileError) {
+                console.error("Error creating user profile:", profileError);
+              } else {
+                console.log("Created new user profile:", userProfile);
+                
+                // Now create asaas_customer record
+                const { error: insertError } = await supabase
+                  .from("asaas_customers")
+                  .insert({
+                    asaas_id: data.customer.id,
+                    user_id: userProfile.user.id,
+                    email: data.customer.email,
+                    cpf_cnpj: data.customer.cpfCnpj
+                  });
+                  
+                if (insertError) {
+                  console.error("Error creating asaas_customer record:", insertError);
+                } else {
+                  console.log("Created new asaas_customer record");
+                }
+              }
+            } else {
+              console.log("Found existing customer in database:", existingCustomer);
+            }
+          }
+        } catch (error) {
+          console.error("Error retrieving customer details from Asaas:", error);
+          
+          // Try to get customer details from our database
+          const { data: customerData, error: customerError } = await supabase
+            .from("asaas_customers")
+            .select("*")
+            .eq("asaas_id", payment.customer)
+            .maybeSingle();
+            
+          if (customerError) {
+            console.error("Error fetching customer data:", customerError);
+          } else if (customerData) {
+            console.log("Found customer data in database:", customerData);
+            customerInfo = {
+              asaas_id: customerData.asaas_id,
+              user_id: customerData.user_id,
+              email: customerData.email,
+              cpf_cnpj: customerData.cpf_cnpj
+            };
+          }
         }
       } else {
         // Direct customer object from webhook
         customerInfo = {
+          asaas_id: payment.customer.id,
           name: payment.customer.name,
           email: payment.customer.email,
           cpf_cnpj: payment.customer.cpfCnpj,
           phone: payment.customer.phone || payment.customer.mobilePhone
         };
+        
+        // Check if this customer exists in our database
+        const { data: existingCustomer, error: customerError } = await supabase
+          .from("asaas_customers")
+          .select("*")
+          .eq("asaas_id", payment.customer.id)
+          .maybeSingle();
+          
+        if (customerError) {
+          console.error("Error checking for existing customer:", customerError);
+        } else if (!existingCustomer) {
+          console.log("Customer not found in database, creating new record");
+          
+          // Create profile first if it doesn't exist
+          const { data: userProfile, error: profileError } = await supabase.auth.admin.createUser({
+            email: payment.customer.email,
+            email_confirm: true,
+            user_metadata: {
+              full_name: payment.customer.name,
+              phone: payment.customer.phone || payment.customer.mobilePhone,
+              cpf: payment.customer.cpfCnpj
+            },
+            password: Math.random().toString(36).substring(2, 10) + Math.random().toString(36).substring(2, 10)
+          });
+          
+          if (profileError) {
+            console.error("Error creating user profile:", profileError);
+          } else {
+            console.log("Created new user profile:", userProfile);
+            
+            // Now create asaas_customer record
+            const { error: insertError } = await supabase
+              .from("asaas_customers")
+              .insert({
+                asaas_id: payment.customer.id,
+                user_id: userProfile.user.id,
+                email: payment.customer.email,
+                cpf_cnpj: payment.customer.cpfCnpj
+              });
+              
+            if (insertError) {
+              console.error("Error creating asaas_customer record:", insertError);
+            } else {
+              console.log("Created new asaas_customer record");
+            }
+          }
+        } else {
+          console.log("Found existing customer in database:", existingCustomer);
+        }
       }
     }
     
@@ -152,6 +277,29 @@ export async function handlePaymentEvent(supabase: any, event: string, payment: 
       }
       
       if (subscriptionByAlt) {
+        // Get or create customer if we have one in the payment
+        if (customerInfo && customerInfo.asaas_id) {
+          // Update the subscription with customer data if available
+          const { data: asaasCustomer, error: customerError } = await supabase
+            .from("asaas_customers")
+            .select("*")
+            .eq("asaas_id", customerInfo.asaas_id)
+            .maybeSingle();
+          
+          if (customerError) {
+            console.error("Error finding asaas_customer:", customerError);
+          } else if (asaasCustomer) {
+            console.log("Updating subscription with asaas_customer_id:", asaasCustomer.asaas_id);
+            
+            // Update the user_id in the subscription if not set
+            if (!subscriptionByAlt.user_id && asaasCustomer.user_id) {
+              subscriptionByAlt.user_id = asaasCustomer.user_id;
+            }
+            
+            subscriptionByAlt.asaas_customer_id = asaasCustomer.asaas_id;
+          }
+        }
+        
         // Enhance existing payment details if present
         let updatedPaymentDetails = paymentDetails;
         if (subscriptionByAlt.payment_details) {
@@ -177,6 +325,7 @@ export async function handlePaymentEvent(supabase: any, event: string, payment: 
             payment_id: payment.id,
             payment_status: payment.status,
             payment_details: updatedPaymentDetails,
+            asaas_customer_id: customerInfo?.asaas_id || subscriptionByAlt.asaas_customer_id,
             updated_at: new Date().toISOString() 
           })
           .eq("id", subscriptionByAlt.id);
@@ -190,89 +339,86 @@ export async function handlePaymentEvent(supabase: any, event: string, payment: 
           // Continue processing with the found subscription
           return await processPaymentUpdate(supabase, event, payment, subscriptionByAlt, updatedPaymentDetails, corsHeaders);
         }
-      } else {
-        // If no subscription was found, try to identify customer and create a new subscription
-        if (customerInfo && payment.description) {
-          console.log("Attempting to create a new subscription record based on payment information");
-          
-          // Try to extract plan information from description
-          const planMatch = payment.description.match(/.*Solução completa.*|.*Plano Básico.*|.*Plano Pro.*/i);
-          let planId = null;
-          
-          if (planMatch) {
-            if (planMatch[0].includes("Básico")) {
-              planId = "basic_plan";
-            } else if (planMatch[0].includes("Pro")) {
-              planId = "pro_plan";
-            } else {
-              planId = "enterprise_plan";
-            }
-            
-            console.log(`Identified plan from payment description: ${planId}`);
-            
-            // Try to find user_id from asaas_customers table
-            const { data: userData, error: userError } = await supabase
-              .from("asaas_customers")
-              .select("user_id")
-              .eq("asaas_id", payment.customer)
-              .maybeSingle();
-              
-            if (!userError && userData && userData.user_id) {
-              const userId = userData.user_id;
-              console.log(`Found user_id for customer: ${userId}`);
-              
-              // Create new subscription record
-              const subscriptionData = {
-                user_id: userId,
-                plan_id: planId,
-                status: "pending",
-                asaas_customer_id: payment.customer,
-                asaas_payment_link: payment.paymentLink,
-                payment_id: payment.id,
-                payment_status: payment.status,
-                payment_details: paymentDetails,
-                external_reference: payment.externalReference,
-                installments: payment.installmentCount || 1
-              };
-              
-              const { data: newSub, error: createError } = await supabase
-                .from("subscriptions")
-                .insert(subscriptionData)
-                .select()
-                .single();
-                
-              if (createError) {
-                console.error("Error creating new subscription:", createError);
-              } else {
-                console.log(`New subscription created: ${newSub.id}`);
-                return await processPaymentUpdate(supabase, event, payment, newSub, paymentDetails, corsHeaders);
-              }
-            } else {
-              console.log("Could not find user_id for customer", userError);
-            }
+      } else if (customerInfo && customerInfo.asaas_id) {
+        // If no subscription was found, but we have customer info, create a new one
+        console.log("Attempting to create a new subscription record based on customer and payment information");
+        
+        // Try to extract plan information from description
+        const planMatch = payment.description ? payment.description.match(/.*Solução completa.*|.*Plano Básico.*|.*Plano Pro.*/i) : null;
+        let planId = "basic_plan"; // Default plan
+        
+        if (planMatch) {
+          if (planMatch[0].includes("Básico")) {
+            planId = "basic_plan";
+          } else if (planMatch[0].includes("Pro")) {
+            planId = "pro_plan";
           } else {
-            console.log("Could not identify plan from payment description");
+            planId = "enterprise_plan";
           }
+          
+          console.log(`Identified plan from payment description: ${planId}`);
         }
         
-        console.log("No matching subscription found, returning generic success response");
-        
-        return new Response(
-          JSON.stringify({ 
-            success: true, 
-            message: "Payment event received, but no matching subscription found",
-            paymentId: payment.id,
-            paymentLink: payment.paymentLink || 'none',
-            externalReference: payment.externalReference || 'none',
-            paymentDetails: paymentDetails,
-            jwtVerificationDisabled: true
-          }),
-          {
-            status: 200, // Return 200 to prevent retries
-            headers: { ...corsHeaders, "Content-Type": "application/json" }
+        // Get customer record
+        const { data: asaasCustomer, error: customerError } = await supabase
+          .from("asaas_customers")
+          .select("*")
+          .eq("asaas_id", customerInfo.asaas_id)
+          .maybeSingle();
+          
+        if (customerError) {
+          console.error("Error finding asaas_customer:", customerError);
+        } else if (asaasCustomer) {
+          console.log("Found asaas_customer record:", asaasCustomer);
+          
+          // Create new subscription record
+          const subscriptionData = {
+            user_id: asaasCustomer.user_id,
+            plan_id: planId,
+            status: "active", // Set to active since payment was successful
+            asaas_customer_id: asaasCustomer.asaas_id,
+            asaas_payment_link: payment.paymentLink,
+            payment_id: payment.id,
+            payment_status: payment.status,
+            payment_details: paymentDetails,
+            external_reference: payment.externalReference,
+            installments: payment.installmentCount || 1
+          };
+          
+          const { data: newSub, error: createError } = await supabase
+            .from("subscriptions")
+            .insert(subscriptionData)
+            .select()
+            .single();
+            
+          if (createError) {
+            console.error("Error creating new subscription:", createError);
+          } else {
+            console.log(`New subscription created: ${newSub.id}`);
+            return await processPaymentUpdate(supabase, event, payment, newSub, paymentDetails, corsHeaders);
           }
-        );
+        } else {
+          console.log("Could not find asaas_customer record for ID:", customerInfo.asaas_id);
+        }
       }
+      
+      console.log("No matching subscription found, returning generic success response");
+      
+      return new Response(
+        JSON.stringify({ 
+          success: true, 
+          message: "Payment event received, but no matching subscription found",
+          paymentId: payment.id,
+          paymentLink: payment.paymentLink || 'none',
+          externalReference: payment.externalReference || 'none',
+          paymentDetails: paymentDetails,
+          jwtVerificationDisabled: true
+        }),
+        {
+          status: 200, // Return 200 to prevent retries
+          headers: { ...corsHeaders, "Content-Type": "application/json" }
+        }
+      );
     } else {
       // Process the payment event for the found subscription
       // Merge existing payment details with new information
@@ -296,6 +442,11 @@ export async function handlePaymentEvent(supabase: any, event: string, payment: 
           ...subscription.payment_details,
           ...updatedPaymentDetails
         };
+      }
+      
+      // Update customer data if we have it
+      if (customerInfo && customerInfo.asaas_id && !subscription.asaas_customer_id) {
+        subscription.asaas_customer_id = customerInfo.asaas_id;
       }
       
       return await processPaymentUpdate(supabase, event, payment, subscription, updatedPaymentDetails, corsHeaders);
@@ -344,7 +495,8 @@ async function processPaymentUpdate(supabase: any, event: string, payment: any, 
     status: newStatus, 
     payment_status: payment.status,
     payment_details: paymentDetails,
-    updated_at: new Date().toISOString() 
+    updated_at: new Date().toISOString(),
+    asaas_customer_id: payment.customer || subscription.asaas_customer_id
   };
 
   const { error: updateError } = await supabase
