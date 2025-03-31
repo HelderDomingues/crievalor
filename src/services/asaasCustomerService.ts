@@ -35,7 +35,7 @@ export const asaasCustomerService = {
         };
       }
       
-      // Create new customer
+      // Create new customer with better error handling
       const newCustomer = await this.createNewCustomer(profileData, cpfCnpj);
       
       return { 
@@ -128,19 +128,27 @@ export const asaasCustomerService = {
   
   async createNewCustomer(profileData: any, cpfCnpj: string) {
     try {
+      // Normalize phone number - remove any non-numeric characters
+      const phone = profileData.phone ? profileData.phone.replace(/\D/g, '') : '';
+      
+      // Prepare customer data with formatted data
+      const customerData = {
+        name: profileData.full_name,
+        email: profileData.email,
+        phone: phone,
+        mobilePhone: phone,
+        cpfCnpj: cpfCnpj,
+        address: profileData.company_address || "",
+        postalCode: "",
+        externalReference: profileData.id || `temp-${Date.now()}`
+      };
+      
+      console.log("Creating customer with formatted data:", customerData);
+      
       const createResponse = await supabase.functions.invoke("asaas", {
         body: {
           action: "create-customer",
-          data: {
-            name: profileData.full_name,
-            email: profileData.email,
-            phone: profileData.phone,
-            mobilePhone: profileData.phone,
-            cpfCnpj: cpfCnpj,
-            address: profileData.company_address || "",
-            postalCode: "",
-            externalReference: profileData.id || `temp-${Date.now()}`
-          },
+          data: customerData,
         },
       });
       
@@ -151,7 +159,8 @@ export const asaasCustomerService = {
       
       const customer = createResponse.data?.customer;
       if (!customer || !customer.id) {
-        throw new Error("Falha ao criar cliente no Asaas");
+        console.error("Resposta inválida do Asaas:", createResponse.data);
+        throw new Error("Falha ao criar cliente no Asaas: resposta inválida");
       }
       
       console.log("Novo cliente criado no Asaas:", customer);

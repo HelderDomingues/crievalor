@@ -1,3 +1,4 @@
+
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.38.4';
 import { getAsaasApiUrl, validateUrls, safeJsonParse } from './utils.ts';
 
@@ -167,7 +168,22 @@ async function getCustomerByCpfCnpj(baseUrl: string, apiKey: string, cpfCnpj: st
 
 async function createCustomer(baseUrl: string, apiKey: string, customerData: any): Promise<any> {
   try {
-    console.log("Creating customer with data:", customerData);
+    // Clean up phone numbers - ensure they only contain digits
+    if (customerData.phone) {
+      customerData.phone = customerData.phone.replace(/\D/g, '');
+    }
+    
+    if (customerData.mobilePhone) {
+      customerData.mobilePhone = customerData.mobilePhone.replace(/\D/g, '');
+    }
+    
+    // Ensure CPF/CNPJ is clean
+    if (customerData.cpfCnpj) {
+      customerData.cpfCnpj = customerData.cpfCnpj.replace(/\D/g, '');
+    }
+    
+    console.log("Creating customer with cleaned data:", customerData);
+    
     const response = await fetch(`${baseUrl}/customers`, {
       method: 'POST',
       headers: {
@@ -177,13 +193,21 @@ async function createCustomer(baseUrl: string, apiKey: string, customerData: any
       body: JSON.stringify(customerData),
     });
 
+    const responseText = await response.text();
+    console.log(`Asaas customer creation response (${response.status}):`, responseText);
+    
     if (!response.ok) {
-      const errorText = await response.text();
-      console.error("Error response from Asaas customer creation:", errorText);
-      throw new Error(`Failed to create customer: ${response.status} ${errorText}`);
+      throw new Error(`Failed to create customer: ${response.status} - ${responseText}`);
     }
 
-    return { customer: await response.json() };
+    let responseData;
+    try {
+      responseData = JSON.parse(responseText);
+    } catch (e) {
+      throw new Error(`Failed to parse response: ${responseText}`);
+    }
+
+    return { customer: responseData };
   } catch (error) {
     console.error('Error creating customer:', error);
     throw error;
