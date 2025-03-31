@@ -82,8 +82,11 @@ export const processPaymentDetailsForStorage = (paymentData: any): any => {
     transactionReceiptUrl, bankSlipUrl, externalReference,
     installment, installmentCount, creditCardToken,
     fine, interest, discount, clientPaymentDate, confirmedDate,
-    paymentDate as originalPaymentDate, paymentMethod
+    paymentMethod
   } = paymentData;
+  
+  // Store the original payment date separately
+  const originalPaymentDate = paymentData.paymentDate;
   
   // Adicionar mais informações sobre datas de pagamento
   const effectivePaymentDate = paymentDate || clientPaymentDate || confirmedDate || originalPaymentDate;
