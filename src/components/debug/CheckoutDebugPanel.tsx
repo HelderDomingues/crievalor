@@ -8,12 +8,17 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PLANS } from "@/services/plansService";
+import { X } from "lucide-react";
 
 interface CheckoutDebugPanelProps {
   isVisible?: boolean;
+  onClose?: () => void;
 }
 
-const CheckoutDebugPanel: React.FC<CheckoutDebugPanelProps> = ({ isVisible = false }) => {
+const CheckoutDebugPanel: React.FC<CheckoutDebugPanelProps> = ({ 
+  isVisible = false,
+  onClose
+}) => {
   const [scenario, setScenario] = useState<'new-user' | 'existing-user' | 'recovery' | 'abandoned' | 'clear'>('new-user');
   const [planId, setPlanId] = useState('basic_plan');
   const [consoleOutput, setConsoleOutput] = useState<string>('');
@@ -59,8 +64,18 @@ const CheckoutDebugPanel: React.FC<CheckoutDebugPanelProps> = ({ isVisible = fal
   
   return (
     <Card className="fixed bottom-4 right-4 w-96 z-50 shadow-lg border-red-300 opacity-80 hover:opacity-100 transition-opacity">
-      <CardHeader className="bg-red-100 py-2">
+      <CardHeader className="bg-red-100 py-2 flex flex-row justify-between items-center">
         <CardTitle className="text-red-800 text-base">Painel de Testes de Checkout</CardTitle>
+        {onClose && (
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            className="h-8 w-8 p-0 text-red-800 hover:bg-red-200"
+            onClick={onClose}
+          >
+            <X className="h-4 w-4" />
+          </Button>
+        )}
       </CardHeader>
       
       <Tabs defaultValue="scenarios">

@@ -50,6 +50,22 @@ const App = () => {
   const [queryClient] = useState(() => new QueryClient());
   // Mostrar painel de depuração apenas em ambiente de desenvolvimento
   const isDebugMode = process.env.NODE_ENV === 'development';
+  const [isDebugPanelVisible, setIsDebugPanelVisible] = useState(false);
+  
+  // Tecla de atalho para alternar a visibilidade do painel de depuração
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      // Ctrl+Shift+C para alternar o painel de debug
+      if (event.ctrlKey && event.shiftKey && event.key === 'C') {
+        setIsDebugPanelVisible(prevState => !prevState);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, []);
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -89,7 +105,23 @@ const App = () => {
                 <Route path="*" element={<NotFound />} />
               </Routes>
               <Chatbot />
-              <CheckoutDebugPanel isVisible={isDebugMode} />
+              {isDebugMode && (
+                <>
+                  {/* Botão flutuante para abrir o painel de debug quando fechado */}
+                  {!isDebugPanelVisible && (
+                    <button
+                      onClick={() => setIsDebugPanelVisible(true)}
+                      className="fixed bottom-4 right-4 bg-red-100 text-red-800 p-2 rounded-md shadow-md z-50 text-xs hover:bg-red-200 transition-colors"
+                    >
+                      Abrir Painel de Testes
+                    </button>
+                  )}
+                  <CheckoutDebugPanel 
+                    isVisible={isDebugPanelVisible} 
+                    onClose={() => setIsDebugPanelVisible(false)}
+                  />
+                </>
+              )}
             </div>
           </Router>
         </AuthProvider>
