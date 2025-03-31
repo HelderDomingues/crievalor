@@ -11,8 +11,8 @@ export interface ClientLogo {
 /**
  * Creates the logos storage bucket if it doesn't exist
  */
-export const createLogosBucketIfNotExists = async () => {
-  return createStorageBucketIfNotExists('logos', {
+export const createLogosBucketIfNotExists = async (bucketName: string = 'logos', options = { public: true, fileSizeLimit: 5242880 }) => {
+  return createStorageBucketIfNotExists(bucketName, {
     public: true,
     fileSizeLimit: 5242880 // 5MB
   });
