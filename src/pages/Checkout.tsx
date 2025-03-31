@@ -15,8 +15,8 @@ import { Button } from "@/components/ui/button";
 import CheckoutMain from "@/components/checkout/CheckoutMain";
 import { paymentProcessor } from "@/services/paymentProcessor";
 
-// Step types for the checkout process
-type CheckoutStep = "plan" | "payment" | "registration" | "processing";
+// Step types for the checkout process - simplified to 3 steps
+type CheckoutStep = "plan" | "processing";
 
 const Checkout = () => {
   const navigate = useNavigate();
@@ -173,46 +173,17 @@ const Checkout = () => {
     setSelectedInstallments(installments);
   };
   
-  // Navigate to next step
+  // Navigate to next step - simplified to just go to processing
   const goToNextStep = () => {
-    const nextStep = getNextStep();
-    setCurrentStep(nextStep);
+    setCurrentStep("processing");
     
     // Atualiza a URL para manter o histórico de navegação correto
     if (selectedPlanId) {
-      const newUrl = `/checkout?plan=${selectedPlanId}&step=${nextStep}`;
-      window.history.pushState({ step: nextStep }, "", newUrl);
+      const newUrl = `/checkout?plan=${selectedPlanId}&step=processing`;
+      window.history.pushState({ step: "processing" }, "", newUrl);
     }
     
-    if (nextStep === "processing") {
-      proceedToPayment();
-    }
-  };
-  
-  // Determina o próximo passo com base no estado atual
-  const getNextStep = (): CheckoutStep => {
-    if (currentStep === "plan") {
-      return "payment";
-    } else if (currentStep === "payment") {
-      return user ? "processing" : "registration";
-    } else if (currentStep === "registration") {
-      return "processing";
-    }
-    return currentStep;
-  };
-  
-  // Handle going back to previous step
-  const goToPreviousStep = () => {
-    if (currentStep === "payment") {
-      setCurrentStep("plan");
-      window.history.back();
-    } else if (currentStep === "registration") {
-      setCurrentStep("payment");
-      window.history.back();
-    } else if (currentStep === "processing") {
-      setCurrentStep(user ? "payment" : "registration");
-      window.history.back();
-    }
+    proceedToPayment();
   };
   
   // Process payment after all required information is collected
@@ -237,8 +208,8 @@ const Checkout = () => {
       // Save important information to localStorage before the attempt
       localStorage.setItem('checkoutPlanId', selectedPlanId);
       localStorage.setItem('checkoutInstallments', String(selectedInstallments));
-      localStorage.setItem('checkoutPaymentType', selectedPaymentType);
       localStorage.setItem('checkoutTimestamp', String(Date.now()));
+      localStorage.setItem('checkoutPaymentType', selectedPaymentType);
       
       // Process the payment
       const result = await paymentProcessor.processPayment({
@@ -325,7 +296,7 @@ const Checkout = () => {
             error={error}
             processId={processId}
             goToNextStep={goToNextStep}
-            goToPreviousStep={goToPreviousStep}
+            goToPreviousStep={() => {}} // Não é mais necessário voltar entre etapas
             onPaymentTypeChange={handlePaymentTypeChange}
             onInstallmentsChange={handleInstallmentsChange}
             proceedToPayment={proceedToPayment}

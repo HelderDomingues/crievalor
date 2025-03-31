@@ -11,8 +11,8 @@ import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import ScrollIndicator from "@/components/ScrollIndicator";
 
-// Step types for the checkout process
-type CheckoutStep = "plan" | "payment" | "registration" | "processing";
+// Step types for the checkout process - simplificado
+type CheckoutStep = "plan" | "processing";
 
 // Updated PaymentType to include credit_cash
 type CheckoutPaymentType = PaymentType | "credit_cash";
@@ -85,26 +85,13 @@ const CheckoutMain: React.FC<CheckoutMainProps> = ({
   
   // Obter detalhes do plano
   const plan = subscriptionService.getPlanFromId(selectedPlanId);
-
-  // If the current step is "payment", we should immediately redirect back to "plan"
-  // This is a side effect, so we handle it here
-  if (currentStep === "payment") {
-    // We need to use setTimeout to avoid modifying state during render
-    setTimeout(() => goToPreviousStep(), 0);
-    return (
-      <div className="text-center py-8">
-        <Loader2 className="h-8 w-8 animate-spin mx-auto" />
-        <p className="mt-2">Redirecionando...</p>
-      </div>
-    );
-  }
   
   return (
     <div className="mt-8 mb-12 grid grid-cols-1 gap-8">
       <div className="max-w-4xl mx-auto w-full">
         {currentStep === "plan" && (
           <div className="space-y-8">
-            {/* Único componente PlanSummary que inclui a seleção de pagamento e o formulário de contato */}
+            {/* PlanSummary agora inclui o formulário unificado */}
             <PlanSummary 
               planId={selectedPlanId} 
               onContinue={goToNextStep}
