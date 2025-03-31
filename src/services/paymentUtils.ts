@@ -1,98 +1,180 @@
 
-import { v4 as uuidv4 } from "uuid";
 import { supabase } from "@/integrations/supabase/client";
 
-// Generate a unique reference for payment tracking
-export function generateUniqueReference(userId: string, planId: string): string {
-  return `${userId}_${planId}_${Date.now()}_${uuidv4().substring(0, 8)}`;
-}
+/**
+ * Generates a unique external reference for payment tracking
+ */
+export const generateUniqueReference = async (userId: string, planId: string): Promise<string> => {
+  const timestamp = Date.now();
+  const random = Math.random().toString(36).substring(2, 9);
+  return `${userId.substring(0, 8)}_${planId}_${timestamp}_${random}`;
+};
 
-// Track payment attempts to prevent duplicates
-export function trackPaymentAttempt(
-  attemptsStore: Record<string, { count: number, timestamp: number }>,
+/**
+ * Tracks payment attempts to prevent duplicate submissions
+ */
+export const trackPaymentAttempt = (
+  attemptsRegistry: Record<string, { count: number, timestamp: number }>,
   userId: string, 
   planId: string
-): boolean {
+): boolean => {
   const key = `${userId}_${planId}`;
   const now = Date.now();
-  const currentAttempt = attemptsStore[key] || { count: 0, timestamp: 0 };
   
-  if (now - currentAttempt.timestamp > 5 * 60 * 1000) {
-    currentAttempt.count = 0;
+  if (!attemptsRegistry[key]) {
+    attemptsRegistry[key] = { count: 1, timestamp: now };
+    return true;
   }
   
-  currentAttempt.count += 1;
-  currentAttempt.timestamp = now;
-  attemptsStore[key] = currentAttempt;
+  // Reset counter if last attempt was more than 5 minutes ago
+  if (now - attemptsRegistry[key].timestamp > 5 * 60 * 1000) {
+    attemptsRegistry[key] = { count: 1, timestamp: now };
+    return true;
+  }
   
-  return currentAttempt.count <= 3 && (currentAttempt.count === 1 || now - currentAttempt.timestamp > 15000);
-}
+  // Allow up to 3 attempts within 5 minutes
+  if (attemptsRegistry[key].count < 3) {
+    attemptsRegistry[key].count++;
+    attemptsRegistry[key].timestamp = now;
+    return true;
+  }
+  
+  // Block if too many attempts
+  return false;
+};
 
-// Check if a payment link is still valid
-export async function checkPaymentLinkValidity(linkUrl: string): Promise<boolean> {
+/**
+ * Checks if a payment link is still valid
+ */
+export const checkPaymentLinkValidity = async (linkUrl: string): Promise<boolean> => {
   try {
-    const linkId = linkUrl.split('/').pop();
+    // First check if the link exists
+    if (!linkUrl) return false;
     
-    if (!linkId) {
-      console.error("ID do link de pagamento não encontrado na URL:", linkUrl);
-      return false;
-    }
-    
-    console.log(`Verificando validade do link de pagamento: ${linkId}`);
-    
-    const response = await supabase.functions.invoke("asaas", {
-      body: {
-        action: "get-payment-link",
-        data: {
-          linkId
-        },
-      },
+    // Try to fetch the payment link to verify it's still active
+    const response = await fetch(linkUrl, {
+      method: 'HEAD',
+      redirect: 'manual'
     });
     
-    if (response.error) {
-      console.error("Erro ao verificar link de pagamento:", response.error);
-      return false;
-    }
-    
-    const linkData = response.data?.paymentLink;
-    
-    if (!linkData) {
-      console.log("Link de pagamento não encontrado");
-      return false;
-    }
-    
-    const isValid = linkData.active === true;
-    
-    console.log(`Link de pagamento ${isValid ? 'é válido' : 'não é válido'}:`, linkData);
-    return isValid;
+    // If we get a redirect to asaas.com or similar domain, the link is valid
+    // If we get a 404 or other error, the link is invalid
+    const isValidStatus = response.status < 400;
+    const hasValidRedirect = 
+      response.status === 302 && 
+      response.headers.get('location')?.includes('asaas.com');
+      
+    return isValidStatus || hasValidRedirect;
   } catch (error) {
-    console.error("Erro ao verificar validade do link de pagamento:", error);
+    console.error("Error checking payment link validity:", error);
     return false;
   }
-}
+};
 
-// Format currency values
-export function formatCurrency(value: number): string {
-  return new Intl.NumberFormat('pt-BR', {
-    style: 'currency',
-    currency: 'BRL'
-  }).format(value);
-}
+/**
+ * Processes payment details for storage in subscription record
+ */
+export const processPaymentDetailsForStorage = (paymentData: any): any => {
+  // Extract only the fields we want to store
+  const {
+    id, customer, value, netValue, description, billingType, 
+    status, dueDate, paymentDate, creditDate, invoiceUrl,
+    transactionReceiptUrl, bankSlipUrl, externalReference,
+    installment, installmentCount, creditCardToken,
+    fine, interest, discount
+  } = paymentData;
+  
+  const paymentDetails = {
+    payment_id: id,
+    status,
+    value,
+    net_value: netValue,
+    description,
+    billing_type: billingType,
+    installment_number: installment,
+    total_installments: installmentCount,
+    due_date: dueDate,
+    payment_date: paymentDate,
+    credit_date: creditDate,
+    invoice_url: invoiceUrl,
+    receipt_url: transactionReceiptUrl,
+    bank_slip_url: bankSlipUrl,
+    external_reference: externalReference,
+    customer: typeof customer === 'string' ? { asaas_id: customer } : customer,
+    processed_at: new Date().toISOString(),
+    payment_method: {
+      has_card_token: !!creditCardToken,
+      has_fine: !!fine,
+      has_interest: !!interest,
+      has_discount: !!discount
+    }
+  };
 
-// Calculate installment value
-export function calculateInstallmentValue(totalValue: number, installments: number): number {
-  return Number((totalValue / installments).toFixed(2));
-}
+  return paymentDetails;
+};
 
-// Get current date in YYYY-MM-DD format
-export function getCurrentDateFormatted(): string {
-  const date = new Date();
-  return date.toISOString().split('T')[0];
-}
+/**
+ * Enriches payment details with additional information from webhook event
+ */
+export const enrichPaymentDetails = (existingDetails: any, eventData: any, eventName: string): any => {
+  // Start with existing details to maintain history
+  const enrichedDetails = { ...existingDetails };
+  
+  // Add or update with new information
+  if (eventData) {
+    enrichedDetails.status = eventData.status || existingDetails.status;
+    enrichedDetails.payment_date = eventData.paymentDate || existingDetails.payment_date;
+    enrichedDetails.value = eventData.value || existingDetails.value;
+    enrichedDetails.net_value = eventData.netValue || existingDetails.net_value;
+    enrichedDetails.external_reference = eventData.externalReference || existingDetails.external_reference;
+    
+    // Add event history if it doesn't exist
+    if (!enrichedDetails.event_history) {
+      enrichedDetails.event_history = [];
+    }
+    
+    // Add the new event to the history
+    enrichedDetails.event_history.push({
+      event: eventName,
+      timestamp: new Date().toISOString(),
+      data: {
+        status: eventData.status,
+        paymentDate: eventData.paymentDate
+      }
+    });
+  }
+  
+  return enrichedDetails;
+};
 
-// Get a future date in YYYY-MM-DD format
-export function getFutureDateFormatted(daysAhead: number): string {
-  const date = new Date();
-  date.setDate(date.getDate() + daysAhead);
-  return date.toISOString().split('T')[0];
-}
+/**
+ * Updates the subscription record with payment details
+ */
+export const updateSubscriptionWithPaymentDetails = async (
+  subscriptionId: string,
+  paymentId: string,
+  paymentStatus: string,
+  paymentDetails: any
+): Promise<boolean> => {
+  try {
+    const { error } = await supabase
+      .from("subscriptions")
+      .update({
+        payment_id: paymentId,
+        payment_status: paymentStatus,
+        payment_details: paymentDetails,
+        updated_at: new Date().toISOString()
+      })
+      .eq("id", subscriptionId);
+      
+    if (error) {
+      console.error("Error updating subscription with payment details:", error);
+      return false;
+    }
+    
+    return true;
+  } catch (error) {
+    console.error("Exception updating subscription with payment details:", error);
+    return false;
+  }
+};

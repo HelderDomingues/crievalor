@@ -44,6 +44,7 @@ export async function handlePaymentEvent(supabase: any, event: string, payment: 
           console.log("Found customer data in database:", customerData);
           customerInfo = {
             asaas_id: customerData.asaas_id,
+            name: customerData.name,
             email: customerData.email,
             cpf_cnpj: customerData.cpf_cnpj
           };
@@ -59,7 +60,7 @@ export async function handlePaymentEvent(supabase: any, event: string, payment: 
       }
     }
     
-    // Create a well-formatted payment details object
+    // Create a well-formatted payment details object with enhanced information
     const paymentDetails = {
       payment_id: payment.id,
       payment_link: payment.paymentLink,
@@ -79,7 +80,23 @@ export async function handlePaymentEvent(supabase: any, event: string, payment: 
       external_reference: payment.externalReference,
       customer: customerInfo,
       processed_at: new Date().toISOString(),
-      event: event
+      event: event,
+      // Add more detailed payment information
+      payment_method: {
+        type: payment.billingType,
+        card_info: payment.creditCard ? {
+          brand: payment.creditCard.brand,
+          last_digits: payment.creditCard.creditCardNumber?.slice(-4) || '',
+          holder_name: payment.creditCard.holderName
+        } : null
+      },
+      // Add a comprehensive event history
+      event_history: [{
+        event: event,
+        timestamp: new Date().toISOString(),
+        status: payment.status,
+        value: payment.value
+      }]
     };
     
     console.log("Structured payment details:", JSON.stringify(paymentDetails, null, 2));
@@ -135,13 +152,31 @@ export async function handlePaymentEvent(supabase: any, event: string, payment: 
       }
       
       if (subscriptionByAlt) {
+        // Enhance existing payment details if present
+        let updatedPaymentDetails = paymentDetails;
+        if (subscriptionByAlt.payment_details) {
+          // Merge existing history with new event
+          if (subscriptionByAlt.payment_details.event_history) {
+            updatedPaymentDetails.event_history = [
+              ...subscriptionByAlt.payment_details.event_history,
+              ...updatedPaymentDetails.event_history
+            ];
+          }
+          
+          // Preserve any custom fields from existing details
+          updatedPaymentDetails = {
+            ...subscriptionByAlt.payment_details,
+            ...updatedPaymentDetails
+          };
+        }
+        
         // Update the payment_id in the subscription along with payment details
         const { error: updateError } = await supabase
           .from("subscriptions")
           .update({ 
             payment_id: payment.id,
             payment_status: payment.status,
-            payment_details: paymentDetails,
+            payment_details: updatedPaymentDetails,
             updated_at: new Date().toISOString() 
           })
           .eq("id", subscriptionByAlt.id);
@@ -153,7 +188,7 @@ export async function handlePaymentEvent(supabase: any, event: string, payment: 
           console.log(`Payment ID and details updated in subscription ${subscriptionByAlt.id}`);
           
           // Continue processing with the found subscription
-          return await processPaymentUpdate(supabase, event, payment, subscriptionByAlt, paymentDetails, corsHeaders);
+          return await processPaymentUpdate(supabase, event, payment, subscriptionByAlt, updatedPaymentDetails, corsHeaders);
         }
       } else {
         // If no subscription was found, try to identify customer and create a new subscription
@@ -240,7 +275,30 @@ export async function handlePaymentEvent(supabase: any, event: string, payment: 
       }
     } else {
       // Process the payment event for the found subscription
-      return await processPaymentUpdate(supabase, event, payment, subscription, paymentDetails, corsHeaders);
+      // Merge existing payment details with new information
+      let updatedPaymentDetails = paymentDetails;
+      if (subscription.payment_details) {
+        // Merge existing history with new event
+        if (subscription.payment_details.event_history) {
+          updatedPaymentDetails.event_history = [
+            ...subscription.payment_details.event_history,
+            ...updatedPaymentDetails.event_history
+          ];
+        }
+        
+        // Keep original payment creation information
+        if (subscription.payment_details.created_at) {
+          updatedPaymentDetails.created_at = subscription.payment_details.created_at;
+        }
+        
+        // Preserve custom fields and add new information
+        updatedPaymentDetails = {
+          ...subscription.payment_details,
+          ...updatedPaymentDetails
+        };
+      }
+      
+      return await processPaymentUpdate(supabase, event, payment, subscription, updatedPaymentDetails, corsHeaders);
     }
   } catch (error) {
     console.error("Error in handlePaymentEvent:", error);

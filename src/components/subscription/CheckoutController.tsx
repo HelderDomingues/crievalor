@@ -48,6 +48,7 @@ const CheckoutController: React.FC<CheckoutControllerProps> = ({
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
   const [checkoutProcessId, setCheckoutProcessId] = useState<string | null>(null);
   const [isRecovering, setIsRecovering] = useState(false);
+  const [processingStep, setProcessingStep] = useState<string | null>(null);
 
   // Check for any existing checkout session on component mount
   useEffect(() => {
@@ -153,7 +154,13 @@ const CheckoutController: React.FC<CheckoutControllerProps> = ({
       if (recoveryData.paymentLink) {
         console.log("Found existing payment link, redirecting to:", recoveryData.paymentLink);
         localStorage.setItem('lastPaymentUrl', recoveryData.paymentLink);
-        window.location.href = recoveryData.paymentLink;
+        
+        // Added a subtle delay and animation before redirecting
+        setProcessingStep("redirect");
+        setTimeout(() => {
+          window.location.href = recoveryData.paymentLink;
+        }, 1000);
+        
         return true;
       }
       
@@ -204,11 +211,20 @@ const CheckoutController: React.FC<CheckoutControllerProps> = ({
     try {
       console.log(`[${processId}] Starting checkout for plan: ${planId} with ${installments} installments, payment method: ${paymentType}`);
       
+      // Visual feedback for user - show initialization step
+      setProcessingStep("initializing");
+      
       // Save important information to localStorage
       localStorage.setItem('checkoutTimestamp', String(Date.now()));
       localStorage.setItem('checkoutInstallments', String(installments));
       localStorage.setItem('checkoutPaymentType', paymentType);
       localStorage.setItem('checkoutPlanId', planId);
+      
+      // Add a slight delay for better UX
+      await new Promise(resolve => setTimeout(resolve, 300));
+      
+      // Visual feedback for user - show processing step
+      setProcessingStep("processing");
       
       // Save recovery state
       const recoveryState = {
@@ -233,6 +249,12 @@ const CheckoutController: React.FC<CheckoutControllerProps> = ({
         throw new Error(result.error || "Não foi possível iniciar o processo de assinatura");
       }
       
+      // Visual feedback for user - show success step
+      setProcessingStep("success");
+      
+      // Add a slight delay before redirecting for better UX
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
       if (result.isCustomPlan) {
         navigate(result.url || "/");
         return;
@@ -248,10 +270,20 @@ const CheckoutController: React.FC<CheckoutControllerProps> = ({
       // Store payment information
       paymentProcessor.storePaymentState(result, updatedRecoveryState);
       
+      // Visual feedback for user - show redirect step
+      setProcessingStep("redirect");
+      
       // Use window.location.href to ensure a complete redirect
-      window.location.href = result.url || "/";
+      // Add a slight delay for the animation
+      setTimeout(() => {
+        window.location.href = result.url || "/";
+      }, 1000);
+      
     } catch (error: any) {
       console.error(`[${processId}] Error creating checkout session:`, error);
+      
+      // Visual feedback for user - show error step
+      setProcessingStep("error");
       
       // Enhanced error logging
       let errorMessage = error.message || "Não foi possível iniciar o processo de assinatura.";
@@ -270,10 +302,55 @@ const CheckoutController: React.FC<CheckoutControllerProps> = ({
         description: "Não foi possível iniciar o processo de assinatura. Por favor, verifique seus dados de perfil e tente novamente.",
         variant: "destructive",
       });
-      setIsCheckingOut(false);
+      
+      // Add a slight delay before resetting state for better UX
+      setTimeout(() => {
+        setIsCheckingOut(false);
+        setProcessingStep(null);
+      }, 1000);
       
       // Clear recovery state on error
       localStorage.setItem('checkoutRecoveryAttempted', 'true');
+    }
+  };
+
+  // Get appropriate button text based on the processing step
+  const getButtonText = () => {
+    if (isCheckingOut) {
+      if (isRecovering) {
+        return "Recuperando...";
+      }
+      
+      switch (processingStep) {
+        case "initializing":
+          return "Iniciando...";
+        case "processing":
+          return "Processando...";
+        case "success":
+          return "Sucesso!";
+        case "redirect":
+          return "Redirecionando...";
+        case "error":
+          return "Erro";
+        default:
+          return "Processando...";
+      }
+    }
+    
+    return buttonText;
+  };
+
+  // Get the appropriate CSS class for animation based on processing step
+  const getAnimationClass = () => {
+    if (!isCheckingOut) return "";
+    
+    switch (processingStep) {
+      case "success":
+        return "bg-green-500 hover:bg-green-600";
+      case "error":
+        return "bg-red-500 hover:bg-red-600";
+      default:
+        return "";
     }
   };
 
@@ -284,18 +361,19 @@ const CheckoutController: React.FC<CheckoutControllerProps> = ({
       <Button
         onClick={handleCheckout}
         disabled={isCheckingOut}
-        className={className}
+        className={`transition-all duration-300 ${className} ${getAnimationClass()}`}
         variant={variant}
         size={size}
       >
-        {isCheckingOut ? (
+        {isCheckingOut && (
           <>
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            {isRecovering ? "Recuperando..." : "Processando..."}
+            <span className={processingStep === "success" ? "animate-fade-in" : ""}>
+              {getButtonText()}
+            </span>
           </>
-        ) : (
-          buttonText
         )}
+        {!isCheckingOut && buttonText}
       </Button>
     </div>
   );
