@@ -17,6 +17,36 @@ export interface Subscription {
   updated_at: string;
   contract_accepted?: boolean;
   contract_accepted_at?: string | null;
+  payment_status?: string | null;
+  payment_id?: string | null;
+  external_reference?: string | null;
+  payment_details?: {
+    payment_id?: string;
+    payment_link?: string;
+    status?: string;
+    value?: number;
+    net_value?: number;
+    description?: string;
+    billing_type?: string;
+    installment_count?: number;
+    total_installments?: number;
+    due_date?: string;
+    payment_date?: string;
+    credit_date?: string;
+    invoice_url?: string;
+    receipt_url?: string;
+    bank_slip_url?: string;
+    external_reference?: string;
+    customer?: {
+      asaas_id?: string;
+      name?: string;
+      email?: string;
+      cpf_cnpj?: string;
+      phone?: string;
+    };
+    processed_at?: string;
+    event?: string;
+  } | null;
 }
 
 // Define plan types more explicitly

@@ -3,11 +3,13 @@ import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { AlertCircle, User, Briefcase, Globe, CreditCard } from "lucide-react";
+import { AlertCircle, User, Briefcase, Globe, CreditCard, CheckCircle } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import AvatarUpload from "@/components/AvatarUpload";
 import { UserProfile } from "@/types/auth";
 import { Link, useNavigate } from "react-router-dom";
+import { Badge } from "@/components/ui/badge";
+import { Subscription } from "@/types/subscription";
 
 interface ProfileSidebarProps {
   profile: UserProfile | null;
@@ -16,6 +18,7 @@ interface ProfileSidebarProps {
   setActiveTab: (tab: string) => void;
   isProfileComplete: boolean;
   handleSignOut: () => void;
+  subscription?: Subscription | null;
 }
 
 const ProfileSidebar: React.FC<ProfileSidebarProps> = ({
@@ -24,7 +27,8 @@ const ProfileSidebar: React.FC<ProfileSidebarProps> = ({
   activeTab,
   setActiveTab,
   isProfileComplete,
-  handleSignOut
+  handleSignOut,
+  subscription
 }) => {
   const navigate = useNavigate();
   
@@ -34,6 +38,8 @@ const ProfileSidebar: React.FC<ProfileSidebarProps> = ({
     // Use navigate instead of Link for programmatic navigation
     navigate("/subscription?tab=plans");
   };
+  
+  const hasActiveSubscription = subscription && ["active", "ACTIVE", "trialing"].includes(subscription.status);
   
   return (
     <Card>
@@ -47,6 +53,13 @@ const ProfileSidebar: React.FC<ProfileSidebarProps> = ({
           <div className="mt-4 text-center">
             <h3 className="font-medium">{profile?.full_name || user?.email}</h3>
             <p className="text-sm text-muted-foreground">{user?.email}</p>
+            
+            {hasActiveSubscription && (
+              <Badge className="mt-2 bg-green-600 hover:bg-green-700">
+                <CheckCircle className="h-3 w-3 mr-1" />
+                Assinante
+              </Badge>
+            )}
           </div>
         </div>
         
@@ -88,11 +101,12 @@ const ProfileSidebar: React.FC<ProfileSidebarProps> = ({
           </Button>
           <Button 
             variant={activeTab === "subscription" ? "default" : "ghost"} 
-            className="justify-start" 
+            className={`justify-start ${hasActiveSubscription ? "text-green-600 hover:text-green-700 hover:bg-green-50/50" : ""}`}
             onClick={handleSubscriptionClick}
           >
-            <CreditCard className="mr-2 h-4 w-4" />
+            <CreditCard className={`mr-2 h-4 w-4 ${hasActiveSubscription ? "text-green-600" : ""}`} />
             Assinatura
+            {hasActiveSubscription && <CheckCircle className="ml-2 h-3 w-3 text-green-600" />}
           </Button>
         </nav>
 

@@ -1,4 +1,3 @@
-
 // CORS headers for all responses
 export const corsHeaders = {
   "Access-Control-Allow-Origin": "*", // Allow requests from any origin
@@ -23,9 +22,68 @@ export function logRequestDetails(req: Request): void {
 // Helper function to process payment events
 export async function handlePaymentEvent(supabase: any, event: string, payment: any, corsHeaders: any) {
   try {
-    // Log payment details for debugging
-    console.log("Processing payment with details:", JSON.stringify(payment, null, 2));
+    // Enhanced logging for debugging
+    console.log(`Processing ${event} event for payment ${payment.id}`);
+    console.log("Payment full details:", JSON.stringify(payment, null, 2));
     
+    // Extract useful customer information if available
+    let customerInfo = null;
+    if (payment.customer) {
+      if (typeof payment.customer === 'string') {
+        console.log(`Customer ID provided: ${payment.customer}`);
+        // Try to get customer details from our database
+        const { data: customerData, error: customerError } = await supabase
+          .from("asaas_customers")
+          .select("*")
+          .eq("asaas_id", payment.customer)
+          .maybeSingle();
+          
+        if (customerError) {
+          console.error("Error fetching customer data:", customerError);
+        } else if (customerData) {
+          console.log("Found customer data in database:", customerData);
+          customerInfo = {
+            asaas_id: customerData.asaas_id,
+            email: customerData.email,
+            cpf_cnpj: customerData.cpf_cnpj
+          };
+        }
+      } else {
+        // Direct customer object from webhook
+        customerInfo = {
+          name: payment.customer.name,
+          email: payment.customer.email,
+          cpf_cnpj: payment.customer.cpfCnpj,
+          phone: payment.customer.phone || payment.customer.mobilePhone
+        };
+      }
+    }
+    
+    // Create a well-formatted payment details object
+    const paymentDetails = {
+      payment_id: payment.id,
+      payment_link: payment.paymentLink,
+      status: payment.status,
+      value: payment.value, 
+      net_value: payment.netValue,
+      description: payment.description,
+      billing_type: payment.billingType,
+      installment_count: payment.installmentNumber || 1,
+      total_installments: payment.installmentCount || 1,
+      due_date: payment.dueDate,
+      payment_date: payment.clientPaymentDate,
+      credit_date: payment.creditDate,
+      invoice_url: payment.invoiceUrl,
+      receipt_url: payment.transactionReceiptUrl,
+      bank_slip_url: payment.bankSlipUrl,
+      external_reference: payment.externalReference,
+      customer: customerInfo,
+      processed_at: new Date().toISOString(),
+      event: event
+    };
+    
+    console.log("Structured payment details:", JSON.stringify(paymentDetails, null, 2));
+
     // Find subscription associated with this payment
     const { data: subscription, error: subscriptionError } = await supabase
       .from("subscriptions")
@@ -38,12 +96,29 @@ export async function handlePaymentEvent(supabase: any, event: string, payment: 
       throw subscriptionError;
     }
 
-    // If no subscription found by payment_id, try to find by external reference
+    // If no subscription found by payment_id, try to find by payment link or external reference
     if (!subscription) {
-      console.log(`No subscription found for payment_id ${payment.id}, trying to find by externalReference`);
+      console.log(`No subscription found for payment_id ${payment.id}, trying to find by alternative methods`);
       
-      if (payment.externalReference) {
-        const { data: subByRef, error: refError } = await supabase
+      let subscriptionByAlt;
+      
+      if (payment.paymentLink) {
+        console.log(`Searching by payment link: ${payment.paymentLink}`);
+        const { data, error } = await supabase
+          .from("subscriptions")
+          .select("*")
+          .eq("asaas_payment_link", payment.paymentLink)
+          .maybeSingle();
+          
+        if (!error && data) {
+          subscriptionByAlt = data;
+          console.log(`Found subscription by payment link: ${data.id}`);
+        }
+      }
+      
+      if (!subscriptionByAlt && payment.externalReference) {
+        console.log(`Searching by external reference: ${payment.externalReference}`);
+        const { data: refData, error: refError } = await supabase
           .from("subscriptions")
           .select("*")
           .eq("external_reference", payment.externalReference)
@@ -53,80 +128,120 @@ export async function handlePaymentEvent(supabase: any, event: string, payment: 
           console.error("Error finding subscription by external reference:", refError);
         }
         
-        if (!refError && subByRef) {
+        if (!refError && refData) {
+          subscriptionByAlt = refData;
           console.log(`Found subscription by external reference: ${payment.externalReference}`);
-          
-          // Extract additional payment info from metadata or description
-          let planInfo = {};
-          
-          // Try to extract plan information from payment description or metadata
-          if (payment.description) {
-            const planMatch = payment.description.match(/Compra: (.+)/);
-            if (planMatch && planMatch[1]) {
-              planInfo = {
-                ...planInfo,
-                plan_name: planMatch[1]
-              };
-            }
-          }
-          
-          // Capture payment method information
-          if (payment.billingType) {
-            planInfo = {
-              ...planInfo,
-              payment_method: payment.billingType,
-              payment_details: {
-                installments: payment.installmentCount || 1,
-                value: payment.value,
-                net_value: payment.netValue,
-                original_value: payment.originalValue
-              }
-            };
-          }
-          
-          // Update the payment_id in the subscription along with plan info
-          const { error: updateError } = await supabase
-            .from("subscriptions")
-            .update({ 
-              payment_id: payment.id,
-              payment_status: payment.status,
-              payment_details: planInfo,
-              updated_at: new Date().toISOString() 
-            })
-            .eq("id", subByRef.id);
-          
-          if (updateError) {
-            console.error("Error updating payment_id in subscription:", updateError);
-            throw updateError;
-          } else {
-            console.log(`Payment ID and details updated in subscription ${subByRef.id}`);
-            
-            // Continue processing with the found subscription
-            return await processPaymentUpdate(supabase, event, payment, subByRef, corsHeaders);
-          }
-        } else {
-          console.log(`No subscription found for external reference: ${payment.externalReference}`);
         }
       }
       
-      // If we got here, no subscription was found
-      return new Response(
-        JSON.stringify({ 
-          success: true, 
-          message: "Payment event received, but no matching subscription found",
-          paymentId: payment.id,
-          externalReference: payment.externalReference || 'none',
-          jwtVerificationDisabled: true
-        }),
-        {
-          status: 200, // Return 200 to prevent retries
-          headers: { ...corsHeaders, "Content-Type": "application/json" }
+      if (subscriptionByAlt) {
+        // Update the payment_id in the subscription along with payment details
+        const { error: updateError } = await supabase
+          .from("subscriptions")
+          .update({ 
+            payment_id: payment.id,
+            payment_status: payment.status,
+            payment_details: paymentDetails,
+            updated_at: new Date().toISOString() 
+          })
+          .eq("id", subscriptionByAlt.id);
+        
+        if (updateError) {
+          console.error("Error updating payment_id in subscription:", updateError);
+          throw updateError;
+        } else {
+          console.log(`Payment ID and details updated in subscription ${subscriptionByAlt.id}`);
+          
+          // Continue processing with the found subscription
+          return await processPaymentUpdate(supabase, event, payment, subscriptionByAlt, paymentDetails, corsHeaders);
         }
-      );
+      } else {
+        // If no subscription was found, try to identify customer and create a new subscription
+        if (customerInfo && payment.description) {
+          console.log("Attempting to create a new subscription record based on payment information");
+          
+          // Try to extract plan information from description
+          const planMatch = payment.description.match(/.*Solução completa.*|.*Plano Básico.*|.*Plano Pro.*/i);
+          let planId = null;
+          
+          if (planMatch) {
+            if (planMatch[0].includes("Básico")) {
+              planId = "basic_plan";
+            } else if (planMatch[0].includes("Pro")) {
+              planId = "pro_plan";
+            } else {
+              planId = "enterprise_plan";
+            }
+            
+            console.log(`Identified plan from payment description: ${planId}`);
+            
+            // Try to find user_id from asaas_customers table
+            const { data: userData, error: userError } = await supabase
+              .from("asaas_customers")
+              .select("user_id")
+              .eq("asaas_id", payment.customer)
+              .maybeSingle();
+              
+            if (!userError && userData && userData.user_id) {
+              const userId = userData.user_id;
+              console.log(`Found user_id for customer: ${userId}`);
+              
+              // Create new subscription record
+              const subscriptionData = {
+                user_id: userId,
+                plan_id: planId,
+                status: "pending",
+                asaas_customer_id: payment.customer,
+                asaas_payment_link: payment.paymentLink,
+                payment_id: payment.id,
+                payment_status: payment.status,
+                payment_details: paymentDetails,
+                external_reference: payment.externalReference,
+                installments: payment.installmentCount || 1
+              };
+              
+              const { data: newSub, error: createError } = await supabase
+                .from("subscriptions")
+                .insert(subscriptionData)
+                .select()
+                .single();
+                
+              if (createError) {
+                console.error("Error creating new subscription:", createError);
+              } else {
+                console.log(`New subscription created: ${newSub.id}`);
+                return await processPaymentUpdate(supabase, event, payment, newSub, paymentDetails, corsHeaders);
+              }
+            } else {
+              console.log("Could not find user_id for customer", userError);
+            }
+          } else {
+            console.log("Could not identify plan from payment description");
+          }
+        }
+        
+        console.log("No matching subscription found, returning generic success response");
+        
+        return new Response(
+          JSON.stringify({ 
+            success: true, 
+            message: "Payment event received, but no matching subscription found",
+            paymentId: payment.id,
+            paymentLink: payment.paymentLink || 'none',
+            externalReference: payment.externalReference || 'none',
+            paymentDetails: paymentDetails,
+            jwtVerificationDisabled: true
+          }),
+          {
+            status: 200, // Return 200 to prevent retries
+            headers: { ...corsHeaders, "Content-Type": "application/json" }
+          }
+        );
+      }
+    } else {
+      // Process the payment event for the found subscription
+      return await processPaymentUpdate(supabase, event, payment, subscription, paymentDetails, corsHeaders);
     }
-
-    // Process the payment event for the found subscription
-    return await processPaymentUpdate(supabase, event, payment, subscription, corsHeaders);
   } catch (error) {
     console.error("Error in handlePaymentEvent:", error);
     throw error;
@@ -134,48 +249,9 @@ export async function handlePaymentEvent(supabase: any, event: string, payment: 
 }
 
 // Helper function to process payment status updates
-async function processPaymentUpdate(supabase: any, event: string, payment: any, subscription: any, corsHeaders: any) {
+async function processPaymentUpdate(supabase: any, event: string, payment: any, subscription: any, paymentDetails: any, corsHeaders: any) {
   // Update subscription status based on payment event
   let newStatus = subscription.status;
-  
-  // Extract additional payment info from metadata or description
-  let paymentDetails = subscription.payment_details || {};
-  
-  // Try to extract plan information from payment description or metadata
-  if (payment.description) {
-    const planMatch = payment.description.match(/Compra: (.+)/);
-    if (planMatch && planMatch[1]) {
-      paymentDetails = {
-        ...paymentDetails,
-        plan_name: planMatch[1]
-      };
-    }
-  }
-  
-  // Capture payment method information
-  if (payment.billingType) {
-    paymentDetails = {
-      ...paymentDetails,
-      payment_method: payment.billingType,
-      installments: payment.installmentCount || 1,
-      value: payment.value,
-      net_value: payment.netValue,
-      original_value: payment.originalValue
-    };
-  }
-  
-  // Add customer information if available
-  if (payment.customer) {
-    paymentDetails = {
-      ...paymentDetails,
-      customer_info: {
-        name: payment.customer.name,
-        email: payment.customer.email,
-        cpfCnpj: payment.customer.cpfCnpj,
-        phone: payment.customer.phone || payment.customer.mobilePhone
-      }
-    };
-  }
   
   switch (event) {
     case "PAYMENT_RECEIVED":
@@ -200,38 +276,27 @@ async function processPaymentUpdate(supabase: any, event: string, payment: any, 
       break;
   }
 
-  // Update subscription if status needs to change
-  if (newStatus !== subscription.status || Object.keys(paymentDetails).length > 0) {
-    console.log(`Updating subscription ${subscription.id} status from ${subscription.status} to ${newStatus} with payment details`);
-    
-    const { error: updateError } = await supabase
-      .from("subscriptions")
-      .update({ 
-        status: newStatus, 
-        payment_status: payment.status,
-        payment_details: paymentDetails,
-        updated_at: new Date().toISOString() 
-      })
-      .eq("id", subscription.id);
-    
-    if (updateError) {
-      console.error("Error updating subscription:", updateError);
-      throw updateError;
-    }
-  } else {
-    // Update only the payment status
-    const { error: updateError } = await supabase
-      .from("subscriptions")
-      .update({ 
-        payment_status: payment.status,
-        updated_at: new Date().toISOString() 
-      })
-      .eq("id", subscription.id);
-    
-    if (updateError) {
-      console.error("Error updating payment status:", updateError);
-      throw updateError;
-    }
+  // Enhanced logging for status changes
+  if (newStatus !== subscription.status) {
+    console.log(`Updating subscription ${subscription.id} status from ${subscription.status} to ${newStatus}`);
+  }
+
+  // Always update payment_details to keep the most current information
+  const updateData = { 
+    status: newStatus, 
+    payment_status: payment.status,
+    payment_details: paymentDetails,
+    updated_at: new Date().toISOString() 
+  };
+
+  const { error: updateError } = await supabase
+    .from("subscriptions")
+    .update(updateData)
+    .eq("id", subscription.id);
+  
+  if (updateError) {
+    console.error("Error updating subscription:", updateError);
+    throw updateError;
   }
 
   console.log("Webhook processed successfully");

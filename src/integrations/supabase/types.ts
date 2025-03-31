@@ -170,6 +170,7 @@ export type Database = {
           external_reference: string | null
           id: string
           installments: number | null
+          payment_details: Json | null
           payment_id: string | null
           payment_status: string | null
           plan_id: string
@@ -188,6 +189,7 @@ export type Database = {
           external_reference?: string | null
           id?: string
           installments?: number | null
+          payment_details?: Json | null
           payment_id?: string | null
           payment_status?: string | null
           plan_id: string
@@ -206,6 +208,7 @@ export type Database = {
           external_reference?: string | null
           id?: string
           installments?: number | null
+          payment_details?: Json | null
           payment_id?: string | null
           payment_status?: string | null
           plan_id?: string

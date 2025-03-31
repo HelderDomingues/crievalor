@@ -1,3 +1,4 @@
+
 import { Database as OriginalDatabase } from '@/integrations/supabase/types';
 
 // Extend the original Database type with our new tables
@@ -97,6 +98,10 @@ export type ExtendedDatabase = OriginalDatabase & {
           updated_at: string;
           contract_accepted: boolean | null;
           contract_accepted_at: string | null;
+          payment_status: string | null;
+          payment_id: string | null;
+          external_reference: string | null;
+          payment_details: Json | null;
         };
         Insert: {
           id?: string;
@@ -112,6 +117,10 @@ export type ExtendedDatabase = OriginalDatabase & {
           updated_at?: string;
           contract_accepted?: boolean | null;
           contract_accepted_at?: string | null;
+          payment_status?: string | null;
+          payment_id?: string | null;
+          external_reference?: string | null;
+          payment_details?: Json | null;
         };
         Update: {
           id?: string;
@@ -127,6 +136,10 @@ export type ExtendedDatabase = OriginalDatabase & {
           updated_at?: string;
           contract_accepted?: boolean | null;
           contract_accepted_at?: string | null;
+          payment_status?: string | null;
+          payment_id?: string | null;
+          external_reference?: string | null;
+          payment_details?: Json | null;
         };
       };
     } & OriginalDatabase['public']['Tables'];
