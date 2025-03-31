@@ -6,12 +6,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { clientLogos } from "@/components/ClientLogosCarousel";
 import { Trash2, Upload, Plus } from "lucide-react";
 import { toast } from "sonner";
-import { 
-  uploadLogoImage, 
-  fetchClientLogos, 
-  saveClientLogos, 
-  ClientLogo 
-} from "@/services/clientLogosService";
+import { fetchClientLogos, ClientLogo } from "@/services/clientLogosService";
+import { supabaseExtended } from "@/integrations/supabase/extendedClient";
 
 const ClientLogosAdmin = () => {
   const [logos, setLogos] = useState<ClientLogo[]>([]);
@@ -63,11 +59,26 @@ const ClientLogosAdmin = () => {
     try {
       setIsLoading(true);
       
-      // Save logos to database
-      const result = await saveClientLogos(logos);
+      // Clear existing logos first
+      const { error: deleteError } = await supabaseExtended
+        .from('client_logos')
+        .delete()
+        .neq('id', '00000000-0000-0000-0000-000000000000');
       
-      if (!result.success) {
-        throw new Error("Erro ao salvar logos");
+      if (deleteError) {
+        throw new Error(`Error deleting existing logos: ${deleteError.message}`);
+      }
+      
+      // Insert new logos
+      const { error: insertError } = await supabaseExtended
+        .from('client_logos')
+        .insert(logos.map(logo => ({
+          name: logo.name,
+          logo: logo.logo
+        })));
+      
+      if (insertError) {
+        throw new Error(`Error inserting logos: ${insertError.message}`);
       }
       
       toast.success("Logos dos clientes atualizados com sucesso");
@@ -77,6 +88,7 @@ const ClientLogosAdmin = () => {
       toast.error("Erro ao salvar logos dos clientes");
     } finally {
       setIsLoading(false);
+      fetchLogos(); // Refresh logos after save
     }
   };
 
@@ -93,16 +105,28 @@ const ClientLogosAdmin = () => {
       
       try {
         setIsLoading(true);
-        const { url, error } = await uploadLogoImage(file);
         
-        if (error || !url) {
-          console.error("Error uploading image:", error);
-          toast.error("Erro ao fazer upload da imagem");
-          return;
+        // Create a unique filename
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${Date.now()}.${fileExt}`;
+        const filePath = `${fileName}`;
+        
+        // Upload the file directly
+        const { error: uploadError } = await supabaseExtended.storage
+          .from('logos')
+          .upload(filePath, file);
+        
+        if (uploadError) {
+          throw uploadError;
         }
         
+        // Get the public URL
+        const { data: urlData } = supabaseExtended.storage
+          .from('logos')
+          .getPublicUrl(filePath);
+        
         // Update the logo URL in state
-        handleLogoChange(index, 'logo', url);
+        handleLogoChange(index, 'logo', urlData.publicUrl);
         toast.success("Imagem carregada com sucesso");
       } catch (error) {
         console.error("Error in handleUploadImage:", error);
