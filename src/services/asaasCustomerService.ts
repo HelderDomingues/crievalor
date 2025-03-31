@@ -1,3 +1,4 @@
+
 import { supabase } from "@/integrations/supabase/client";
 import { RegistrationFormData } from "@/components/checkout/form/RegistrationFormSchema";
 
@@ -211,7 +212,12 @@ export const asaasCustomerService = {
         throw new Error(`Erro ao criar cliente: ${createResponse.error.message}`);
       }
       
+      // The customer object is nested inside 'data.customer'
       const customer = createResponse.data?.customer;
+      
+      // Log the full response for debugging
+      console.log("Full Asaas customer creation response:", createResponse.data);
+      
       if (!customer || !customer.id) {
         console.error("Resposta inválida do Asaas:", createResponse.data);
         throw new Error("Falha ao criar cliente no Asaas: resposta inválida");
