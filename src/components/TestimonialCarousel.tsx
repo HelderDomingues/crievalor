@@ -2,49 +2,47 @@
 import React, { useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight, Quote } from "lucide-react";
 import { Button } from "@/components/ui/button";
-
-interface Testimonial {
-  name: string;
-  role: string;
-  company: string;
-  text: string;
-}
-
-const testimonials: Testimonial[] = [
-  {
-    name: "Ana Silva",
-    role: "CEO",
-    company: "TechSolutions Inc.",
-    text: "O MAR transformou completamente a nossa abordagem estratégica. Em apenas 2 semanas, tínhamos um plano completo que normalmente levaria meses para ser desenvolvido. A combinação de IA com consultoria humana é simplesmente revolucionária."
-  },
-  {
-    name: "Pedro Mendes",
-    role: "Diretor de Operações",
-    company: "Inova Distribuidora",
-    text: "Como uma empresa de médio porte, nunca pensamos que poderíamos ter acesso a planejamento estratégico de tão alto nível. O MAR democratizou algo que antes era exclusivo para grandes corporações."
-  },
-  {
-    name: "Carla Rodrigues",
-    role: "Fundadora",
-    company: "Startup Connect",
-    text: "A profundidade das análises geradas pelo MAR é impressionante. A inteligência artificial identificou oportunidades de mercado que passaram despercebidas, enquanto os consultores humanos nos ajudaram a interpretar e implementar as estratégias de maneira prática."
-  }
-];
+import { Skeleton } from "@/components/ui/skeleton";
+import { toast } from "sonner";
+import { fetchActiveTestimonials, Testimonial } from "@/services/testimonialsService";
 
 const TestimonialCarousel = () => {
+  const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
   const [direction, setDirection] = useState<'left' | 'right' | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const loadTestimonials = async () => {
+      try {
+        setIsLoading(true);
+        const data = await fetchActiveTestimonials();
+        if (data && data.length > 0) {
+          setTestimonials(data);
+        } else {
+          console.warn("Nenhum depoimento encontrado");
+        }
+      } catch (error) {
+        console.error("Erro ao carregar depoimentos:", error);
+        toast.error("Não foi possível carregar os depoimentos");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadTestimonials();
+  }, []);
 
   const goToPrevious = () => {
-    if (isAnimating) return;
+    if (isAnimating || testimonials.length <= 1) return;
     setDirection('left');
     setIsAnimating(true);
     setCurrentIndex((prevIndex) => (prevIndex === 0 ? testimonials.length - 1 : prevIndex - 1));
   };
 
   const goToNext = () => {
-    if (isAnimating) return;
+    if (isAnimating || testimonials.length <= 1) return;
     setDirection('right');
     setIsAnimating(true);
     setCurrentIndex((prevIndex) => (prevIndex === testimonials.length - 1 ? 0 : prevIndex + 1));
@@ -60,9 +58,29 @@ const TestimonialCarousel = () => {
   }, [isAnimating]);
 
   useEffect(() => {
+    if (testimonials.length <= 1) return;
+    
     const interval = setInterval(goToNext, 8000);
     return () => clearInterval(interval);
-  }, [currentIndex]);
+  }, [currentIndex, testimonials.length]);
+
+  if (isLoading) {
+    return (
+      <div className="relative overflow-hidden py-10">
+        <div className="relative z-10 max-w-4xl mx-auto px-4">
+          <div className="text-center space-y-4">
+            <Skeleton className="h-24 w-full mx-auto rounded-md" />
+            <Skeleton className="h-6 w-40 mx-auto rounded-md" />
+            <Skeleton className="h-4 w-60 mx-auto rounded-md" />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (testimonials.length === 0) {
+    return null; // Não exibe o carrossel se não houver depoimentos
+  }
 
   const currentTestimonial = testimonials[currentIndex];
 
@@ -107,27 +125,29 @@ const TestimonialCarousel = () => {
           ))}
         </div>
         
-        <div className="flex justify-between absolute top-1/2 left-0 right-0 transform -translate-y-1/2 pointer-events-none">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={goToPrevious}
-            className="rounded-full text-foreground hover:text-primary hover:bg-card/50 pointer-events-auto"
-            aria-label="Previous testimonial"
-          >
-            <ChevronLeft className="h-6 w-6" />
-          </Button>
-          
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={goToNext}
-            className="rounded-full text-foreground hover:text-primary hover:bg-card/50 pointer-events-auto"
-            aria-label="Next testimonial"
-          >
-            <ChevronRight className="h-6 w-6" />
-          </Button>
-        </div>
+        {testimonials.length > 1 && (
+          <div className="flex justify-between absolute top-1/2 left-0 right-0 transform -translate-y-1/2 pointer-events-none">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={goToPrevious}
+              className="rounded-full text-foreground hover:text-primary hover:bg-card/50 pointer-events-auto"
+              aria-label="Previous testimonial"
+            >
+              <ChevronLeft className="h-6 w-6" />
+            </Button>
+            
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={goToNext}
+              className="rounded-full text-foreground hover:text-primary hover:bg-card/50 pointer-events-auto"
+              aria-label="Next testimonial"
+            >
+              <ChevronRight className="h-6 w-6" />
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   );
