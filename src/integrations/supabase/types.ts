@@ -16,6 +16,8 @@ export type Database = {
           created_at: string
           email: string | null
           id: string
+          nome_completo: string | null
+          telefone: number | null
           updated_at: string
           user_id: string
         }
@@ -25,6 +27,8 @@ export type Database = {
           created_at?: string
           email?: string | null
           id?: string
+          nome_completo?: string | null
+          telefone?: number | null
           updated_at?: string
           user_id: string
         }
@@ -34,6 +38,8 @@ export type Database = {
           created_at?: string
           email?: string | null
           id?: string
+          nome_completo?: string | null
+          telefone?: number | null
           updated_at?: string
           user_id?: string
         }
@@ -307,19 +313,12 @@ export type Database = {
         }
         Returns: boolean
       }
-      check_if_user_is_admin:
-        | {
-            Args: {
-              user_id: number
-            }
-            Returns: boolean
-          }
-        | {
-            Args: {
-              user_id: string
-            }
-            Returns: boolean
-          }
+      check_if_user_is_admin: {
+        Args: {
+          user_id: string
+        }
+        Returns: boolean
+      }
       get_system_setting: {
         Args: {
           setting_key: string

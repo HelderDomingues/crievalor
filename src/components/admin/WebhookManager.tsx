@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,6 +12,7 @@ import { useAuth } from "@/context/AuthContext";
 import { useProfile } from "@/hooks/useProfile";
 import { useToast } from "@/hooks/use-toast";
 import { Separator } from "@/components/ui/separator";
+
 export const WebhookManager = () => {
   const {
     user
@@ -24,12 +26,13 @@ export const WebhookManager = () => {
   const [webhookUrl, setWebhookUrl] = useState(webhookService.getPreferredWebhookUrl());
   const [isTestLoading, setIsTestLoading] = useState(false);
   const [isCustomerTestLoading, setIsCustomerTestLoading] = useState(false);
-  const [customerId, setCustomerId] = useState("cus_000006606255"); // Default para Pedro Gaudioso
+  const [customerId, setCustomerId] = useState("cus_000006606644"); // Default para Pedro Gaudioso
   const [webhookStatus, setWebhookStatus] = useState<'active' | 'unknown'>('unknown');
   const [errorDetails, setErrorDetails] = useState<string | null>(null);
   const [fullError, setFullError] = useState<any>(null);
   const [testResults, setTestResults] = useState<any>(null);
   const [customerTestResults, setCustomerTestResults] = useState<any>(null);
+  
   const handleTestWebhook = async () => {
     try {
       setIsTestLoading(true);
@@ -120,6 +123,7 @@ export const WebhookManager = () => {
       setIsTestLoading(false);
     }
   };
+  
   const handleTestCustomerCreation = async () => {
     try {
       setIsCustomerTestLoading(true);
@@ -181,6 +185,7 @@ export const WebhookManager = () => {
       setIsCustomerTestLoading(false);
     }
   };
+  
   return <Card className="w-full max-w-3xl">
       <CardHeader>
         <div className="flex justify-between items-start">
@@ -240,6 +245,15 @@ export const WebhookManager = () => {
                 <span>Header: <code className="bg-blue-100 px-1 py-0.5 rounded text-blue-800">access_token</code> contendo a Chave de API do Asaas (opcional no ambiente Sandbox)</span>
               </div>
             </div>
+          </AlertDescription>
+        </Alert>
+        
+        <Alert className="bg-green-50 border-green-200">
+          <CheckCircle2 className="h-4 w-4 text-green-600" />
+          <AlertTitle className="text-green-700">JWT Verification Desabilitado</AlertTitle>
+          <AlertDescription className="text-sm text-green-700">
+            <p>A verificação JWT foi desabilitada para este webhook, conforme necessário para o Asaas.</p>
+            <p className="mt-1">Isso permite que o Asaas envie requisições autenticadas sem JWT token.</p>
           </AlertDescription>
         </Alert>
         
@@ -360,7 +374,7 @@ export const WebhookManager = () => {
                 ID do Cliente no Asaas
               </label>
               <div className="flex items-center space-x-2">
-                <Input id="customer-id" value={customerId} onChange={e => setCustomerId(e.target.value)} placeholder="Ex: cus_000006606255" className="flex-1" />
+                <Input id="customer-id" value={customerId} onChange={e => setCustomerId(e.target.value)} placeholder="Ex: cus_000006606644" className="flex-1" />
                 <Button onClick={handleTestCustomerCreation} disabled={isCustomerTestLoading || !user || !isAdmin} variant="default">
                   {isCustomerTestLoading ? <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />

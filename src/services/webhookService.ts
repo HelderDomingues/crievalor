@@ -138,7 +138,7 @@ export const webhookService = {
   /**
    * Teste manual para recuperar um cliente específico e criar o usuário
    */
-  async testCustomerCreation(customerId: string = "cus_000006606255"): Promise<CustomerTestResult> {
+  async testCustomerCreation(customerId: string = "cus_000006606644"): Promise<CustomerTestResult> {
     try {
       console.log(`Testando recuperação e criação do cliente ${customerId}`);
       
