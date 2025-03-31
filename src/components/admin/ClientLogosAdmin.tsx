@@ -77,8 +77,6 @@ const ClientLogosAdmin = () => {
   };
 
   const handleSave = async () => {
-    // In this refactored version, we don't need to save anything to the database
-    // as we're directly managing files in the storage bucket
     setIsEditing(false);
     toast.success("Alterações salvas com sucesso");
   };
@@ -183,6 +181,9 @@ const ClientLogosAdmin = () => {
                     src={logo.logo}
                     alt={logo.name}
                     className="max-h-full max-w-full object-contain"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src = "/placeholder.svg";
+                    }}
                   />
                 </div>
                 <div className="flex-grow space-y-2">
@@ -230,6 +231,9 @@ const ClientLogosAdmin = () => {
                     src={logo.logo}
                     alt={logo.name}
                     className="max-h-full max-w-full object-contain"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src = "/placeholder.svg";
+                    }}
                   />
                 </div>
                 <span className="text-sm text-center mt-2">{logo.name}</span>

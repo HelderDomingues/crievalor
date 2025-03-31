@@ -16,16 +16,24 @@ const fallbackLogos = [
 const ClientLogosCarousel = () => {
   const [logos, setLogos] = useState(fallbackLogos);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const getLogos = async () => {
       try {
+        setIsLoading(true);
         const fetchedLogos = await fetchClientLogos();
+        console.log("Fetched logos in component:", fetchedLogos);
+        
         if (fetchedLogos && fetchedLogos.length > 0) {
           setLogos(fetchedLogos);
+        } else {
+          console.warn("No logos fetched from service, using fallbacks");
         }
-      } catch (error) {
-        console.error("Error fetching client logos:", error);
+        setError(null);
+      } catch (err) {
+        console.error("Error fetching client logos:", err);
+        setError("Failed to load client logos");
       } finally {
         setIsLoading(false);
       }
@@ -41,15 +49,21 @@ const ClientLogosCarousel = () => {
           <h3 className="text-xl md:text-2xl font-medium mb-8">
             Empresas que confiam em nossa estratégia
           </h3>
-          <div className="animate-pulse flex justify-center space-x-8">
+          <div className="flex justify-center space-x-8">
             {[1, 2, 3, 4, 5].map((item) => (
-              <div key={item} className="h-12 w-24 bg-gray-200 rounded"></div>
+              <Skeleton key={item} className="h-16 w-24 rounded-md" />
             ))}
           </div>
         </div>
       </div>
     );
   }
+
+  if (error) {
+    console.error("Rendering error state:", error);
+  }
+
+  console.log("Rendering logos:", logos);
 
   return (
     <div className="py-12 bg-background/50 relative overflow-hidden">
@@ -78,7 +92,11 @@ const ClientLogosCarousel = () => {
                     <img
                       src={client.logo}
                       alt={`${client.name} logo`}
-                      className="max-h-full max-w-full object-contain filter brightness-0 invert animate-pulse-subtle"
+                      className="max-h-full max-w-full object-contain"
+                      onError={(e) => {
+                        console.error(`Error loading image: ${client.logo}`);
+                        (e.target as HTMLImageElement).src = "/placeholder.svg";
+                      }}
                     />
                   </div>
                 </CarouselItem>
