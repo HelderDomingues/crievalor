@@ -51,7 +51,7 @@ const services: Service[] = [
   },
   {
     icon: Palette,
-    title: "Identidade Visual",
+    title: "Branding",
     description: "Desenvolvimento de marcas e identidades visuais completas para seu negócio.",
     route: "/identidade-visual",
     color: "bg-pink-500/10 text-pink-500"
