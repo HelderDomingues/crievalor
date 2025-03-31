@@ -1,15 +1,17 @@
 
 import { paymentsService } from "./paymentsService";
+import { RegistrationFormData } from "@/components/checkout/form/RegistrationFormSchema";
 
 interface RecoveryState {
   timestamp: number;
   planId: string;
-  installments: number;
-  paymentType: string;
+  installments?: number;
+  paymentType?: string;
   processId: string;
   paymentLink?: string;
   paymentId?: string;
   subscriptionId?: string;
+  formData?: RegistrationFormData;
 }
 
 export const checkoutRecoveryService = {

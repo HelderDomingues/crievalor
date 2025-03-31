@@ -77,6 +77,7 @@ export interface CreateCheckoutOptions {
   cancelUrl: string;
   installments?: number;
   paymentType?: PaymentType;
+  customerId?: string | null;
 }
 
 export interface AsaasCustomer {
