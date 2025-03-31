@@ -668,16 +668,22 @@ async function getPaymentLink(baseUrl: string, apiKey: string, linkId: string): 
   }
 }
 
-async function handleGetCustomer(customerId: string, apiKey: string, isSandbox: boolean): Promise<any> {
+/**
+ * Buscar dados do cliente no Asaas
+ */
+export async function handleGetCustomer(customerId: string, apiKey: string, isSandbox: boolean) {
   try {
     if (!customerId) {
-      throw new Error("Customer ID is required");
+      return {
+        success: false,
+        error: "ID do cliente não fornecido"
+      };
     }
 
-    console.log(`Getting customer details for: ${customerId}`);
+    const asaasApiUrl = getAsaasApiUrl(isSandbox);
+    const url = `${asaasApiUrl}/customers/${customerId}`;
     
-    const apiUrl = getAsaasApiUrl(isSandbox);
-    const url = `${apiUrl}/v3/customers/${customerId}`;
+    console.log(`Buscando cliente com ID: ${customerId}`);
     
     const response = await fetch(url, {
       method: "GET",
@@ -689,7 +695,12 @@ async function handleGetCustomer(customerId: string, apiKey: string, isSandbox: 
     
     if (!response.ok) {
       const errorData = await response.json();
-      throw new Error(`Failed to get customer: ${JSON.stringify(errorData)}`);
+      console.error("Erro ao buscar cliente:", errorData);
+      return {
+        success: false,
+        error: `Erro ao buscar cliente: ${errorData.errors?.[0]?.description || response.statusText}`,
+        details: errorData
+      };
     }
     
     const customer = await response.json();
@@ -699,10 +710,10 @@ async function handleGetCustomer(customerId: string, apiKey: string, isSandbox: 
       customer
     };
   } catch (error) {
-    console.error("Error in handleGetCustomer:", error);
+    console.error("Erro ao buscar cliente:", error);
     return {
       success: false,
-      error: error.message
+      error: `Erro ao buscar cliente: ${error.message}`
     };
   }
 }
