@@ -60,14 +60,29 @@ function getPlanInfoFromPayment(payment: any): { planId: string, paymentType: st
   return { planId: "basic_plan", paymentType: "credit" };
 }
 
-// Generate a temporary password
-function generateTemporaryPassword(): string {
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()';
-  let password = '';
-  for (let i = 0; i < 12; i++) {
-    password += chars.charAt(Math.floor(Math.random() * chars.length));
+// Helper function to send password reset email
+async function sendPasswordResetEmail(supabase: any, userEmail: string): Promise<void> {
+  try {
+    console.log(`Sending password reset email to ${userEmail}`);
+    
+    const { data, error } = await supabase.auth.admin.generateLink({
+      type: 'recovery',
+      email: userEmail,
+      options: {
+        redirectTo: 'https://app.crievalor.com.br/auth?action=reset_password'
+      }
+    });
+    
+    if (error) {
+      console.error("Error sending password reset email:", error);
+      throw error;
+    }
+    
+    console.log("Password reset email sent successfully:", data);
+  } catch (error) {
+    console.error("Error in sendPasswordResetEmail:", error);
+    throw error;
   }
-  return password;
 }
 
 // Helper function to process payment events
@@ -126,8 +141,6 @@ export async function handlePaymentEvent(supabase: any, event: string, payment: 
             console.log("Customer not found in database, creating new record");
             
             // Create profile first if it doesn't exist
-            const tempPassword = generateTemporaryPassword();
-            
             const { data: userProfile, error: profileError } = await supabase.auth.admin.createUser({
               email: data.customer.email,
               email_confirm: true,
@@ -135,8 +148,7 @@ export async function handlePaymentEvent(supabase: any, event: string, payment: 
                 full_name: data.customer.name,
                 phone: data.customer.phone || data.customer.mobilePhone,
                 cpf: data.customer.cpfCnpj
-              },
-              password: tempPassword
+              }
             });
             
             if (profileError) {
@@ -146,19 +158,7 @@ export async function handlePaymentEvent(supabase: any, event: string, payment: 
               userAccount = userProfile.user;
               
               // Send password reset email to allow user to set their own password
-              const { error: resetError } = await supabase.auth.admin.generateLink({
-                type: 'recovery',
-                email: data.customer.email,
-                options: {
-                  redirectTo: 'https://app.crievalor.com.br/auth?action=reset_password'
-                }
-              });
-              
-              if (resetError) {
-                console.error("Error sending password reset email:", resetError);
-              } else {
-                console.log("Password reset email sent to user");
-              }
+              await sendPasswordResetEmail(supabase, data.customer.email);
               
               // Now create asaas_customer record
               const { error: insertError } = await supabase
@@ -494,12 +494,9 @@ export async function handlePaymentEvent(supabase: any, event: string, payment: 
             console.log("No email found, cannot create user account");
           } else {
             // Create new user account
-            const tempPassword = generateTemporaryPassword();
-            
             const { data: newUser, error: newUserError } = await supabase.auth.admin.createUser({
               email: email,
-              email_confirm: true,
-              password: tempPassword
+              email_confirm: true
             });
             
             if (newUserError) {
@@ -508,19 +505,7 @@ export async function handlePaymentEvent(supabase: any, event: string, payment: 
               console.log("Created new user account:", newUser);
               
               // Send password reset email
-              const { error: resetError } = await supabase.auth.admin.generateLink({
-                type: 'recovery',
-                email: email,
-                options: {
-                  redirectTo: 'https://app.crievalor.com.br/auth?action=reset_password'
-                }
-              });
-              
-              if (resetError) {
-                console.error("Error sending password reset email:", resetError);
-              } else {
-                console.log("Password reset email sent to user");
-              }
+              await sendPasswordResetEmail(supabase, email);
               
               // Create asaas_customer record
               const { data: newCustomer, error: customerError } = await supabase
@@ -687,19 +672,7 @@ async function processPaymentUpdate(supabase: any, event: string, payment: any, 
             console.log("New user needs to set password, sending reset email");
             
             // Send password reset email
-            const { data: resetData, error: resetError } = await supabase.auth.admin.generateLink({
-              type: 'recovery',
-              email: authUser.user.email,
-              options: {
-                redirectTo: 'https://app.crievalor.com.br/auth?action=reset_password'
-              }
-            });
-            
-            if (resetError) {
-              console.error("Error sending password reset email:", resetError);
-            } else {
-              console.log("Password reset email sent to user:", resetData);
-            }
+            await sendPasswordResetEmail(supabase, authUser.user.email);
           }
         }
       }
