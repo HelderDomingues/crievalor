@@ -3,7 +3,6 @@ import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, ArrowRight, Loader2, Lock, Shield, Info } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
-import { useAuth } from "@/context/AuthContext";
 
 interface UnifiedCheckoutFormProps {
   onPaymentRedirect: () => Promise<void>;
@@ -24,8 +23,23 @@ export const UnifiedCheckoutForm: React.FC<UnifiedCheckoutFormProps> = ({
   formatCurrency = (value) => value.toString(),
   selectedPaymentMethod
 }) => {
-  const { user } = useAuth();
   const [isFormVisible, setIsFormVisible] = useState(false);
+  
+  // Links de pagamento estáticos para cada plano
+  const paymentLinks = {
+    basic_plan: {
+      credit_installment: "https://sandbox.asaas.com/c/vydr3n77kew5fd4s", 
+      cash_payment: "https://sandbox.asaas.com/c/fy15747uacorzbla"
+    },
+    pro_plan: {
+      credit_installment: "https://sandbox.asaas.com/c/4fcw2ezk4je61qon", 
+      cash_payment: "https://sandbox.asaas.com/c/pqnkhgvic7c25ufq"
+    },
+    enterprise_plan: {
+      credit_installment: "https://sandbox.asaas.com/c/z4vate6zwonrwoft", 
+      cash_payment: "https://sandbox.asaas.com/c/3pdwf46bs80mpk0s"
+    }
+  };
   
   // Add animation of fade-in
   useEffect(() => {
@@ -35,6 +49,27 @@ export const UnifiedCheckoutForm: React.FC<UnifiedCheckoutFormProps> = ({
     
     return () => clearTimeout(timer);
   }, []);
+  
+  const handlePaymentClick = () => {
+    if (plan && plan.id === "corporate_plan") {
+      const message = encodeURIComponent("Olá, gostaria de obter mais informações sobre o Plano Corporativo.");
+      window.location.href = `https://wa.me/5547992150289?text=${message}`;
+      return;
+    }
+    
+    // Get direct payment link based on plan and payment method
+    const planLinks = paymentLinks[plan?.id as keyof typeof paymentLinks];
+    if (planLinks) {
+      const paymentLink = planLinks[selectedPaymentMethod];
+      if (paymentLink) {
+        window.location.href = paymentLink;
+        return;
+      }
+    }
+    
+    // Fallback to the original method if no direct link is found
+    onPaymentRedirect();
+  };
 
   return (
     <Card className={`w-full transition-all duration-500 ${isFormVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
@@ -81,7 +116,7 @@ export const UnifiedCheckoutForm: React.FC<UnifiedCheckoutFormProps> = ({
         
         <div className="pt-4 mt-4 slide-up" style={{ animationDelay: '0.35s' }}>
           <Button 
-            onClick={onPaymentRedirect} 
+            onClick={handlePaymentClick} 
             className="w-full hover-raise payment-button-transition"
             disabled={isSubmitting}
           >

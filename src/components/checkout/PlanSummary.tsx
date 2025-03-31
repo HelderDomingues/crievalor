@@ -22,6 +22,22 @@ interface PlanSummaryProps {
   selectedPaymentType?: PaymentSelectionType;
 }
 
+// Static payment links mapping
+const STATIC_PAYMENT_LINKS = {
+  basic_plan: {
+    credit_installment: "https://sandbox.asaas.com/c/vydr3n77kew5fd4s", 
+    cash_payment: "https://sandbox.asaas.com/c/fy15747uacorzbla"
+  },
+  pro_plan: {
+    credit_installment: "https://sandbox.asaas.com/c/4fcw2ezk4je61qon", 
+    cash_payment: "https://sandbox.asaas.com/c/pqnkhgvic7c25ufq"
+  },
+  enterprise_plan: {
+    credit_installment: "https://sandbox.asaas.com/c/z4vate6zwonrwoft", 
+    cash_payment: "https://sandbox.asaas.com/c/3pdwf46bs80mpk0s"
+  }
+};
+
 const PlanSummary = ({
   planId,
   onContinue,
@@ -100,17 +116,25 @@ const PlanSummary = ({
   const handlePaymentRedirect = async () => {
     setIsSubmitting(true);
     try {
-      // Definir algumas informações mínimas para o estado de recuperação
-      const recoveryState = {
-        timestamp: Date.now(),
-        planId: planId,
-        paymentMethod,
-        processId
-      };
+      // Se for o plano corporativo, redirecionar para WhatsApp
+      if (planId === "corporate_plan") {
+        const message = encodeURIComponent("Olá, gostaria de obter mais informações sobre o Plano Corporativo.");
+        window.location.href = `https://wa.me/5547992150289?text=${message}`;
+        return;
+      }
       
-      checkoutRecoveryService.saveRecoveryState(recoveryState);
+      // Obter o link de pagamento estático correspondente
+      const planLinks = STATIC_PAYMENT_LINKS[planId as keyof typeof STATIC_PAYMENT_LINKS];
+      if (!planLinks) {
+        throw new Error(`Plano não encontrado: ${planId}`);
+      }
       
-      // Armazenar informações sobre o plano selecionado
+      const paymentLink = planLinks[paymentMethod];
+      if (!paymentLink) {
+        throw new Error(`Método de pagamento não suportado: ${paymentMethod}`);
+      }
+      
+      // Armazenar informações para recuperação futura
       localStorage.setItem('paymentMethod', paymentMethod);
       localStorage.setItem('paymentTimestamp', Date.now().toString());
       localStorage.setItem('planName', plan.name);
@@ -119,6 +143,17 @@ const PlanSummary = ({
         localStorage.setItem('planPrice', getPaymentAmount().toString());
       }
       
+      // Definir algumas informações mínimas para o estado de recuperação
+      const recoveryState = {
+        timestamp: Date.now(),
+        planId: planId,
+        paymentMethod,
+        processId,
+        paymentLink
+      };
+      
+      checkoutRecoveryService.saveRecoveryState(recoveryState);
+      
       // Mostrar toast de processamento
       toast({
         title: "Processando",
@@ -126,46 +161,23 @@ const PlanSummary = ({
         variant: "default"
       });
       
-      // Processar pagamento para redirecionar para Asaas
-      const result = await paymentProcessor.processPayment({
-        planId,
-        installments: 1,
-        paymentType: paymentMethod === "credit_installment" ? "credit" : "pix",
-        processId
+      // Redirecionar para o link de pagamento
+      toast({
+        title: "Sucesso!",
+        description: "Redirecionando para o pagamento...",
+        variant: "default"
       });
       
-      if (result.success && result.url) {
-        // Atualizar o recoveryState com o link de pagamento
-        const updatedState = {
-          ...recoveryState,
-          paymentLink: result.url
-        };
-        checkoutRecoveryService.saveRecoveryState(updatedState);
-        
-        // Mostrar toast de sucesso
-        toast({
-          title: "Sucesso!",
-          description: "Redirecionando para o pagamento...",
-          variant: "default"
-        });
-        
-        // Adicionar uma pequena espera para a animação
-        setTimeout(() => {
-          // Redirecionar para o link de pagamento
-          window.location.href = result.url;
-        }, 1000);
-        
-        return;
-      } else {
-        throw new Error(result.error || "Não foi possível gerar o link de pagamento");
-      }
+      // Adicionar uma pequena espera para a animação
+      setTimeout(() => {
+        window.location.href = paymentLink;
+      }, 1000);
     } catch (error: any) {
       toast({
         title: "Erro ao processar",
         description: error.message || "Ocorreu um erro ao processar sua solicitação. Por favor, tente novamente.",
         variant: "destructive"
       });
-    } finally {
       setIsSubmitting(false);
     }
   };

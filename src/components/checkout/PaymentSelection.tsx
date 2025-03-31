@@ -29,7 +29,7 @@ const PaymentSelection: React.FC<PaymentSelectionProps> = ({
   const creditFullPrice = planTotalPrice;
   const cashPrice = planTotalPrice * 0.9; // 10% de desconto
 
-  // Links de pagamento para cada plano
+  // Links de pagamento estáticos para cada plano
   const paymentLinks = {
     basic_plan: {
       creditInstallments: "https://sandbox.asaas.com/c/vydr3n77kew5fd4s", 
@@ -50,6 +50,13 @@ const PaymentSelection: React.FC<PaymentSelectionProps> = ({
 
   const handlePaymentMethodClick = (type: PaymentType) => {
     onPaymentTypeChange(type);
+    
+    // Redirecionar diretamente para o link de pagamento adequado
+    const link = type === "credit" 
+      ? currentPlanLinks.creditInstallments 
+      : currentPlanLinks.cashPayment;
+      
+    window.location.href = link;
   };
 
   const formatCurrency = (value: number) => {
@@ -78,69 +85,55 @@ const PaymentSelection: React.FC<PaymentSelectionProps> = ({
         className="space-y-4"
       >
         {/* Cartão de crédito em até 12x */}
-        <a 
-          href={currentPlanLinks.creditInstallments}
-          className="block"
-          onClick={(e) => { 
-            e.preventDefault(); 
-            handlePaymentMethodClick("credit");
-            window.location.href = currentPlanLinks.creditInstallments;
-          }}
-        >
-          <div className={`
+        <div 
+          className={`
             flex items-center justify-between border rounded-lg p-4 
             ${selectedPaymentType === "credit" ? "bg-primary/10 border-primary" : "border-input"}
             hover:bg-primary/20 transition-colors group cursor-pointer
-          `}>
-            <div className="flex items-center space-x-3">
-              <RadioGroupItem value="credit" id="payment-credit" />
-              <Label htmlFor="payment-credit" className="cursor-pointer flex items-center">
-                <CreditCard className="h-5 w-5 mr-3 text-primary group-hover:text-primary transition-colors" />
-                <div>
-                  <p className="font-medium text-foreground group-hover:text-primary transition-colors">Cartão de Crédito Em Até 12X</p>
-                  <p className="text-sm text-muted-foreground group-hover:text-primary/80 transition-colors">Parcele em até 12x sem juros</p>
-                </div>
-              </Label>
-            </div>
-            <div className="text-right">
-              <p className="text-lg font-bold text-primary">12x {formatCurrency(planMonthlyPrice)}</p>
-              <p className="text-sm text-muted-foreground">total: {formatCurrency(creditFullPrice)}</p>
-            </div>
+          `}
+          onClick={() => handlePaymentMethodClick("credit")}
+        >
+          <div className="flex items-center space-x-3">
+            <RadioGroupItem value="credit" id="payment-credit" />
+            <Label htmlFor="payment-credit" className="cursor-pointer flex items-center">
+              <CreditCard className="h-5 w-5 mr-3 text-primary group-hover:text-primary transition-colors" />
+              <div>
+                <p className="font-medium text-foreground group-hover:text-primary transition-colors">Cartão de Crédito Em Até 12X</p>
+                <p className="text-sm text-muted-foreground group-hover:text-primary/80 transition-colors">Parcele em até 12x sem juros</p>
+              </div>
+            </Label>
           </div>
-        </a>
+          <div className="text-right">
+            <p className="text-lg font-bold text-primary">12x {formatCurrency(planMonthlyPrice)}</p>
+            <p className="text-sm text-muted-foreground">total: {formatCurrency(creditFullPrice)}</p>
+          </div>
+        </div>
 
         {/* Pagamento à vista com 10% de desconto (qualquer método) */}
-        <a 
-          href={currentPlanLinks.cashPayment}
-          className="block"
-          onClick={(e) => { 
-            e.preventDefault(); 
-            handlePaymentMethodClick("pix");
-            window.location.href = currentPlanLinks.cashPayment;
-          }}
-        >
-          <div className={`
+        <div 
+          className={`
             flex items-center justify-between border rounded-lg p-4 
             ${selectedPaymentType === "pix" ? "bg-primary/10 border-primary" : "border-input"}
             hover:bg-primary/20 transition-colors group cursor-pointer
-          `}>
-            <div className="flex items-center space-x-3">
-              <RadioGroupItem value="pix" id="payment-cash" />
-              <Label htmlFor="payment-cash" className="cursor-pointer flex items-center">
-                <BanknoteIcon className="h-5 w-5 mr-3 text-primary group-hover:text-primary transition-colors" />
-                <div>
-                  <p className="font-medium text-foreground group-hover:text-primary transition-colors">
-                    Pagamento à Vista <span className="text-green-600 font-semibold">(10% de Desconto)</span>
-                  </p>
-                  <p className="text-sm text-muted-foreground group-hover:text-primary/80 transition-colors">
-                    Cartão, PIX ou Boleto com desconto
-                  </p>
-                </div>
-              </Label>
-            </div>
-            <p className="text-lg font-bold text-primary">{formatCurrency(cashPrice)}</p>
+          `}
+          onClick={() => handlePaymentMethodClick("pix")}
+        >
+          <div className="flex items-center space-x-3">
+            <RadioGroupItem value="pix" id="payment-cash" />
+            <Label htmlFor="payment-cash" className="cursor-pointer flex items-center">
+              <BanknoteIcon className="h-5 w-5 mr-3 text-primary group-hover:text-primary transition-colors" />
+              <div>
+                <p className="font-medium text-foreground group-hover:text-primary transition-colors">
+                  Pagamento à Vista <span className="text-green-600 font-semibold">(10% de Desconto)</span>
+                </p>
+                <p className="text-sm text-muted-foreground group-hover:text-primary/80 transition-colors">
+                  Cartão, PIX ou Boleto com desconto
+                </p>
+              </div>
+            </Label>
           </div>
-        </a>
+          <p className="text-lg font-bold text-primary">{formatCurrency(cashPrice)}</p>
+        </div>
       </RadioGroup>
     </div>
   );

@@ -25,6 +25,22 @@ const PricingCard = ({
   const navigate = useNavigate();
   const { user } = useAuth();
 
+  // Links de pagamento estáticos para cada plano
+  const paymentLinks = {
+    basic_plan: {
+      creditInstallments: "https://sandbox.asaas.com/c/vydr3n77kew5fd4s", 
+      cashPayment: "https://sandbox.asaas.com/c/fy15747uacorzbla"
+    },
+    pro_plan: {
+      creditInstallments: "https://sandbox.asaas.com/c/4fcw2ezk4je61qon", 
+      cashPayment: "https://sandbox.asaas.com/c/pqnkhgvic7c25ufq"
+    },
+    enterprise_plan: {
+      creditInstallments: "https://sandbox.asaas.com/c/z4vate6zwonrwoft", 
+      cashPayment: "https://sandbox.asaas.com/c/3pdwf46bs80mpk0s"
+    }
+  };
+
   const handleSubscribe = () => {
     // Check if this is the corporate plan and handle it differently
     if (plan.id === "corporate_plan") {
@@ -38,8 +54,8 @@ const PricingCard = ({
       return;
     }
 
-    // Direct users to the checkout flow with the plan ID
-    // The checkout page will handle authentication if needed
+    // Direct users to the checkout page to select payment method
+    // We'll maintain this flow for UX consistency
     navigate(`/checkout?plan=${plan.id}`);
   };
 
