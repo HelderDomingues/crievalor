@@ -2,12 +2,33 @@
 import React, { useEffect } from "react";
 import { plans } from "./pricing/pricingData";
 import PricingGrid from "./pricing/PricingGrid";
+import { useAuth } from "@/context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 const PricingSection = () => {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  
   // Add scroll to top effect when component mounts
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+  
+  const handleSubscribe = (planId: string) => {
+    if (planId === "corporate_plan") {
+      const message = encodeURIComponent("Olá, gostaria de obter mais informações sobre o Plano Corporativo.");
+      window.open(`https://wa.me/5547992150289?text=${message}`, '_blank');
+      return;
+    }
+    
+    // If no user, direct to checkout with plan
+    if (!user) {
+      navigate(`/checkout?plan=${planId}`);
+    } else {
+      // If user exists, direct to subscription page
+      navigate(`/subscription?tab=plans`);
+    }
+  };
   
   return (
     <section id="pricing" className="py-20 bg-gradient-to-b from-muted/30 to-background">
@@ -22,7 +43,7 @@ const PricingSection = () => {
           </p>
         </div>
         
-        <PricingGrid plans={plans} />
+        <PricingGrid plans={plans} onSubscribe={handleSubscribe} />
 
         <div className="mt-12 text-center">
           <p className="text-muted-foreground text-sm max-w-2xl mx-auto">

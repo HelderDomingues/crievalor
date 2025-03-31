@@ -21,21 +21,20 @@ const SubscriptionPlans = ({
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
       {Object.values(PLANS).map((plan) => {
-        // Determine the price label based on plan type
+        // Always show installment prices
         let priceLabel: string | undefined = undefined;
         
         if ('customPrice' in plan && plan.customPrice) {
           priceLabel = "Sob Consulta";
         } else if ('priceLabel' in plan) {
-          priceLabel = selectedInstallments === 1 ? 
-            `À vista: R$ ${(plan.cashPrice).toFixed(2).replace('.', ',')}` : 
-            `${selectedInstallments}x de R$ ${(plan.totalPrice / selectedInstallments).toFixed(2).replace('.', ',')}`;
+          // Always show monthly price instead of cash price
+          priceLabel = `12x de R$ ${(plan.price).toFixed(2).replace('.', ',')}`;
         }
         
         // Determine base price for calculations
         let basePrice: number | undefined = undefined;
         if ('price' in plan) {
-          basePrice = selectedInstallments === 1 ? plan.cashPrice : plan.price;
+          basePrice = plan.price;
         }
         
         // Corporate plan needs special handling for the button label
@@ -54,7 +53,7 @@ const SubscriptionPlans = ({
             isCurrentPlan={isPlanCurrent(plan.id)}
             isCheckingOut={isCheckingOut}
             onSubscribe={onSubscribe}
-            installments={selectedInstallments}
+            installments={12} // Set default to 12
             buttonLabel={buttonLabel}
           />
         );

@@ -100,6 +100,12 @@ const SubscriptionPage = () => {
       return;
     }
 
+    if (planId === "corporate_plan") {
+      const message = encodeURIComponent("Olá, gostaria de obter mais informações sobre o Plano Corporativo.");
+      window.open(`https://wa.me/5547992150289?text=${message}`, '_blank');
+      return;
+    }
+
     setSelectedPlanId(planId);
     
     const paymentOptionsElement = document.getElementById('payment-options');
@@ -251,7 +257,7 @@ const SubscriptionPage = () => {
                 onInstallmentsChange={handleInstallmentsChange}
               />
               
-              {selectedPlanId && (
+              {selectedPlanId && selectedPlanId !== "corporate_plan" && (
                 <div id="payment-options" className="mt-8 scroll-mt-16">
                   <h2 className="text-2xl font-semibold mb-4">Opções de pagamento para {subscriptionService.getPlanFromId(selectedPlanId)?.name || "plano selecionado"}</h2>
                   

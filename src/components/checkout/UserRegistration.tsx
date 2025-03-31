@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { useToast } from "@/hooks/use-toast";
@@ -6,15 +5,18 @@ import { supabase } from "@/integrations/supabase/client";
 import { sanitizePhoneNumber } from "@/utils/formatters";
 import { RegistrationForm } from "./form/RegistrationForm";
 import { RegistrationFormData } from "./form/RegistrationFormSchema";
+import { useNavigate } from "react-router-dom";
 
 interface UserRegistrationProps {
   onContinue: () => void;
   onBack: () => void;
+  planId?: string;
 }
 
-const UserRegistration = ({ onContinue, onBack }: UserRegistrationProps) => {
+const UserRegistration = ({ onContinue, onBack, planId }: UserRegistrationProps) => {
   const { signUp } = useAuth();
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
   
   const onSubmit = async (data: RegistrationFormData) => {
@@ -62,7 +64,13 @@ const UserRegistration = ({ onContinue, onBack }: UserRegistrationProps) => {
       });
       
       // Continue to the next step
-      onContinue();
+      if (planId) {
+        // If planId is provided, redirect to checkout with the selected plan
+        navigate(`/checkout?plan=${planId}`);
+      } else {
+        // Otherwise, continue with the default flow
+        onContinue();
+      }
     } catch (error: any) {
       console.error("Error during registration:", error);
       

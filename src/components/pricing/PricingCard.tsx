@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
@@ -25,6 +26,13 @@ const PricingCard = ({
   const { user } = useAuth();
 
   const handleSubscribe = () => {
+    // Check if this is the corporate plan and handle it differently
+    if (plan.id === "corporate_plan") {
+      const message = encodeURIComponent("Olá, gostaria de obter mais informações sobre o Plano Corporativo.");
+      window.open(`https://wa.me/5547992150289?text=${message}`, '_blank');
+      return;
+    }
+    
     if (onSubscribe) {
       onSubscribe();
       return;
@@ -50,6 +58,8 @@ const PricingCard = ({
       return "Plano Atual";
     } else if (plan.comingSoon) {
       return "Em Breve";
+    } else if (plan.id === "corporate_plan") {
+      return "Consultar via WhatsApp";
     } else {
       return plan.cta || "Quero este plano";
     }
