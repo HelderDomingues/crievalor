@@ -7,6 +7,7 @@ import { checkoutTestUtils } from "@/utils/checkoutTestUtils";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { PLANS } from "@/services/plansService";
 
 interface CheckoutDebugPanelProps {
   isVisible?: boolean;
@@ -14,7 +15,7 @@ interface CheckoutDebugPanelProps {
 
 const CheckoutDebugPanel: React.FC<CheckoutDebugPanelProps> = ({ isVisible = false }) => {
   const [scenario, setScenario] = useState<'new-user' | 'existing-user' | 'recovery' | 'abandoned' | 'clear'>('new-user');
-  const [planId, setPlanId] = useState('standard_monthly');
+  const [planId, setPlanId] = useState('basic_plan');
   const [consoleOutput, setConsoleOutput] = useState<string>('');
   
   if (!isVisible) return null;
@@ -50,6 +51,12 @@ const CheckoutDebugPanel: React.FC<CheckoutDebugPanelProps> = ({ isVisible = fal
     }
   };
   
+  // Obter as opções de plano dos planos definidos no sistema
+  const planOptions = Object.values(PLANS).map(plan => ({
+    id: plan.id,
+    name: plan.name
+  }));
+  
   return (
     <Card className="fixed bottom-4 right-4 w-96 z-50 shadow-lg border-red-300 opacity-80 hover:opacity-100 transition-opacity">
       <CardHeader className="bg-red-100 py-2">
@@ -82,16 +89,17 @@ const CheckoutDebugPanel: React.FC<CheckoutDebugPanelProps> = ({ isVisible = fal
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="planId">ID do plano</Label>
+              <Label htmlFor="planId">Plano</Label>
               <Select value={planId} onValueChange={setPlanId}>
                 <SelectTrigger>
                   <SelectValue placeholder="Selecione um plano" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="standard_monthly">Padrão (Mensal)</SelectItem>
-                  <SelectItem value="standard_yearly">Padrão (Anual)</SelectItem>
-                  <SelectItem value="premium_monthly">Premium (Mensal)</SelectItem>
-                  <SelectItem value="premium_yearly">Premium (Anual)</SelectItem>
+                  {planOptions.map(plan => (
+                    <SelectItem key={plan.id} value={plan.id}>
+                      {plan.name}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
