@@ -38,8 +38,9 @@ const Auth = () => {
   };
 
   const handleChoosePlan = () => {
-    // Explicitly navigate to subscription page with plans tab active
-    navigate("/subscription?tab=plans");
+    console.log("Redirecting to subscription plans...");
+    // Force navigation to the subscription page with plans tab
+    window.location.href = "/subscription?tab=plans";
   };
 
   return (
