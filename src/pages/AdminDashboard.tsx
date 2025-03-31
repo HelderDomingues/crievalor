@@ -1,115 +1,125 @@
 
-import React, { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { useAuth } from "@/context/AuthContext";
-import { useProfile } from "@/hooks/useProfile";
+import React from "react";
+import { Link } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import AdminAuth from "@/components/admin/AdminAuth";
-import { Users, Settings, Shield } from "lucide-react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Settings, FileText, WebhookIcon, Briefcase, Users } from "lucide-react";
 
 const AdminDashboard = () => {
-  const navigate = useNavigate();
-  const { user } = useAuth();
-  const { isAdmin, rolesLoading } = useProfile();
-  
-  useEffect(() => {
-    // Add debug logging to understand the admin status
-    console.log("AdminDashboard - User:", user?.id);
-    console.log("AdminDashboard - isAdmin:", isAdmin);
-    console.log("AdminDashboard - rolesLoading:", rolesLoading);
-  }, [user, isAdmin, rolesLoading]);
-
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
-      
       <main className="flex-grow py-16">
         <div className="container mx-auto px-4">
-          <AdminAuth 
-            onAuthenticated={() => {
-              console.log("User authenticated as admin");
-            }}
-            redirectPath="/admin-setup"
-          >
-            <h1 className="text-3xl font-bold mb-8">Painel Administrativo</h1>
+          <AdminAuth redirectPath="/admin-setup">
+            <h1 className="text-4xl font-bold mb-8">Painel Administrativo</h1>
             
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center">
-                    <Shield className="mr-2 h-5 w-5" />
-                    Administração de Materiais
-                  </CardTitle>
-                  <CardDescription>
-                    Gerencie materiais exclusivos disponíveis para os usuários
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <p>Adicione, edite ou remova materiais exclusivos que serão disponibilizados para os usuários com base no nível do plano.</p>
-                </CardContent>
-                <CardFooter>
-                  <Button 
-                    onClick={() => navigate("/admin-materials")}
-                    className="w-full"
-                  >
-                    Gerenciar Materiais
-                  </Button>
-                </CardFooter>
-              </Card>
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+              {/* Material Exclusivo Admin */}
+              <Link to="/admin-materials">
+                <Card className="h-full hover:shadow-md transition-shadow cursor-pointer">
+                  <CardHeader>
+                    <CardTitle className="flex items-center">
+                      <FileText className="mr-2 h-5 w-5 text-primary" />
+                      Material Exclusivo
+                    </CardTitle>
+                    <CardDescription>
+                      Gerenciar materiais exclusivos
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm text-muted-foreground">
+                      Adicione, edite ou remova documentos e materiais para seus assinantes.
+                    </p>
+                  </CardContent>
+                </Card>
+              </Link>
               
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center">
-                    <Settings className="mr-2 h-5 w-5" />
-                    Webhooks
-                  </CardTitle>
-                  <CardDescription>
-                    Configure integrações e webhooks para o sistema
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <p>Gerencie webhooks e integrações com sistemas externos como gateway de pagamento e outras plataformas.</p>
-                </CardContent>
-                <CardFooter>
-                  <Button 
-                    onClick={() => navigate("/admin-webhooks")}
-                    className="w-full"
-                  >
-                    Gerenciar Webhooks
-                  </Button>
-                </CardFooter>
-              </Card>
+              {/* Portfolio Admin */}
+              <Link to="/portfolio-admin">
+                <Card className="h-full hover:shadow-md transition-shadow cursor-pointer">
+                  <CardHeader>
+                    <CardTitle className="flex items-center">
+                      <Briefcase className="mr-2 h-5 w-5 text-primary" />
+                      Portfólio
+                    </CardTitle>
+                    <CardDescription>
+                      Gerenciar portfólio
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm text-muted-foreground">
+                      Adicione, edite ou remova itens do seu portfólio de trabalhos.
+                    </p>
+                  </CardContent>
+                </Card>
+              </Link>
               
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center">
-                    <Users className="mr-2 h-5 w-5" />
-                    Administração de Usuários
-                  </CardTitle>
-                  <CardDescription>
-                    Gerencie usuários e permissões
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <p>Visualize, edite permissões e gerencie contas de usuários da plataforma.</p>
-                </CardContent>
-                <CardFooter>
-                  <Button 
-                    onClick={() => navigate("/admin-settings")}
-                    className="w-full"
-                  >
-                    Gerenciar Usuários
-                  </Button>
-                </CardFooter>
-              </Card>
+              {/* Client Logos Admin */}
+              <Link to="/admin-client-logos">
+                <Card className="h-full hover:shadow-md transition-shadow cursor-pointer">
+                  <CardHeader>
+                    <CardTitle className="flex items-center">
+                      <Users className="mr-2 h-5 w-5 text-primary" />
+                      Logos dos Clientes
+                    </CardTitle>
+                    <CardDescription>
+                      Gerenciar logos de clientes
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm text-muted-foreground">
+                      Adicione, edite ou remova logos dos clientes exibidos no carrossel.
+                    </p>
+                  </CardContent>
+                </Card>
+              </Link>
+              
+              {/* Webhooks Admin */}
+              <Link to="/admin-webhooks">
+                <Card className="h-full hover:shadow-md transition-shadow cursor-pointer">
+                  <CardHeader>
+                    <CardTitle className="flex items-center">
+                      <WebhookIcon className="mr-2 h-5 w-5 text-primary" />
+                      Webhooks
+                    </CardTitle>
+                    <CardDescription>
+                      Gerenciar webhooks
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm text-muted-foreground">
+                      Configure os webhooks para integração com sistemas externos.
+                    </p>
+                  </CardContent>
+                </Card>
+              </Link>
+              
+              {/* System Settings */}
+              <Link to="/admin-settings">
+                <Card className="h-full hover:shadow-md transition-shadow cursor-pointer">
+                  <CardHeader>
+                    <CardTitle className="flex items-center">
+                      <Settings className="mr-2 h-5 w-5 text-primary" />
+                      Configurações
+                    </CardTitle>
+                    <CardDescription>
+                      Configurações do sistema
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm text-muted-foreground">
+                      Gerencie as configurações gerais do sistema e preferências.
+                    </p>
+                  </CardContent>
+                </Card>
+              </Link>
             </div>
           </AdminAuth>
         </div>
       </main>
-      
       <Footer />
     </div>
   );

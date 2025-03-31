@@ -1,7 +1,7 @@
 
 import { supabaseExtended } from "@/integrations/supabase/extendedClient";
 
-export const createStorageBucketIfNotExists = async () => {
+export const createStorageBucketIfNotExists = async (bucketName: string, options = { public: true, fileSizeLimit: 10485760 }) => {
   try {
     // Check if the bucket exists
     const { data: buckets, error: listError } = await supabaseExtended.storage.listBuckets();
@@ -10,22 +10,27 @@ export const createStorageBucketIfNotExists = async () => {
       throw listError;
     }
 
-    const materialsBucketExists = buckets?.some(bucket => bucket.name === 'materials');
+    const bucketExists = buckets?.some(bucket => bucket.name === bucketName);
     
-    if (!materialsBucketExists) {
-      // Create the materials bucket
-      const { error: createError } = await supabaseExtended.storage.createBucket('materials', {
-        public: true,
-        fileSizeLimit: 10485760 // 10MB
-      });
+    if (!bucketExists) {
+      // Create the bucket
+      const { error: createError } = await supabaseExtended.storage.createBucket(bucketName, options);
       
       if (createError) {
         throw createError;
       }
       
-      console.log('Materials storage bucket created');
+      console.log(`Storage bucket '${bucketName}' created`);
     }
   } catch (error) {
-    console.error('Error setting up materials storage bucket:', error);
+    console.error(`Error setting up ${bucketName} storage bucket:`, error);
   }
+};
+
+// Specific function for materials bucket for backward compatibility
+export const createMaterialsBucketIfNotExists = async () => {
+  return createStorageBucketIfNotExists('materials', {
+    public: true,
+    fileSizeLimit: 10485760 // 10MB
+  });
 };

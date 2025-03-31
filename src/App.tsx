@@ -33,6 +33,7 @@ import AdminDashboard from "./pages/AdminDashboard";
 import AdminSettings from "./pages/AdminSettings";
 import Checkout from "./pages/Checkout";
 import CheckoutDebugPanel from "./components/debug/CheckoutDebugPanel";
+import ClientLogosAdminPage from "./pages/ClientLogosAdminPage";
 
 // Scroll to top component
 const ScrollToTop = () => {
@@ -100,6 +101,7 @@ const App = () => {
                 <Route path="/admin-setup" element={<AdminSetup />} />
                 <Route path="/admin" element={<AdminDashboard />} />
                 <Route path="/admin-settings" element={<AdminSettings />} />
+                <Route path="/admin-client-logos" element={<ClientLogosAdminPage />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
               <Chatbot />

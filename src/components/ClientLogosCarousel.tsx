@@ -2,8 +2,8 @@
 import React from "react";
 import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
 
-// Client logos will be imported from the public directory
-const clientLogos = [
+// Client logos with editable fields
+export const clientLogos = [
   { name: "Client 1", logo: "/lovable-uploads/client1.png" },
   { name: "Client 2", logo: "/lovable-uploads/client2.png" },
   { name: "Client 3", logo: "/lovable-uploads/client3.png" },
