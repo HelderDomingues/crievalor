@@ -54,7 +54,7 @@ const AuthHeader = () => {
                 <DropdownMenuSeparator />
                 <DropdownMenuLabel>Administração</DropdownMenuLabel>
                 <DropdownMenuItem asChild>
-                  <Link to="/admin" className="flex items-center">
+                  <Link to="/admin-setup" className="flex items-center">
                     <Settings className="mr-2 h-4 w-4" />
                     <span>Painel Admin</span>
                   </Link>

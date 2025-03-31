@@ -50,15 +50,17 @@ export const fetchClientLogos = async (): Promise<ClientLogo[]> => {
         .from('clientlogos')
         .getPublicUrl(file.name);
       
+      const publicUrl = urlData.publicUrl + '?t=' + new Date().getTime(); // Add cache-busting parameter
+      
       // Use filename as the client name (removing extension)
       const clientName = file.name.split('.').slice(0, -1).join('.');
       
-      console.log(`Logo ${index + 1}: ${clientName} - ${urlData.publicUrl}`);
+      console.log(`Logo ${index + 1}: ${clientName} - ${publicUrl}`);
       
       return {
         id: String(index + 1),
         name: clientName || `Cliente ${index + 1}`,
-        logo: urlData.publicUrl
+        logo: publicUrl
       };
     }));
     

@@ -12,6 +12,7 @@ import PortfolioAdmin from "./pages/PortfolioAdmin";
 import AdminMaterialsPage from "./pages/AdminMaterials";
 import ClientLogosAdminPage from "./pages/ClientLogosAdminPage";
 import TestimonialsAdmin from "./pages/TestimonialsAdmin";
+import Auth from "./pages/Auth";
 
 const router = createBrowserRouter([
   {
@@ -42,6 +43,10 @@ const router = createBrowserRouter([
   {
     path: "/admin-testimonials",
     element: <TestimonialsAdmin />,
+  },
+  {
+    path: "/auth",
+    element: <Auth />,
   },
 ]);
 
