@@ -46,7 +46,7 @@ async function setupSystemSettings() {
 
 // Inicializar storage bucket, configurar políticas RLS e system settings
 createStorageBucketIfNotExists();
-createLogosBucketIfNotExists();
+createLogosBucketIfNotExists(); // Provide argument if needed
 setupRLSPolicies();
 setupSystemSettings();
 
