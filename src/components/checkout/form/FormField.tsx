@@ -17,6 +17,7 @@ interface FormFieldProps {
   label: string;
   placeholder: string;
   type?: string;
+  disabled?: boolean;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>, onChange: (value: string) => void) => void;
 }
 
@@ -26,6 +27,7 @@ export const FormField: React.FC<FormFieldProps> = ({
   label,
   placeholder,
   type = "text",
+  disabled = false,
   onChange
 }) => {
   // Default onChange handlers for common field types
@@ -49,7 +51,8 @@ export const FormField: React.FC<FormFieldProps> = ({
           <FormControl>
             <Input 
               type={type} 
-              placeholder={placeholder} 
+              placeholder={placeholder}
+              disabled={disabled}
               {...field} 
               onChange={onChange 
                 ? (e) => onChange(e, field.onChange) 
