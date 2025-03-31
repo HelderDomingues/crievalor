@@ -24,7 +24,7 @@ export const createLogosBucketIfNotExists = async (bucketName: string = 'logos',
 export const uploadLogoImage = async (file: File) => {
   try {
     // Make sure the logos bucket exists
-    await createLogosBucketIfNotExists();
+    await createLogosBucketIfNotExists('logos');
     
     // Create a unique filename
     const fileExt = file.name.split('.').pop();
