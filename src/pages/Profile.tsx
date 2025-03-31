@@ -48,7 +48,7 @@ const Profile = () => {
 
   const openWhatsApp = () => {
     const message = encodeURIComponent("Olá, gostaria de obter mais informações sobre os planos para empresas sem CNPJ.");
-    window.open(`https://wa.me/5567996880616?text=${message}`, '_blank');
+    window.open(`https://wa.me/5547992150289?text=${message}`, '_blank');
   };
 
   if (loading) {
