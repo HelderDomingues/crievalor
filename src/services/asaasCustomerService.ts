@@ -1,3 +1,4 @@
+
 import { supabase } from "@/integrations/supabase/client";
 import { RegistrationFormData } from "@/components/checkout/form/RegistrationFormSchema";
 
@@ -95,23 +96,32 @@ export const asaasCustomerService = {
   
   async findCustomerByCpfCnpj(cpfCnpj: string) {
     try {
+      // Format CPF/CNPJ to ensure consistency
+      const formattedCpfCnpj = this.formatCpfCnpj(cpfCnpj);
+      
+      console.log(`Verificando cliente por CPF/CNPJ: ${formattedCpfCnpj}`);
+      
       const response = await supabase.functions.invoke("asaas", {
         body: {
           action: "get-customer-by-cpf-cnpj",
           data: {
-            cpfCnpj: cpfCnpj
+            cpfCnpj: formattedCpfCnpj
           },
         },
       });
       
       if (response.error) {
         console.error("Erro ao verificar cliente no Asaas:", response.error);
-        throw new Error(`Erro ao verificar cliente: ${response.error.message}`);
+        // Instead of throwing an error, return null to allow the flow to continue to customer creation
+        console.log("Continuando com a criação de novo cliente devido a erro na verificação");
+        return null;
       }
       
       return response.data?.customer || null;
     } catch (error) {
       console.error("Error finding customer by CPF/CNPJ:", error);
+      // Instead of re-throwing the error, return null to allow the flow to continue
+      console.log("Continuando com a criação de novo cliente devido a exceção");
       return null;
     }
   },

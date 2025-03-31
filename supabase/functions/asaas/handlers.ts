@@ -1,4 +1,3 @@
-
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.38.4';
 import { getAsaasApiUrl, validateUrls, safeJsonParse } from './utils.ts';
 
@@ -16,8 +15,7 @@ export async function handleCustomer(action: string, data: any, apiKey: string):
     
     case 'get-customer-by-cpf-cnpj':
       if (!data.cpfCnpj) throw new Error('CPF/CNPJ is required');
-      // This would need to be implemented if required
-      throw new Error('Not implemented yet');
+      return await getCustomerByCpfCnpj(baseUrl, apiKey, data.cpfCnpj);
     
     case 'create-customer':
       console.log("Creating customer with data:", data);
@@ -128,6 +126,41 @@ async function getCustomer(baseUrl: string, apiKey: string, customerId: string):
     return await response.json();
   } catch (error) {
     console.error('Error fetching customer:', error);
+    throw error;
+  }
+}
+
+async function getCustomerByCpfCnpj(baseUrl: string, apiKey: string, cpfCnpj: string): Promise<any> {
+  try {
+    console.log(`Searching for customer with CPF/CNPJ: ${cpfCnpj}`);
+    
+    // Format CPF/CNPJ to remove any non-numeric characters
+    const formattedCpfCnpj = cpfCnpj.replace(/[^0-9]/g, '');
+    
+    // Query Asaas API to search customers by CPF/CNPJ
+    const response = await fetch(`${baseUrl}/customers?cpfCnpj=${formattedCpfCnpj}`, {
+      headers: {
+        'Content-Type': 'application/json',
+        'access_token': apiKey,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch customer by CPF/CNPJ: ${response.status}`);
+    }
+
+    const result = await response.json();
+    
+    // Check if any customers were found
+    if (result.data && result.data.length > 0) {
+      console.log(`Found existing customer for CPF/CNPJ ${cpfCnpj}:`, result.data[0]);
+      return { customer: result.data[0] };
+    } else {
+      console.log(`No customer found for CPF/CNPJ ${cpfCnpj}`);
+      return { customer: null };
+    }
+  } catch (error) {
+    console.error(`Error finding customer by CPF/CNPJ ${cpfCnpj}:`, error);
     throw error;
   }
 }
