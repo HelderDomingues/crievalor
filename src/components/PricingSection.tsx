@@ -22,8 +22,8 @@ const PricingSection = () => {
       return;
     }
     
-    // Direct all users to checkout with plan, registration will happen there
-    navigate(`/checkout?plan=${planId}`);
+    // Direct all users to subscription page with plan selected
+    navigate(`/subscription?tab=plans&plan=${planId}`);
   };
   
   return (

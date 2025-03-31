@@ -8,7 +8,8 @@ import { RegistrationForm } from "./form/RegistrationForm";
 import { RegistrationFormData } from "./form/RegistrationFormSchema";
 import { useNavigate } from "react-router-dom";
 import { AlertCircle } from "lucide-react";
-import { Alert } from "@/components/ui/alert";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
 
 interface UserRegistrationProps {
   onContinue: () => void;
@@ -114,14 +115,23 @@ const UserRegistration = ({ onContinue, onBack, planId }: UserRegistrationProps)
     }
   };
   
-  // Se não tiver planId, mostre uma mensagem e redirecione
+  // Se não tiver planId, mostre uma mensagem e botão para escolher um plano
   if (!planId) {
     return (
       <div className="space-y-6">
         <Alert variant="destructive" className="mb-4">
           <AlertCircle className="h-4 w-4 mr-2" />
-          É necessário escolher um plano antes de se cadastrar.
+          É necessário escolher um plano MAR antes de se cadastrar.
         </Alert>
+        
+        <div className="text-center">
+          <Button 
+            onClick={() => navigate("/subscription?tab=plans")}
+            className="mt-4"
+          >
+            Escolher um plano MAR
+          </Button>
+        </div>
       </div>
     );
   }

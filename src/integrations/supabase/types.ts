@@ -245,6 +245,33 @@ export type Database = {
         }
         Relationships: []
       }
+      "Teste MAKE": {
+        Row: {
+          created_at: string
+          Email: string
+          id: number
+          Nome: string
+          Sobrenome: string
+          Whatsapp: number
+        }
+        Insert: {
+          created_at?: string
+          Email: string
+          id?: number
+          Nome: string
+          Sobrenome: string
+          Whatsapp: number
+        }
+        Update: {
+          created_at?: string
+          Email?: string
+          id?: number
+          Nome?: string
+          Sobrenome?: string
+          Whatsapp?: number
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string | null

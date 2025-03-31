@@ -9,7 +9,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { AlertCircle } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const Auth = () => {
   const navigate = useNavigate();
@@ -19,7 +18,6 @@ const Auth = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [activeTab, setActiveTab] = useState("login");
 
   // Check if the user is already signed in, redirect to home
   useEffect(() => {
@@ -27,13 +25,6 @@ const Auth = () => {
       navigate("/");
     }
   }, [user, navigate]);
-
-  // Redirect to subscription/pricing page for registration
-  useEffect(() => {
-    if (activeTab === "register" && !location.search.includes("fromCheckout")) {
-      navigate("/subscription?tab=plans");
-    }
-  }, [activeTab, navigate, location]);
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -46,14 +37,8 @@ const Auth = () => {
     setIsLoading(false);
   };
 
-  const switchTab = (tab: string) => {
-    setActiveTab(tab);
-    setError(null);
-    
-    // If switching to register tab, redirect to plans page
-    if (tab === "register" && !location.search.includes("fromCheckout")) {
-      navigate("/subscription?tab=plans");
-    }
+  const handleChoosePlan = () => {
+    navigate("/subscription?tab=plans");
   };
 
   return (
@@ -66,63 +51,41 @@ const Auth = () => {
             Acesso à Plataforma
           </h1>
 
-          <Tabs defaultValue="login" className="w-full" value={activeTab} onValueChange={switchTab}>
-            <TabsList className="grid w-full grid-cols-2 mb-8">
-              <TabsTrigger value="login">Login</TabsTrigger>
-              <TabsTrigger value="register">Cadastro</TabsTrigger>
-            </TabsList>
+          <div className="bg-[#1a2e4c] border-l-4 border-primary p-6 mb-8 shadow-md rounded-2xl">
+            <div className="text-center">
+              <h2 className="text-xl font-semibold mb-3 text-white">Não tem uma conta ainda?</h2>
+              <p className="text-gray-300 mb-4">
+                Para criar uma conta, você precisa primeiro escolher um plano MAR e realizar o pagamento.
+              </p>
+              <Button 
+                onClick={handleChoosePlan} 
+                className="mt-2 font-semibold bg-primary hover:bg-primary/90 text-white"
+              >
+                Escolha um plano para começar
+              </Button>
+            </div>
+          </div>
+          
+          <form onSubmit={handleSignIn} className="space-y-6">
+            <div className="space-y-2">
+              <Label htmlFor="email">Email</Label>
+              <Input id="email" type="email" placeholder="seu@email.com" value={email} onChange={e => setEmail(e.target.value)} required />
+            </div>
             
-            <TabsContent value="login">
-              <div className="bg-[#1a2e4c] border-l-4 border-primary p-6 mb-8 shadow-md rounded-2xl">
-                <p className="text-center">
-                  <span className="block text-lg mb-2 font-medium text-white">Não tem uma conta ainda?</span>
-                  <Button 
-                    onClick={() => navigate("/subscription?tab=plans")} 
-                    className="mt-2 font-semibold bg-primary hover:bg-primary/90 text-white"
-                  >
-                    Escolha um plano para começar
-                  </Button>
-                </p>
-              </div>
-              
-              <form onSubmit={handleSignIn} className="space-y-6">
-                <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
-                  <Input id="email" type="email" placeholder="seu@email.com" value={email} onChange={e => setEmail(e.target.value)} required />
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="password">Senha</Label>
-                  <Input id="password" type="password" placeholder="Sua senha" value={password} onChange={e => setPassword(e.target.value)} required />
-                </div>
-                
-                {error && <Alert variant={error.includes("sucesso") ? "default" : "destructive"}>
-                    <AlertCircle className="h-4 w-4" />
-                    <AlertDescription>{error}</AlertDescription>
-                  </Alert>}
-                
-                <Button type="submit" className="w-full" disabled={isLoading}>
-                  {isLoading ? "Entrando..." : "Entrar"}
-                </Button>
-              </form>
-            </TabsContent>
+            <div className="space-y-2">
+              <Label htmlFor="password">Senha</Label>
+              <Input id="password" type="password" placeholder="Sua senha" value={password} onChange={e => setPassword(e.target.value)} required />
+            </div>
             
-            <TabsContent value="register">
-              <div className="text-center p-8">
-                <AlertCircle className="h-12 w-12 mx-auto text-primary mb-4" />
-                <h3 className="text-xl font-semibold mb-2">Cadastro requer escolha de plano</h3>
-                <p className="text-muted-foreground mb-6">
-                  Para criar uma conta, você precisa primeiro escolher um plano e realizar o pagamento.
-                </p>
-                <Button
-                  onClick={() => navigate("/subscription?tab=plans")}
-                  className="w-full bg-primary hover:bg-primary/90"
-                >
-                  Ver planos disponíveis
-                </Button>
-              </div>
-            </TabsContent>
-          </Tabs>
+            {error && <Alert variant={error.includes("sucesso") ? "default" : "destructive"}>
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>}
+            
+            <Button type="submit" className="w-full" disabled={isLoading}>
+              {isLoading ? "Entrando..." : "Entrar"}
+            </Button>
+          </form>
         </div>
       </main>
       
