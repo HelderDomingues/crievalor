@@ -1,5 +1,6 @@
+
 import React from "react";
-import { Card, CardContent } from "@/components/ui/card";
+import { CardContent } from "@/components/ui/card";
 import ProfileField from "./ProfileField";
 import SocialMediaField from "./SocialMediaField";
 import { Button } from "@/components/ui/button";
@@ -22,11 +23,9 @@ const ProfileTabs: React.FC<ProfileTabsProps> = ({
   openWhatsApp
 }) => {
   return (
-    <CardContent>
+    <CardContent className="p-6">
       {activeTab === "personal" && (
         <div className="space-y-4">
-          <h3 className="text-lg font-medium">Dados Pessoais</h3>
-          
           <ProfileField
             label="Nome de Usuário"
             value={profile?.username || ""}
@@ -72,8 +71,6 @@ const ProfileTabs: React.FC<ProfileTabsProps> = ({
       
       {activeTab === "company" && (
         <div className="space-y-4">
-          <h3 className="text-lg font-medium">Dados da Empresa</h3>
-          
           <ProfileField
             label="Nome da Empresa"
             value={profile?.company_name || ""}
@@ -105,16 +102,14 @@ const ProfileTabs: React.FC<ProfileTabsProps> = ({
           />
           
           <div className="mb-4">
-            <div className="flex justify-between items-center mb-2">
-              <ProfileField
-                label="CNPJ"
-                value={profile?.cnpj || ""}
-                fieldName="cnpj"
-                onSave={handleSaveField}
-                loading={loading}
-                placeholder="00.000.000/0000-00"
-              />
-            </div>
+            <ProfileField
+              label="CNPJ"
+              value={profile?.cnpj || ""}
+              fieldName="cnpj"
+              onSave={handleSaveField}
+              loading={loading}
+              placeholder="00.000.000/0000-00"
+            />
             
             {!profile?.cnpj && (
               <div className="mt-2 p-4 bg-muted rounded-md">
@@ -135,8 +130,6 @@ const ProfileTabs: React.FC<ProfileTabsProps> = ({
       
       {activeTab === "social" && (
         <div className="space-y-4">
-          <h3 className="text-lg font-medium">Redes Sociais</h3>
-          
           <SocialMediaField
             label="LinkedIn"
             value={profile?.social_media?.linkedin}

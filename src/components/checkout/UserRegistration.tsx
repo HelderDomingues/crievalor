@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+
+import React, { useState, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -18,6 +19,13 @@ const UserRegistration = ({ onContinue, onBack, planId }: UserRegistrationProps)
   const { toast } = useToast();
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  // If user came from the pricing page, they must have a plan selected
+  useEffect(() => {
+    if (!planId) {
+      navigate("/");
+    }
+  }, [planId, navigate]);
   
   const onSubmit = async (data: RegistrationFormData) => {
     setIsSubmitting(true);
@@ -63,12 +71,11 @@ const UserRegistration = ({ onContinue, onBack, planId }: UserRegistrationProps)
         description: "Agora você pode prosseguir com o pagamento.",
       });
       
-      // Continue to the next step
+      // If planId is provided, always redirect to checkout with the selected plan
       if (planId) {
-        // If planId is provided, redirect to checkout with the selected plan
         navigate(`/checkout?plan=${planId}`);
       } else {
-        // Otherwise, continue with the default flow
+        // This path should not be reachable with the new logic
         onContinue();
       }
     } catch (error: any) {
@@ -95,7 +102,7 @@ const UserRegistration = ({ onContinue, onBack, planId }: UserRegistrationProps)
       <div className="text-center mb-8">
         <h1 className="text-3xl font-bold">Crie sua conta</h1>
         <p className="text-muted-foreground mt-2">
-          Complete seu cadastro para prosseguir com o pagamento.
+          Complete seu cadastro para prosseguir com o pagamento do plano selecionado.
         </p>
       </div>
       

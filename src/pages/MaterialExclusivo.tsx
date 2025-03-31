@@ -195,7 +195,7 @@ const MaterialExclusivoPage: React.FC = () => {
                   </AlertDescription>
                 </Alert>
                 <Button asChild>
-                  <a href="/subscription">Ver Planos de Assinatura</a>
+                  <a href="/mar">Ver Planos de Assinatura</a>
                 </Button>
               </CardContent>
             </Card>

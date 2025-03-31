@@ -1,15 +1,35 @@
+
 import React from "react";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
+
 const SubscriptionNotFound = () => {
-  return <Alert className="mt-4">
+  const handleConsultant = () => {
+    const message = encodeURIComponent("Olá, gostaria de obter mais informações sobre os planos disponíveis.");
+    window.open(`https://wa.me/5547992150289?text=${message}`, '_blank');
+  };
+
+  return (
+    <Alert className="mt-4">
       <AlertCircle className="h-4 w-4" />
       <AlertTitle>Nenhuma assinatura encontrada</AlertTitle>
-      <AlertDescription>
-        Você ainda não possui uma assinatura ativa. Visite nossa página de planos para conhecer nossas opções e potencializar seus resultados.
+      <AlertDescription className="space-y-4">
+        <p>Você ainda não possui uma assinatura ativa. Visite nossa página de planos para conhecer nossas opções e potencializar seus resultados.</p>
+        
+        <div className="flex gap-3 mt-4">
+          <Button asChild>
+            <Link to="/subscription?tab=plans">Ver planos</Link>
+          </Button>
+          
+          <Button variant="outline" onClick={handleConsultant}>
+            Falar com consultor
+          </Button>
+        </div>
       </AlertDescription>
-      
-    </Alert>;
+    </Alert>
+  );
 };
+
 export default SubscriptionNotFound;

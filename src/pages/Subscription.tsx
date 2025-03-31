@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useNavigate, useSearchParams, useLocation } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
@@ -11,7 +12,7 @@ import SubscriptionPlans from "@/components/subscription/SubscriptionPlans";
 import CheckoutError from "@/components/subscription/CheckoutError";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import SubscriptionDetails from "@/components/profile/SubscriptionDetails";
-import { Card, CardHeader, CardContent, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
+import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import PaymentOptions, { PaymentType } from "@/components/pricing/PaymentOptions";
 import CheckoutController from "@/components/subscription/CheckoutController";
@@ -226,7 +227,7 @@ const SubscriptionPage = () => {
                         Agende suas sessões de mentoria incluídas no plano.
                       </p>
                       <Button asChild>
-                        <a href="#mentorias">Agendar Mentoria</a>
+                        <a href="/mentorias">Agendar Mentoria</a>
                       </Button>
                     </CardContent>
                   </Card>
@@ -240,7 +241,7 @@ const SubscriptionPage = () => {
                         Participe da nossa comunidade exclusiva.
                       </p>
                       <Button asChild>
-                        <a href="#comunidade">Acessar Comunidade</a>
+                        <a href="/comunidade">Acessar Comunidade</a>
                       </Button>
                     </CardContent>
                   </Card>
@@ -264,14 +265,14 @@ const SubscriptionPage = () => {
                   <PaymentOptions 
                     onInstallmentsChange={handleInstallmentsChange}
                     onPaymentTypeChange={handlePaymentTypeChange}
-                    selectedInstallments={1}
+                    selectedInstallments={selectedInstallments}
                     selectedPaymentType={selectedPaymentType}
                   />
                   
                   <div className="mt-6 text-center">
                     <CheckoutController 
                       planId={selectedPlanId}
-                      installments={1}
+                      installments={selectedInstallments}
                       paymentType={selectedPaymentType}
                       buttonText="Continuar com o pagamento"
                       className="px-8 py-3 text-lg"

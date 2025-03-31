@@ -26,9 +26,10 @@ const SubscriptionPlans = ({
         
         if ('customPrice' in plan && plan.customPrice) {
           priceLabel = "Sob Consulta";
-        } else if ('priceLabel' in plan) {
-          // Always show monthly price instead of cash price
-          priceLabel = `12x de R$ ${(plan.price).toFixed(2).replace('.', ',')}`;
+        } else if ('price' in plan) {
+          // Monthly installment price
+          const installmentPrice = plan.price / 12;
+          priceLabel = `12x de R$ ${installmentPrice.toFixed(2).replace('.', ',')}`;
         }
         
         // Determine base price for calculations

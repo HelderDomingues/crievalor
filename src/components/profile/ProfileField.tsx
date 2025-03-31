@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Edit, Save, Trash2 } from "lucide-react";
+import { Trash2, Save } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { formatPhoneNumber } from "@/utils/formatters";
 
@@ -61,7 +61,6 @@ const ProfileField: React.FC<ProfileFieldProps> = ({
     setIsSaving(true);
     try {
       await onSave(fieldName, fieldValue);
-      setIsEditing(false);
       toast({
         title: "Campo atualizado",
         description: `${label} foi atualizado com sucesso.`
@@ -82,7 +81,7 @@ const ProfileField: React.FC<ProfileFieldProps> = ({
   };
 
   return (
-    <div className="space-y-2 mb-4">
+    <div className="space-y-2 mb-6">
       <div className="flex justify-between items-center">
         <div className="flex items-center">
           <Label htmlFor={fieldName} className={required ? "after:content-['*'] after:ml-0.5 after:text-red-500" : ""}>{label}</Label>
@@ -90,59 +89,54 @@ const ProfileField: React.FC<ProfileFieldProps> = ({
             <span className="ml-2 text-xs text-muted-foreground">(Obrigatório)</span>
           )}
         </div>
-        <div className="flex gap-2">
-          {!isEditing ? (
-            <Button 
-              variant="outline" 
-              size="sm" 
-              onClick={() => setIsEditing(true)}
-              disabled={loading}
-            >
-              <Edit className="h-4 w-4 mr-1" /> Editar
-            </Button>
-          ) : (
-            <>
-              <Button 
-                variant="outline" 
-                size="sm" 
-                onClick={handleClear}
-                disabled={isSaving}
-              >
-                <Trash2 className="h-4 w-4 mr-1" /> Limpar
-              </Button>
-              <Button 
-                variant="default" 
-                size="sm" 
-                onClick={handleSave}
-                disabled={isSaving}
-              >
-                <Save className="h-4 w-4 mr-1" /> {isSaving ? "Salvando..." : "Salvar"}
-              </Button>
-            </>
-          )}
-        </div>
       </div>
       
-      {isTextarea ? (
-        <Textarea
-          id={fieldName}
-          value={fieldValue}
-          onChange={handleChange}
-          disabled={!isEditing || isSaving || loading}
-          className="w-full"
-          placeholder={placeholder}
-          rows={3}
-        />
-      ) : (
-        <Input
-          id={fieldName}
-          value={fieldValue}
-          onChange={handleChange}
-          disabled={!isEditing || isSaving || loading}
-          className="w-full"
-          placeholder={placeholder}
-        />
-      )}
+      <div className="relative">
+        {isTextarea ? (
+          <Textarea
+            id={fieldName}
+            value={fieldValue}
+            onChange={handleChange}
+            disabled={isSaving || loading}
+            className="w-full pr-24"
+            placeholder={placeholder}
+            rows={3}
+          />
+        ) : (
+          <Input
+            id={fieldName}
+            value={fieldValue}
+            onChange={handleChange}
+            disabled={isSaving || loading}
+            className="w-full pr-24"
+            placeholder={placeholder}
+          />
+        )}
+        
+        <div className="absolute right-2 top-1/2 transform -translate-y-1/2 flex gap-2">
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            onClick={handleClear}
+            disabled={isSaving}
+            className="h-8 px-2"
+          >
+            <Trash2 className="h-4 w-4" />
+            <span className="sr-only">Limpar</span>
+          </Button>
+          
+          <Button 
+            variant="default" 
+            size="sm" 
+            onClick={handleSave}
+            disabled={isSaving}
+            className="h-8 px-3"
+          >
+            <Save className="h-4 w-4 mr-1" />
+            {isSaving ? "..." : "Salvar"}
+          </Button>
+        </div>
+      </div>
     </div>
   );
 };

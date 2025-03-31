@@ -7,7 +7,7 @@ import { AlertCircle, User, Briefcase, Globe, CreditCard, CheckCircle } from "lu
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import AvatarUpload from "@/components/AvatarUpload";
 import { UserProfile } from "@/types/auth";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { Subscription } from "@/types/subscription";
 
@@ -35,16 +35,15 @@ const ProfileSidebar: React.FC<ProfileSidebarProps> = ({
   // Handle subscription tab click with navigation
   const handleSubscriptionClick = () => {
     setActiveTab("subscription");
-    // Use navigate instead of Link for programmatic navigation
-    navigate("/subscription?tab=plans");
+    navigate("/subscription?tab=details");
   };
   
   const hasActiveSubscription = subscription && ["active", "ACTIVE", "trialing"].includes(subscription.status);
   
   return (
-    <Card>
+    <Card className="bg-card border-0 shadow-md">
       <CardContent className="pt-6">
-        <div className="flex flex-col items-center mb-4">
+        <div className="flex flex-col items-center mb-6">
           <AvatarUpload 
             avatarUrl={profile?.avatar_url || null} 
             username={profile?.username || null}

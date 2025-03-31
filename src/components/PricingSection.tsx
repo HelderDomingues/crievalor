@@ -21,13 +21,8 @@ const PricingSection = () => {
       return;
     }
     
-    // If no user, direct to checkout with plan
-    if (!user) {
-      navigate(`/checkout?plan=${planId}`);
-    } else {
-      // If user exists, direct to subscription page
-      navigate(`/subscription?tab=plans`);
-    }
+    // Direct all users to checkout with plan, registration will happen there
+    navigate(`/checkout?plan=${planId}`);
   };
   
   return (

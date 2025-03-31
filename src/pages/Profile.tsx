@@ -6,7 +6,8 @@ import { useProfile } from "@/hooks/useProfile";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Card, CardHeader, CardContent, CardTitle, CardDescription } from "@/components/ui/card";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
+import { subscriptionService } from "@/services/subscriptionService";
 import SubscriptionDetails from "@/components/profile/SubscriptionDetails";
 import ProfileSidebar from "@/components/profile/ProfileSidebar";
 import ProfileTabs from "@/components/profile/ProfileTabs";
@@ -18,12 +19,32 @@ const Profile = () => {
   const { toast } = useToast();
   
   const [activeTab, setActiveTab] = useState("personal");
+  const [subscription, setSubscription] = useState(null);
+  const [subscriptionLoading, setSubscriptionLoading] = useState(true);
   
   useEffect(() => {
     if (!user && !loading) {
       navigate("/auth");
     }
   }, [user, loading, navigate]);
+
+  useEffect(() => {
+    const loadSubscription = async () => {
+      if (user) {
+        try {
+          setSubscriptionLoading(true);
+          const sub = await subscriptionService.getCurrentSubscription();
+          setSubscription(sub);
+        } catch (error) {
+          console.error("Error loading subscription:", error);
+        } finally {
+          setSubscriptionLoading(false);
+        }
+      }
+    };
+    
+    loadSubscription();
+  }, [user]);
 
   const handleSaveField = async (field: string, value: string) => {
     console.log(`Saving field ${field} with value:`, value);
@@ -53,7 +74,7 @@ const Profile = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex flex-col">
+      <div className="min-h-screen flex flex-col bg-background">
         <Header />
         <main className="flex-grow py-16 flex items-center justify-center">
           <div className="flex flex-col items-center">
@@ -75,7 +96,7 @@ const Profile = () => {
   );
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-background">
       <Header />
       
       <main className="flex-grow py-10">
@@ -90,12 +111,13 @@ const Profile = () => {
                 setActiveTab={setActiveTab} 
                 isProfileComplete={isProfileComplete} 
                 handleSignOut={handleSignOut} 
+                subscription={subscription}
               />
             </div>
             
             <div className="lg:col-span-3">
-              <Card>
-                <CardHeader>
+              <Card className="shadow-sm border-0">
+                <CardHeader className="pb-3">
                   <CardTitle>
                     {activeTab === "personal" && "Dados Pessoais"}
                     {activeTab === "company" && "Dados da Empresa"}
