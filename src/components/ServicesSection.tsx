@@ -39,12 +39,12 @@ const services: Service[] = [
   {
     icon: Users,
     title: "Mentorias",
-    description: "Acompanhamento personalizado com foco especial em Marketing Digital, Gestão e RH.",
+    description: "Acompanhamento personalizado com foco especial em Gestão, Marketing e RH.",
     route: "/mentorias",
     color: "bg-purple-500/10 text-purple-500",
     details: [
-      "Mentoria em Marketing Digital completo",
       "Mentoria em Gestão Estratégica",
+      "Mentoria em Marketing",
       "Mentoria em Recursos Humanos",
       "Planos personalizados para cada necessidade"
     ],
