@@ -2,15 +2,14 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { 
-  Zap, 
-  Users, 
-  Lightbulb, 
   BookOpen, 
+  Users, 
   Palette, 
   Briefcase,
   ArrowRight
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 
 export interface Service {
   icon: React.ElementType;
@@ -18,50 +17,66 @@ export interface Service {
   description: string;
   route: string;
   color: string;
+  details?: string[];
+  image?: string;
 }
 
 const services: Service[] = [
-  {
-    icon: Zap,
-    title: "MAR",
-    description: "Mapa para Alto Rendimento - Estratégias personalizadas combinando IA e consultoria humana.",
-    route: "/mar",
-    color: "bg-blue-500/10 text-blue-500"
-  },
-  {
-    icon: Users,
-    title: "Mentorias",
-    description: "Acompanhamento personalizado para desenvolvimento de líderes e equipes.",
-    route: "/mentorias",
-    color: "bg-purple-500/10 text-purple-500"
-  },
-  {
-    icon: Lightbulb,
-    title: "Consultoria",
-    description: "Soluções estratégicas personalizadas para desafios específicos do seu negócio.",
-    route: "/consultoria",
-    color: "bg-amber-500/10 text-amber-500"
-  },
   {
     icon: BookOpen,
     title: "Escola de Gestão",
     description: "Cursos e treinamentos para aprimorar habilidades de liderança e gestão.",
     route: "/escola-de-gestao",
-    color: "bg-emerald-500/10 text-emerald-500"
+    color: "bg-emerald-500/10 text-emerald-500",
+    details: [
+      "Formação de líderes e gestores",
+      "Desenvolvimento de habilidades gerenciais",
+      "Implementação de metodologias ágeis",
+      "Gestão de projetos e processos"
+    ],
+    image: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?q=80&w=2070"
+  },
+  {
+    icon: Users,
+    title: "Mentorias",
+    description: "Acompanhamento personalizado para desenvolvimento em Gestão, Marketing e RH.",
+    route: "/mentorias",
+    color: "bg-purple-500/10 text-purple-500",
+    details: [
+      "Mentoria em Gestão Estratégica",
+      "Mentoria em Marketing Digital",
+      "Mentoria em Recursos Humanos",
+      "Planos personalizados para cada necessidade"
+    ],
+    image: "https://images.unsplash.com/photo-1557425955-df376b5903c8?q=80&w=2070"
   },
   {
     icon: Palette,
     title: "Branding",
     description: "Desenvolvimento de marcas e identidades visuais completas para seu negócio.",
     route: "/identidade-visual",
-    color: "bg-pink-500/10 text-pink-500"
+    color: "bg-pink-500/10 text-pink-500",
+    details: [
+      "Criação de identidade visual",
+      "Design de logotipos e materiais",
+      "Estratégia de posicionamento de marca",
+      "Gestão de presença online"
+    ],
+    image: "https://images.unsplash.com/photo-1561070791-2526d30994b5?q=80&w=2000"
   },
   {
     icon: Briefcase,
     title: "Projetos sob Medida",
     description: "Projetos customizados para necessidades específicas da sua empresa.",
     route: "/projetos",
-    color: "bg-indigo-500/10 text-indigo-500"
+    color: "bg-indigo-500/10 text-indigo-500",
+    details: [
+      "Consultoria estratégica personalizada",
+      "Desenvolvimento de projetos específicos",
+      "Transformação digital de processos",
+      "Implantação de sistemas e metodologias"
+    ],
+    image: "https://images.unsplash.com/photo-1507925921958-8a62f3d1a50d?q=80&w=2076"
   }
 ];
 
@@ -74,38 +89,65 @@ const ServicesSection = () => {
       </div>
       
       <div className="container mx-auto px-4 relative z-10">
-        <div className="max-w-3xl mx-auto text-center mb-12">
+        <div className="max-w-3xl mx-auto text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            Nossos Serviços
+            Outros Serviços
           </h2>
           <p className="text-lg text-muted-foreground">
-            Oferecemos soluções estratégicas customizadas para impulsionar 
-            o crescimento e a transformação digital do seu negócio.
+            Soluções especializadas para impulsionar o crescimento e o desenvolvimento do seu negócio.
           </p>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-12">
-          {services.map((service, index) => {
-            const IconComponent = service.icon;
-            return (
-              <div 
-                key={index}
-                className="bg-card rounded-xl p-6 border border-border hover:glow-border transition-all duration-300 animate-fade-in"
-                style={{ animationDelay: `${index * 0.1}s` }}
-              >
-                <div className={`rounded-full ${service.color} p-3 w-12 h-12 flex items-center justify-center mb-4`}>
-                  <IconComponent className="h-6 w-6" />
+        <div className="space-y-20">
+          {services.map((service, index) => (
+            <div 
+              key={service.title}
+              className={`grid grid-cols-1 lg:grid-cols-2 gap-8 items-center ${
+                index % 2 === 1 ? 'lg:flex-row-reverse' : ''
+              }`}
+            >
+              <div className={`order-2 ${index % 2 === 1 ? 'lg:order-1' : 'lg:order-2'}`}>
+                <div className="rounded-xl overflow-hidden relative aspect-video">
+                  <img 
+                    src={service.image} 
+                    alt={service.title} 
+                    className="object-cover w-full h-full"
+                  />
+                  <div className="absolute inset-0 bg-black/20"></div>
                 </div>
-                <h3 className="text-xl font-medium mb-2">{service.title}</h3>
-                <p className="text-muted-foreground mb-4">{service.description}</p>
-                <Button variant="link" className="px-0" asChild>
-                  <Link to={service.route}>
-                    Saiba mais <ArrowRight className="ml-2 h-4 w-4" />
-                  </Link>
-                </Button>
               </div>
-            );
-          })}
+              
+              <div className={`order-1 ${index % 2 === 1 ? 'lg:order-2' : 'lg:order-1'}`}>
+                <Card className="border border-border hover:shadow-lg transition-all duration-300">
+                  <CardContent className="p-8">
+                    <div className={`rounded-full ${service.color} p-3 w-12 h-12 flex items-center justify-center mb-4`}>
+                      {React.createElement(service.icon, { className: "h-6 w-6" })}
+                    </div>
+                    
+                    <h3 className="text-2xl font-bold mb-3">{service.title}</h3>
+                    <p className="text-muted-foreground mb-6">{service.description}</p>
+                    
+                    {service.details && (
+                      <ul className="space-y-2 mb-6">
+                        {service.details.map((detail, i) => (
+                          <li key={i} className="flex items-center">
+                            <span className={`w-2 h-2 rounded-full ${service.color.replace('text-', 'bg-')} mr-2`}></span>
+                            <span>{detail}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                    
+                    <Button variant="outline" asChild className="mt-4">
+                      <Link to={service.route}>
+                        Saiba mais <ArrowRight className="ml-2 h-4 w-4" />
+                      </Link>
+                    </Button>
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </section>

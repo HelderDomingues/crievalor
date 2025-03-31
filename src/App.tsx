@@ -16,7 +16,6 @@ import PrivacyPolicy from "./pages/PrivacyPolicy";
 import RefundPolicy from "./pages/RefundPolicy";
 import TermsOfService from "./pages/TermsOfService";
 import Mentorias from "./pages/Mentorias";
-import Consultoria from "./pages/Consultoria";
 import EscolaGestao from "./pages/EscolaGestao";
 import IdentidadeVisual from "./pages/IdentidadeVisual";
 import Projetos from "./pages/Projetos";
@@ -79,7 +78,6 @@ const App = () => {
               <Routes>
                 <Route path="/" element={<Index />} />
                 <Route path="/sobre" element={<Sobre />} />
-                <Route path="/consultoria" element={<Consultoria />} />
                 <Route path="/mentorias" element={<Mentorias />} />
                 <Route path="/escola-gestao" element={<EscolaGestao />} />
                 <Route path="/contato" element={<Contato />} />

@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Link } from "react-router-dom";
 import { Mail, Phone, MapPin, Linkedin, Instagram, Twitter } from "lucide-react";
@@ -79,7 +80,7 @@ const Footer = () => {
           </div>
 
           <div className="space-y-4">
-            <h4 className="text-base font-medium text-foreground">Produtos</h4>
+            <h4 className="text-base font-medium text-foreground">Serviços</h4>
             <ul className="space-y-2">
               <li>
                 <Link to="/mar" className="text-muted-foreground hover:text-primary transition-colors text-sm">
@@ -87,18 +88,23 @@ const Footer = () => {
                 </Link>
               </li>
               <li>
-                <Link to="/" className="text-muted-foreground hover:text-primary transition-colors text-sm">
-                  Consultoria Estratégica
+                <Link to="/escola-gestao" className="text-muted-foreground hover:text-primary transition-colors text-sm">
+                  Escola de Gestão
                 </Link>
               </li>
               <li>
-                <Link to="/" className="text-muted-foreground hover:text-primary transition-colors text-sm">
-                  Treinamentos
+                <Link to="/mentorias" className="text-muted-foreground hover:text-primary transition-colors text-sm">
+                  Mentorias
                 </Link>
               </li>
               <li>
-                <Link to="/" className="text-muted-foreground hover:text-primary transition-colors text-sm">
-                  Workshops
+                <Link to="/identidade-visual" className="text-muted-foreground hover:text-primary transition-colors text-sm">
+                  Branding
+                </Link>
+              </li>
+              <li>
+                <Link to="/projetos" className="text-muted-foreground hover:text-primary transition-colors text-sm">
+                  Projetos sob Medida
                 </Link>
               </li>
             </ul>
