@@ -38,9 +38,9 @@ const Auth = () => {
   };
 
   const handleChoosePlan = () => {
-    console.log("Redirecting to subscription plans...");
-    // Force navigation to the subscription page with plans tab
-    window.location.href = "/subscription?tab=plans";
+    console.log("Redirecting to MAR pricing section...");
+    // Navigate to the MAR page and scroll to the pricing section
+    window.location.href = "/mar#pricing";
   };
 
   return (

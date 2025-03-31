@@ -14,7 +14,8 @@ const SubscriptionNotFound = () => {
   };
 
   const handleViewPlans = () => {
-    navigate("/subscription?tab=plans");
+    // Navigate to the MAR page and scroll to the pricing section
+    window.location.href = "/mar#pricing";
   };
 
   return (
