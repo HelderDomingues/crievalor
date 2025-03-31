@@ -1,6 +1,6 @@
 
 import { supabase } from "@/integrations/supabase/client";
-import { Subscription, CreateCheckoutOptions } from "@/types/subscription";
+import { Subscription, CreateCheckoutOptions, PaymentDetails } from "@/types/subscription";
 import { plansService } from "./plansService";
 import { asaasCustomerService } from "./asaasCustomerService";
 import { paymentsService } from "./paymentsService";
@@ -250,22 +250,29 @@ export const subscriptionService = {
         return null;
       }
       
+      // Properly cast the payment_details from Json to PaymentDetails type
+      const subscription: Subscription = {
+        ...data,
+        // Ensure payment_details is properly typed
+        payment_details: data.payment_details as unknown as PaymentDetails
+      };
+      
       // Verify payment status if the subscription is pending
-      if (data.status === "pending" && data.payment_id) {
-        const payment = await paymentsService.getPayment(data.payment_id);
+      if (subscription.status === "pending" && subscription.payment_id) {
+        const payment = await paymentsService.getPayment(subscription.payment_id);
         
         // If the payment was approved but the subscription status is still pending, update
         if (payment && ["RECEIVED", "CONFIRMED", "RECEIVED_IN_CASH"].includes(payment.status)) {
-          await this.updateSubscriptionStatus(data.id, "active");
-          data.status = "active";
+          await this.updateSubscriptionStatus(subscription.id, "active");
+          subscription.status = "active";
         } else if (payment && ["OVERDUE", "REFUNDED", "REFUND_REQUESTED", "CHARGEBACK_REQUESTED", 
                                "CHARGEBACK_DISPUTE", "AWAITING_CHARGEBACK_REVERSAL"].includes(payment.status)) {
-          await this.updateSubscriptionStatus(data.id, "past_due");
-          data.status = "past_due";
+          await this.updateSubscriptionStatus(subscription.id, "past_due");
+          subscription.status = "past_due";
         }
       }
       
-      return data;
+      return subscription;
     } catch (error) {
       console.error("Erro em getCurrentSubscription:", error);
       return null;
