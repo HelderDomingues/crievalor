@@ -47,7 +47,6 @@ async function setupSystemSettings() {
 createStorageBucketIfNotExists('materials');
 
 // Note: No need to create logos bucket since it's already created in Supabase
-// We're removing this line that was causing the error
 setupRLSPolicies();
 setupSystemSettings();
 
