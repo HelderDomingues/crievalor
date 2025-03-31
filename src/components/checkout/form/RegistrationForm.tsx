@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft, ArrowRight, Loader2 } from "lucide-react";
 import { registrationFormSchema, RegistrationFormData } from "./RegistrationFormSchema";
 import { FormField } from "./FormField";
-import { formatPhoneNumber } from "@/utils/formatters";
 
 interface RegistrationFormProps {
   onSubmit: (data: RegistrationFormData) => Promise<void>;
@@ -30,11 +29,6 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({
       password: "",
     },
   });
-  
-  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>, onChange: (value: string) => void) => {
-    const formatted = formatPhoneNumber(e.target.value);
-    onChange(formatted);
-  };
   
   return (
     <Form {...form}>
@@ -60,7 +54,6 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({
             name="phone"
             label="Telefone"
             placeholder="(00) 00000-0000"
-            onChange={handlePhoneChange}
           />
           
           <FormField
