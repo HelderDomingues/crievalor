@@ -1,0 +1,1026 @@
+
+Autenticação
+De que forma o Asaas identifica quem é você?
+Suggest Edits
+A autenticação em nossa API é feita através do uso de uma chave de API. É através desta chave que nosso sistema identifica a sua conta e permite a comunicação conosco em nome da conta em questão.
+
+Caso a chave de API seja inválida, não seja informada ou o header esteja incorreto, nossa API retornará HTTP 401.
+
+A chave de API é de responsabilidade do cliente. Para garantir a segurança, recomendamos que você utilize também os demais mecanismos de proteção disponíveis. Considere definir endereços IP autorizados para adicionar uma camada extra de segurança. Para mais detalhes, consulte as medidas de segurança na documentação: Mecanismos adicionais de segurança.
+
+🚧
+Atenção:
+
+Após a geração da chave de API em nossa interface, armazene-a diretamente em seu cofre de chaves, evitando que seja exposta em mensagens de qualquer tipo ou emails. Nunca deixe a chave de API diretamente no código fonte de seus sistemas.
+Não informe sua chave de API em atendimentos, a terceiros ou exponha no front-end da sua aplicação. Garanta que sua aplicação não exponha a chave em logs de sistema.
+Caso seu time de desenvolvimento utilize a chave de API de Produção nos ambientes de desenvolvimento ou homologação durante os testes finais da integração, é essencial renová-la antes da entrada em produção, garantindo que o menor número de pessoas possível tenha acesso a ela.
+Utilize pelo menos um dos mecanismos adicionais de segurança descritos aqui.
+A chave de API é irrecuperável, caso seja perdida, é necessário a geração de uma nova.
+Utilize os headers abaixo em todas as suas chamadas para a API
+
+JSON
+
+"Content-Type": "application/json",
+"User-Agent": "nome_da_sua_aplicação",
+"access_token": "sua_api_key"
+🚧
+Importante
+
+É obrigatório enviar o User-Agent no header de todas as requisições em novas contas raiz criadas a partir de 13/06/2024. Sugerimos enviar o nome da sua aplicação caso o seu framework não adicione um User-Agent padrão.
+📘
+Ambientes distintos (sandbox e produção)
+
+As Chaves de API são distintas entre os ambientes de Sandbox e Produção, portanto lembre-se de alterá-la quando mudar a URL.
+Para obter sua Chave de API acesse a área de integrações em nossa interface web. Pelo aplicativo não tem a opção de gerar chave. Além disso, apenas usuários do tipo administrador, tem permissão para gerar a chave.
+
+
+
+🔒
+Gerenciando suas chaves de API
+
+Você pode criar até 10 chaves de API para uma conta Asaas.
+As chaves podem ser nomeadas, para facilitar a identificação.
+É possível definir uma data de expiração para cada chave.
+Você pode desabilitar/habilitar uma chave a qualquer momento, sem de fato inválida-la.
+Caso a chave seja excluída, não é possível restaura-la.
+URL de Produção e Sandbox
+
+Após a criação da conta e geração da chave de API, utilize a URL específica para cada ambiente em suas chamadas, conforme listado abaixo:
+
+Ambiente	URL
+Produção	https://api.asaas.com/v3
+Sandbox	https://api-sandbox.asaas.com/v3
+Teste em ambiente Sandbox
+
+Durante o desenvolvimento da integração, teste as requisições em nosso ambiente de Sandbox utilizando dados fictícios e direcionando as requisições para o domínio “https://api-sandbox.asaas.com/v3", alterando para produção apenas após a validação de todas as funcionalidades.
+
+Armazenamento seguro para a Chave de API
+
+A Chave de API do Asaas segue o modelo de chave “irrecuperável”, isto é, ela será exibida apenas uma vez quando criada. Sendo assim, você precisará copiá-la e salvá-la de modo seguro antes de sair da área de integrações.
+
+Nunca armazene chaves de API em texto claro dentro do código-fonte ou em arquivos de configuração acessíveis ao público.
+
+Utilize mecanismos de segurança, como variáveis de ambiente ou arquivos de configuração protegidos, para armazenar as chaves de API de forma segura.
+
+Utilize serviços de gerenciamento de segredos para armazenar e gerenciar as chaves de API de forma centralizada e segura, como AWS Secrets Manager, Google Cloud Secret Manager e Azure Key Vault, por exemplo.
+
+Transmissão segura da sua Chave de API
+
+Utilize exclusivamente protocolos de comunicação seguros, como HTTPS, evitando métodos não criptografados, como HTTP.
+Protocolo de segurança TLS (Transport Layer Security)
+
+Atualmente nossos sistemas em produção aceitam TLS 1.2 e 1.3 para comunicação. Mas recomendamos o uso do TLS 1.3.
+
+Controle de acesso e rotação de chave
+
+O acesso à Chave de API deve ser concedido apenas a usuários ou sistemas autorizados que realmente necessitam de acesso aos recursos protegidos.
+Estabeleça um processo de monitoramento dos logs a fim de rastrear a origem e propósito das requisições, de modo a detectar atividades suspeitas ou uso indevido de sua Chave de API. Ferramentas como SIEM, Splunk, ELK Stack, AWS CloudWatch ou Azure Monitor podem auxiliar no processo.
+Estabeleça uma política de rotação regular das chaves de API para reduzir o impacto em caso de comprometimento ou vazamento.
+O armazenamento e segurança da chave apikey é de inteira responsabilidade do cliente, visto que o Asaas não detém dessa informação armazenada em nenhum local de nosso banco.
+
+Mecanismos adicionais de segurança
+Utilize os mecanismos abaixo para maior segurança em sua conta.
+Suggest Edits
+Além de chave de API que é usada para autenticar suas requisições, possuímos mecanismos adicionais que oferecem camadas extras de segurança para sua conta. Recomendamos utilizar pelo menos um deles, e se possível ambos. Conheça-os abaixo.
+
+Whitelist de IPs
+
+Este mecanismo permite definir IPs a partir dos quais aceitaremos requisições utilizando sua chave de API.
+
+Qualquer requisição recebida de um IP não contido na whitelist será recusada com resposta HTTP 403. Desta forma, mesmo que sua chave seja comprometida, a menos que as requisições partam de sua infraestrutura, elas serão recusadas.
+
+Você pode definir a sua lista de IPs autorizados acessando Menu do usuário > Integrações > Mecanismos de segurança.
+
+
+
+📘
+Configuração de IPs por faixa
+
+Você consegue adicionar um IP autorizado em uma faixa de IPs, usando o x, por exemplo: 192.168.1.x irá pegar desde o IP 192.168.1.0 até 192.168.1.255.
+Por que fixar IPs?
+
+Fixar IPs para chamadas de API pode ser uma prática útil e necessária por diversas razões.
+
+Restrição de Acesso: Ao fixar IPs, você pode restringir o acesso às suas APIs, permitindo chamadas apenas de IPs específicos. Isso ajuda a bloquear acessos não autorizados ou indesejados, como tentativas de invasão ou ataques DDoS.
+Autenticação e Filtragem de IP: Muitas APIs e serviços de backend permitem a configuração de filtros de IP para garantir que apenas sistemas ou servidores conhecidos possam acessar a API. Esse tipo de controle aumenta a segurança do seu sistema.
+Fixar IPs para chamadas de API é uma prática que pode oferecer mais controle sobre segurança, desempenho, auditoria e conformidade regulatória. No entanto, isso também exige a manutenção de uma lista de IPs autorizados e pode tornar o gerenciamento de acessos mais complexo. A decisão de fixar ou não os IPs depende muito do contexto de segurança e da infraestrutura da aplicação ou serviço.
+
+Webhook de autorização de transferências
+
+Ao habilitar este mecanismo, todas as transferências solicitadas em sua conta dispararão um webhook para o seu sistema afim de validar a legitimidade das mesmas. Desta forma, a menos que seu sistema reconheça a transferência como legítima, ela será cancelada. Para maiores detalhes no uso deste mecanismo acesso à documentação.
+
+Criando um link de pagamentos
+Suggest Edits
+Para criar um link de pagamentos, basta chamar o endpoint de link de pagamentos.
+
+POST /v3/paymentLinks
+Confira a referência completa deste endpoint.
+JSON
+
+{
+  "name": "Venda de livros",
+  "description": "Qualquer livro por apenas R$: 50,00",
+  "value": 50.00,
+  "billingType": "UNDEFINED",
+  "chargeType": "DETACHED",
+  "dueDateLimitDays": 10
+}
+No exemplo acima, uma nova cobrança avulsa de R$ 50 será criada cada vez que um cliente preencher este link de pagamentos. Ele ficará ativo até que seja desabilitado ou deletado.
+
+Também é possível criar link de pagamentos para pagamentos parcelados, nesse sentido você apenas informa qual a quantidade máxima de parcelas disponíveis e o cliente irá escolher qual forma deseja fazer o pagamento.
+
+POST /v3/paymentLinks
+Confira a referência completa deste endpoint.
+JSON
+
+{
+  "billingType": "CREDIT_CARD",
+  "chargeType": "INSTALLMENT",
+  "name": "Venda de eletrônicos",
+  "description": "Qualquer produto em até 10x de R$ 50,00",
+  "value": 500.00,
+  "maxInstallmentCount": 10,
+  "notificationEnabled": false
+}
+No exemplo acima, como não temos BOLETO no billingType não foi necessário informar o campo dueDateLimitDays. Também definimos o notificationEnabled como false, dessa forma os clientes que preencherem este link de pagamento não terão notificações ativas.
+
+Da mesma forma, também é possível criar links de pagamentos que criam assinaturas. Bastando informar o chargeType como RECURRENT.
+
+POST /v3/paymentLinks
+Confira a referência completa deste endpoint.
+JSON
+
+{
+  "billingType": "CREDIT_CARD",
+  "chargeType": "RECURRENT",
+  "name": "Assinatura de livros",
+  "description": "Receba um livro todo mês por R$: 50,00",
+  "value": 50.00,
+  "subscriptionCycle": "MONTHLY"
+}
+Como saber se um link de pagamentos foi pago?
+
+Toda vez que um link de pagamentos é pago, você recebe um evento no Webhook para Cobranças. No JSON retornado você terá acesso ao campo paymentLink com o ID do seu link de pagamento.
+
+Neste mesmo JSON você terá acesso ao customer com o ID do seu cliente, e poderá pegar os dados do mesmo caso precise usando o endpoint "Recuperar um único cliente".
+
+Adicionando imagens em um link de pagamentos
+
+É possível adicionar até 5 imagens em um link de pagamentos e você pode fazer isso chamando o endpoint abaixo:
+
+POST /v3/paymentLinks/{id}/images
+Confira a referência completa deste endpoint
+Você pode definir se a imagem é a principal, com o campo main sendo enviado como true. O envio dos arquivos deve ser com o header Content-Type: multipart/form-data.
+
+🚧
+Duplicação de clientes em links de pagamento
+
+No Asaas, é possível criar clientes com CPF/CNPJ duplicados. Pelo link de pagamento, como o cliente é sempre criado no momento da geração da cobrança, caso ele já exista no Asaas, o cliente será cadastrado novamente, aparecendo duas ou mais vezes (a depender da quantidade de vezes que gerou a cobrança).
+
+Criar um link de pagamentos
+POST
+https://api-sandbox.asaas.com/v3/paymentLinks
+Caso o seu cliente possa pagar via boleto bancário, será necessário informar o campo dueDateLimitDays, que determina a quantidade de dias úteis para a realização do pagamento após a geração do boleto.
+
+Se a forma de cobrança for Parcelamento, informe o campo maxInstallmentCount para determinar o limite máximo de parcelas que seu cliente poderá escolher para realizar o pagamento parcelado.
+
+Já se a forma de cobrança ser Assinatura, será necessário o envio do campo subscriptionCycle para determinar a periodicidade da geração das cobranças.
+
+Você poderá adicionar imagens ao seu link de pagamentos por meio deste endpoint
+BODY PARAMS
+name
+string
+required
+Nome do link de pagamentos
+description
+string
+Descrição do link de pagamentos
+endDate
+string
+Data de encerramento
+value
+number
+Valor do link de pagamentos, caso não informado o pagador poderá informar o quanto deseja pagar
+billingType
+string
+required
+Forma de pagamento permitida
+
+chargeType
+string
+required
+Forma de cobrança
+
+dueDateLimitDays
+int32
+Quantidade de dias úteis que o seu cliente poderá pagar após o boleto ser gerado (Para forma de pagamento como Boleto)
+subscriptionCycle
+string
+Periodicidade da cobrança, caso o chargeType seja RECURRENT
+
+maxInstallmentCount
+int32
+Defaults to 1
+Quantidade máxima de parcelas que seu cliente poderá parcelar o valor do link de pagamentos caso a forma de cobrança selecionado seja Parcelamento. Caso não informado o valor padrão será de 1 parcela
+externalReference
+string
+Campo livre para busca
+notificationEnabled
+boolean
+Defaults to true
+Define se os clientes cadastrados pelo link de pagamentos terão as notificações habilitadas. Caso não seja informado o valor padrão será true
+
+callback
+object
+Informações de redirecionamento automático após pagamento do link de pagamento
+
+CALLBACK OBJECT
+isAddressRequired
+boolean
+True para tornar obrigatório o preenchimento de dados de endereço no checkout.
+
+RESPONSES
+
+
+200
+OK
+
+
+401
+Unauthorized
+
+Criar novo cliente
+POST
+https://api-sandbox.asaas.com/v3/customers
+Para que seja possível criar uma cobrança, antes é necessário criar o cliente ao qual ela irá pertencer. Você deve utilizar o ID retornado nesta requisição na criação da cobrança.
+
+Caso você envie o postalCode do cliente, não é necessário enviar os atributos city, province e address, pois o Asaas preencherá estas informações automaticamente com base no CEP que você informou. Nestes casos basta enviar somente postalCode e addressNumber.
+
+No campo city é retornado um identificador. Caso você queira obter o nome e demais informações da cidade você deve fazer a seguinte requisição utilizando esse identificador:
+GET https://api.asaas.com/v3/cities/{city_id}
+
+🚧
+Atenção
+
+O sistema permite a criação de clientes duplicados. Portanto, se você não quiser permitir é necessário implementar a validação antes de realizar a criação do cliente. Você pode consultar a existência do cliente no Listar Clientes.
+📘
+Produção: Caso seu cliente seja estrangeiro, será necessário entrar em contato com seu Gerente de Contas para que ele solicite a liberação em seu cadastro de criação de clientes estrangeiros.
+
+Sandbox: Em sandbox é possível gerar clientes estrangeiros sem liberação prévia.
+🚧
+Importante
+
+O envio e recebimento de notificações de email e SMS funcionam normalmente em Sandbox. Portanto você não deve criar clientes com emails e celulares reais ou números aleatórios como (51) 9999-9999. Para testar o recebimento de notificações você pode utilizar os seus próprios emails e celulares.
+BODY PARAMS
+name
+string
+required
+Nome do cliente
+cpfCnpj
+string
+required
+CPF ou CNPJ do cliente
+email
+string
+Email do cliente
+phone
+string
+Fone fixo
+mobilePhone
+string
+Fone celular
+address
+string
+Logradouro
+addressNumber
+string
+Número do endereço
+complement
+string
+Complemento do endereço (máx. 255 caracteres)
+province
+string
+Bairro
+postalCode
+string
+CEP do endereço
+externalReference
+string
+Identificador do cliente no seu sistema
+notificationDisabled
+boolean
+true para desabilitar o envio de notificações de cobrança
+
+additionalEmails
+string
+Emails adicionais para envio de notificações de cobrança separados por ","
+municipalInscription
+string
+Inscrição municipal do cliente
+stateInscription
+string
+Inscrição estadual do cliente
+observations
+string
+Observações adicionais
+groupName
+string
+Nome do grupo ao qual o cliente pertence
+company
+string
+Empresa
+foreignCustomer
+boolean
+informe true caso seja pagador estrangeiro
+
+RESPONSES
+
+
+200
+OK
+
+
+401
+Unauthorized
+
+Listar clientes
+GET
+https://api-sandbox.asaas.com/v3/customers
+Diferente da recuperação de um cliente específico, este método retorna uma lista paginada com todos os clientes para os filtros informados.
+
+Filtrar por nome:
+
+GET https://api.asaas.com/v3/customers?name=Marcelo
+
+Filtrar por CPF ou CNPJ:
+
+GET https://api.asaas.com/v3/customers?cpfCnpj=42885229519
+QUERY PARAMS
+offset
+integer
+Elemento inicial da lista
+limit
+integer
+≤ 100
+Número de elementos da lista (max: 100)
+name
+string
+Filtrar por nome
+email
+string
+Filtrar por email
+cpfCnpj
+string
+Filtrar por CPF ou CNPJ
+groupName
+string
+Filtrar por grupo
+externalReference
+string
+Filtrar pelo Identificador do seu sistema
+RESPONSES
+
+
+200
+OK
+
+
+401
+Unauthorized
+
+403
+Forbidden. Ocorre quando o body da requisição está preenchido, chamadas de método GET precisam ter um body vazio.
+
+Recuperar um único cliente
+GET
+https://api-sandbox.asaas.com/v3/customers/{id}
+PATH PARAMS
+id
+string
+required
+Identificador único do cliente no Asaas
+RESPONSES
+
+
+200
+OK
+
+
+401
+Unauthorized
+
+403
+Forbidden. Ocorre quando o body da requisição está preenchido, chamadas de método GET precisam ter um body vazio.
+
+404
+Not found
+
+Atualizar cliente existente
+PUT
+https://api-sandbox.asaas.com/v3/customers/{id}
+PATH PARAMS
+id
+string
+required
+Identificador único do cliente a ser atualizado
+BODY PARAMS
+name
+string
+Nome do cliente
+cpfCnpj
+string
+CPF ou CNPJ do cliente
+email
+string
+Email do cliente
+phone
+string
+Fone fixo
+mobilePhone
+string
+Fone celular
+address
+string
+Logradouro
+addressNumber
+string
+Número do endereço
+complement
+string
+Complemento do endereço
+province
+string
+Bairro
+postalCode
+string
+CEP do endereço
+externalReference
+string
+Identificador do cliente no seu sistema
+notificationDisabled
+boolean
+true para desabilitar o envio de notificações de cobrança
+
+additionalEmails
+string
+Emails adicionais para envio de notificações de cobrança separados por ","
+municipalInscription
+string
+Inscrição municipal do cliente
+stateInscription
+string
+Inscrição estadual do cliente
+observations
+string
+Observações adicionais
+groupName
+string
+Nome do grupo ao qual o cliente pertence
+company
+string
+Empresa
+foreignCustomer
+boolean
+informe true caso seja pagador estrangeiro
+
+RESPONSES
+
+
+200
+OK
+
+
+401
+Unauthorized
+
+404
+Not found
+
+Remover cliente
+DELETE
+https://api-sandbox.asaas.com/v3/customers/{id}
+🚧
+Ao remover um cliente, as assinaturas e cobranças aguardando pagamento ou vencidas pertencentes a ela também são removidas.
+PATH PARAMS
+id
+string
+required
+Identificador único do cliente a ser removido.
+RESPONSES
+
+
+200
+OK
+
+
+401
+Unauthorized
+
+404
+Not found
+
+Restaurar cliente removido
+POST
+https://api-sandbox.asaas.com/v3/customers/{id}/restore
+PATH PARAMS
+id
+string
+required
+Identificador único do cliente a ser restaurado.
+RESPONSES
+
+
+200
+OK
+
+
+401
+Unauthorized
+
+404
+Not found
+
+Receba eventos do Asaas no seu endpoint de Webhook
+Configure uma URL de webhook para manter sua aplicação sempre atualizada com a integração da API
+Suggest Edits
+Siga este tutorial para criar seu primeiro Webhook.
+
+O objeto de evento
+
+Eventos são objetos enviados em formato JSON via webhooks do Asaas. Eles são responsáveis por avisar quando algum evento aconteceu em sua conta.
+
+Através dele você terá acesso ao id, event indicando qual seu evento e o objeto da entidade da qual o evento pertence, no exemplo abaixo temos o objeto payment com os dados da cobrança em questão.
+
+JSON
+
+{
+   "id": "evt_05b708f961d739ea7eba7e4db318f621&368604920",
+   "event":"PAYMENT_RECEIVED",
+   "dateCreated": "2024-06-12 16:45:03",
+   "payment":{
+      "object":"payment",
+      "id":"pay_080225913252",
+      ...
+   }
+}
+Os webhooks são a forma que você usa para inscrever-se em eventos e receber notificações na sua aplicação sempre que o evento acontece.
+
+Tipos de eventos
+
+Os eventos são divididos por categorias relacionadas a entidade ao qual eles pertencem. Confira a página Eventos de Webhooks para conferir cada um.
+
+Comece por aqui
+
+Para começar a receber eventos através de webhooks na sua aplicação, siga os passos abaixo:
+
+Acesse o ambiente de Sandbox;
+Crie um endpoint na sua aplicação para receber requests HTTP do tipo POST;
+Configure seu webhook usando nossa aplicação web ou via API;
+Teste seu webhook;
+Realize debug em problemas com eventos;
+Após testado e validado, replique a configurações no ambiente de Produção;
+Mantenha seu webhook seguro.
+Crie um endpoint
+
+Crie um endpoint que espera receber um objeto de evento em um evento de POST. Este endpoint também deve retornar o mais rápido possível uma resposta 200, para evitar problemas na fila de sincronização de eventos.
+
+Abaixo um exemplo básico usando Node.js:
+
+Node.js
+PHP
+Java
+Python
+
+const express = require('express');
+const app = express();
+
+app.post('/payments-webhook', express.json({type: 'application/json'}), (request, response) => {
+  const body = request.body;
+
+  switch (body.event) {
+    case 'PAYMENT_CREATED':
+      const payment = body.payment;
+      createPayment(payment);
+      break;
+    case 'PAYMENT_RECEIVED':
+      const payment = body.payment;
+      receivePayment(payment)
+      break;
+    // ... trate outos eventos
+    default:
+      console.log(`Este evento não é aceito ${body.event}`);
+  }
+
+  // Retorne uma resposta para dizer que o webhook foi recebido
+  response.json({received: true});
+});
+
+app.listen(8000, () => console.log('Running on port 8000'));
+Configure seu webhook
+
+Você pode realizar a configuração de um novo webhook via aplicação web ou via API.
+
+Recomendamos, para testar seu webhook e sua integração, que você primeiro precisa crie uma conta em Sandbox. Confira nossa documentação sobre o Sandbox e siga os passos. Você também pode seguir os tutoriais de criação de webhook:
+
+Criar novo webhook pela aplicação web
+Criar novo webhook pela API
+Teste seu webhook
+
+Com o webhook em Sandbox configurado, você pode testar seu código que está em localhost usando algumas aplicações que expõe o seu código local na web.
+
+Recomendamos usar uma aplicação de confiança como o ngrok ou o Cloudflare Tunnel. Com ambas aplicações você pode definir uma url que pode utilizar na configuração do seu webhook.
+
+Debugar integração com webhooks
+
+Você pode facilmente debugar seu webhook através da nossa página de logs de Webhooks. Acesse Menu do Usuário > Integrações > Logs de Webhooks.
+
+
+Nesta página você poderá visualizar todas as requisições enviadas via webhook para sua aplicação, qual o status retornado pelo seu servidor e também qual o conteúdo enviado. Essa página é relevante também quando você tiver problemas com a fila de sincronização pausada , confira a documentação para mais detalhes.
+
+Mantenha seu webhook seguro
+
+É altamente recomendado que você mantenha sua integração e todos os seus webhooks seguros. Como recomendação, o Asaas sugere:
+
+Confie somente nos IPs do Asaas para chamadas em webhooks: você pode realizar o bloqueio via firewall em todos os IPs que realização chamadas nas suas URLs de webhooks, exceto os IPs oficiais do Asaas.
+Configure um accessToken: ao criar um novo webhook, você pode definir um código único para ele. Crie uma hash forte, de preferência um UUID v4, e confira sempre o header asaas-access-token para certificar que esta é uma chamada legítima.
+
+Como implementar idempotência em Webhooks
+Suggest Edits
+Os webhooks do Asaas garantem que os eventos serão enviados ao menos uma vez, ou seja, seguem a premissa "at least once". Isso significa que seu endpoint pode, ocasionalmente, receber o mesmo evento de webhook repetidamente em algumas situações esporádicas. Como, por exemplo, numa situação em que o Asaas não recebe uma resposta do seu endpoint.
+
+Dito isso, o ideal é que sua aplicação saiba tratar os eventos recebidos com duplicidade utilizando idempotência e este artigo tem o objetivo de explicar como a idempotência funciona e como você pode proteger a sua aplicação.
+
+O que é idempotência?
+
+Idempotência se refere a capacidade que uma operação (função) tem de retornar constantemente o mesmo resultado independente da quantidade de vezes que possa ser executada, desde que os parâmetros se mantenham sempre os mesmos.
+
+Trazendo para o contexto de webhook, se o Asaas ocasionalmente enviar o mesmo webhook duas vezes, o ideal é que a sua aplicação responda às duas requisições com HTTP Status 200, mantendo sempre o mesmo retorno da primeira requisição recebida.
+
+Por que usar idempotência?
+
+Antes de explicarmos o porquê de utilizar idempotência, vamos analisar os principais verbos HTTP: GET, PUT, DELETE e POST.
+
+Aplicando os padrões REST corretamente na sua aplicação, os verbos GET, PUT e DELETE serão sempre idempotentes:
+
+O GET é um verbo de consulta que não altera o estado do recurso.
+O PUT, se executado diversas vezes com os mesmos parâmetros, sempre retornará o mesmo resultado.
+O DELETE na primeira requisição torna o estado do recurso como “excluído”, mesmo que sejam enviadas outras requisições de DELETE, o estado do recurso se manterá o mesmo.
+No entanto, o verbo POST é o único dos verbos HTTPs que não possui o comportamento de idempotência por padrão:
+
+O POST pode criar um novo recurso único a cada vez que a operação for executada.
+Os webhooks que são disparados pelo Asaas, por padrão, utilizam o verbo POST e é por isso que é importante que a sua aplicação aplique o conceito de idempotência para que o recebimento de webhooks repetidos não interfira na lógica aplicada pelo seu sistema.
+
+Estratégias de idempotência
+
+Usando um index único no banco de dados
+
+Os eventos enviados pelos Webhooks do Asaas possuem IDs únicos e, mesmo que eles sejam enviados mais de uma vez, você sempre receberá o mesmo ID. Uma das estratégias é criar uma fila de eventos no seu banco de dados e utilizar esse ID como uma chave única, desta maneira você não conseguirá salvar dois IDs iguais
+
+SQL
+
+CREATE TABLE asaas_events (
+    id bigint PRIMARY KEY,
+    asaas_event_id text UNIQUE NOT NULL,
+    payload JSON NOT NULL,
+    status ENUM('PENDING','DONE') NOT NULL
+    [...]
+);
+
+O indicado é que ao receber o evento do Asaas na sua aplicação, você salve essa informação em uma tabela como mostrada acima e responda 200 para o Asaas para indicar o recebimento com sucesso. Lembre-se de retornar 200 somente após a confirmação da persistência do evento na sua tabela no banco de dados, pois não garantimos que este evento será reenviado automaticamente.
+
+Após isso, crie uma rotina de processamento, como Cron Jobs ou Workers, para processar os eventos persistidos e não processados (status = PENDING), assim que finalizar o seu processamento, marque-os com o status DONE ou simplesmente remova o registro da tabela. Caso a ordem dos eventos seja importante para o seu sistema, lembre-se de buscar e processá-los de forma ascendente.
+
+Node.js
+
+const express = require('express');
+const app = express();
+
+app.post('/asaas/webhooks/payments', express.json({type: 'application/json'}), (request, response) => {
+  const body = request.body;
+  const eventId = body.id;
+  const eventType = body.event;
+  const payload = body; // Salvar o payload inteiro para verificar o "event" no processamento
+  const status = "PENDING";
+  
+  await client
+    .query("INSERT INTO asaas_events (asaas_event_id, payload, status) VALUES ($1, $2, $3)", [eventId, payload, status])
+    .catch((e) => {
+      // PostgreSQL code for unique violation
+      if (e.code == "23505") {
+        response.json({received: true});
+        return;
+      }
+      throw e;
+    });
+
+  // Retorne uma resposta para dizer que o webhook foi recebido
+  response.json({received: true});
+});
+
+app.listen(8000, () => console.log('Running on port 8000'));
+Se o seu sistema recebe mais de centenas de milhares de eventos por dia, a indicação é utilizar uma solução de fila mais robusta, como Amazon SQS, RabbitMQ ou Kafka.
+
+Nesta solução, além de resolver o ponto da idempotência, a sugestão também é que o processamento dos eventos seja assíncrono, logo tendo uma resposta mais rápida para o Asaas e uma vazão maior da fila de eventos enviados.
+
+Salvar eventos já processados
+
+Outra estratégia comum é realizar o processamento dos Webhooks e salvar o ID de cada evento em uma tabela.
+
+SQL
+
+CREATE TABLE asaas_processed_webhooks (
+    id bigint PRIMARY KEY,
+    asaas_evt_id text UNIQUE NOT NULL,
+    [...]
+);
+Dessa forma você pode sempre verificar essa tabela quando receber um novo evento e verificar se o ID já foi processado anteriormente.
+
+Node.js
+
+const express = require('express');
+const app = express();
+
+app.post('/asaas/webhooks/payments', express.json({type: 'application/json'}), (request, response) => {
+  const body = request.body;
+
+  const eventId = body.id;
+
+  
+  await client
+    .query("INSERT INTO asaas_processed_webhooks (asaas_evt_id) VALUES $1", [eventId])
+    .catch((e) => {
+      // PostgreSQL code for unique violation
+      if (e.code == "23505") {
+        response.json({received: true});
+        return;
+      }
+      throw e;
+    });
+
+  switch (body.event) {
+    case 'PAYMENT_CREATED':
+      const payment = body.payment;
+      createPayment(payment);
+      break;
+    // ... trate outos eventos
+    default:
+      console.log(`Este evento não é aceito ${body.event}`);
+  }
+
+  // Retorne uma resposta para dizer que o webhook foi recebido
+  response.json({received: true});
+});
+
+app.listen(8000, () => console.log('Running on port 8000'));
+
+Nesta solução, a tabela é usada como um check após o processamento, esse que é feito ainda nos 10s de limite de timeout que o Asaas tem da requisição.
+
+Eventos para cobranças
+Escute os eventos do Asaas para ter sua integração em dia.
+Suggest Edits
+Os Webhooks são a melhor e mais segura forma de manter os dados da sua aplicação atualizados com os dados do Asaas. Você sempre receberá um novo evento quando o status do Webhook mudar. Os eventos que o Asaas notifica são:
+
+PAYMENT_CREATED - Geração de nova cobrança.
+PAYMENT_AWAITING_RISK_ANALYSIS - Pagamento em cartão aguardando aprovação pela análise manual de risco.
+PAYMENT_APPROVED_BY_RISK_ANALYSIS - Pagamento em cartão aprovado pela análise manual de risco.
+PAYMENT_REPROVED_BY_RISK_ANALYSIS - Pagamento em cartão reprovado pela análise manual de risco.
+PAYMENT_AUTHORIZED - Pagamento em cartão que foi autorizado e precisa ser capturado.
+PAYMENT_UPDATED - Alteração no vencimento ou valor de cobrança existente.
+PAYMENT_CONFIRMED - Cobrança confirmada (pagamento efetuado, porém, o saldo ainda não foi disponibilizado).
+PAYMENT_RECEIVED - Cobrança recebida.
+PAYMENT_CREDIT_CARD_CAPTURE_REFUSED - Falha no pagamento de cartão de crédito
+PAYMENT_ANTICIPATED - Cobrança antecipada.
+PAYMENT_OVERDUE - Cobrança vencida.
+PAYMENT_DELETED - Cobrança removida.
+PAYMENT_RESTORED - Cobrança restaurada.
+PAYMENT_REFUNDED - Cobrança estornada.
+PAYMENT_PARTIALLY_REFUNDED - Cobrança estornada parcialmente.
+PAYMENT_REFUND_IN_PROGRESS - Estorno em processamento (liquidação já está agendada, cobrança será estornada após executar a liquidação).
+PAYMENT_RECEIVED_IN_CASH_UNDONE - Recebimento em dinheiro desfeito.
+PAYMENT_CHARGEBACK_REQUESTED - Recebido chargeback.
+PAYMENT_CHARGEBACK_DISPUTE - Em disputa de chargeback (caso sejam apresentados documentos para contestação).
+PAYMENT_AWAITING_CHARGEBACK_REVERSAL - Disputa vencida, aguardando repasse da adquirente.
+PAYMENT_DUNNING_RECEIVED - Recebimento de negativação.
+PAYMENT_DUNNING_REQUESTED - Requisição de negativação.
+PAYMENT_BANK_SLIP_VIEWED - Boleto da cobrança visualizado pelo cliente.
+PAYMENT_CHECKOUT_VIEWED - Fatura da cobrança visualizada pelo cliente.
+PAYMENT_SPLIT_CANCELLED - Cobrança teve um split cancelado.
+PAYMENT_SPLIT_DIVERGENCE_BLOCK - Valor da cobrança bloqueado por divergência de split.
+PAYMENT_SPLIT_DIVERGENCE_BLOCK_FINISHED - Bloqueio do valor da cobrança por divergência de split foi finalizado.
+Cada vez que um Webhook de cobrança é enviado, junto dele é enviado um objeto em JSON via POST com os dados completos da cobrança. Conforme este exemplo:
+
+JSON
+
+{
+   "id": "evt_05b708f961d739ea7eba7e4db318f621&368604920",
+   "event":"PAYMENT_RECEIVED",
+   "dateCreated": "2024-06-12 16:45:03",
+   "payment":{
+      "object":"payment",
+      "id":"pay_080225913252",
+      "dateCreated":"2021-01-01",
+      "customer":"cus_G7Dvo4iphUNk",
+      "subscription":"sub_VXJBYgP2u0eO",  
+         // somente quando pertencer a uma assinatura
+      "installment":"2765d086-c7c5-5cca-898a-4262d212587c",
+         // somente quando pertencer a um parcelamento
+      "paymentLink":"123517639363",
+         // identificador do link de pagamento
+      "dueDate":"2021-01-01",
+      "originalDueDate":"2021-01-01",
+      "value":100,
+      "netValue":94.51,
+      "originalValue":null,
+         // para quando o valor pago é diferente do valor da cobrança
+      "interestValue":null,
+      "nossoNumero": null,
+      "description":"Pedido 056984",
+      "externalReference":"056984",
+      "billingType":"CREDIT_CARD",
+      "status":"RECEIVED",
+      "pixTransaction":null,
+      "confirmedDate":"2021-01-01",
+      "paymentDate":"2021-01-01",
+      "clientPaymentDate":"2021-01-01",
+      "installmentNumber": null,
+      "creditDate":"2021-02-01",
+      "custody": null,
+      "estimatedCreditDate":"2021-02-01",
+      "invoiceUrl":"https://www.asaas.com/i/080225913252",
+      "bankSlipUrl":null,
+      "transactionReceiptUrl":"https://www.asaas.com/comprovantes/4937311816045162",
+      "invoiceNumber":"00005101",
+      "deleted":false,
+      "anticipated":false,
+      "anticipable":false,
+      "lastInvoiceViewedDate":"2021-01-01 12:54:56",
+      "lastBankSlipViewedDate":null,
+      "postalService":false,
+      "creditCard":{
+         "creditCardNumber":"8829",
+         "creditCardBrand":"MASTERCARD",
+         "creditCardToken":"a75a1d98-c52d-4a6b-a413-71e00b193c99"
+      },
+      "discount":{
+         "value":0.00,
+         "dueDateLimitDays":0,
+         "limitedDate": null,
+         "type":"FIXED"
+      },
+      "fine":{
+         "value":0.00,
+         "type":"FIXED"
+      },
+      "interest":{
+         "value":0.00,
+         "type":"PERCENTAGE"
+      },
+      "split":[
+         {
+            "id": "c788f2e1-0a5b-41b9-b0be-ff3641fb0cbe",
+            "walletId":"48548710-9baa-4ec1-a11f-9010193527c6",
+            "fixedValue":20,
+            "status":"PENDING",
+            "refusalReason": null,
+            "externalReference": null,
+            "description": null
+         },
+         {
+            "id": "e754f2e1-09mn-88pj-l552-df38j1fbll1c",
+            "walletId":"0b763922-aa88-4cbe-a567-e3fe8511fa06",
+            "percentualValue":10,
+            "status":"PENDING",
+            "refusalReason": null,
+            "externalReference": null,
+            "description": null
+         }
+      ],
+      "chargeback": {
+          "status": "REQUESTED",
+          "reason": "PROCESS_ERROR"
+      },
+      "refunds": null
+   }
+}
+👍
+Retorno do Webhook com tipagem e ENUMs
+
+Caso você queira saber qual o tipo de cada campo e os retornos de ENUMs disponíveis, confira a resposta 200 no endpoint "Recuperar uma única cobrança" na documentação.
+Tudo no Asaas é considerado uma cobrança, inclusive transferências diretas para a conta bancária, depósitos ou recebimentos via Pix. Portanto você recebe Webhooks de Cobranças para qualquer dinheiro que entrar na sua conta.
+
+🚧
+Com a entrada de novos produtos e funções dentro do Asaas, é possível que novos atributos sejam incluídos no Webhook. É muito importante que seu código esteja preparado para não gerar exceções caso o Asaas devolva novos atributos não tratados pela sua aplicação, pois isso poderá causar interrupção na fila de sincronização.
+Enviaremos um e-mail e avisaremos em nosso Discord quando novos campos forem incluídos no Webhook. O disparo será feito para o e-mail de notificação definido nas configurações do webhook.
+O array de split será devolvido apenas quando a cobrança possuir configurações de Split de Pagamento.
+Como funciona o fluxo do Webhook de cobranças?
+
+Veja mais detalhes sobre o fluxo de webhooks em recebimentos de cobranças no Asaas:
+
+Cobrança recebida em Boleto, sem atraso:
+PAYMENT_CREATED > PAYMENT_CONFIRMED > PAYMENT_RECEIVED
+
+Cobrança recebida em Boleto, com atraso:
+PAYMENT_CREATED > PAYMENT_OVERDUE > PAYMENT_CONFIRMED > PAYMENT_RECEIVED
+
+Cobrança recebida em Pix, sem atraso:
+PAYMENT_CREATED -> PAYMENT_RECEIVED
+
+Cobrança recebida em Pix, com atraso:
+PAYMENT_CREATED -> PAYMENT_OVERDUE -> PAYMENT_RECEIVED
+
+Cobrança recebida em Cartão de Crédito, sem atraso:
+PAYMENT_CREATED -> PAYMENT_CONFIRMED -> PAYMENT_RECEIVED (32 dias após PAYMENT_CONFIRMED)
+
+Cobrança recebida em Cartão de Débito, sem atraso:
+PAYMENT_CREATED -> PAYMENT_CONFIRMED -> PAYMENT_RECEIVED (3 dias após PAYMENT_CONFIRMED)
+
+Cobrança recebida em Cartão de Crédito, com atraso:
+PAYMENT_CREATED -> PAYMENT_OVERDUE -> PAYMENT_CONFIRMED -> PAYMENT_RECEIVED (32 dias após PAYMENT_CONFIRMED)
+
+Cobrança recebida em Cartão de Débito, com atraso:
+PAYMENT_CREATED -> PAYMENT_OVERDUE -> PAYMENT_CONFIRMED -> PAYMENT_RECEIVED (3 dias após PAYMENT_CONFIRMED)
+
+Cobrança estornada durante fase de confirmação (Cartão de Crédito/Débito):
+PAYMENT_CREATED -> PAYMENT_CONFIRMED -> PAYMENT_REFUNDED
+
+Cobrança estornada após recebimento (Cartão de Crédito/Débito):
+PAYMENT_CREATED -> PAYMENT_CONFIRMED -> PAYMENT_RECEIVED -> PAYMENT_REFUNDED
+
+Cobrança estornada após recebimento (Boleto/Pix):
+PAYMENT_CREATED -> PAYMENT_RECEIVED -> PAYMENT_REFUNDED
+
+Chargeback solicitado, disputa aberta e ganha pelo cliente Asaas:
+PAYMENT_CREATED -> PAYMENT_CONFIRMED ou PAYMENT_RECEIVED -> CHARGEBACK_REQUESTED -> CHARGEBACK_DISPUTE -> AWAITING_CHARGEBACK_REVERSAL -> PAYMENT_CONFIRMED ou PAYMENT_RECEIVED (depende se a cobrança já atingiu a data de crédito).
+
+Chargeback solicitado, disputa aberta e ganha pelo cliente:
+PAYMENT_CREATED -> PAYMENT_CONFIRMED ou PAYMENT_RECEIVED -> CHARGEBACK_REQUESTED -> CHARGEBACK_DISPUTE -> PAYMENT_REFUNDED
+
+Chargeback solicitado e disputa não aberta:
+PAYMENT_CREATED -> PAYMENT_CONFIRMED ou PAYMENT_RECEIVED -> CHARGEBACK_REQUESTED -> PAYMENT_REFUNDED
+
+Cobrança confirmada em dinheiro:
+PAYMENT_CREATED -> PAYMENT_RECEIVED (o billingType será "RECEIVED_IN_CASH").
+
+Cobrança em processo de negativação Serasa:
+PAYMENT_CREATED -> PAYMENT_OVERDUE -> PAYMENT_DUNNING_REQUESTED
+
+Cobrança em processo de negativação Serasa recebida:
+PAYMENT_CREATED -> PAYMENT_OVERDUE -> PAYMENT_DUNNING_REQUESTED -> PAYMENT_DUNNING_RECEIVED
+
+É importante frisar que sempre que a cobrança sofrer atraso de vencimento, ela passará pelo status PAYMENT_OVERDUE.
+
+Ocasionalmente, outros eventos podem ser disparados, como PAYMENT_DELETED, PAYMENT_RESTORED, PAYMENT_BANK_SLIP_VIEWED e PAYMENT_CHECKOUT_VIEWED, porém são eventos que não estão ligados com processos de recebimento de valores.
+
+Bloqueio do Firewall na CloudFlare
+O CloudFlare é uma das soluções de Firewall mais utilizadas mundialmente para sites.
+Suggest Edits
+Se a sua solução de Firewall for CloudFlare e estiver enfrentando o erro HTTP 403 na sincronização dos webhooks, você precisará criar algumas regras no seu Firewall para o correto funcionamento dos Webhooks Asaas com o seu sistema.
+
+
+Primeiro, acesse as configurações do domínio de seu sistema no CloudFlare. Ao expandir a Visão Geral do domínio, vá até o menu “Segurança > WAF”.
+
+No lado direito, escolha a opção “Regras de acesso de IP” e crie a regra de permitir todos os IPs oficiais do Asaas (clique no link para saber mais).
+
+
+Obs.: em sandbox pode haver outros IPs, siga bloqueando, vá em Segurança > Eventos e libere o IP bloqueado também:
+
+
+Ao acessar a página a lista de IPs bloqueados aparecerão na lista, basta copiar o IP e liberá-los.
+
+Finalizando a configuração, basta acessar o menu de Configurações do Webhook em sua conta Asaas, e reativar a fila de sincronização para conferir se a situação está resolvida.
+
+IPs oficiais do Asaas
+Suggest Edits
+O Asaas possui IPs oficiais pelos quais se comunica com sua aplicação através dos webhooks. Você pode utilizá-los para liberar acesso em sua aplicação através do firewall ou para bloquear outros IPs que não sejam estes, por questão de segurança.
+
+52.67.12.206
+18.230.8.159
+54.94.136.112
+54.94.183.101
+
+Assinaturas
+Dúvidas frequentes sobre assinaturas na API do Asaas
+Suggest Edits
+Posso criar assinaturas com período de gratuidade?
+
+Se você trabalha com um período de trial (7 dias grátis, por exemplo), poderá seguir da mesma forma e informar no campo nextDueDate a data da primeira cobrança. Assim, se o cartão for validado na criação, ele já será gravado para que o primeiro pagamento aconteça no dia informado por você.
+
+Porém, se você criar a assinatura sem os dados do cartão e o pagador inserir depois os dados do cartão, o valor será descontado no momento que ele inserir o cartão, independente do nextDueDate.
+
+Como funcionam as notificações de assinaturas?
+
+As notificações em cobranças de assinaturas serão enviadas conforme as configurações de notificação definidas no cliente. Porém, existem algumas mudanças de acordo com a forma de pagamento, veja abaixo:
+
+Quando a forma de pagamento é Cartão, mesmo que todas as notificações estejam habilitadas no cadastro do pagador, elas são enviadas apenas quando há confirmação de pagamento na primeira cobrança (tanto para o cliente quanto para o pagador) e/ou quando há confirmação de Pagamento em cobranças futuras (apenas para o cliente).
+
+Notificação de cobranças antes do vencimento:
+Essa notificação será enviada apenas se o cliente clicar manualmente no botão Reenviar E-mail/SMS/WhatsApp de notificação e a cobrança precisa estar com o status aguardando pagamento.
+Notificação para cobranças vencidas:
+Se essa opção estiver ativa, o sistema irá disparar uma notificação apenas se houver falha no pagamento.
+Outras notificações, mesmo que habilitadas, não são disparadas.
+Quando a forma de pagamento é Boleto/Pix ou Pergunte ao Cliente os envios das notificações são realizados conforme configurado, com exceção das notificações de Aviso de Geração de Cobrança, pois na assinatura as cobranças são geradas sempre com 40 dias de antecedência. Caso esteja habilitada, essa notificação será enviada apenas na primeira cobrança. Se a assinatura estiver definida como Pergunte ao Cliente e for paga com Cartão, as próximas serão definidas com a forma de pagamento Cartão, sendo assim, começa a seguir as regras de notificações para assinatura em cartão.
+
+Como acompanho os webhooks de cobranças de assinaturas?
+
+A assinatura é apenas uma configuração de como queremos que de fato a cobrança seja criada. O Asaas não possui webhooks próprios para as assinaturas, apenas das cobranças. Então, o gerenciamento deve ser realizado através dos webhooks de cobranças. Sempre ao criar uma nova assinatura, a primeira cobrança dela é gerada automaticamente e enviamos um webhook de PAYMENT_CREATED, onde nele contém o id do subscription. Toda cobrança que faça parte dessa assinatura, conterá o atributo subscription no JSON do webhook, por onde você poderá vincular que tal cobrança faz parte de determinada assinatura.
+
