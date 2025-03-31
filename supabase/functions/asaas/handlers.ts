@@ -668,45 +668,41 @@ async function getPaymentLink(baseUrl: string, apiKey: string, linkId: string): 
   }
 }
 
-async function handleGetCustomer(id, apiKey, isSandbox) {
+async function handleGetCustomer(customerId: string, apiKey: string, isSandbox: boolean): Promise<any> {
   try {
-    // Construct API endpoint
-    const apiUrl = `${isSandbox ? 'https://sandbox.asaas.com/api/v3' : 'https://www.asaas.com/api/v3'}/customers/${id}`;
+    if (!customerId) {
+      throw new Error("Customer ID is required");
+    }
+
+    console.log(`Getting customer details for: ${customerId}`);
     
-    console.log(`Getting customer info from: ${apiUrl}`);
+    const apiUrl = getAsaasApiUrl(isSandbox);
+    const url = `${apiUrl}/v3/customers/${customerId}`;
     
-    // Make the request to Asaas API
-    const response = await fetch(apiUrl, {
-      method: 'GET',
+    const response = await fetch(url, {
+      method: "GET",
       headers: {
-        'Content-Type': 'application/json',
-        'access_token': apiKey
+        "Content-Type": "application/json",
+        "access_token": apiKey
       }
     });
     
-    // Parse the JSON response
-    const data = await response.json();
-    
-    console.log(`Customer data response:`, data);
-    
-    if (response.ok) {
-      return {
-        success: true,
-        customer: data
-      };
-    } else {
-      return {
-        success: false,
-        error: data.errors ? data.errors[0].description : 'Failed to get customer information',
-        details: data
-      };
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(`Failed to get customer: ${JSON.stringify(errorData)}`);
     }
+    
+    const customer = await response.json();
+    
+    return {
+      success: true,
+      customer
+    };
   } catch (error) {
-    console.error(`Error in handleGetCustomer:`, error);
+    console.error("Error in handleGetCustomer:", error);
     return {
       success: false,
-      error: error.message || 'An unexpected error occurred',
-      details: error
+      error: error.message
     };
   }
 }
