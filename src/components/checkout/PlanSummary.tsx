@@ -1,13 +1,15 @@
+
 import React, { useState, useEffect } from "react";
 import { subscriptionService } from "@/services/subscriptionService";
 import { Button } from "@/components/ui/button";
-import { Check, ExternalLink, Mail, Phone, AlertCircle, Shield, Lock, CreditCard, BanknoteIcon, ChevronDown, Info } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Card } from "@/components/ui/card";
+import { Info, Shield, Lock } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { PaymentType } from "@/components/pricing/PaymentOptions";
 import { formatPhoneNumber, isValidPhoneNumber } from "@/utils/formatters";
+import { PaymentMethodSection } from "./payment/PaymentMethodSection";
+import { ContactFormSection } from "./payment/ContactFormSection";
+import { PlanCard } from "./plan/PlanCard";
 
 type PaymentSelectionType = PaymentType | "credit_cash";
 
@@ -58,10 +60,6 @@ const PlanSummary = ({
     }
   };
 
-  const isValidPhone = (phoneNumber: string) => {
-    return isValidPhoneNumber(phoneNumber);
-  };
-
   const isValidEmail = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
@@ -89,7 +87,7 @@ const PlanSummary = ({
       });
       return;
     }
-    if (!isValidPhone(phone)) {
+    if (!isValidPhoneNumber(phone)) {
       toast({
         title: "Telefone/WhatsApp inválido",
         description: "Por favor, forneça um número de telefone válido com DDD no formato (XX) XXXXX-XXXX.",
@@ -150,24 +148,6 @@ const PlanSummary = ({
     return value.toFixed(2).replace('.', ',');
   };
 
-  const PriceDisplay = () => {
-    if (!('price' in plan)) return null;
-    return <div className="mt-1">
-        <div className="flex items-baseline">
-          <span className="text-sm mr-1">até 12x de</span>
-          <span className="text-3xl font-bold">
-            R$ {formatCurrency(plan.price)}
-          </span>
-        </div>
-        <div className="text-sm text-muted-foreground">
-          <span>total a prazo: R$ {formatCurrency(plan.totalPrice)}</span>
-        </div>
-        <div className="text-sm mt-1">
-          Ou R$ {formatCurrency(plan.cashPrice)} à vista
-        </div>
-      </div>;
-  };
-
   return <div className="space-y-6">
       <div className="text-center mb-8">
         <h1 className="text-3xl font-bold">Você escolheu o plano {plan.name}</h1>
@@ -178,79 +158,18 @@ const PlanSummary = ({
       
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <Card className="overflow-hidden border-primary/20">
-          <div className="bg-primary/5 p-4 border-b border-primary/10">
-            <h3 className="text-xl font-semibold">{plan.name}</h3>
-            <PriceDisplay />
-            {'customPrice' in plan && plan.customPrice && <div className="text-lg font-medium mt-1">Sob Consulta</div>}
-          </div>
-          
-          <CardContent className="p-6">
-            <h4 className="font-medium mb-4">O que está incluído:</h4>
-            <ul className="space-y-3">
-              {plan.features.map((feature, index) => <li key={index} className="flex">
-                  <Check className="h-5 w-5 text-primary mr-2 flex-shrink-0" />
-                  <span>{feature}</span>
-                </li>)}
-            </ul>
-          </CardContent>
+          <PlanCard plan={plan} formatCurrency={formatCurrency} />
         </Card>
         
         <div className="space-y-6">
           <Card>
-            <CardHeader>
-              <CardTitle>Escolha a forma de pagamento</CardTitle>
-              <CardDescription>
-                Selecione como você deseja efetuar o pagamento da sua assinatura
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <RadioGroup 
-                value={paymentMethod} 
-                onValueChange={value => setPaymentMethod(value as "credit_installment" | "cash_payment")} 
-                className="space-y-4"
-              >
-                <div className="flex items-center space-x-2 border rounded-md p-3 hover:bg-primary/10 dark:hover:bg-primary/20 cursor-pointer transition-colors">
-                  <RadioGroupItem value="credit_installment" id="payment-credit-installment" />
-                  <label htmlFor="payment-credit-installment" className="flex items-center cursor-pointer w-full">
-                    <CreditCard className="mr-2 h-4 w-4 text-primary" />
-                    <div className="flex-1">
-                      <p className="font-medium">Cartão de Crédito Em Até 12X</p>
-                      <p className="text-sm text-muted-foreground">Parcele em até 12x sem juros</p>
-                    </div>
-                    {'price' in plan && <div className="text-right">
-                        <p className="text-base font-bold text-primary">12x R$ {formatCurrency(plan.price)}</p>
-                        <p className="text-xs text-muted-foreground">total: R$ {formatCurrency(plan.totalPrice)}</p>
-                      </div>}
-                  </label>
-                </div>
-                
-                <div className="flex items-center space-x-2 border rounded-md p-3 hover:bg-primary/10 dark:hover:bg-primary/20 cursor-pointer transition-colors">
-                  <RadioGroupItem value="cash_payment" id="payment-cash" />
-                  <label htmlFor="payment-cash" className="flex items-center cursor-pointer w-full">
-                    <BanknoteIcon className="mr-2 h-4 w-4 text-primary" />
-                    <div className="flex-1">
-                      <p className="font-medium">
-                        Pagamento à Vista <span className="text-green-600 font-semibold whitespace-nowrap">(10% de Desconto)</span>
-                      </p>
-                      <p className="text-sm text-muted-foreground">
-                        Cartão, PIX ou Boleto com desconto
-                      </p>
-                    </div>
-                    {'price' in plan && <p className="text-base font-bold text-primary whitespace-nowrap">R$ {formatCurrency(plan.cashPrice)}</p>}
-                  </label>
-                </div>
-              </RadioGroup>
-              
-              <div className="mt-6 p-3 bg-primary/5 rounded-md">
-                <div className="font-medium">Resumo do pagamento</div>
-                <div className="flex justify-between items-center mt-2">
-                  <span>Total:</span>
-                  <span className="font-bold text-lg">
-                    {'price' in plan ? `R$ ${formatCurrency(getPaymentAmount())}` : 'Sob consulta'}
-                  </span>
-                </div>
-              </div>
-            </CardContent>
+            <PaymentMethodSection 
+              paymentMethod={paymentMethod}
+              onPaymentMethodChange={setPaymentMethod}
+              plan={plan}
+              getPaymentAmount={getPaymentAmount}
+              formatCurrency={formatCurrency}
+            />
           </Card>
           
           <div className="bg-blue-50 border border-blue-200 rounded-md p-4 flex items-start">
@@ -265,94 +184,19 @@ const PlanSummary = ({
           </div>
           
           <Card id="contact-form">
-            <CardHeader>
-              <CardTitle>Seus dados de contato</CardTitle>
-              <CardDescription>
-                Complete com seus dados para prosseguir ao pagamento
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <label htmlFor="name" className="flex items-center font-medium">
-                    Nome completo
-                    <span className="text-red-500 ml-1">*</span>
-                  </label>
-                  <div className="flex relative">
-                    <Input 
-                      id="name" 
-                      placeholder="Digite seu nome completo"
-                      value={name} 
-                      onChange={e => setName(e.target.value)} 
-                      required
-                      className="w-full" 
-                    />
-                  </div>
-                </div>
-                
-                <div className="space-y-2">
-                  <label htmlFor="email" className="flex items-center font-medium">
-                    Seu email para contato
-                    <span className="text-red-500 ml-1">*</span>
-                  </label>
-                  <div className="flex relative">
-                    <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                    <Input 
-                      id="email" 
-                      type="email" 
-                      placeholder="seuemail@exemplo.com" 
-                      value={email} 
-                      onChange={e => setEmail(e.target.value)} 
-                      className="pl-10" 
-                      required
-                    />
-                  </div>
-                  <p className="text-xs text-muted-foreground">Enviaremos a confirmação do pagamento para este email</p>
-                </div>
-                
-                <div className="space-y-2">
-                  <label htmlFor="phone" className="flex items-center font-medium">
-                    Seu telefone/WhatsApp
-                    <span className="text-red-500 ml-1">*</span>
-                  </label>
-                  <div className="flex relative">
-                    <Phone className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                    <Input 
-                      id="phone" 
-                      type="tel" 
-                      placeholder="(XX) XXXXX-XXXX" 
-                      value={phone} 
-                      onChange={handlePhoneChange} 
-                      className="pl-10" 
-                      required
-                    />
-                  </div>
-                  <p className="text-xs text-muted-foreground">Para contato em caso de problemas com o pagamento</p>
-                </div>
-                
-                <div className="rounded-md bg-amber-50 border border-amber-200 p-3 mt-4">
-                  <div className="flex items-start">
-                    <AlertCircle className="h-5 w-5 text-amber-500 mt-0.5 mr-2" />
-                    <div>
-                      <h4 className="font-medium text-amber-800">Importante</h4>
-                      <p className="text-sm text-amber-700 mt-1">
-                        Após o pagamento, você será redirecionado de volta ao nosso site. 
-                        Caso não seja redirecionado automaticamente, volte para nossa página 
-                        para confirmar o status do seu pagamento.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-            <CardFooter>
-              <Button onClick={handleRedirect} className="w-full" disabled={isSubmitting}>
-                {isSubmitting ? <>Processando...</> : <>
-                    {'price' in plan ? <>Pagar R$ {formatCurrency(getPaymentAmount())} no Asaas</> : <>Prosseguir para contato</>}
-                    <ExternalLink className="ml-2 h-4 w-4" />
-                  </>}
-              </Button>
-            </CardFooter>
+            <ContactFormSection 
+              name={name}
+              setName={setName}
+              email={email}
+              setEmail={setEmail}
+              phone={phone}
+              handlePhoneChange={handlePhoneChange}
+              handleRedirect={handleRedirect}
+              isSubmitting={isSubmitting}
+              plan={plan}
+              getPaymentAmount={getPaymentAmount}
+              formatCurrency={formatCurrency}
+            />
           </Card>
           
           <div className="flex items-center justify-center space-x-4">

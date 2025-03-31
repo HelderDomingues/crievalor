@@ -1,64 +1,23 @@
 
 import React, { useState } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
-import { Button } from "@/components/ui/button";
-import { ArrowLeft, ArrowRight, Loader2 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { useToast } from "@/hooks/use-toast";
-import { 
-  Form, 
-  FormControl, 
-  FormField, 
-  FormItem, 
-  FormLabel, 
-  FormMessage 
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
-import { formatPhoneNumber, sanitizePhoneNumber, isValidPhoneNumber } from "@/utils/formatters";
+import { sanitizePhoneNumber } from "@/utils/formatters";
+import { RegistrationForm } from "./form/RegistrationForm";
+import { RegistrationFormData } from "./form/RegistrationFormSchema";
 
 interface UserRegistrationProps {
   onContinue: () => void;
   onBack: () => void;
 }
 
-const formSchema = z.object({
-  fullName: z.string().min(3, "Nome completo é obrigatório"),
-  email: z.string().email("Email inválido"),
-  phone: z.string()
-    .refine(val => isValidPhoneNumber(val), {
-      message: "Telefone deve ter 10 ou 11 dígitos incluindo DDD",
-    }),
-  cpf: z.string().min(11, "CPF deve ter 11 dígitos"),
-  password: z.string().min(6, "Senha deve ter pelo menos 6 caracteres"),
-});
-
-type FormData = z.infer<typeof formSchema>;
-
 const UserRegistration = ({ onContinue, onBack }: UserRegistrationProps) => {
   const { signUp } = useAuth();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   
-  const form = useForm<FormData>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      fullName: "",
-      email: "",
-      phone: "",
-      cpf: "",
-      password: "",
-    },
-  });
-  
-  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>, onChange: (value: string) => void) => {
-    const formatted = formatPhoneNumber(e.target.value);
-    onChange(formatted);
-  };
-  
-  const onSubmit = async (data: FormData) => {
+  const onSubmit = async (data: RegistrationFormData) => {
     setIsSubmitting(true);
     
     try {
@@ -133,106 +92,11 @@ const UserRegistration = ({ onContinue, onBack }: UserRegistrationProps) => {
       </div>
       
       <div className="bg-card border rounded-xl p-6">
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            <FormField
-              control={form.control}
-              name="fullName"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Nome completo</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Digite seu nome completo" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>E-mail</FormLabel>
-                  <FormControl>
-                    <Input type="email" placeholder="seu@email.com" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <FormField
-                control={form.control}
-                name="phone"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Telefone</FormLabel>
-                    <FormControl>
-                      <Input 
-                        placeholder="(00) 00000-0000" 
-                        {...field}
-                        onChange={(e) => handlePhoneChange(e, field.onChange)}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
-              <FormField
-                control={form.control}
-                name="cpf"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>CPF</FormLabel>
-                    <FormControl>
-                      <Input placeholder="000.000.000-00" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-            
-            <FormField
-              control={form.control}
-              name="password"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Senha</FormLabel>
-                  <FormControl>
-                    <Input type="password" placeholder="******" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            
-            <div className="flex justify-between mt-8">
-              <Button type="button" variant="outline" onClick={onBack}>
-                <ArrowLeft className="mr-2 h-4 w-4" />
-                Voltar para pagamento
-              </Button>
-              
-              <Button type="submit" disabled={isSubmitting}>
-                {isSubmitting ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Processando...
-                  </>
-                ) : (
-                  <>
-                    Finalizar cadastro
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </>
-                )}
-              </Button>
-            </div>
-          </form>
-        </Form>
+        <RegistrationForm
+          onSubmit={onSubmit}
+          onBack={onBack}
+          isSubmitting={isSubmitting}
+        />
       </div>
     </div>
   );
