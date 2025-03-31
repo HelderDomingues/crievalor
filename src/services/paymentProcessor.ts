@@ -41,6 +41,12 @@ export const paymentProcessor = {
         cancelUrl: `${paymentDomain}/checkout/canceled`
       });
       
+      // Clear any stale data from localStorage
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('cachedCustomerData');
+        localStorage.removeItem('lastFormSubmission');
+      }
+      
       // Verify form data freshness
       if (formData) {
         console.log(`[${processId}] Processing customer with form data:`, {
@@ -49,22 +55,32 @@ export const paymentProcessor = {
           phone: formData.phone,
           cpf: formData.cpf
         });
+      } else {
+        console.error(`[${processId}] No form data provided, cannot process customer`);
+        throw new Error('Dados do formulário ausentes. Por favor, preencha os dados do cliente.');
       }
       
       // If form data is provided, first process the Asaas customer
       let customerId = null;
       if (formData) {
         try {
-          // Prepare profile data for Asaas service
+          // Clear any stale cached data
+          localStorage.removeItem('cachedCustomerData');
+          
+          // Prepare profile data for Asaas service with a unique timestamp to prevent caching
           const profileData = {
             id: null, // Will be filled after user registration
             full_name: formData.fullName,
             email: formData.email,
             phone: formData.phone,
-            cpf: formData.cpf
+            cpf: formData.cpf,
+            timestamp: Date.now() // Add timestamp to ensure freshness
           };
           
-          // Store form data locally for later use with a timestamp
+          // Add debugging information
+          console.log(`[${processId}] Preparing customer data for Asaas:`, JSON.stringify(profileData));
+          
+          // Store fresh form data locally for later use with a timestamp
           const timestamp = Date.now();
           localStorage.setItem('customerEmail', formData.email);
           localStorage.setItem('customerPhone', formData.phone);
@@ -92,7 +108,8 @@ export const paymentProcessor = {
         cancelUrl: `${paymentDomain}/checkout/canceled`,
         installments,
         paymentType,
-        customerId
+        customerId,
+        timestamp: Date.now() // Add timestamp to prevent caching
       });
       
       console.log(`[${processId}] Checkout result:`, result);

@@ -2,33 +2,27 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.38.4';
 import { getAsaasApiUrl, validateUrls, safeJsonParse } from './utils.ts';
 
 // Handler for customer-related endpoints
-export async function handleCustomer(req: Request, baseUrl: string, apiKey: string): Promise<Response> {
+export async function handleCustomer(action: string, data: any, apiKey: string): Promise<any> {
   try {
-    const { action, data } = await req.json();
-
     if (!action) {
-      return new Response(JSON.stringify({
-        error: "No action specified"
-      }), { status: 400 });
+      throw new Error("No action specified");
     }
 
+    const baseUrl = getAsaasApiUrl();
+    
     switch (action) {
       case 'get-customers':
-        return new Response(JSON.stringify(await getCustomers(baseUrl, apiKey)));
+        return await getCustomers(baseUrl, apiKey);
       
       case 'get-customer':
         if (!data?.customerId) {
-          return new Response(JSON.stringify({
-            error: "Customer ID is required"
-          }), { status: 400 });
+          throw new Error("Customer ID is required");
         }
-        return new Response(JSON.stringify(await getCustomer(baseUrl, apiKey, data.customerId)));
+        return await getCustomer(baseUrl, apiKey, data.customerId);
       
       case 'get-customer-by-cpf-cnpj':
         if (!data?.cpfCnpj) {
-          return new Response(JSON.stringify({
-            error: "CPF/CNPJ is required"
-          }), { status: 400 });
+          throw new Error("CPF/CNPJ is required");
         }
         
         // Normalize and sanitize input
@@ -36,49 +30,39 @@ export async function handleCustomer(req: Request, baseUrl: string, apiKey: stri
         console.log(`Searching for customer with CPF/CNPJ: ${formattedCpfCnpj}`);
         
         const customer = await getCustomerByCpfCnpj(baseUrl, apiKey, formattedCpfCnpj);
-        return new Response(JSON.stringify({ customer }));
+        return { customer };
       
       case 'create-customer':
         // Validate and sanitize input data
         if (!data?.name) {
-          return new Response(JSON.stringify({
-            error: "Customer name is required"
-          }), { status: 400 });
+          throw new Error("Customer name is required");
         }
         
         // Add a request timestamp to help debug potential caching issues
         const timestamp = new Date().toISOString();
-        console.log(`Processing create-customer request at ${timestamp}`);
+        console.log(`Processing create-customer request at ${timestamp}`, data);
         
         const result = await createCustomer(baseUrl, apiKey, data);
-        return new Response(JSON.stringify(result));
+        return result;
       
       case 'update-customer':
         if (!data?.customerId) {
-          return new Response(JSON.stringify({
-            error: "Customer ID is required"
-          }), { status: 400 });
+          throw new Error("Customer ID is required");
         }
-        return new Response(JSON.stringify(await updateCustomer(baseUrl, apiKey, data.customerId, data)));
+        return await updateCustomer(baseUrl, apiKey, data.customerId, data);
       
       case 'delete-customer':
         if (!data?.customerId) {
-          return new Response(JSON.stringify({
-            error: "Customer ID is required"
-          }), { status: 400 });
+          throw new Error("Customer ID is required");
         }
-        return new Response(JSON.stringify(await deleteCustomer(baseUrl, apiKey, data.customerId)));
+        return await deleteCustomer(baseUrl, apiKey, data.customerId);
       
       default:
-        return new Response(JSON.stringify({
-          error: `Unknown action: ${action}`
-        }), { status: 400 });
+        throw new Error(`Unknown action: ${action}`);
     }
   } catch (error) {
     console.error('Error handling customer request:', error);
-    return new Response(JSON.stringify({
-      error: error.message || "An error occurred processing the customer request"
-    }), { status: 500 });
+    throw error;
   }
 }
 
@@ -189,6 +173,8 @@ async function getCustomerByCpfCnpj(baseUrl: string, apiKey: string, cpfCnpj: st
     // Format CPF/CNPJ (remove non-numeric characters)
     const formattedCpfCnpj = cpfCnpj.replace(/\D/g, '');
     
+    console.log(`Verificando cliente por CPF/CNPJ: ${formattedCpfCnpj}`);
+    
     const response = await fetch(`${baseUrl}/customers?cpfCnpj=${formattedCpfCnpj}`, {
       method: 'GET',
       headers: {
@@ -220,6 +206,9 @@ async function getCustomerByCpfCnpj(baseUrl: string, apiKey: string, cpfCnpj: st
 
 async function createCustomer(baseUrl: string, apiKey: string, customerData: any): Promise<any> {
   try {
+    // Log the raw input data for debugging
+    console.log("Creating customer with data:", JSON.stringify(customerData));
+    
     // Clean up phone numbers - ensure they only contain digits
     if (customerData.phone) {
       customerData.phone = customerData.phone.replace(/\D/g, '');
@@ -239,7 +228,7 @@ async function createCustomer(baseUrl: string, apiKey: string, customerData: any
       throw new Error("Missing required fields: name, email, and cpfCnpj are required");
     }
     
-    console.log("Creating customer with cleaned data:", customerData);
+    console.log("Creating customer with cleaned data:", JSON.stringify(customerData));
     
     const response = await fetch(`${baseUrl}/customers`, {
       method: 'POST',

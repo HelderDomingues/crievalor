@@ -25,7 +25,7 @@ serve(async (req) => {
       throw new Error('No action specified');
     }
 
-    console.log(`Received action: ${action}`);
+    console.log(`Received action: ${action}`, data);
 
     let result;
     switch (action) {

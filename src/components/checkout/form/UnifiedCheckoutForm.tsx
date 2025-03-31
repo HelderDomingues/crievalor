@@ -36,6 +36,7 @@ export const UnifiedCheckoutForm: React.FC<UnifiedCheckoutFormProps> = ({
   const [savedEmail, setSavedEmail] = useState<string>("");
   const [savedPhone, setSavedPhone] = useState<string>("");
   const [savedName, setSavedName] = useState<string>("");
+  const [formHasBeenCleared, setFormHasBeenCleared] = useState(false);
   const [isFormVisible, setIsFormVisible] = useState(false);
   
   const form = useForm<RegistrationFormData>({
@@ -51,66 +52,116 @@ export const UnifiedCheckoutForm: React.FC<UnifiedCheckoutFormProps> = ({
   
   // Clear localStorage cached data to ensure fresh form
   useEffect(() => {
-    // Only clear specific checkout-related items, not everything
+    // Clear cached form data on component mount to prevent stale data
+    console.log("Clearing cached customer data on component mount");
     const itemsToClear = [
       'cachedCustomerData',
-      'lastCheckoutFormData'
+      'lastCheckoutFormData',
+      'lastFormSubmission'
     ];
     
-    itemsToClear.forEach(item => localStorage.removeItem(item));
-  }, []);
+    if (!formHasBeenCleared) {
+      itemsToClear.forEach(item => localStorage.removeItem(item));
+      setFormHasBeenCleared(true);
+      console.log("Form data cleared");
+    }
+  }, [formHasBeenCleared]);
   
-  // Recuperar valores do localStorage, se existirem
-  useEffect(() => {
+  // Function to populate form with recent data if available
+  const populateFormWithRecentData = () => {
     const storedEmail = localStorage.getItem('customerEmail');
     const storedPhone = localStorage.getItem('customerPhone');
     const storedName = localStorage.getItem('customerName');
     const storedCPF = localStorage.getItem('customerCPF');
+    const storedTimestamp = localStorage.getItem('formDataTimestamp');
     
-    if (storedEmail) {
-      setSavedEmail(storedEmail);
-      form.setValue("email", storedEmail);
+    // Check if data is recent (less than 10 minutes old)
+    const isDataRecent = storedTimestamp && 
+      Date.now() - parseInt(storedTimestamp) < 10 * 60 * 1000;
+    
+    if (isDataRecent) {
+      console.log("Using recent saved form data");
+      
+      if (storedEmail) {
+        setSavedEmail(storedEmail);
+        form.setValue("email", storedEmail);
+      }
+      
+      if (storedPhone) {
+        setSavedPhone(storedPhone);
+        form.setValue("phone", storedPhone);
+      }
+      
+      if (storedName) {
+        setSavedName(storedName);
+        form.setValue("fullName", storedName);
+      }
+      
+      if (storedCPF) {
+        form.setValue("cpf", storedCPF);
+      }
+    } else {
+      console.log("No recent data found or data is stale, clearing form");
+      // Clear stored data if it's too old
+      localStorage.removeItem('customerEmail');
+      localStorage.removeItem('customerPhone');
+      localStorage.removeItem('customerName');
+      localStorage.removeItem('customerCPF');
+      localStorage.removeItem('formDataTimestamp');
+      
+      // Reset form
+      form.reset({
+        fullName: "",
+        email: user?.email || "",
+        phone: "",
+        cpf: "",
+        password: ""
+      });
     }
+  };
+  
+  // Recover from localStorage on component mount once
+  useEffect(() => {
+    console.log("UnifiedCheckoutForm mounted, checking for user data");
     
-    if (storedPhone) {
-      setSavedPhone(storedPhone);
-      form.setValue("phone", storedPhone);
-    }
-    
-    if (storedName) {
-      setSavedName(storedName);
-      form.setValue("fullName", storedName);
-    }
-    
-    if (storedCPF) {
-      form.setValue("cpf", storedCPF);
-    }
-    
-    // Se o usuário já estiver autenticado, preencher alguns campos automaticamente
-    if (user) {
-      form.setValue("email", user.email || "");
-    }
-    
-    // Adicionar animação de fade-in
+    // Add animation of fade-in
     const timer = setTimeout(() => {
       setIsFormVisible(true);
     }, 200);
     
+    // If the user already has an account, prepopulate email
+    if (user) {
+      console.log("User is logged in, setting email:", user.email);
+      form.setValue("email", user.email || "");
+    } else {
+      // Check for recent data to populate the form
+      populateFormWithRecentData();
+    }
+    
     return () => clearTimeout(timer);
   }, [form, user]);
+  
+  // Log when the form data changes
+  useEffect(() => {
+    const subscription = form.watch((value) => {
+      console.log("Form values updated:", value);
+    });
+    
+    return () => subscription.unsubscribe();
+  }, [form]);
 
   // Determinar se é um novo usuário ou existente
   const isNewUser = !user;
   
   const handleFormSubmit = async (data: RegistrationFormData) => {
+    console.log("Form submitted with data:", data);
+    
     // Ensure data is saved to localStorage with current timestamp to avoid stale data
     localStorage.setItem('customerEmail', data.email);
     localStorage.setItem('customerPhone', data.phone);
     localStorage.setItem('customerName', data.fullName);
     localStorage.setItem('customerCPF', data.cpf);
     localStorage.setItem('formTimestamp', Date.now().toString());
-    
-    console.log("Form submitted with data:", data);
     
     if (isNewUser) {
       // Caso seja um novo usuário, precisamos registrá-lo

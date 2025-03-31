@@ -1,11 +1,15 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { RegistrationFormData } from "@/components/checkout/form/RegistrationFormSchema";
 
 export const asaasCustomerService = {
   async createOrRetrieveCustomer(profileData: any) {
     try {
-      console.log("Creating or retrieving customer with data:", profileData);
+      console.log("Creating or retrieving customer with data:", JSON.stringify(profileData));
+      
+      // Clear any stale cached data
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('cachedCustomerData');
+      }
       
       // First check for existing customer
       const existingCustomer = await this.findExistingCustomer(profileData.id);
@@ -55,16 +59,27 @@ export const asaasCustomerService = {
       console.log("Registering customer from form data:", formData);
       
       // Clear any cached customer data to ensure fresh data is used
-      localStorage.removeItem('cachedCustomerData');
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('cachedCustomerData');
+        localStorage.removeItem('lastFormSubmission');
+      }
       
+      // Validate form data
+      if (!formData.fullName || !formData.email || !formData.phone || !formData.cpf) {
+        throw new Error("Dados de formulário incompletos. Todos os campos são obrigatórios.");
+      }
+      
+      // Add timestamp to ensure fresh data
       const profileData = {
         id: userId || null,
-        full_name: formData.fullName,
-        email: formData.email,
-        phone: formData.phone,
-        cpf: formData.cpf
+        full_name: formData.fullName.trim(),
+        email: formData.email.trim(),
+        phone: formData.phone.trim(),
+        cpf: formData.cpf.trim(),
+        timestamp: Date.now()  // Ensure fresh data
       };
       
+      console.log("Prepared profile data:", JSON.stringify(profileData));
       return await this.createOrRetrieveCustomer(profileData);
     } catch (error) {
       console.error("Erro ao registrar cliente a partir do formulário:", error);
@@ -74,6 +89,10 @@ export const asaasCustomerService = {
   
   async findExistingCustomer(userId: string) {
     try {
+      if (!userId) {
+        return null;
+      }
+      
       const { data: existingCustomer, error: existingError } = await supabase
         .from("asaas_customers")
         .select("asaas_id")
@@ -114,6 +133,7 @@ export const asaasCustomerService = {
           data: {
             cpfCnpj: formattedCpfCnpj
           },
+          timestamp: Date.now() // Add timestamp to prevent caching
         },
       });
       
@@ -140,7 +160,8 @@ export const asaasCustomerService = {
         fullName: profileData.full_name,
         email: profileData.email, 
         phone: profileData.phone,
-        cpf: cpfCnpj
+        cpf: cpfCnpj,
+        timestamp: Date.now()
       });
       
       // Ensure we have fresh data, not cached values
@@ -159,6 +180,8 @@ export const asaasCustomerService = {
           phone,
           cpfCnpj
         });
+        
+        throw new Error(`Dados incompletos: ${!profileData.full_name ? 'Nome, ' : ''}${!profileData.email ? 'Email, ' : ''}${!phone ? 'Telefone, ' : ''}${!cpfCnpj ? 'CPF' : ''}`);
       }
       
       // Prepare customer data with formatted data
