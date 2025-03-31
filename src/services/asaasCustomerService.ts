@@ -1,5 +1,5 @@
-
 import { supabase } from "@/integrations/supabase/client";
+import { RegistrationFormData } from "@/components/checkout/form/RegistrationFormSchema";
 
 export const asaasCustomerService = {
   async createOrRetrieveCustomer(profileData: any) {
@@ -23,8 +23,10 @@ export const asaasCustomerService = {
       // Check if customer exists by CPF/CNPJ
       const existingAsaasCustomer = await this.findCustomerByCpfCnpj(cpfCnpj);
       if (existingAsaasCustomer) {
-        // Register in local database
-        await this.registerLocalCustomer(profileData.id, existingAsaasCustomer);
+        // Register in local database if we have a user ID
+        if (profileData.id) {
+          await this.registerLocalCustomer(profileData.id, existingAsaasCustomer);
+        }
         
         return { 
           customerId: existingAsaasCustomer.id, 
@@ -41,6 +43,23 @@ export const asaasCustomerService = {
       };
     } catch (error) {
       console.error("Erro em createOrRetrieveCustomer:", error);
+      throw error;
+    }
+  },
+  
+  async registerCustomerFromForm(formData: RegistrationFormData, userId?: string) {
+    try {
+      const profileData = {
+        id: userId || null,
+        full_name: formData.fullName,
+        email: formData.email,
+        phone: formData.phone,
+        cpf: formData.cpf
+      };
+      
+      return await this.createOrRetrieveCustomer(profileData);
+    } catch (error) {
+      console.error("Erro ao registrar cliente a partir do formulário:", error);
       throw error;
     }
   },
@@ -108,9 +127,9 @@ export const asaasCustomerService = {
             phone: profileData.phone,
             mobilePhone: profileData.phone,
             cpfCnpj: cpfCnpj,
-            address: profileData.company_address,
+            address: profileData.company_address || "",
             postalCode: "",
-            externalReference: profileData.id
+            externalReference: profileData.id || `temp-${Date.now()}`
           },
         },
       });
@@ -127,11 +146,14 @@ export const asaasCustomerService = {
       
       console.log("Novo cliente criado no Asaas:", customer);
       
-      // Register in local database
-      await this.registerLocalCustomer(profileData.id, customer);
-      
-      // Update flag in profile
-      await this.updateProfileHasCustomer(profileData.id, true);
+      // Register in local database if we have a user ID
+      if (profileData.id) {
+        // Register in local database
+        await this.registerLocalCustomer(profileData.id, customer);
+        
+        // Update flag in profile
+        await this.updateProfileHasCustomer(profileData.id, true);
+      }
       
       return customer;
     } catch (error) {

@@ -14,8 +14,10 @@ import { errorUtils } from "@/utils/errorUtils";
 import { Button } from "@/components/ui/button";
 import CheckoutMain from "@/components/checkout/CheckoutMain";
 import { paymentProcessor } from "@/services/paymentProcessor";
+import { RegistrationFormData } from "@/components/checkout/form/RegistrationFormSchema";
+import { asaasCustomerService } from "@/services/asaasCustomerService";
 
-// Step types for the checkout process - simplified to 3 steps
+// Step types for the checkout process - simplified to 2 steps
 type CheckoutStep = "plan" | "processing";
 
 const Checkout = () => {
@@ -37,6 +39,7 @@ const Checkout = () => {
   const [error, setError] = useState<string | null>(null);
   const [processId, setProcessId] = useState<string>(`checkout_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`);
   const [isRecovering, setIsRecovering] = useState(false);
+  const [formData, setFormData] = useState<RegistrationFormData | null>(null);
   
   // Scroll to top on initial load and when route changes
   useEffect(() => {
@@ -89,6 +92,10 @@ const Checkout = () => {
         setSelectedPaymentType(recoveryState.paymentType as PaymentType);
       }
       
+      if (recoveryState.formData) {
+        setFormData(recoveryState.formData);
+      }
+      
       if (recoveryState.paymentLink) {
         // If we have a payment link, check if we're in a recent session
         const isRecent = Date.now() - recoveryState.timestamp < 10 * 60 * 1000;
@@ -129,6 +136,24 @@ const Checkout = () => {
     
     if (savedPaymentType) {
       setSelectedPaymentType(savedPaymentType as PaymentType);
+    }
+    
+    // Recuperar dados de formulário do localStorage
+    const storedEmail = localStorage.getItem('customerEmail');
+    const storedPhone = localStorage.getItem('customerPhone');
+    const storedName = localStorage.getItem('customerName');
+    const storedCPF = localStorage.getItem('customerCPF');
+    
+    if (storedEmail && storedPhone && storedName && storedCPF) {
+      const recoveredFormData: RegistrationFormData = {
+        email: storedEmail,
+        phone: storedPhone,
+        fullName: storedName,
+        cpf: storedCPF,
+        password: '' // Senha vazia por segurança
+      };
+      
+      setFormData(recoveredFormData);
     }
   }, []);
   
@@ -194,13 +219,34 @@ const Checkout = () => {
     setError(null);
     
     try {
+      // Recuperar dados do formulário do localStorage
+      const storedEmail = localStorage.getItem('customerEmail');
+      const storedPhone = localStorage.getItem('customerPhone');
+      const storedName = localStorage.getItem('customerName');
+      const storedCPF = localStorage.getItem('customerCPF');
+      
+      // Criar objeto de dados do formulário
+      const submittedFormData: RegistrationFormData = formData || {
+        email: storedEmail || '',
+        phone: storedPhone || '',
+        fullName: storedName || '',
+        cpf: storedCPF || '',
+        password: '' // Senha vazia por segurança, será usada apenas para novos cadastros
+      };
+      
+      // Verificar dados mínimos necessários
+      if (!submittedFormData.email || !submittedFormData.phone || !submittedFormData.cpf || !submittedFormData.fullName) {
+        throw new Error("Dados de formulário incompletos. Por favor, preencha todos os campos obrigatórios.");
+      }
+      
       // Save checkout state for recovery
       const recoveryState = {
         timestamp: Date.now(),
         planId: selectedPlanId,
         installments: selectedInstallments,
         paymentType: selectedPaymentType,
-        processId: processId
+        processId: processId,
+        formData: submittedFormData
       };
       
       checkoutRecoveryService.saveRecoveryState(recoveryState);
@@ -211,11 +257,12 @@ const Checkout = () => {
       localStorage.setItem('checkoutTimestamp', String(Date.now()));
       localStorage.setItem('checkoutPaymentType', selectedPaymentType);
       
-      // Process the payment
+      // Process the payment using unified form data
       const result = await paymentProcessor.processPayment({
         planId: selectedPlanId,
         installments: selectedInstallments,
         paymentType: selectedPaymentType,
+        formData: submittedFormData,
         processId,
         recoveryState
       });
@@ -255,7 +302,7 @@ const Checkout = () => {
       setError(error.message || "Could not start the payment process.");
       
       toast({
-        title: "Error processing payment",
+        title: "Erro ao processar pagamento",
         description: errorUtils.getUserFriendlyMessage(error),
         variant: "destructive",
       });

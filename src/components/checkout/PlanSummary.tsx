@@ -6,12 +6,13 @@ import { Card } from "@/components/ui/card";
 import { Info, Shield, Lock } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { PaymentType } from "@/components/pricing/PaymentOptions";
-import { formatPhoneNumber, isValidPhoneNumber } from "@/utils/formatters";
 import { PaymentMethodSection } from "./payment/PaymentMethodSection";
 import { PlanCard } from "./plan/PlanCard";
 import { UnifiedCheckoutForm } from "./form/UnifiedCheckoutForm";
 import { RegistrationFormData } from "./form/RegistrationFormSchema";
 import { useAuth } from "@/context/AuthContext";
+import { paymentProcessor } from "@/services/paymentProcessor";
+import { checkoutRecoveryService } from "@/services/checkoutRecoveryService";
 
 type PaymentSelectionType = PaymentType | "credit_cash";
 
@@ -34,10 +35,18 @@ const PlanSummary = ({
 
   const [paymentMethod, setPaymentMethod] = useState<"credit_installment" | "cash_payment">("credit_installment");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [processId, setProcessId] = useState<string>(`checkout_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`);
 
   useEffect(() => {
     window.scrollTo(0, 0);
-  }, []);
+    
+    // Definir o tipo de pagamento inicial com base no valor selecionado previamente
+    if (selectedPaymentType === "pix") {
+      setPaymentMethod("cash_payment");
+    } else {
+      setPaymentMethod("credit_installment");
+    }
+  }, [selectedPaymentType]);
 
   if (!plan) {
     return <div className="text-center p-8">
@@ -73,9 +82,42 @@ const PlanSummary = ({
   const handleFormSubmit = async (data: RegistrationFormData) => {
     setIsSubmitting(true);
     try {
+      // Salvar o recoveryState para possibilitar recuperação futura
+      const recoveryState = {
+        timestamp: Date.now(),
+        planId: planId,
+        formData: data,
+        paymentMethod,
+        processId
+      };
+      
+      checkoutRecoveryService.saveRecoveryState(recoveryState);
+      
+      // Processar o pagamento diretamente se for um usuário existente
+      if (user) {
+        // Processar pagamento para usuário existente
+        const result = await paymentProcessor.processPayment({
+          planId,
+          installments: 1, // Ou outro valor conforme necessário
+          paymentType: paymentMethod === "credit_installment" ? "credit" : "pix",
+          formData: data,
+          processId
+        });
+        
+        if (result.success && result.url) {
+          // Redirecionar para o link de pagamento
+          window.location.href = result.url;
+          return;
+        } else {
+          throw new Error(result.error || "Não foi possível gerar o link de pagamento");
+        }
+      }
+      
+      // Para novos usuários, precisamos primeiro criar a conta e então solicitar o pagamento
       localStorage.setItem('customerEmail', data.email);
       localStorage.setItem('customerPhone', data.phone);
       localStorage.setItem('customerName', data.fullName);
+      localStorage.setItem('customerCPF', data.cpf);
       localStorage.setItem('paymentMethod', paymentMethod);
       localStorage.setItem('paymentTimestamp', Date.now().toString());
       localStorage.setItem('planName', plan.name);
@@ -83,7 +125,7 @@ const PlanSummary = ({
         localStorage.setItem('planPrice', getPaymentAmount().toString());
       }
 
-      // Se houver um usuário autenticado, podemos pular diretamente para a próxima etapa
+      // Avançar para a próxima etapa (a lógica de registro/pagamento será tratada lá)
       onContinue();
     } catch (error: any) {
       toast({

@@ -2,11 +2,14 @@
 import { PaymentType } from "@/components/pricing/PaymentOptions";
 import { subscriptionService } from "@/services/subscriptionService";
 import { paymentsService } from "@/services/paymentsService";
+import { RegistrationFormData } from "@/components/checkout/form/RegistrationFormSchema";
+import { asaasCustomerService } from "@/services/asaasCustomerService";
 
 export interface PaymentProcessingOptions {
   planId: string;
   installments: number;
   paymentType: PaymentType;
+  formData?: RegistrationFormData;
   domain?: string;
   processId?: string;
   recoveryState?: any;
@@ -24,7 +27,7 @@ export interface PaymentResult {
 export const paymentProcessor = {
   async processPayment(options: PaymentProcessingOptions): Promise<PaymentResult> {
     try {
-      const { planId, installments, paymentType, domain } = options;
+      const { planId, installments, paymentType, formData, domain } = options;
       const processId = options.processId || `checkout_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
       
       // Use the exact domain configured in Asaas
@@ -38,12 +41,46 @@ export const paymentProcessor = {
         cancelUrl: `${paymentDomain}/checkout/canceled`
       });
       
+      // Se temos dados do formulário, processá-los para o cliente Asaas
+      let customerId = null;
+      if (formData) {
+        try {
+          // Preparar dados do perfil para o serviço Asaas
+          const profileData = {
+            id: null, // Será preenchido após o registro do usuário
+            full_name: formData.fullName,
+            email: formData.email,
+            phone: formData.phone,
+            cpf: formData.cpf
+          };
+          
+          // Armazenar dados do formulário localmente para uso posterior
+          localStorage.setItem('customerEmail', formData.email);
+          localStorage.setItem('customerPhone', formData.phone);
+          localStorage.setItem('customerName', formData.fullName);
+          localStorage.setItem('customerCPF', formData.cpf);
+          
+          // Criar ou recuperar o cliente Asaas com os dados do formulário
+          const customerResult = await asaasCustomerService.createOrRetrieveCustomer(profileData);
+          customerId = customerResult.customerId;
+          
+          console.log(`[${processId}] Customer processed:`, {
+            customerId,
+            isNew: customerResult.isNew
+          });
+        } catch (customerError: any) {
+          console.error(`[${processId}] Error processing customer:`, customerError);
+          throw new Error(`Erro ao processar dados do cliente: ${customerError.message}`);
+        }
+      }
+      
       const result = await subscriptionService.createCheckoutSession({
         planId,
         successUrl: `${paymentDomain}/checkout/success`,
         cancelUrl: `${paymentDomain}/checkout/canceled`,
         installments,
-        paymentType
+        paymentType,
+        customerId
       });
       
       console.log(`[${processId}] Checkout result:`, result);
