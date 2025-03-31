@@ -83,7 +83,7 @@ const CurrentSubscription = ({
             </div>
           )}
         </CardContent>
-        <CardFooter>
+        <CardFooter className="flex flex-wrap gap-2">
           <Button 
             variant="destructive" 
             disabled={isCanceling || subscription.status.toLowerCase() === "canceled"}
@@ -97,6 +97,15 @@ const CurrentSubscription = ({
             ) : (
               "Cancelar Assinatura"
             )}
+          </Button>
+          
+          <Button 
+            variant="outline" 
+            asChild
+          >
+            <a href="/subscription?tab=plans">
+              Ver Planos
+            </a>
           </Button>
         </CardFooter>
       </Card>

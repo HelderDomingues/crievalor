@@ -63,9 +63,9 @@ const SubscriptionSummary = ({ subscription, planName }: SubscriptionSummaryProp
           </Button>
           
           <Button variant="outline" className="w-full" asChild>
-            <a href="/subscription?tab=payments">
+            <a href="/subscription?tab=plans">
               <CalendarIcon className="mr-2 h-4 w-4" />
-              Ver Pagamentos
+              Ver Planos
             </a>
           </Button>
         </div>
