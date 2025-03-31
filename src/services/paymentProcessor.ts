@@ -39,6 +39,16 @@ const STATIC_PAYMENT_LINKS = {
   }
 };
 
+// Map of payment links to plan IDs (for webhook matching)
+export const PAYMENT_LINK_TO_PLAN_MAP = {
+  "vydr3n77kew5fd4s": "basic_plan",
+  "fy15747uacorzbla": "basic_plan",
+  "4fcw2ezk4je61qon": "pro_plan",
+  "pqnkhgvic7c25ufq": "pro_plan",
+  "z4vate6zwonrwoft": "enterprise_plan",
+  "3pdwf46bs80mpk0s": "enterprise_plan"
+};
+
 export const paymentProcessor = {
   async processPayment(options: PaymentProcessingOptions): Promise<PaymentResult> {
     try {
@@ -76,10 +86,12 @@ export const paymentProcessor = {
       console.log(`[${processId}] Using static payment link: ${paymentLink}`);
       
       // Store information in localStorage for potential recovery
-      localStorage.setItem('lastPaymentUrl', paymentLink);
-      localStorage.setItem('checkoutPlanId', planId);
-      localStorage.setItem('checkoutPaymentType', paymentType);
-      localStorage.setItem('checkoutTimestamp', Date.now().toString());
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('lastPaymentUrl', paymentLink);
+        localStorage.setItem('checkoutPlanId', planId);
+        localStorage.setItem('checkoutPaymentType', paymentType);
+        localStorage.setItem('checkoutTimestamp', Date.now().toString());
+      }
       
       return {
         success: true,
@@ -96,9 +108,24 @@ export const paymentProcessor = {
   },
   
   storePaymentState(result: PaymentResult, state: any): void {
+    if (typeof window === 'undefined') return;
+    
     // Save payment URL
     if (result.url) {
       localStorage.setItem('lastPaymentUrl', result.url);
+      
+      // Extract payment link code from URL if available
+      const linkMatch = result.url.match(/\/c\/([a-zA-Z0-9]+)/);
+      if (linkMatch && linkMatch[1]) {
+        const linkCode = linkMatch[1];
+        localStorage.setItem('checkoutPaymentLink', linkCode);
+        
+        // Store plan ID based on payment link
+        const planId = PAYMENT_LINK_TO_PLAN_MAP[linkCode];
+        if (planId) {
+          localStorage.setItem('checkoutPlanId', planId);
+        }
+      }
     }
     
     // Save payment ID if available

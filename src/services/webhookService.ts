@@ -71,7 +71,8 @@ export const webhookService = {
           data: response.data,
           testResults: response.data.testResults,
           recommendations: response.data.recommendations,
-          options: response.data.options
+          options: response.data.options,
+          jwtVerificationStatus: response.data.jwtVerificationDisabled ? 'disabled' : 'enabled'
         };
       } catch (error: any) {
         console.error("Erro na comunicação com edge function:", error);
@@ -105,5 +106,12 @@ export const webhookService = {
    */
   getPreferredWebhookUrl() {
     return this.getSupabaseWebhookUrl();
+  },
+
+  /**
+   * Verifica o estado de verificação JWT do webhook
+   */
+  isJwtVerificationDisabled() {
+    return true; // Always disabled for Asaas webhook since they don't support it
   }
 };

@@ -6,6 +6,7 @@ import { ArrowLeft, CreditCard, CheckCircle2, ChevronDown, BanknoteIcon } from "
 import { Card, CardContent } from "@/components/ui/card";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
+import { paymentProcessor } from "@/services/paymentProcessor";
 
 interface PaymentSelectionProps {
   onBack?: () => void;
@@ -29,34 +30,32 @@ const PaymentSelection: React.FC<PaymentSelectionProps> = ({
   const creditFullPrice = planTotalPrice;
   const cashPrice = planTotalPrice * 0.9; // 10% de desconto
 
-  // Links de pagamento estáticos para cada plano
-  const paymentLinks = {
-    basic_plan: {
-      creditInstallments: "https://sandbox.asaas.com/c/vydr3n77kew5fd4s", 
-      cashPayment: "https://sandbox.asaas.com/c/fy15747uacorzbla"
-    },
-    pro_plan: {
-      creditInstallments: "https://sandbox.asaas.com/c/4fcw2ezk4je61qon", 
-      cashPayment: "https://sandbox.asaas.com/c/pqnkhgvic7c25ufq"
-    },
-    enterprise_plan: {
-      creditInstallments: "https://sandbox.asaas.com/c/z4vate6zwonrwoft", 
-      cashPayment: "https://sandbox.asaas.com/c/3pdwf46bs80mpk0s"
-    }
-  };
-
-  // Obter os links corretos com base no plano selecionado
-  const currentPlanLinks = paymentLinks[planId as keyof typeof paymentLinks] || paymentLinks.basic_plan;
-
-  const handlePaymentMethodClick = (type: PaymentType) => {
+  const handlePaymentMethodClick = async (type: PaymentType) => {
+    // Update selected payment type
     onPaymentTypeChange(type);
     
-    // Redirecionar diretamente para o link de pagamento adequado
-    const link = type === "credit" 
-      ? currentPlanLinks.creditInstallments 
-      : currentPlanLinks.cashPayment;
+    // Process the payment using the payment processor service
+    try {
+      const result = await paymentProcessor.processPayment({
+        planId,
+        paymentType: type,
+        installments: type === "credit" ? 12 : 1
+      });
       
-    window.location.href = link;
+      if (result.success && result.url) {
+        // Store payment state in localStorage before redirecting
+        paymentProcessor.storePaymentState(result, null);
+        
+        // Redirect to payment URL
+        window.location.href = result.url;
+      } else {
+        console.error("Payment processing failed:", result.error);
+        // You could show an error toast here
+      }
+    } catch (error) {
+      console.error("Error processing payment:", error);
+      // You could show an error toast here
+    }
   };
 
   const formatCurrency = (value: number) => {

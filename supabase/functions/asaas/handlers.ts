@@ -57,6 +57,18 @@ export async function handleCustomer(action: string, data: any, apiKey: string):
         }
         return await deleteCustomer(baseUrl, apiKey, data.customerId);
       
+      case 'get-customer':
+        if (!data?.id) {
+          throw new Error("Customer ID is required");
+        }
+        return await handleGetCustomer(data.id, apiKey, false);
+      
+      case 'get-customer-sandbox':
+        if (!data?.id) {
+          throw new Error("Customer ID is required");
+        }
+        return await handleGetCustomer(data.id, apiKey, true);
+      
       default:
         throw new Error(`Unknown action: ${action}`);
     }
@@ -653,5 +665,48 @@ async function getPaymentLink(baseUrl: string, apiKey: string, linkId: string): 
   } catch (error) {
     console.error('Error getting payment link:', error);
     throw error;
+  }
+}
+
+async function handleGetCustomer(id, apiKey, isSandbox) {
+  try {
+    // Construct API endpoint
+    const apiUrl = `${isSandbox ? 'https://sandbox.asaas.com/api/v3' : 'https://www.asaas.com/api/v3'}/customers/${id}`;
+    
+    console.log(`Getting customer info from: ${apiUrl}`);
+    
+    // Make the request to Asaas API
+    const response = await fetch(apiUrl, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'access_token': apiKey
+      }
+    });
+    
+    // Parse the JSON response
+    const data = await response.json();
+    
+    console.log(`Customer data response:`, data);
+    
+    if (response.ok) {
+      return {
+        success: true,
+        customer: data
+      };
+    } else {
+      return {
+        success: false,
+        error: data.errors ? data.errors[0].description : 'Failed to get customer information',
+        details: data
+      };
+    }
+  } catch (error) {
+    console.error(`Error in handleGetCustomer:`, error);
+    return {
+      success: false,
+      error: error.message || 'An unexpected error occurred',
+      details: error
+    };
   }
 }
