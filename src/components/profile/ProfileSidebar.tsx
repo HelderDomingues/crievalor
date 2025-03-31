@@ -7,6 +7,7 @@ import { AlertCircle, User, Briefcase, Globe, CreditCard } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import AvatarUpload from "@/components/AvatarUpload";
 import { UserProfile } from "@/types/auth";
+import { Link } from "react-router-dom";
 
 interface ProfileSidebarProps {
   profile: UserProfile | null;

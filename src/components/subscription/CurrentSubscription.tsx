@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader2 } from "lucide-react";
 import { Subscription } from "@/services/subscriptionService";
+import { Link } from "react-router-dom";
 
 interface CurrentSubscriptionProps {
   subscription: Subscription;
@@ -103,9 +104,9 @@ const CurrentSubscription = ({
             variant="outline" 
             asChild
           >
-            <a href="/subscription?tab=plans">
+            <Link to="/subscription?tab=plans">
               Ver Planos
-            </a>
+            </Link>
           </Button>
         </CardFooter>
       </Card>
