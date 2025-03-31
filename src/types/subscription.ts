@@ -78,6 +78,7 @@ export interface CreateCheckoutOptions {
   installments?: number;
   paymentType?: PaymentType;
   customerId?: string | null;
+  timestamp?: number; // Added timestamp property
 }
 
 export interface AsaasCustomer {

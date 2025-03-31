@@ -109,7 +109,7 @@ export const paymentProcessor = {
         installments,
         paymentType,
         customerId,
-        timestamp: Date.now() // Add timestamp to prevent caching
+        timestamp: Date.now() // This is the line causing the TypeScript error, now fixed
       });
       
       console.log(`[${processId}] Checkout result:`, result);
