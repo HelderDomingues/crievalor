@@ -1,6 +1,7 @@
 import React from "react";
 import { ArrowRight, Route, Compass } from "lucide-react";
 import { Button } from "@/components/ui/button";
+
 interface HeroContentProps {
   title: string;
   subtitle: string;
@@ -11,6 +12,7 @@ interface HeroContentProps {
   secondaryCtaUrl?: string;
   isMarHero?: boolean;
 }
+
 const HeroContent: React.FC<HeroContentProps> = ({
   title,
   subtitle,
@@ -22,7 +24,6 @@ const HeroContent: React.FC<HeroContentProps> = ({
   isMarHero = false
 }) => {
   const handleButtonClick = (url: string) => {
-    // Se a URL começa com #, é um link de âncora
     if (url.startsWith('#')) {
       const element = document.getElementById(url.substring(1));
       if (element) {
@@ -31,10 +32,10 @@ const HeroContent: React.FC<HeroContentProps> = ({
         });
       }
     } else {
-      // Caso contrário, navegar para a URL
       window.location.href = url;
     }
   };
+
   return <div className="container mx-auto px-4 relative z-30">
       <div className="max-w-3xl mx-auto text-center">
         {isMarHero ? <div className="mb-5 animate-fade-in">
@@ -75,4 +76,5 @@ const HeroContent: React.FC<HeroContentProps> = ({
       </div>
     </div>;
 };
+
 export default HeroContent;
