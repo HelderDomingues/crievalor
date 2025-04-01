@@ -24,6 +24,7 @@ import IdentidadeVisual from "./pages/IdentidadeVisual";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import RefundPolicy from "./pages/RefundPolicy";
 import TermsOfService from "./pages/TermsOfService";
+import Subscription from "./pages/Subscription";
 // Import AuthProvider from AuthContext
 import { AuthProvider } from "./context/AuthContext";
 // Import setup service to initialize application
@@ -74,6 +75,10 @@ const router = createBrowserRouter([
   {
     path: "/termos-de-servico",
     element: <TermsOfService />,
+  },
+  {
+    path: "/subscription",
+    element: <Subscription />,
   },
   {
     path: "/admin-setup",
