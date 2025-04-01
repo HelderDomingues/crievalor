@@ -12,6 +12,10 @@ const ContactSection = () => {
     console.log("Form submitted");
   };
 
+  const handleOpenMap = (location: string) => {
+    window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(location)}`, '_blank');
+  };
+
   return <section id="contato" className="py-16 md:py-24 relative bg-secondary/30">
       {/* Background elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -36,8 +40,10 @@ const ContactSection = () => {
                 </div>
                 <div>
                   <h3 className="text-lg font-medium">Telefone/Whatsapp</h3>
-                  <p className="text-muted-foreground">67 99654-2991 (MS)
-47 99215-0289 (SC)</p>
+                  <p className="text-muted-foreground">
+                    (67) 99654-2991 (MS)<br />
+                    (47) 99215-0289 (SC)
+                  </p>
                 </div>
               </div>
               
@@ -57,14 +63,32 @@ const ContactSection = () => {
                 </div>
                 <div>
                   <h3 className="text-lg font-medium">Endereços:</h3>
-                  <div className="space-y-2">
+                  <div className="space-y-4">
                     <div>
-                      <p className="font-medium text-sm">Mato Grosso do Sul</p>
-                      <p className="text-muted-foreground">Rua Roque Tertuliano de Andrade, 836. Campo Grande.</p>
+                      <p className="font-medium text-sm mb-1">Mato Grosso do Sul</p>
+                      <p className="text-muted-foreground mb-2">Rua Roque Tertuliano de Andrade, 836 - Vila Morumbi. Campo Grande/MS</p>
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        className="flex items-center gap-2"
+                        onClick={() => handleOpenMap("Rua Roque Tertuliano de Andrade, 836, Vila Morumbi, Campo Grande, MS, Brasil")}
+                      >
+                        <MapPin className="h-4 w-4" />
+                        Ver no mapa
+                      </Button>
                     </div>
                     <div>
-                      <p className="font-medium text-sm">Santa Catarina</p>
-                      <p className="text-muted-foreground">Rua Bolívia, 59. Navegantes</p>
+                      <p className="font-medium text-sm mb-1">Santa Catarina</p>
+                      <p className="text-muted-foreground mb-2">Rua Senador Carlos Gomes de Oliveira, 214 - Meia Praia. Navegantes/SC</p>
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        className="flex items-center gap-2"
+                        onClick={() => handleOpenMap("Rua Senador Carlos Gomes de Oliveira, 214, Meia Praia, Navegantes, SC, Brasil")}
+                      >
+                        <MapPin className="h-4 w-4" />
+                        Ver no mapa
+                      </Button>
                     </div>
                   </div>
                 </div>
