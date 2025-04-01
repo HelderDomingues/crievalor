@@ -1,12 +1,31 @@
 
-import { FileText, FileCheck, Users, Presentation, BarChart, Award, BookOpen, ClipboardCheck } from "lucide-react";
+import { 
+  FileText, 
+  FileCheck, 
+  Users, 
+  Award, 
+  ClipboardCheck,
+  GitCompare,
+  Target,
+  Fingerprint,
+  Pin,
+  Briefcase,
+  LineChart,
+  Radar,
+  HandMetal
+} from "lucide-react";
 import { DocumentType, PricingPlan } from "./types";
 
 // Tipos de documentos disponíveis
 const documentTypes: Record<string, DocumentType> = {
-  planoEstrategico: {
+  planoEstrategicoSimplificado: {
     icon: FileText,
-    name: "Plano Estratégico",
+    name: "Plano Estratégico Simplificado",
+    included: true
+  },
+  planoEstrategicoAprofundado: {
+    icon: FileText,
+    name: "Plano Estratégico Aprofundado com Relatórios Completos",
     included: true
   },
   relatorioCompleto: {
@@ -16,7 +35,7 @@ const documentTypes: Record<string, DocumentType> = {
   },
   workshop: {
     icon: Users,
-    name: "Workshop de Implementação",
+    name: "01 Sessão on line (até 50 min) com consultor para orientações e tira dúvidas",
     included: true
   },
   vip: {
@@ -24,14 +43,44 @@ const documentTypes: Record<string, DocumentType> = {
     name: "Conteúdos exclusivos",
     included: true
   },
-  mentoria: {
-    icon: BookOpen,
-    name: "Mentoria Especializada",
+  segmento: {
+    icon: Radar,
+    name: "Análise sobre o segmento de atuação",
     included: true
   },
   revisao: {
     icon: ClipboardCheck,
     name: "Revisão do MAR",
+    included: true 
+  },
+  benchmarking: {
+    icon: GitCompare,
+    name: "Análise de Concorrência e Benchmarking",
+    included: true 
+  },
+  posicionamento: {
+    icon: Pin,
+    name: "Posicionamento de Mercado",
+    included: true 
+  },
+  branding: {
+    icon: Fingerprint,
+    name: "Branding e Posicionamento de Marca",
+    included: true 
+  },
+  negocios: {
+    icon: Briefcase,
+    name: "Estratégias de Negócio 100% personalizadas",
+    included: true 
+  },
+  marketing: {
+    icon: LineChart,
+    name: "Estratégias de Marketing 100% personalizadas",
+    included: true 
+  },
+  planosAcao: {
+    icon: ClipboardCheck,
+    name: "Planos de Ação prontos para aplicar",
     included: true 
   }
 };
@@ -49,22 +98,28 @@ export const plans: PricingPlan[] = [
       "Plano Estratégico simplificado:",
       "• Estratégias de Negócios e Comerciais",
       "• Estratégias de Marketing",
-      "• Planos de Ação prontos para executar",
+      "• Planos de Ação prontos para aplicar",
       "Recomendações 100% personalizadas",
-      "Workshop de implantação",
+      "01 Sessão on line (até 50 min) com consultor para orientações e tira dúvidas",
       "Suporte por e-mail",
       "Acesso à comunidade",
       "Apenas 1 usuário",
-      "1 revisão geral do MAR"
+      "1 revisão geral do MAR dentro do prazo de 06 meses"
     ],
     documents: [
-      {...documentTypes.relatorioCompleto, included: false},
-      {...documentTypes.mentoria, included: false},
-      documentTypes.planoEstrategico,
+      documentTypes.planoEstrategicoSimplificado,
       documentTypes.revisao,
+      {...documentTypes.planosAcao, included: true},
+      {...documentTypes.negocios, included: true},
+      {...documentTypes.marketing, included: true},
+      {...documentTypes.relatorioCompleto, included: false},
+      {...documentTypes.segmento, included: false},
+      {...documentTypes.benchmarking, included: false},
+      {...documentTypes.posicionamento, included: false},
+      {...documentTypes.branding, included: false}
     ],
     cta: "Quero este plano",
-    ctaUrl: "/subscription?plan=basic_plan"
+    ctaUrl: "https://sandbox.asaas.com/c/vydr3n77kew5fd4s"
   },
   {
     id: "pro_plan",
@@ -95,14 +150,20 @@ export const plans: PricingPlan[] = [
       "2 revisões gerais do MAR"
     ],
     documents: [
-      documentTypes.planoEstrategico,
+      documentTypes.planoEstrategicoAprofundado,
       {...documentTypes.relatorioCompleto, included: true},
       {...documentTypes.workshop, included: true},
-      {...documentTypes.mentoria, included: true},
-      {...documentTypes.revisao, included: true}
+      {...documentTypes.revisao, included: true},
+      {...documentTypes.segmento, included: true},
+      {...documentTypes.benchmarking, included: true},
+      {...documentTypes.posicionamento, included: true},
+      {...documentTypes.branding, included: true},
+      {...documentTypes.negocios, included: true},
+      {...documentTypes.marketing, included: true},
+      {...documentTypes.planosAcao, included: true}
     ],
     cta: "Quero este plano",
-    ctaUrl: "/subscription?plan=pro_plan",
+    ctaUrl: "https://sandbox.asaas.com/c/4fcw2ezk4je61qon",
     popular: true
   },
   {
@@ -136,14 +197,21 @@ export const plans: PricingPlan[] = [
       "até 3 revisões gerais do MAR"
     ],
     documents: [
-      documentTypes.planoEstrategico,
+      documentTypes.planoEstrategicoAprofundado,
       documentTypes.relatorioCompleto,
       documentTypes.workshop,
       documentTypes.vip,
-      documentTypes.revisao
+      documentTypes.revisao,
+      documentTypes.segmento,
+      documentTypes.benchmarking,
+      documentTypes.posicionamento,
+      documentTypes.branding,
+      documentTypes.negocios,
+      documentTypes.marketing,
+      documentTypes.planosAcao
     ],
     cta: "Quero este plano",
-    ctaUrl: "/subscription?plan=enterprise_plan"
+    ctaUrl: "https://sandbox.asaas.com/c/z4vate6zwonrwoft"
   },
   {
     id: "corporate_plan",
@@ -164,14 +232,21 @@ export const plans: PricingPlan[] = [
       "Até 3 revisões gerais do MAR"
     ],
     documents: [
-      documentTypes.planoEstrategico,
+      documentTypes.planoEstrategicoAprofundado,
       documentTypes.relatorioCompleto,
       documentTypes.workshop,
       documentTypes.vip,
-      documentTypes.revisao
+      documentTypes.revisao,
+      documentTypes.segmento,
+      documentTypes.benchmarking,
+      documentTypes.posicionamento,
+      documentTypes.branding,
+      documentTypes.negocios,
+      documentTypes.marketing,
+      documentTypes.planosAcao
     ],
     cta: "Falar com consultor",
-    ctaUrl: "https://wa.me/+5547992152089",
+    ctaUrl: "https://wa.me/+5547992150289",
     customPrice: true
   }
 ];
