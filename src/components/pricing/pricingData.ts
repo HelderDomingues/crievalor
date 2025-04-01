@@ -199,20 +199,12 @@ export const plans: PricingPlan[] = [
     name: "Corporativo",
     description: "Solução totalmente personalizada para empresas e corporações com necessidades específicas",
     features: [
-      "(Para empresas com equipes acima de 51 pessoas na organização)"
+      "(Para empresas com equipes acima de 51 pessoas na organização)",
+      "Consultoria dedicada",
+      "Sessões de mentoria para equipe completa", 
+      "Implementação assistida"
     ],
-    documents: [
-      documentTypes.planoEstrategicoAprofundado,
-      documentTypes.estrategiasNegocio,
-      documentTypes.estrategiasMarketing,
-      documentTypes.planosAcao,
-      documentTypes.analiseSegmento,
-      documentTypes.analiseConcorrencia,
-      documentTypes.posicionamentoMercado,
-      documentTypes.brandingPosicionamento,
-      documentTypes.consideracoesFinais,
-      documentTypes.analisesCenario
-    ],
+    // Removing documents array for Corporate plan
     cta: "Falar com consultor",
     ctaUrl: "https://wa.me/+5547992150289",
     customPrice: true

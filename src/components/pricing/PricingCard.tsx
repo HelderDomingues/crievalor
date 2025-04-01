@@ -8,6 +8,7 @@ import PlanDocuments from "./PlanDocuments";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { Loader2, BadgePercent } from "lucide-react";
+import { AuroraButton } from "@/components/ui/aurora-button";
 
 interface PricingCardProps {
   plan: PricingPlan;
@@ -127,6 +128,16 @@ const PricingCard = ({
     return null;
   };
 
+  // Extract team size recommendation from features (if present)
+  const teamSizeRecommendation = plan.features.find(feature => 
+    feature.startsWith("(Para empresas")
+  );
+  
+  // Filter out the team size recommendation from features list
+  const actualFeatures = plan.features.filter(feature => 
+    !feature.startsWith("(Para empresas")
+  );
+
   return (
     <Card className={`flex h-full flex-col transition-all duration-300 hover:shadow-md ${plan.popular ? "border-primary shadow-lg" : ""}`}>
       <CardHeader className="pb-2">
@@ -145,12 +156,12 @@ const PricingCard = ({
         
         <h3 className="mt-2 text-xl font-bold">{plan.name}</h3>
         
-        {/* Recommendation text - not a feature */}
-        <div className="text-xs text-muted-foreground mt-0.5">
-          {plan.description && plan.description.startsWith("(Para empresas") 
-            ? plan.description 
-            : null}
-        </div>
+        {/* Team size recommendation displayed near plan name */}
+        {teamSizeRecommendation && (
+          <div className="text-xs text-muted-foreground mt-0.5">
+            {teamSizeRecommendation}
+          </div>
+        )}
         
         {/* Price information */}
         <div className="mt-2">
@@ -161,54 +172,48 @@ const PricingCard = ({
         </div>
         
         {/* Plan description */}
-        <p className="mt-2 text-sm text-muted-foreground">
-          {!plan.description?.startsWith("(Para empresas") ? plan.description : null}
-        </p>
+        {plan.description && (
+          <p className="mt-2 text-sm text-muted-foreground">
+            {plan.description}
+          </p>
+        )}
       </CardHeader>
       
-      {/* CTA Button - Moved up before features */}
+      {/* CTA Button - Moved here right after description and before features */}
       <div className="px-6 pb-4">
-        <Button 
-          className={`w-full ${plan.popular ? "shadow-glow animate-pulse-subtle" : ""}`}
-          onClick={handleSubscribe}
-          disabled={isButtonDisabled}
-          variant={plan.comingSoon ? "outline" : "default"}
-        >
-          {getButtonText()}
-        </Button>
+        {plan.popular ? (
+          <AuroraButton 
+            onClick={handleSubscribe}
+            disabled={isButtonDisabled}
+            className="w-full font-medium"
+            glowClassName="from-blue-500 via-purple-500 to-cyan-400"
+          >
+            {getButtonText()}
+          </AuroraButton>
+        ) : (
+          <Button 
+            className="w-full"
+            onClick={handleSubscribe}
+            disabled={isButtonDisabled}
+            variant={plan.comingSoon ? "outline" : "default"}
+          >
+            {getButtonText()}
+          </Button>
+        )}
       </div>
       
       <CardContent className="flex-grow pt-0">
         <div className="space-y-6">
-          {/* Documents section with visual hierarchy */}
-          {plan.documents && plan.documents.length > 0 && (
-            <div className="mb-4">
-              <h4 className="text-sm font-medium mb-3 border-b border-border pb-2">Documentos Incluídos</h4>
-              <ul className="space-y-3">
-                {plan.documents.map((doc, i) => {
-                  // Check if this is the main strategic plan
-                  const isMainPlan = doc.name.includes("Plano Estratégico");
-                  
-                  return (
-                    <li key={i} className={`flex items-start ${isMainPlan ? "mb-2" : "pl-3"}`}>
-                      <div className={`shrink-0 mr-2 h-5 w-5 mt-0.5 ${doc.included ? 'text-green-500' : 'text-muted-foreground opacity-50'}`}>
-                        <doc.icon className="h-5 w-5" />
-                      </div>
-                      <span className={`text-sm ${doc.included ? '' : 'text-muted-foreground line-through opacity-50'}`}>
-                        {doc.name}
-                      </span>
-                    </li>
-                  );
-                })}
-              </ul>
-            </div>
+          {/* Documents section with visual hierarchy - Only show for non-corporate plans */}
+          {plan.id !== "corporate_plan" && plan.documents && plan.documents.length > 0 && (
+            <PlanDocuments documents={plan.documents} />
           )}
           
           {/* Benefits section */}
           <div>
             <h4 className="mb-3 border-b border-border pb-2 text-sm font-medium">Benefícios Incluídos neste plano</h4>
             <ul className="space-y-3">
-              {plan.features.map((feature, index) => (
+              {actualFeatures.map((feature, index) => (
                 <li key={index} className="flex items-start text-sm">
                   <span className="mr-2 text-green-500">✓</span>
                   {feature}
