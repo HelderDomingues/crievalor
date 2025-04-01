@@ -26,7 +26,7 @@ const services: Service[] = [
     icon: BookOpen,
     title: "Escola de Gestão",
     description: "Cursos e treinamentos para aprimorar habilidades de liderança e gestão.",
-    route: "/escola-de-gestao",
+    route: "/escola-gestao",
     color: "bg-emerald-500/10 text-emerald-500",
     details: [
       "Formação de líderes e gestores",

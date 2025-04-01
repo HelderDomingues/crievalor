@@ -15,6 +15,15 @@ import TestimonialsAdmin from "./pages/TestimonialsAdmin";
 import Auth from "./pages/Auth";
 import Profile from "./pages/Profile";
 import Mar from "./pages/Mar";
+import Sobre from "./pages/Sobre";
+import Contato from "./pages/Contato";
+import Projetos from "./pages/Projetos";
+import EscolaGestao from "./pages/EscolaGestao";
+import Mentorias from "./pages/Mentorias";
+import IdentidadeVisual from "./pages/IdentidadeVisual";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import RefundPolicy from "./pages/RefundPolicy";
+import TermsOfService from "./pages/TermsOfService";
 // Import AuthProvider from AuthContext
 import { AuthProvider } from "./context/AuthContext";
 // Import setup service to initialize application
@@ -29,6 +38,42 @@ const router = createBrowserRouter([
   {
     path: "/mar",
     element: <Mar />,
+  },
+  {
+    path: "/sobre",
+    element: <Sobre />,
+  },
+  {
+    path: "/contato",
+    element: <Contato />,
+  },
+  {
+    path: "/projetos",
+    element: <Projetos />,
+  },
+  {
+    path: "/escola-gestao",
+    element: <EscolaGestao />,
+  },
+  {
+    path: "/mentorias",
+    element: <Mentorias />,
+  },
+  {
+    path: "/identidade-visual",
+    element: <IdentidadeVisual />,
+  },
+  {
+    path: "/politica-de-privacidade",
+    element: <PrivacyPolicy />,
+  },
+  {
+    path: "/politica-de-reembolso",
+    element: <RefundPolicy />,
+  },
+  {
+    path: "/termos-de-servico",
+    element: <TermsOfService />,
   },
   {
     path: "/admin-setup",

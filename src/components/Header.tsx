@@ -48,6 +48,11 @@ const Header = () => {
     { title: "Contato", path: "/contato" },
   ];
 
+  const handleWhatsAppContact = () => {
+    const message = encodeURIComponent("Olá, gostaria de obter mais informações sobre os serviços da Crie Valor.");
+    window.open(`https://wa.me/5547992150289?text=${message}`, '_blank');
+  };
+
   return (
     <header
       className={`fixed top-0 w-full z-50 transition-all duration-300 ${
@@ -89,6 +94,7 @@ const Header = () => {
             <Button
               size="sm"
               className="ml-2 bg-primary text-primary-foreground hover:bg-primary/90 transition-all"
+              onClick={handleWhatsAppContact}
             >
               Fale Conosco
             </Button>
@@ -139,7 +145,10 @@ const Header = () => {
               {item.title}
             </Link>
           ))}
-          <Button className="mt-4 bg-primary text-primary-foreground hover:bg-primary/90 transition-all">
+          <Button 
+            className="mt-4 bg-primary text-primary-foreground hover:bg-primary/90 transition-all"
+            onClick={handleWhatsAppContact}
+          >
             Fale Conosco
           </Button>
         </nav>
