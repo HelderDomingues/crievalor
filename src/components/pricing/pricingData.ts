@@ -1,5 +1,5 @@
 
-import { FileText, FileCheck, Users, Presentation, BarChart, Award, BookOpen, ClipboardCheck } from "lucide-react";
+import { FileText, FileCheck, Users, Award, ClipboardCheck, BarChart3, GitCompareArrows, Star, Briefcase, LineChart } from "lucide-react";
 import { DocumentType, PricingPlan } from "./types";
 
 // Tipos de documentos disponíveis
@@ -25,7 +25,7 @@ const documentTypes: Record<string, DocumentType> = {
     included: true
   },
   segmento: {
-    icon: radar,
+    icon: BarChart3,
     name: "Análise de Segmento de atuação",
     included: true
   },
@@ -33,36 +33,41 @@ const documentTypes: Record<string, DocumentType> = {
     icon: ClipboardCheck,
     name: "Revisão do MAR",
     included: true 
-  }
+  },
   benchmarking: {
-    icon: git-compare-arrows,
+    icon: GitCompareArrows,
     name: "Análise de Concorrência e Benchmarking",
     included: true 
-  }
+  },
   posicionamento: {
-    icon: git-compare-arrows,
+    icon: Star,
     name: "Posicionamento de Mercado",
     included: true 
-  }
+  },
   branding: {
-    icon: git-compare-arrows,
+    icon: Award,
     name: "Branding e Posicionamento de Marca",
     included: true 
-  }
+  },
   negocios: {
-    icon: git-compare-arrows,
+    icon: Briefcase,
     name: "Estratégias de Negócio 100% personalizadas",
     included: true 
-  }
+  },
   marketing: {
-    icon: git-compare-arrows,
+    icon: LineChart,
     name: "Estratégias de Marketing 100% personalizadas",
     included: true 
-  }
+  },
   planosAcao: {
-    icon: git-compare-arrows,
+    icon: FileCheck,
     name: "Planos de Ação prontos para aplicar",
     included: true 
+  },
+  mentoria: {
+    icon: Users,
+    name: "Sessões de mentoria estratégica",
+    included: true
   }
 };
 
@@ -95,9 +100,9 @@ export const plans: PricingPlan[] = [
       {...documentTypes.marketing, included: true},
       {...documentTypes.relatorioCompleto, included: false},
       {...documentTypes.segmento, included: false},
-      {...documentTypes.benchmarking, included: false};
-      {...documentTypes.posicionamento, included: false};
-      {...documentTypes.branding, included: false};
+      {...documentTypes.benchmarking, included: false},
+      {...documentTypes.posicionamento, included: false},
+      {...documentTypes.branding, included: false}
     ],
     cta: "Quero este plano",
     ctaUrl: "/subscription?plan=basic_plan"
@@ -207,7 +212,7 @@ export const plans: PricingPlan[] = [
       documentTypes.revisao
     ],
     cta: "Falar com consultor",
-    ctaUrl: "https://wa.me/+5547992152089",
+    ctaUrl: "https://wa.me/+5547992150289",
     customPrice: true
   }
 ];
