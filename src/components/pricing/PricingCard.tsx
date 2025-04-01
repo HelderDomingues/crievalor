@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
@@ -74,6 +75,12 @@ const PricingCard = ({
     }
   };
 
+  // Extraindo a recomendação de tamanho de equipe para exibir abaixo do nome do plano
+  const teamSizeRecommendation = plan.features.find(feature => feature.startsWith("(Para empresas"));
+  
+  // Filtrando a lista de recursos para remover a recomendação sobre tamanho da equipe
+  const actualFeatures = plan.features.filter(feature => !feature.startsWith("(Para empresas"));
+
   const renderPriceInfo = () => {
     if (plan.comingSoon) {
       return null;
@@ -82,14 +89,13 @@ const PricingCard = ({
     } else if (plan.monthlyPrice || plan.annualPrice) {
       return <>
           {plan.monthlyPrice && <div className="flex items-baseline">
-              <span className="text-3xl font-bold">{plan.monthlyPrice}</span>
-              
+              <span className="text-3xl font-bold text-nowrap">{plan.monthlyPrice}</span>
             </div>}
           
           {plan.annualPrice && <div className="mt-1 space-y-1">
               <div className="text-sm text-muted-foreground flex items-center">
                 <span>ou</span>
-                <span className="font-medium ml-1">{plan.annualPrice}</span>
+                <span className="font-medium ml-1 text-nowrap">{plan.annualPrice}</span>
                 <span className="ml-1">à vista</span>
                 {plan.annualDiscount && <Badge variant="outline" className="ml-2 flex items-center text-green-600">
                     <BadgePercent className="h-3 w-3 mr-1" />
@@ -104,9 +110,6 @@ const PricingCard = ({
     }
     return null;
   };
-
-  const teamSizeRecommendation = plan.features.find(feature => feature.startsWith("(Para empresas"));
-  const actualFeatures = plan.features.filter(feature => !feature.startsWith("(Para empresas"));
 
   return <Card className={`flex h-full flex-col transition-all duration-300 hover:shadow-md ${plan.popular ? "border-primary shadow-lg relative" : ""}`}>
       {plan.popular && !plan.comingSoon && <div className="absolute top-0 left-0 w-full flex justify-center">
