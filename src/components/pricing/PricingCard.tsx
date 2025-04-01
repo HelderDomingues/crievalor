@@ -71,7 +71,7 @@ const PricingCard = ({
     if (plan.comingSoon) {
       return null;
     } else if (plan.customPrice) {
-      return <div className="text-3XL font-bold">Sob Consulta</div>;
+      return <div className="text-3xl font-bold">Sob Consulta</div>;
     } else if (plan.monthlyPrice || plan.annualPrice) {
       return <>
           {plan.monthlyPrice && <div className="flex items-baseline">
