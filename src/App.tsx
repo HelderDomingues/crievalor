@@ -14,6 +14,7 @@ import ClientLogosAdminPage from "./pages/ClientLogosAdminPage";
 import TestimonialsAdmin from "./pages/TestimonialsAdmin";
 import Auth from "./pages/Auth";
 import Profile from "./pages/Profile";
+import Mar from "./pages/Mar";
 // Import AuthProvider from AuthContext
 import { AuthProvider } from "./context/AuthContext";
 // Import setup service to initialize application
@@ -24,6 +25,10 @@ const router = createBrowserRouter([
     path: "/",
     element: <Index />,
     errorElement: <NotFound />,
+  },
+  {
+    path: "/mar",
+    element: <Mar />,
   },
   {
     path: "/admin-setup",
