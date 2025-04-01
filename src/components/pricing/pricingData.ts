@@ -1,5 +1,5 @@
 
-import { FileText, FileCheck, Users, Award, ClipboardCheck, BarChart3, GitCompareArrows, Star, Briefcase, LineChart } from "lucide-react";
+import { FileText, FileCheck, Users, Presentation, BarChart, Award, BookOpen, ClipboardCheck } from "lucide-react";
 import { DocumentType, PricingPlan } from "./types";
 
 // Tipos de documentos disponíveis
@@ -16,7 +16,7 @@ const documentTypes: Record<string, DocumentType> = {
   },
   workshop: {
     icon: Users,
-    name: "01 Sessão on line (até 50 min) com consultor para orientações e tira dúvidas",
+    name: "Workshop de Implementação",
     included: true
   },
   vip: {
@@ -24,50 +24,15 @@ const documentTypes: Record<string, DocumentType> = {
     name: "Conteúdos exclusivos",
     included: true
   },
-  segmento: {
-    icon: BarChart3,
-    name: "Análise de Segmento de atuação",
+  mentoria: {
+    icon: BookOpen,
+    name: "Mentoria Especializada",
     included: true
   },
   revisao: {
     icon: ClipboardCheck,
     name: "Revisão do MAR",
     included: true 
-  },
-  benchmarking: {
-    icon: GitCompareArrows,
-    name: "Análise de Concorrência e Benchmarking",
-    included: true 
-  },
-  posicionamento: {
-    icon: Star,
-    name: "Posicionamento de Mercado",
-    included: true 
-  },
-  branding: {
-    icon: Award,
-    name: "Branding e Posicionamento de Marca",
-    included: true 
-  },
-  negocios: {
-    icon: Briefcase,
-    name: "Estratégias de Negócio 100% personalizadas",
-    included: true 
-  },
-  marketing: {
-    icon: LineChart,
-    name: "Estratégias de Marketing 100% personalizadas",
-    included: true 
-  },
-  planosAcao: {
-    icon: FileCheck,
-    name: "Planos de Ação prontos para aplicar",
-    included: true 
-  },
-  mentoria: {
-    icon: Users,
-    name: "Sessões de mentoria estratégica",
-    included: true
   }
 };
 
@@ -84,25 +49,19 @@ export const plans: PricingPlan[] = [
       "Plano Estratégico simplificado:",
       "• Estratégias de Negócios e Comerciais",
       "• Estratégias de Marketing",
-      "• Planos de Ação prontos para aplicar",
+      "• Planos de Ação prontos para executar",
       "Recomendações 100% personalizadas",
-      "01 Sessão on line (até 50 min) com consultor para orientações e tira dúvidas",
+      "Workshop de implantação",
       "Suporte por e-mail",
       "Acesso à comunidade",
       "Apenas 1 usuário",
-      "1 revisão geral do MAR dentro do prazo de 06 meses"
+      "1 revisão geral do MAR"
     ],
     documents: [
+      {...documentTypes.relatorioCompleto, included: false},
+      {...documentTypes.mentoria, included: false},
       documentTypes.planoEstrategico,
       documentTypes.revisao,
-      {...documentTypes.planosAcao, included: true},
-      {...documentTypes.negocios, included: true},
-      {...documentTypes.marketing, included: true},
-      {...documentTypes.relatorioCompleto, included: false},
-      {...documentTypes.segmento, included: false},
-      {...documentTypes.benchmarking, included: false},
-      {...documentTypes.posicionamento, included: false},
-      {...documentTypes.branding, included: false}
     ],
     cta: "Quero este plano",
     ctaUrl: "/subscription?plan=basic_plan"
@@ -212,7 +171,7 @@ export const plans: PricingPlan[] = [
       documentTypes.revisao
     ],
     cta: "Falar com consultor",
-    ctaUrl: "https://wa.me/+5547992150289",
+    ctaUrl: "https://wa.me/+5547992152089",
     customPrice: true
   }
 ];
