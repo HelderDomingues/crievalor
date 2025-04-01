@@ -97,7 +97,7 @@ const TestimonialCarousel = () => {
               <ChevronLeft className="h-6 w-6" />
             </Button>
             
-            <Button variant="ghost" size="icon" onClick={goToNext} className="rounded-full text-foreground hover:text-primary hover:bg-card/50 pointer-events-auto" aria-label="Next testimonial">
+            <Button variant="ghost" size="icon" onClick={goToNext} aria-label="Next testimonial" className="rounded-full text-foreground hover:text-primary hover:bg-card/50 pointer-events-auto text-2xl">
               <ChevronRight className="h-6 w-6" />
             </Button>
           </div>}
