@@ -46,12 +46,19 @@ export const createMaterialsBucketIfNotExists = async () => {
 // Create required buckets when service is imported
 export const initializeStorageBuckets = async () => {
   try {
-    // Invoke the edge function to set up storage policies
-    const { error } = await supabaseExtended.functions.invoke('setup-storage-policies');
+    // Use the extended client to correctly invoke the function with authentication
+    console.log("Setting up storage buckets via edge function...");
+    const { data, error } = await supabaseExtended.functions.invoke('setup-storage-policies', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+    
     if (error) {
       console.error("Error setting up storage policies:", error);
     } else {
-      console.log("Storage policies set up successfully");
+      console.log("Storage policies set up successfully:", data);
     }
     
     // Check bucket existence locally (won't create)
