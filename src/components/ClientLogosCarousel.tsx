@@ -103,7 +103,7 @@ const ClientLogosCarousel = () => {
           dragFree: true
         }} className="w-full">
             <CarouselContent className="py-4">
-              {logos.map((client, index) => <CarouselItem key={index} className="basis-1/3 md:basis-1/4 lg:basis-1/5 pl-4">
+              {logos.map((client, index) => <CarouselItem key={index} className="basis-1/3 md:basis-1/4 lg:basis-1/5 pl-4 px-[30px]">
                   <div className="h-20 flex items-center justify-center p-2 transition-all duration-300 hover:scale-105 border border-transparent hover:border-gray-200 rounded-md">
                     <img src={client.logo} alt={`${client.name} logo`} onError={e => handleImageError(e, index)} className="max-h-full max-w-full object-scale-down" />
                   </div>
