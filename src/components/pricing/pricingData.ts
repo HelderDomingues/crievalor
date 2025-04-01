@@ -16,7 +16,7 @@ const documentTypes: Record<string, DocumentType> = {
   },
   workshop: {
     icon: Users,
-    name: "Workshop de Implementação",
+    name: "01 Sessão on line (até 50 min) com consultor para orientações e tira dúvidas",
     included: true
   },
   vip: {
@@ -24,14 +24,44 @@ const documentTypes: Record<string, DocumentType> = {
     name: "Conteúdos exclusivos",
     included: true
   },
-  mentoria: {
-    icon: BookOpen,
-    name: "Mentoria Especializada",
+  segmento: {
+    icon: radar,
+    name: "Análise de Segmento de atuação",
     included: true
   },
   revisao: {
     icon: ClipboardCheck,
     name: "Revisão do MAR",
+    included: true 
+  }
+  benchmarking: {
+    icon: git-compare-arrows,
+    name: "Análise de Concorrência e Benchmarking",
+    included: true 
+  }
+  posicionamento: {
+    icon: git-compare-arrows,
+    name: "Posicionamento de Mercado",
+    included: true 
+  }
+  branding: {
+    icon: git-compare-arrows,
+    name: "Branding e Posicionamento de Marca",
+    included: true 
+  }
+  negocios: {
+    icon: git-compare-arrows,
+    name: "Estratégias de Negócio 100% personalizadas",
+    included: true 
+  }
+  marketing: {
+    icon: git-compare-arrows,
+    name: "Estratégias de Marketing 100% personalizadas",
+    included: true 
+  }
+  planosAcao: {
+    icon: git-compare-arrows,
+    name: "Planos de Ação prontos para aplicar",
     included: true 
   }
 };
@@ -49,19 +79,25 @@ export const plans: PricingPlan[] = [
       "Plano Estratégico simplificado:",
       "• Estratégias de Negócios e Comerciais",
       "• Estratégias de Marketing",
-      "• Planos de Ação prontos para executar",
+      "• Planos de Ação prontos para aplicar",
       "Recomendações 100% personalizadas",
-      "Workshop de implantação",
+      "01 Sessão on line (até 50 min) com consultor para orientações e tira dúvidas",
       "Suporte por e-mail",
       "Acesso à comunidade",
       "Apenas 1 usuário",
-      "1 revisão geral do MAR"
+      "1 revisão geral do MAR dentro do prazo de 06 meses"
     ],
     documents: [
       documentTypes.planoEstrategico,
       documentTypes.revisao,
+      {...documentTypes.planosAcao, included: true},
+      {...documentTypes.negocios, included: true},
+      {...documentTypes.marketing, included: true},
       {...documentTypes.relatorioCompleto, included: false},
-      {...documentTypes.mentoria, included: false}
+      {...documentTypes.segmento, included: false},
+      {...documentTypes.benchmarking, included: false};
+      {...documentTypes.posicionamento, included: false};
+      {...documentTypes.branding, included: false};
     ],
     cta: "Quero este plano",
     ctaUrl: "/subscription?plan=basic_plan"
