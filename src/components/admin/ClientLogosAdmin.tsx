@@ -7,7 +7,7 @@ import { Trash2, Upload, Plus, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { 
   fetchClientLogos, 
-  uploadClientLogo, 
+  addClientLogo, 
   deleteClientLogo, 
   ClientLogo 
 } from "@/services/clientLogosService";
@@ -45,7 +45,13 @@ const ClientLogosAdmin = () => {
   };
 
   const handleAddLogo = () => {
-    setLogos([...logos, { name: `Cliente ${logos.length + 1}`, logo: "/placeholder.svg" }]);
+    const newLogo: ClientLogo = { 
+      id: `temp-${Date.now()}`, 
+      name: `Cliente ${logos.length + 1}`, 
+      logo: "/placeholder.svg",
+      created_at: new Date().toISOString()
+    };
+    setLogos([...logos, newLogo]);
   };
 
   const handleRemoveLogo = async (index: number) => {
@@ -53,17 +59,13 @@ const ClientLogosAdmin = () => {
       setIsLoading(true);
       const logoToRemove = logos[index];
       
-      // Extract the filename from the URL
-      const fileName = logoToRemove.logo.split('/').pop();
-      
-      if (fileName && logoToRemove.logo.includes('clientlogos')) {
-        // Delete file from Supabase storage
-        const result = await deleteClientLogo(fileName);
+      // Only attempt to delete from database if it has a proper ID (not a temp ID)
+      if (logoToRemove.id && !logoToRemove.id.startsWith('temp-')) {
+        // Extract the logo_path from URL if needed
+        const urlParts = logoToRemove.logo.split('/');
+        const fileName = urlParts[urlParts.length - 1].split('?')[0]; // Remove query params if any
         
-        if (result.error) {
-          throw result.error;
-        }
-        
+        await deleteClientLogo(logoToRemove.id, fileName);
         toast.success("Logo removido com sucesso");
       }
       
@@ -114,20 +116,13 @@ const ClientLogosAdmin = () => {
         // Sanitize the name for use as filename
         const logoName = logos[index].name.trim() || `cliente-${index + 1}`;
         
-        // Upload file
-        const { url, error } = await uploadClientLogo(file, logoName);
+        // Upload file using addClientLogo from the service
+        await addClientLogo(logoName, file);
         
-        if (error) {
-          console.error("Erro no upload:", error);
-          toast.error(`Erro ao fazer upload: ${error.message}`);
-          return;
-        }
+        // Refresh the logos to get the updated list with the new logo
+        await fetchLogos();
         
-        if (url) {
-          // Update logo URL in state with timestamp to prevent caching
-          handleLogoChange(index, 'logo', `${url}?t=${new Date().getTime()}`);
-          toast.success("Logo carregado com sucesso");
-        }
+        toast.success("Logo carregado com sucesso");
       } catch (error) {
         console.error("Erro no upload da imagem:", error);
         toast.error("Erro ao fazer upload do logo");

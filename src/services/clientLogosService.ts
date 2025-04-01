@@ -33,18 +33,23 @@ export const fetchClientLogos = async (): Promise<ClientLogo[]> => {
       (data || []).map(async (logo) => {
         try {
           // Verificar se o logo.logo_path existe
-          if (!logo.logo_path) {
-            console.warn(`Logo ${logo.id} has no logo_path defined`);
+          if (!logo.logo) {
+            console.warn(`Logo ${logo.id} has no logo defined`);
             return {
               ...logo,
               logo: "/placeholder.svg" // Placeholder para logos sem imagem
             };
           }
 
-          // Obter a URL pública sem autenticação
+          // For logos that are already full URLs, just return them
+          if (logo.logo.startsWith('http')) {
+            return logo;
+          }
+
+          // Get public URL for logo stored in Supabase
           const { data: publicUrl } = supabaseExtended.storage
             .from("clientlogos")
-            .getPublicUrl(logo.logo_path);
+            .getPublicUrl(logo.logo);
 
           console.log(`Logo ${logo.id} public URL:`, publicUrl);
 
@@ -97,7 +102,7 @@ export const addClientLogo = async (name: string, file: File): Promise<void> => 
       .from('client_logos')
       .insert({
         name,
-        logo_path: filePath
+        logo: filePath
       });
 
     if (insertError) {
