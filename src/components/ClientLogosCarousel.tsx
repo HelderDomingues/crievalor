@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from "react";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { fetchClientLogos } from "@/services/clientLogosService";
@@ -28,6 +29,7 @@ const ClientLogosCarousel = () => {
   const [error, setError] = useState<string | null>(null);
   const [api, setApi] = useState<any>(null);
   const intervalRef = useRef<number | null>(null);
+  const didInitialize = useRef(false);
 
   useEffect(() => {
     const getLogos = async () => {
@@ -55,7 +57,11 @@ const ClientLogosCarousel = () => {
       }
     };
     
-    getLogos();
+    // Only fetch once
+    if (!didInitialize.current) {
+      didInitialize.current = true;
+      getLogos();
+    }
   }, []);
 
   // Set up auto-slide

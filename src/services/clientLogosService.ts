@@ -53,10 +53,14 @@ export const fetchClientLogos = async (): Promise<ClientLogo[]> => {
 
           console.log(`Logo ${logo.id} public URL:`, publicUrl);
 
+          // Add a cache-busting parameter to avoid browser caching
+          const cacheBuster = `?cache=${Date.now()}`;
+          const finalUrl = publicUrl.publicUrl + cacheBuster;
+
           return {
             id: logo.id,
             name: logo.name,
-            logo: publicUrl.publicUrl,
+            logo: finalUrl,
             created_at: logo.created_at
           };
         } catch (logoError) {
@@ -90,7 +94,10 @@ export const addClientLogo = async (name: string, file: File): Promise<void> => 
     // Upload do arquivo para o bucket 'clientlogos'
     const { error: uploadError } = await supabaseExtended.storage
       .from('clientlogos')
-      .upload(filePath, file);
+      .upload(filePath, file, {
+        cacheControl: 'no-cache', // Prevent caching
+        upsert: false
+      });
 
     if (uploadError) {
       console.error("Error uploading logo:", uploadError);
@@ -138,7 +145,7 @@ export const deleteClientLogo = async (id: string, logoPath: string): Promise<vo
     }
 
     // Se tiver um caminho de arquivo, remover do storage
-    if (logoPath) {
+    if (logoPath && !logoPath.startsWith('http')) {
       const { error: storageError } = await supabaseExtended.storage
         .from('clientlogos')
         .remove([logoPath]);

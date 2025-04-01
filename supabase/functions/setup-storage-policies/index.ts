@@ -23,11 +23,26 @@ interface Response {
 }
 
 serve(async (req) => {
+  // Add CORS headers
+  const headers = new Headers({
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+    "Content-Type": "application/json"
+  });
+
+  // Handle OPTIONS request for CORS preflight
+  if (req.method === "OPTIONS") {
+    return new Response(null, {
+      headers,
+      status: 204,
+    });
+  }
+
   // Responder somente a POST requests
   if (req.method !== "POST") {
     return new Response(
       JSON.stringify({ error: "Method not allowed" }),
-      { headers: { "Content-Type": "application/json" }, status: 405 }
+      { headers, status: 405 }
     )
   }
 
@@ -146,7 +161,7 @@ serve(async (req) => {
 
     return new Response(
       JSON.stringify(response),
-      { headers: { "Content-Type": "application/json" } }
+      { headers }
     )
   } catch (error) {
     console.error("Error in setup-storage-policies function:", error)
@@ -157,7 +172,7 @@ serve(async (req) => {
         message: `Error setting up storage policies: ${error.message}`,
         error: error.message
       }),
-      { headers: { "Content-Type": "application/json" }, status: 500 }
+      { headers, status: 500 }
     )
   }
 })

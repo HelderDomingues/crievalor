@@ -17,6 +17,17 @@ export const createStorageBucketIfNotExists = async (bucketName: string, options
     const bucketExists = buckets?.some(bucket => bucket.name === bucketName);
     if (bucketExists) {
       console.log(`Bucket ${bucketName} already exists.`);
+      
+      // Update bucket to ensure it's public even if it exists
+      const { error: updateError } = await supabaseExtended.storage.updateBucket(bucketName, {
+        public: true
+      });
+      
+      if (updateError) {
+        console.error(`Error updating bucket ${bucketName}: ${updateError.message}`);
+      } else {
+        console.log(`Bucket ${bucketName} updated to be public.`);
+      }
     } else {
       console.log(`Bucket ${bucketName} not found. Will attempt to create via edge function.`);
     }
@@ -44,27 +55,69 @@ export const createMaterialsBucketIfNotExists = async () => {
 // Create required buckets when service is imported
 export const initializeStorageBuckets = async () => {
   try {
+    // First, manually create the buckets locally if they don't exist
+    // This is a fallback in case the edge function fails
+    try {
+      const { data: buckets, error: listError } = await supabaseExtended.storage.listBuckets();
+      
+      if (!listError) {
+        // Check if clientlogos bucket exists, create it if not
+        if (!buckets?.some(bucket => bucket.name === 'clientlogos')) {
+          const { error } = await supabaseExtended.storage.createBucket('clientlogos', {
+            public: true
+          });
+          
+          if (!error) {
+            console.log("Created clientlogos bucket manually");
+          }
+        } else {
+          // Update bucket to ensure it's public
+          await supabaseExtended.storage.updateBucket('clientlogos', {
+            public: true
+          });
+        }
+        
+        // Check if materials bucket exists, create it if not
+        if (!buckets?.some(bucket => bucket.name === 'materials')) {
+          const { error } = await supabaseExtended.storage.createBucket('materials', {
+            public: true
+          });
+          
+          if (!error) {
+            console.log("Created materials bucket manually");
+          }
+        } else {
+          // Update bucket to ensure it's public
+          await supabaseExtended.storage.updateBucket('materials', {
+            public: true
+          });
+        }
+      }
+    } catch (err) {
+      console.error("Error creating buckets manually:", err);
+    }
+
     // Use the extended client to correctly invoke the function with authentication
     console.log("Setting up storage buckets via edge function...");
     
-    // Ensure storage.objects table has RLS enabled
-    console.log("Calling setup-storage-policies edge function...");
-    const { data, error } = await supabaseExtended.functions.invoke('setup-storage-policies', {
+    // Try to call the setup-storage-policies function, but don't wait for it
+    // This is to avoid blocking the app initialization if the function fails
+    supabaseExtended.functions.invoke('setup-storage-policies', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       }
+    }).then(({ data, error }) => {
+      if (error) {
+        console.error("Error setting up storage policies:", error);
+      } else {
+        console.log("Storage policies set up successfully:", data);
+      }
+    }).catch(err => {
+      console.error("Failed to invoke setup-storage-policies:", err);
     });
     
-    if (error) {
-      console.error("Error setting up storage policies:", error);
-    } else {
-      console.log("Storage policies set up successfully:", data);
-    }
-    
-    // Check bucket existence locally (won't create)
-    await createClientLogosBucketIfNotExists();
-    await createMaterialsBucketIfNotExists();
+    console.log("Storage setup completed");
   } catch (err) {
     console.error("Error initializing storage buckets:", err);
   }
