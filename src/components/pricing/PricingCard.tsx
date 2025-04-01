@@ -129,7 +129,8 @@ const PricingCard = ({
 
   return (
     <Card className={`flex h-full flex-col transition-all duration-300 hover:shadow-md ${plan.popular ? "border-primary shadow-lg" : ""}`}>
-      <CardHeader className="pb-4">
+      <CardHeader className="pb-2">
+        {/* Plan badges and title */}
         <div className="flex flex-wrap gap-2">
           {plan.popular && !plan.comingSoon && (
             <Badge variant="default" className="self-start">Mais Vendido</Badge>
@@ -144,6 +145,14 @@ const PricingCard = ({
         
         <h3 className="mt-2 text-xl font-bold">{plan.name}</h3>
         
+        {/* Recommendation text - not a feature */}
+        <div className="text-xs text-muted-foreground mt-0.5">
+          {plan.description && plan.description.startsWith("(Para empresas") 
+            ? plan.description 
+            : null}
+        </div>
+        
+        {/* Price information */}
         <div className="mt-2">
           {renderPriceInfo()}
           {plan.comingSoon && (
@@ -151,15 +160,51 @@ const PricingCard = ({
           )}
         </div>
         
-        <p className="mt-2 text-sm text-muted-foreground">{plan.description}</p>
+        {/* Plan description */}
+        <p className="mt-2 text-sm text-muted-foreground">
+          {!plan.description?.startsWith("(Para empresas") ? plan.description : null}
+        </p>
       </CardHeader>
       
-      <CardContent className="flex-grow">
+      {/* CTA Button - Moved up before features */}
+      <div className="px-6 pb-4">
+        <Button 
+          className={`w-full ${plan.popular ? "shadow-glow animate-pulse-subtle" : ""}`}
+          onClick={handleSubscribe}
+          disabled={isButtonDisabled}
+          variant={plan.comingSoon ? "outline" : "default"}
+        >
+          {getButtonText()}
+        </Button>
+      </div>
+      
+      <CardContent className="flex-grow pt-0">
         <div className="space-y-6">
+          {/* Documents section with visual hierarchy */}
           {plan.documents && plan.documents.length > 0 && (
-            <PlanDocuments documents={plan.documents} />
+            <div className="mb-4">
+              <h4 className="text-sm font-medium mb-3 border-b border-border pb-2">Documentos Incluídos</h4>
+              <ul className="space-y-3">
+                {plan.documents.map((doc, i) => {
+                  // Check if this is the main strategic plan
+                  const isMainPlan = doc.name.includes("Plano Estratégico");
+                  
+                  return (
+                    <li key={i} className={`flex items-start ${isMainPlan ? "mb-2" : "pl-3"}`}>
+                      <div className={`shrink-0 mr-2 h-5 w-5 mt-0.5 ${doc.included ? 'text-green-500' : 'text-muted-foreground opacity-50'}`}>
+                        <doc.icon className="h-5 w-5" />
+                      </div>
+                      <span className={`text-sm ${doc.included ? '' : 'text-muted-foreground line-through opacity-50'}`}>
+                        {doc.name}
+                      </span>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
           )}
           
+          {/* Benefits section */}
           <div>
             <h4 className="mb-3 border-b border-border pb-2 text-sm font-medium">Benefícios Incluídos neste plano</h4>
             <ul className="space-y-3">
@@ -173,17 +218,6 @@ const PricingCard = ({
           </div>
         </div>
       </CardContent>
-      
-      <CardFooter>
-        <Button 
-          className="w-full" 
-          onClick={handleSubscribe}
-          disabled={isButtonDisabled}
-          variant={plan.comingSoon ? "outline" : "default"}
-        >
-          {getButtonText()}
-        </Button>
-      </CardFooter>
     </Card>
   );
 };
