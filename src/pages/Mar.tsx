@@ -5,6 +5,7 @@ import Footer from "@/components/Footer";
 import HeroSection from "@/components/HeroSection";
 import ContactSection from "@/components/ContactSection";
 import MarExplanation from "@/components/MarExplanation";
+import MarComparisonSection from "@/components/MarComparisonSection";
 import PricingSection from "@/components/PricingSection";
 import VideoSection from "@/components/VideoSection";
 import ErrorBoundary from "@/components/ErrorBoundary";
@@ -95,6 +96,10 @@ const Mar = () => {
             {/* Background effect */}
             <div className="absolute top-1/4 right-0 w-96 h-96 bg-primary/5 rounded-full blur-3xl translate-x-1/2 -z-10"></div>
           </div>
+        </ErrorBoundary>
+        
+        <ErrorBoundary>
+          <MarComparisonSection />
         </ErrorBoundary>
         
         <ErrorBoundary>
