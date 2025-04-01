@@ -1,18 +1,15 @@
-
 import React, { useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight, Quote } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import { fetchActiveTestimonials, Testimonial } from "@/services/testimonialsService";
-
 const TestimonialCarousel = () => {
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
   const [direction, setDirection] = useState<'left' | 'right' | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-
   useEffect(() => {
     const loadTestimonials = async () => {
       try {
@@ -30,24 +27,20 @@ const TestimonialCarousel = () => {
         setIsLoading(false);
       }
     };
-
     loadTestimonials();
   }, []);
-
   const goToPrevious = () => {
     if (isAnimating || testimonials.length <= 1) return;
     setDirection('left');
     setIsAnimating(true);
-    setCurrentIndex((prevIndex) => (prevIndex === 0 ? testimonials.length - 1 : prevIndex - 1));
+    setCurrentIndex(prevIndex => prevIndex === 0 ? testimonials.length - 1 : prevIndex - 1);
   };
-
   const goToNext = () => {
     if (isAnimating || testimonials.length <= 1) return;
     setDirection('right');
     setIsAnimating(true);
-    setCurrentIndex((prevIndex) => (prevIndex === testimonials.length - 1 ? 0 : prevIndex + 1));
+    setCurrentIndex(prevIndex => prevIndex === testimonials.length - 1 ? 0 : prevIndex + 1);
   };
-
   useEffect(() => {
     if (isAnimating) {
       const timer = setTimeout(() => {
@@ -56,17 +49,13 @@ const TestimonialCarousel = () => {
       return () => clearTimeout(timer);
     }
   }, [isAnimating]);
-
   useEffect(() => {
     if (testimonials.length <= 1) return;
-    
     const interval = setInterval(goToNext, 8000);
     return () => clearInterval(interval);
   }, [currentIndex, testimonials.length]);
-
   if (isLoading) {
-    return (
-      <div className="relative overflow-hidden py-10">
+    return <div className="relative overflow-hidden py-10">
         <div className="relative z-10 max-w-4xl mx-auto px-4">
           <div className="text-center space-y-4">
             <Skeleton className="h-24 w-full mx-auto rounded-md" />
@@ -74,33 +63,20 @@ const TestimonialCarousel = () => {
             <Skeleton className="h-4 w-60 mx-auto rounded-md" />
           </div>
         </div>
-      </div>
-    );
+      </div>;
   }
-
   if (testimonials.length === 0) {
     return null; // Não exibe o carrossel se não houver depoimentos
   }
-
   const currentTestimonial = testimonials[currentIndex];
-
-  return (
-    <div className="relative overflow-hidden py-10">
+  return <div className="relative overflow-hidden py-10">
       <div className="absolute top-6 left-0 text-primary/20">
         <Quote size={120} />
       </div>
       
       <div className="relative z-10 max-w-4xl mx-auto px-4">
-        <div 
-          className={`transition-all duration-500 ${
-            isAnimating 
-              ? direction === 'right' 
-                ? 'opacity-0 translate-x-10' 
-                : 'opacity-0 -translate-x-10'
-              : 'opacity-100 translate-x-0'
-          }`}
-        >
-          <blockquote className="text-lg md:text-xl text-foreground/90 text-center mb-6 relative">
+        <div className={`transition-all duration-500 ${isAnimating ? direction === 'right' ? 'opacity-0 translate-x-10' : 'opacity-0 -translate-x-10' : 'opacity-100 translate-x-0'}`}>
+          <blockquote className="text-lg md:text-xl text-foreground/90 text-center mb-6 relative px-[20px]">
             "{currentTestimonial.text}"
           </blockquote>
           
@@ -113,44 +89,19 @@ const TestimonialCarousel = () => {
         </div>
         
         <div className="flex justify-center mt-8 space-x-2">
-          {testimonials.map((_, index) => (
-            <button
-              key={index}
-              onClick={() => setCurrentIndex(index)}
-              className={`w-2 h-2 rounded-full transition-all ${
-                index === currentIndex ? "bg-primary w-8" : "bg-muted-foreground/30"
-              }`}
-              aria-label={`Go to testimonial ${index + 1}`}
-            />
-          ))}
+          {testimonials.map((_, index) => <button key={index} onClick={() => setCurrentIndex(index)} className={`w-2 h-2 rounded-full transition-all ${index === currentIndex ? "bg-primary w-8" : "bg-muted-foreground/30"}`} aria-label={`Go to testimonial ${index + 1}`} />)}
         </div>
         
-        {testimonials.length > 1 && (
-          <div className="flex justify-between absolute top-1/2 left-0 right-0 transform -translate-y-1/2 pointer-events-none">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={goToPrevious}
-              className="rounded-full text-foreground hover:text-primary hover:bg-card/50 pointer-events-auto"
-              aria-label="Previous testimonial"
-            >
+        {testimonials.length > 1 && <div className="flex justify-between absolute top-1/2 left-0 right-0 transform -translate-y-1/2 pointer-events-none">
+            <Button variant="ghost" size="icon" onClick={goToPrevious} aria-label="Previous testimonial" className="rounded-full text-foreground hover:text-primary hover:bg-card/50 pointer-events-auto font-normal text-2xl">
               <ChevronLeft className="h-6 w-6" />
             </Button>
             
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={goToNext}
-              className="rounded-full text-foreground hover:text-primary hover:bg-card/50 pointer-events-auto"
-              aria-label="Next testimonial"
-            >
+            <Button variant="ghost" size="icon" onClick={goToNext} className="rounded-full text-foreground hover:text-primary hover:bg-card/50 pointer-events-auto" aria-label="Next testimonial">
               <ChevronRight className="h-6 w-6" />
             </Button>
-          </div>
-        )}
+          </div>}
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default TestimonialCarousel;
