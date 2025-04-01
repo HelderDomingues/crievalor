@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
@@ -124,7 +123,7 @@ const PricingCard = ({
         
         <h3 className="mt-2 font-bold text-3xl">{plan.name}</h3>
         
-        {teamSizeRecommendation && <div className="text-xs text-muted-foreground mt-0.5">
+        {teamSizeRecommendation && <div className="text-xs text-muted-foreground mt-1 mb-2">
             {teamSizeRecommendation}
           </div>}
         
