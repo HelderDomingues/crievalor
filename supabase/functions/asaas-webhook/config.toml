@@ -1,3 +1,4 @@
 
-project_id = "nmxfknwkhnengqqjtwru"
-enforce_jwt = false
+# Disable JWT verification for this function
+# Required for Asaas webhook
+verify_jwt = false
