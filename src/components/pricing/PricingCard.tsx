@@ -80,8 +80,8 @@ const PricingCard = ({
       return null;
     } else if (plan.customPrice) {
       return (
-        <div className="text-xl font-semibold">
-          Preços e Condições sob consulta
+        <div className="text-2xl font-semibold">
+          {plan.name === "Corporativo" ? "Preços e Condições sob consulta" : "Preços sob consulta"}
         </div>
       );
     } else if (plan.monthlyPrice || plan.annualPrice) {
@@ -136,7 +136,7 @@ const PricingCard = ({
       </CardHeader>
       
       {plan.description && (
-        <div className="px-6 min-h-[100px]">
+        <div className="px-6 h-[100px]">
           <p className="text-sm text-muted-foreground">
             {plan.description}
           </p>
@@ -166,22 +166,23 @@ const PricingCard = ({
       </div>
       
       <CardContent className="border-t border-border pt-4 mt-2">
-        {plan.id !== "corporate_plan" && plan.documents && plan.documents.length > 0 && (
-          <PlanDocuments documents={plan.documents} />
-        )}
-        
-        <div>
+        <div className="mb-6">
           <h4 className="mb-3 border-b border-border pb-2 text-sm font-bold">
-            {plan.id === "corporate_plan" ? "Benefícios Incluídos neste plano" : "Benefícios Incluídos"}
+            {plan.id === "corporate_plan" ? "Benefícios Incluídos neste plano" : "Documentos Incluídos"}
           </h4>
-          <ul className="space-y-3">
-            {actualFeatures.map((feature, index) => (
-              <li key={index} className="flex items-start text-sm">
-                <span className="mr-2 text-green-500">✓</span>
-                {feature}
-              </li>
-            ))}
-          </ul>
+          
+          {plan.id !== "corporate_plan" && plan.documents && plan.documents.length > 0 ? (
+            <PlanDocuments documents={plan.documents} />
+          ) : (
+            <ul className="space-y-3">
+              {actualFeatures.map((feature, index) => (
+                <li key={index} className="flex items-start text-sm">
+                  <span className="mr-2 text-green-500">✓</span>
+                  {feature}
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
       </CardContent>
     </Card>

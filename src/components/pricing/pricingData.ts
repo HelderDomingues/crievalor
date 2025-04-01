@@ -197,7 +197,7 @@ export const plans: PricingPlan[] = [
   {
     id: "corporate_plan",
     name: "Corporativo",
-    description: "Solução totalmente personalizada para empresas e corporações com necessidades específicas. Inclui consultoria dedicada, mentoria para equipes completas, implementação assistida e desenvolvimento de estratégias customizadas para cada departamento da sua organização.",
+    description: "Solução totalmente personalizada para empresas e corporações com necessidades específicas. Inclui consultoria dedicada, mentoria para equipes completas, implementação assistida e desenvolvimento de estratégias customizadas para cada departamento.",
     features: [
       "(Para empresas com equipes acima de 51 pessoas na organização)",
       "Consultoria dedicada",

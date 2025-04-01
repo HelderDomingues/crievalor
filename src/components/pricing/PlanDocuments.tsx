@@ -1,4 +1,3 @@
-
 import React from "react";
 import { ElementType } from "react";
 
@@ -20,9 +19,7 @@ const PlanDocuments = ({
   const otherDocuments = documents.filter(doc => !doc.name.includes("Plano Estratégico"));
   
   return (
-    <div className="mb-6">
-      <h4 className="text-sm mb-3 border-b border-border pb-2 font-bold">Documentos Incluídos</h4>
-      
+    <div>
       {/* Main planning documents - top level in hierarchy */}
       <ul className="space-y-3 mb-4">
         {mainPlanningDocuments.map((doc, i) => (
@@ -38,7 +35,7 @@ const PlanDocuments = ({
       </ul>
       
       {/* Other supporting documents - indented to show hierarchy */}
-      <ul className="space-y-3 pl-4">
+      <ul className="space-y-3">
         {otherDocuments.map((doc, i) => (
           <li key={`sub-${i}`} className="flex items-start">
             <div className={`shrink-0 mr-2 h-5 w-5 mt-0.5 ${doc.included ? 'text-green-500' : 'text-muted-foreground opacity-50'}`}>
