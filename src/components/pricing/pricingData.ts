@@ -1,17 +1,29 @@
 
-import { FileText, FileCheck, Users, Presentation, BarChart, Award, BookOpen, ClipboardCheck } from "lucide-react";
+import { 
+  FileText, 
+  FileCheck, 
+  Users, 
+  Award, 
+  ClipboardCheck,
+  Radar,
+  GitCompare,
+  Pin,
+  Fingerprint,
+  Briefcase,
+  LineChart
+} from "lucide-react";
 import { DocumentType, PricingPlan } from "./types";
 
 // Tipos de documentos disponíveis
 const documentTypes: Record<string, DocumentType> = {
-  planoEstrategico: {
+  planoEstrategicoSimplificado: {
     icon: FileText,
-    name: "Plano Estratégico",
+    name: "Plano Estratégico Simplificado",
     included: true
   },
-  relatorioCompleto: {
-    icon: FileCheck,
-    name: "Relatórios Completos",
+  planoEstrategicoAprofundado: {
+    icon: FileText,
+    name: "Plano Estratégico Aprofundado com Relatórios Completos",
     included: true
   },
   workshop1: {
@@ -19,25 +31,80 @@ const documentTypes: Record<string, DocumentType> = {
     name: "01 Sessão on line (até 50 min) com consultor para orientações e tira dúvidas",
     included: true
   },
-   workshop2: {
+  workshop2: {
     icon: Users,
     name: "02 Sessões on line (até 50 min) com consultor para orientações e tira dúvidas",
     included: true
-   },
-   workshop3: {
+  },
+  workshop3: {
     icon: Users,
-    name: "03 Sessões on line (até 50 min) com consultor para orientações e tira dúvidas",
+    name: "04 Sessões de mentoria avançada on line (até 50 min) com consultor para orientações e tira dúvidas",
     included: true
-   },
+  },
   vip: {
     icon: Award,
     name: "Conteúdos exclusivos",
     included: true
   },
-  revisao: {
+  revisao1: {
     icon: ClipboardCheck,
-    name: "Revisão do MAR",
+    name: "01 revisão do seu planejamento dentro do prazo de 06 meses",
     included: true 
+  },
+  revisao2: {
+    icon: ClipboardCheck,
+    name: "02 revisões do seu planejamento dentro do prazo de 06 meses",
+    included: true 
+  },
+  comunidade: {
+    icon: Users,
+    name: "Acesso à comunidade exclusiva",
+    included: true
+  },
+  estrategiasNegocio: {
+    icon: Briefcase,
+    name: "Estratégias de negócio personalizadas",
+    included: true
+  },
+  estrategiasMarketing: {
+    icon: LineChart,
+    name: "Estratégias de marketing personalizadas",
+    included: true
+  },
+  planosAcao: {
+    icon: ClipboardCheck,
+    name: "Planos de ação personalizados",
+    included: true
+  },
+  analiseSegmento: {
+    icon: Radar,
+    name: "Análise sobre o segmento de atuação",
+    included: true
+  },
+  analiseConcorrencia: {
+    icon: GitCompare,
+    name: "Análise de Concorrência e benchmarking",
+    included: true
+  },
+  posicionamentoMercado: {
+    icon: Pin,
+    name: "Posicionamento de mercado",
+    included: true
+  },
+  brandingPosicionamento: {
+    icon: Fingerprint,
+    name: "Branding/Posicionamento de Marca",
+    included: true
+  },
+  consideracoesFinais: {
+    icon: FileText,
+    name: "Considerações Finais/Orientações estratégicas",
+    included: true
+  },
+  analisesCenario: {
+    icon: Radar,
+    name: "Análises de cenário aprofundadas por IA por setor (Financeiro/ Marketing e Gente (RH)), a cada 02 meses",
+    included: true
   }
 };
 
@@ -51,22 +118,21 @@ export const plans: PricingPlan[] = [
     annualDiscount: true,
     description: "Combinação ideal de expertise humana e IA para empreendedores iniciando sua jornada estratégica",
     features: [
-      "Plano Estratégico simplificado:",
-      "• Estratégias de Negócios e Comerciais",
-      "• Estratégias de Marketing",
-      "• Planos de Ação prontos para executar",
-      "Recomendações 100% personalizadas",
-      "Workshop de implantação",
-      "Suporte por e-mail",
-      "Acesso à comunidade",
-      "Apenas 1 usuário",
-      "1 revisão geral do MAR"
+      "(Para empresas com equipes de 1 a 5 pessoas)",
+      "01 Sessão on line (até 50 min) com consultor para orientações e tira dúvidas",
+      "01 revisão do seu planejamento dentro do prazo de 06 meses",
+      "Acesso à comunidade exclusiva"
     ],
     documents: [
-      documentTypes.planoEstrategico,
-      documentTypes.revisao,
-      {...documentTypes.relatorioCompleto, included: false},
-      {...documentTypes.mentoria, included: false}
+      documentTypes.planoEstrategicoSimplificado,
+      documentTypes.estrategiasNegocio,
+      documentTypes.estrategiasMarketing,
+      documentTypes.planosAcao,
+      documentTypes.analiseSegmento,
+      documentTypes.analiseConcorrencia,
+      documentTypes.posicionamentoMercado,
+      documentTypes.brandingPosicionamento,
+      documentTypes.consideracoesFinais
     ],
     cta: "Quero este plano",
     ctaUrl: "/subscription?plan=basic_plan"
@@ -74,37 +140,26 @@ export const plans: PricingPlan[] = [
   {
     id: "pro_plan",
     name: "Profissional",
-    monthlyPrice: "12 x de R$ 299,90",
-    annualPrice: "R$ 3.238,92",
+    monthlyPrice: "12 x de R$ 399,90",
+    annualPrice: "R$ 4.318,92",
     annualDiscount: true,
-    description: "Para empreendedores em crescimento que precisam de estratégias mais estruturadas e detalhamento técnico",
+    description: "Para empreendedores em crescimento que precisam de estratégias mais estruturadas e acompanhamento",
     features: [
-      "Plano Estratégico detalhado e personalizado",
-      "Relatórios completos de todo o processo:",
-      "• Análise de Segmento",
-      "• Análise de presença digital",
-      "• Análise da concorrência",
-      "• Relatório de Inteligência Competitiva",
-      "• Posicionamento Estratégico",
-      "• Branding e Identidade da Marca",
-      "• Estratégias de Negócios e Comercial",
-      "• Estratégias de Marketing",
-      "• Planos de Ação prontos para executar",
-      "Recomendações 100% personalizadas",
-      "Revisão por especialistas",
-      "Workshop de implantação",
-      "Sessão estratégica exclusiva",
-      "Suporte via Whatsapp por 30 dias",
-      "Acesso à comunidade",
-      "Até 3 usuários",
-      "2 revisões gerais do MAR"
+      "(Para empresas com equipes de 6 a 10 pessoas)",
+      "02 Sessões on line (até 50 min) com consultor para orientações e tira dúvidas",
+      "02 revisões do seu planejamento dentro do prazo de 06 meses",
+      "Acesso à comunidade exclusiva"
     ],
     documents: [
-      documentTypes.planoEstrategico,
-      {...documentTypes.relatorioCompleto, included: true},
-      {...documentTypes.workshop, included: true},
-      {...documentTypes.mentoria, included: true},
-      {...documentTypes.revisao, included: true}
+      documentTypes.planoEstrategicoAprofundado,
+      documentTypes.estrategiasNegocio,
+      documentTypes.estrategiasMarketing,
+      documentTypes.planosAcao,
+      documentTypes.analiseSegmento,
+      documentTypes.analiseConcorrencia,
+      documentTypes.posicionamentoMercado,
+      documentTypes.brandingPosicionamento,
+      documentTypes.consideracoesFinais
     ],
     cta: "Quero este plano",
     ctaUrl: "/subscription?plan=pro_plan",
@@ -118,34 +173,23 @@ export const plans: PricingPlan[] = [
     annualDiscount: true,
     description: "Solução completa para empresas que buscam excelência estratégica e implementação assistida",
     features: [
-      "Plano Estratégico completo",
-      "Relatórios completos de todo o processo:",
-      "• Análise de Segmento",
-      "• Análise de presença digital",
-      "• Análise da concorrência",
-      "• Relatório de Inteligência Competitiva",
-      "• Posicionamento Estratégico",
-      "• Branding e Identidade da Marca",
-      "• Estratégias de Negócios e Comercial",
-      "• Estratégias de Marketing",
-      "• Planos de Ação prontos para executar",
-      "Recomendações 100% personalizadas",
-      "Revisão por especialistas",
-      "Workshop de implantação",
-      "Suporte via Whatsapp por 30 dias",
-      "Acesso à comunidade",
-      "4 sessões de mentoria estratégica",
-      "Acesso VIP a conteúdos exclusivos",
-      "Traga sua equipe para construir junto",
-      "• Até 5 usuários",
-      "até 3 revisões gerais do MAR"
+      "(Para empresas com equipes de 11 a 50 pessoas)",
+      "04 Sessões de mentoria avançada on line (até 50 min) com consultor para orientações e tira dúvidas",
+      "02 revisões do seu planejamento dentro do prazo de 06 meses",
+      "Acesso à comunidade exclusiva",
+      "EXTRA: Análises de cenário aprofundadas por IA por setor (Financeiro/ Marketing e Gente (RH)), a cada 02 meses"
     ],
     documents: [
-      documentTypes.planoEstrategico,
-      documentTypes.relatorioCompleto,
-      documentTypes.workshop,
-      documentTypes.vip,
-      documentTypes.revisao
+      documentTypes.planoEstrategicoAprofundado,
+      documentTypes.estrategiasNegocio,
+      documentTypes.estrategiasMarketing,
+      documentTypes.planosAcao,
+      documentTypes.analiseSegmento,
+      documentTypes.analiseConcorrencia,
+      documentTypes.posicionamentoMercado,
+      documentTypes.brandingPosicionamento,
+      documentTypes.consideracoesFinais,
+      documentTypes.analisesCenario
     ],
     cta: "Quero este plano",
     ctaUrl: "/subscription?plan=enterprise_plan"
@@ -153,30 +197,24 @@ export const plans: PricingPlan[] = [
   {
     id: "corporate_plan",
     name: "Corporativo",
-    description: "Solução totalmente personalizada para grandes corporações com necessidades específicas",
+    description: "Solução totalmente personalizada para empresas e corporações com necessidades específicas",
     features: [
-      "Plano Estratégico corporativo personalizado",
-      "Estratégia completamente personalizada",
-      "Equipe de consultores",
-      "Implementação assistida",
-      "Workshops para equipe de liderança",
-      "Acompanhamento contínuo por 30 dias",
-      "Acesso à comunidade",
-      "Sessões de mentoria estratégica",
-      "Acesso VIP a conteúdos exclusivos",
-      "Traga sua equipe para construir junto",
-      "• Até 5 usuários",
-      "Até 3 revisões gerais do MAR"
+      "(Para empresas com equipes acima de 51 pessoas na organização)"
     ],
     documents: [
-      documentTypes.planoEstrategico,
-      documentTypes.relatorioCompleto,
-      documentTypes.workshop,
-      documentTypes.vip,
-      documentTypes.revisao
+      documentTypes.planoEstrategicoAprofundado,
+      documentTypes.estrategiasNegocio,
+      documentTypes.estrategiasMarketing,
+      documentTypes.planosAcao,
+      documentTypes.analiseSegmento,
+      documentTypes.analiseConcorrencia,
+      documentTypes.posicionamentoMercado,
+      documentTypes.brandingPosicionamento,
+      documentTypes.consideracoesFinais,
+      documentTypes.analisesCenario
     ],
     cta: "Falar com consultor",
-    ctaUrl: "https://wa.me/+5547992152089",
+    ctaUrl: "https://wa.me/+5547992150289",
     customPrice: true
   }
 ];

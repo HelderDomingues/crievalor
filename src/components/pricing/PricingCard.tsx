@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
@@ -131,7 +132,7 @@ const PricingCard = ({
       <CardHeader className="pb-4">
         <div className="flex flex-wrap gap-2">
           {plan.popular && !plan.comingSoon && (
-            <Badge variant="default" className="self-start">Mais Popular</Badge>
+            <Badge variant="default" className="self-start">Mais Vendido</Badge>
           )}
           {plan.comingSoon && (
             <Badge variant="outline" className="self-start">Em Breve</Badge>
@@ -160,7 +161,7 @@ const PricingCard = ({
           )}
           
           <div>
-            <h4 className="mb-3 border-b border-border pb-2 text-sm font-medium">Incluído neste plano</h4>
+            <h4 className="mb-3 border-b border-border pb-2 text-sm font-medium">Benefícios Incluídos neste plano</h4>
             <ul className="space-y-3">
               {plan.features.map((feature, index) => (
                 <li key={index} className="flex items-start text-sm">

@@ -10,16 +10,26 @@ export const PLANS: Record<string, Plan> = {
     priceLabel: "12x de R$ 179,90",
     totalPrice: 2158.80, // 12 * 179.90
     cashPrice: 1942.92, // 10% discount on total
-    features: ["Plano Estratégico simplificado", "Workshop de implantação", "Suporte por e-mail", "Acesso à comunidade"],
+    features: [
+      "Plano Estratégico simplificado", 
+      "01 Sessão on line (até 50 min) com consultor", 
+      "01 revisão do seu planejamento dentro do prazo de 06 meses", 
+      "Acesso à comunidade exclusiva"
+    ],
   },
   PRO: {
     id: "pro_plan",
     name: "Plano Profissional",
-    price: 299.90,
-    priceLabel: "12x de R$ 299,90",
-    totalPrice: 3598.80, // 12 * 299.90
-    cashPrice: 3238.92, // 10% discount on total
-    features: ["Plano Estratégico detalhado", "Relatórios completos", "Workshop de implantação", "Sessão estratégica exclusiva", "Suporte via Whatsapp"],
+    price: 399.90,
+    priceLabel: "12x de R$ 399,90",
+    totalPrice: 4798.80, // 12 * 399.90
+    cashPrice: 4318.92, // 10% discount on total
+    features: [
+      "Plano Estratégico Aprofundado com Relatórios Completos", 
+      "02 Sessões on line (até 50 min) com consultor", 
+      "02 revisões do seu planejamento dentro do prazo de 06 meses", 
+      "Acesso à comunidade exclusiva"
+    ],
   },
   ENTERPRISE: {
     id: "enterprise_plan",
@@ -28,13 +38,24 @@ export const PLANS: Record<string, Plan> = {
     priceLabel: "12x de R$ 799,90",
     totalPrice: 9598.80, // 12 * 799.90
     cashPrice: 8638.92, // 10% discount on total
-    features: ["Plano Estratégico completo", "Relatórios completos", "Mentoria estratégica", "Acesso VIP a conteúdos exclusivos", "Suporte prioritário"],
+    features: [
+      "Plano Estratégico Aprofundado",
+      "04 Sessões de mentoria avançada on line",
+      "02 revisões do seu planejamento dentro do prazo de 06 meses",
+      "Análises de cenário aprofundadas",
+      "Acesso à comunidade exclusiva"
+    ],
   },
   CORPORATE: {
     id: "corporate_plan",
     name: "Plano Corporativo",
     customPrice: true,
-    features: ["Plano Estratégico personalizado", "Consultoria dedicada", "Mentoria para equipe completa", "Acesso prioritário ao CEO", "Implementação assistida"],
+    features: [
+      "Solução personalizada para grandes corporações", 
+      "Consultoria dedicada", 
+      "Sessões de mentoria para equipe completa", 
+      "Implementação assistida"
+    ],
   }
 };
 
