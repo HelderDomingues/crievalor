@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
@@ -26,7 +25,6 @@ const PricingCard = ({
   const navigate = useNavigate();
   const { user } = useAuth();
 
-  // Links de pagamento estáticos para cada plano
   const paymentLinks = {
     basic_plan: {
       creditInstallments: "https://sandbox.asaas.com/c/vydr3n77kew5fd4s", 
@@ -43,7 +41,6 @@ const PricingCard = ({
   };
 
   const handleSubscribe = () => {
-    // Check if this is the corporate plan and handle it differently
     if (plan.id === "corporate_plan") {
       const message = encodeURIComponent("Olá, gostaria de obter mais informações sobre o Plano Corporativo.");
       window.open(`https://wa.me/5547992150289?text=${message}`, '_blank');
@@ -55,15 +52,11 @@ const PricingCard = ({
       return;
     }
 
-    // Direct users to the checkout page to select payment method
-    // We'll maintain this flow for UX consistency
     navigate(`/checkout?plan=${plan.id}`);
   };
 
-  // Determine if button should be disabled
   const isButtonDisabled = plan.comingSoon || isCheckingOut || isCurrent;
 
-  // Determine button text
   const getButtonText = () => {
     if (isCheckingOut) {
       return (
@@ -83,10 +76,9 @@ const PricingCard = ({
     }
   };
 
-  // Display price information - ensuring no pricing for comingSoon plans
   const renderPriceInfo = () => {
     if (plan.comingSoon) {
-      return null; // Don't display any pricing for coming soon plans
+      return null;
     } else if (plan.customPrice) {
       return (
         <div className="text-lg font-medium">Sob Consulta</div>
@@ -128,12 +120,10 @@ const PricingCard = ({
     return null;
   };
 
-  // Extract team size recommendation from features (if present)
   const teamSizeRecommendation = plan.features.find(feature => 
     feature.startsWith("(Para empresas")
   );
   
-  // Filter out the team size recommendation from features list
   const actualFeatures = plan.features.filter(feature => 
     !feature.startsWith("(Para empresas")
   );
@@ -141,7 +131,6 @@ const PricingCard = ({
   return (
     <Card className={`flex h-full flex-col transition-all duration-300 hover:shadow-md ${plan.popular ? "border-primary shadow-lg" : ""}`}>
       <CardHeader className="pb-2">
-        {/* Plan badges and title */}
         <div className="flex flex-wrap gap-2">
           {plan.popular && !plan.comingSoon && (
             <Badge variant="default" className="self-start">Mais Vendido</Badge>
@@ -156,14 +145,12 @@ const PricingCard = ({
         
         <h3 className="mt-2 text-xl font-bold">{plan.name}</h3>
         
-        {/* Team size recommendation displayed near plan name */}
         {teamSizeRecommendation && (
           <div className="text-xs text-muted-foreground mt-0.5">
             {teamSizeRecommendation}
           </div>
         )}
         
-        {/* Price information */}
         <div className="mt-2">
           {renderPriceInfo()}
           {plan.comingSoon && (
@@ -171,7 +158,6 @@ const PricingCard = ({
           )}
         </div>
         
-        {/* Plan description */}
         {plan.description && (
           <p className="mt-2 text-sm text-muted-foreground">
             {plan.description}
@@ -179,14 +165,13 @@ const PricingCard = ({
         )}
       </CardHeader>
       
-      {/* CTA Button - Moved here right after description and before features */}
       <div className="px-6 pb-4">
         {plan.popular ? (
           <AuroraButton 
             onClick={handleSubscribe}
             disabled={isButtonDisabled}
             className="w-full font-medium"
-            glowClassName="from-blue-500 via-purple-500 to-cyan-400"
+            glowClassName="from-blue-700 via-blue-600 to-blue-500"
           >
             {getButtonText()}
           </AuroraButton>
@@ -203,24 +188,20 @@ const PricingCard = ({
       </div>
       
       <CardContent className="flex-grow pt-0">
-        <div className="space-y-6">
-          {/* Documents section with visual hierarchy - Only show for non-corporate plans */}
-          {plan.id !== "corporate_plan" && plan.documents && plan.documents.length > 0 && (
-            <PlanDocuments documents={plan.documents} />
-          )}
-          
-          {/* Benefits section */}
-          <div>
-            <h4 className="mb-3 border-b border-border pb-2 text-sm font-medium">Benefícios Incluídos neste plano</h4>
-            <ul className="space-y-3">
-              {actualFeatures.map((feature, index) => (
-                <li key={index} className="flex items-start text-sm">
-                  <span className="mr-2 text-green-500">✓</span>
-                  {feature}
-                </li>
-              ))}
-            </ul>
-          </div>
+        {plan.id !== "corporate_plan" && plan.documents && plan.documents.length > 0 && (
+          <PlanDocuments documents={plan.documents} />
+        )}
+        
+        <div>
+          <h4 className="mb-3 border-b border-border pb-2 text-sm font-medium">Benefícios Incluídos neste plano</h4>
+          <ul className="space-y-3">
+            {actualFeatures.map((feature, index) => (
+              <li key={index} className="flex items-start text-sm">
+                <span className="mr-2 text-green-500">✓</span>
+                {feature}
+              </li>
+            ))}
+          </ul>
         </div>
       </CardContent>
     </Card>

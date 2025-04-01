@@ -22,7 +22,7 @@ export function AuroraButton({
       {/* Gradient border container */}
       <div
         className={cn(
-          "absolute -inset-[2px] rounded-lg bg-gradient-to-r from-purple-500 via-cyan-300 to-emerald-400 opacity-75 blur-lg transition-all",
+          "absolute -inset-[2px] rounded-lg bg-gradient-to-r from-blue-700 via-blue-600 to-blue-500 opacity-75 blur-lg transition-all",
           "group-hover:opacity-100 group-hover:blur-xl",
           glowClassName
         )}
