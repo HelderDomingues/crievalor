@@ -25,6 +25,7 @@ import PrivacyPolicy from "./pages/PrivacyPolicy";
 import RefundPolicy from "./pages/RefundPolicy";
 import TermsOfService from "./pages/TermsOfService";
 import Subscription from "./pages/Subscription";
+import Checkout from "./pages/Checkout";
 // Import AuthProvider from AuthContext
 import { AuthProvider } from "./context/AuthContext";
 // Import setup service to initialize application
@@ -79,6 +80,10 @@ const router = createBrowserRouter([
   {
     path: "/subscription",
     element: <Subscription />,
+  },
+  {
+    path: "/checkout",
+    element: <Checkout />,
   },
   {
     path: "/admin-setup",
