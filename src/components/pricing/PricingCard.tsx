@@ -80,13 +80,13 @@ const PricingCard = ({
       return null;
     } else if (plan.customPrice) {
       return (
-        <div className="text-2xl font-semibold">
-          {plan.name === "Corporativo" ? "Preços e Condições sob consulta" : "Preços sob consulta"}
+        <div className="text-2xl font-semibold mt-2">
+          Preços e Condições sob consulta
         </div>
       );
     } else if (plan.monthlyPrice || plan.annualPrice) {
       return <>
-          {plan.monthlyPrice && <div className="flex items-baseline">
+          {plan.monthlyPrice && <div className="flex items-baseline mt-2">
               <span className="text-3xl font-bold">{plan.monthlyPrice}</span>
             </div>}
           
@@ -115,13 +115,13 @@ const PricingCard = ({
   return (
     <Card className={`flex h-full flex-col transition-all duration-300 hover:shadow-md ${plan.popular ? "border-primary shadow-lg" : ""}`}>
       <CardHeader className="pb-2">
-        <div className="flex flex-wrap gap-2">
-          {plan.popular && !plan.comingSoon && <Badge variant="default" className="self-start">Mais Vendido</Badge>}
-          {plan.comingSoon && <Badge variant="outline" className="self-start">Em Breve</Badge>}
-          {isCurrent && !plan.comingSoon && <Badge variant="secondary" className="self-start">Plano Atual</Badge>}
-        </div>
+        {plan.popular && !plan.comingSoon && (
+          <div className="flex justify-start">
+            <Badge variant="default" className="self-start mb-1">Mais Vendido</Badge>
+          </div>
+        )}
         
-        <h3 className="mt-2 font-bold text-3xl">{plan.name}</h3>
+        <h3 className={`font-bold text-3xl ${plan.popular ? "" : "mt-2"}`}>{plan.name}</h3>
         
         {teamSizeRecommendation && (
           <div className="text-xs text-muted-foreground mt-0.5">
@@ -129,14 +129,14 @@ const PricingCard = ({
           </div>
         )}
         
-        <div className="mt-4 mb-2">
+        <div className="mt-2 mb-2">
           {renderPriceInfo()}
           {plan.comingSoon && <div className="text-lg font-medium text-muted-foreground">Em Breve</div>}
         </div>
       </CardHeader>
       
       {plan.description && (
-        <div className="px-6 h-[100px]">
+        <div className="px-6 h-[120px]">
           <p className="text-sm text-muted-foreground">
             {plan.description}
           </p>
@@ -165,15 +165,12 @@ const PricingCard = ({
         )}
       </div>
       
-      <CardContent className="border-t border-border pt-4 mt-2">
-        <div className="mb-6">
-          <h4 className="mb-3 border-b border-border pb-2 text-sm font-bold">
-            {plan.id === "corporate_plan" ? "Benefícios Incluídos neste plano" : "Documentos Incluídos"}
-          </h4>
-          
-          {plan.id !== "corporate_plan" && plan.documents && plan.documents.length > 0 ? (
-            <PlanDocuments documents={plan.documents} />
-          ) : (
+      {plan.id === "corporate_plan" ? (
+        <CardContent className="border-t border-border pt-4 mt-2">
+          <div className="mb-6">
+            <h4 className="mb-3 font-bold">
+              Benefícios Incluídos neste plano
+            </h4>
             <ul className="space-y-3">
               {actualFeatures.map((feature, index) => (
                 <li key={index} className="flex items-start text-sm">
@@ -182,9 +179,20 @@ const PricingCard = ({
                 </li>
               ))}
             </ul>
-          )}
-        </div>
-      </CardContent>
+          </div>
+        </CardContent>
+      ) : (
+        <CardContent className="border-t border-border pt-4 mt-2">
+          <div className="mb-6">
+            <h4 className="mb-3 font-bold">
+              Documentos Incluídos
+            </h4>
+            {plan.documents && plan.documents.length > 0 && (
+              <PlanDocuments documents={plan.documents} />
+            )}
+          </div>
+        </CardContent>
+      )}
     </Card>
   );
 };
