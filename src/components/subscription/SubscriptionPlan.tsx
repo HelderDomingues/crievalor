@@ -1,8 +1,10 @@
 
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { Check } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Loader2, BadgePercent } from "lucide-react";
+import { AuroraButton } from "@/components/ui/aurora-button";
 
 interface SubscriptionPlanProps {
   id: string;
@@ -10,9 +12,9 @@ interface SubscriptionPlanProps {
   price?: string;
   basePrice?: number;
   features: string[];
-  isCurrentPlan: boolean;
-  isCheckingOut: boolean;
   onSubscribe: (planId: string) => Promise<void>;
+  isCurrentPlan?: boolean;
+  isCheckingOut?: boolean;
   installments?: number;
   buttonLabel?: string;
   priceFormat?: string;
@@ -22,76 +24,99 @@ const SubscriptionPlan = ({
   id,
   name,
   price,
-  basePrice,
   features,
-  isCurrentPlan,
-  isCheckingOut,
+  basePrice,
+  isCurrentPlan = false,
+  isCheckingOut = false,
   onSubscribe,
   installments = 1,
   buttonLabel = "Assinar",
-  priceFormat = ""
+  priceFormat
 }: SubscriptionPlanProps) => {
   const handleSubscribe = () => {
     onSubscribe(id);
   };
-  
-  const isHighlighted = id === "pro_plan";
-  
+
   return (
-    <div 
-      className={cn(
-        "flex flex-col p-6 bg-white border rounded-lg shadow-sm hover:shadow-md transition-all",
-        isHighlighted ? "border-primary" : "border-gray-200"
-      )}
-    >
-      <div className="flex-1">
-        <h3 className={cn(
-          "text-xl font-bold mb-1",
-          isHighlighted ? "text-primary" : "text-gray-900"
-        )}>
-          {name}
-        </h3>
+    <Card className="flex h-full flex-col transition-all duration-300 hover:shadow-md bg-card text-card-foreground border-border">
+      <CardHeader className="pb-2">
+        <div className="flex flex-wrap gap-2">
+          {isCurrentPlan && (
+            <Badge variant="secondary" className="self-start">
+              Plano Atual
+            </Badge>
+          )}
+        </div>
+        
+        <h3 className="mt-2 font-bold text-2xl">{name}</h3>
         
         {price && (
-          <div className="mb-4">
+          <div className="mt-4">
             <div className="flex items-baseline">
-              <span className="text-3xl font-bold">{price}</span>
-              {priceFormat && (
-                <span className="ml-1 text-sm text-muted-foreground">{priceFormat}</span>
-              )}
+              <span className="text-3xl font-bold text-nowrap">{price}</span>
             </div>
-            
-            {basePrice && (
-              <div className="mt-1 text-sm text-muted-foreground">
-                Total: R$ {basePrice.toFixed(2).replace('.', ',')}
-              </div>
+            {priceFormat && (
+              <div className="text-sm text-muted-foreground mt-1">{priceFormat}</div>
             )}
           </div>
         )}
         
-        <ul className="space-y-3 mb-6">
+        {!price && id === 'corporate_plan' && (
+          <div className="text-lg font-medium mt-4">
+            Condições sob consulta
+          </div>
+        )}
+      </CardHeader>
+      
+      <CardContent className="flex-grow">
+        <ul className="space-y-3">
           {features.map((feature, index) => (
-            <li key={index} className="flex items-start">
-              <Check className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
-              <span className="text-sm text-gray-700">{feature}</span>
+            <li key={index} className="flex items-start text-sm">
+              <span className="mr-2 text-green-500">✓</span>
+              {feature}
             </li>
           ))}
         </ul>
-      </div>
+      </CardContent>
       
-      <Button
-        onClick={handleSubscribe}
-        className={cn(
-          "w-full mt-auto",
-          isHighlighted ? "bg-primary hover:bg-primary/90" : "",
-          isCurrentPlan ? "bg-green-600 hover:bg-green-700" : ""
+      <CardFooter className="pt-4 pb-6 px-6">
+        {id === "corporate_plan" || isCurrentPlan ? (
+          <Button
+            className="w-full"
+            variant={isCurrentPlan ? "secondary" : "default"}
+            onClick={handleSubscribe}
+            disabled={isCurrentPlan || isCheckingOut}
+          >
+            {isCheckingOut ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Processando...
+              </>
+            ) : isCurrentPlan ? (
+              "Plano Atual"
+            ) : (
+              buttonLabel
+            )}
+          </Button>
+        ) : (
+          <AuroraButton
+            onClick={handleSubscribe}
+            disabled={isCurrentPlan || isCheckingOut}
+            className="w-full font-medium bg-blue-700 hover:bg-blue-800"
+            glowClassName="from-blue-700 via-blue-600 to-blue-500"
+          >
+            {isCheckingOut ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Processando...
+              </>
+            ) : (
+              buttonLabel
+            )}
+          </AuroraButton>
         )}
-        variant={isHighlighted ? "default" : "outline"}
-        disabled={isCurrentPlan}
-      >
-        {isCurrentPlan ? "Plano Atual" : buttonLabel}
-      </Button>
-    </div>
+      </CardFooter>
+    </Card>
   );
 };
 

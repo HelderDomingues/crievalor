@@ -25,24 +25,13 @@ const PricingCard = ({
   onSubscribe
 }: PricingCardProps) => {
   const navigate = useNavigate();
-  const {
-    user
-  } = useAuth();
-
-  const paymentLinks = {
-    basic_plan: {
-      creditInstallments: "https://sandbox.asaas.com/c/vydr3n77kew5fd4s",
-      cashPayment: "https://sandbox.asaas.com/c/fy15747uacorzbla"
-    },
-    pro_plan: {
-      creditInstallments: "https://sandbox.asaas.com/c/4fcw2ezk4je61qon",
-      cashPayment: "https://sandbox.asaas.com/c/pqnkhgvic7c25ufq"
-    },
-    enterprise_plan: {
-      creditInstallments: "https://sandbox.asaas.com/c/z4vate6zwonrwoft",
-      cashPayment: "https://sandbox.asaas.com/c/3pdwf46bs80mpk0s"
-    }
-  };
+  const { user } = useAuth();
+  
+  // Extract team size recommendation (this is now only for display below plan name)
+  const teamSizeRecommendation = plan.features.find(feature => feature.startsWith("Para empresas"));
+  
+  // Filter out team size recommendation from features list
+  const filteredFeatures = plan.features.filter(feature => !feature.startsWith("Para empresas"));
 
   const handleSubscribe = () => {
     if (plan.id === "corporate_plan") {
@@ -62,9 +51,9 @@ const PricingCard = ({
   const getButtonText = () => {
     if (isCheckingOut) {
       return <>
-          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-          Processando...
-        </>;
+        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+        Processando...
+      </>;
     } else if (isCurrent) {
       return "Plano Atual";
     } else if (plan.comingSoon) {
@@ -76,12 +65,6 @@ const PricingCard = ({
     }
   };
 
-  // Extraindo a recomendação de tamanho de equipe para exibir abaixo do nome do plano
-  const teamSizeRecommendation = plan.features.find(feature => feature.startsWith("Para empresas"));
-  
-  // Filtrando a lista de recursos para remover a recomendação sobre tamanho da equipe
-  const actualFeatures = plan.features.filter(feature => !feature.startsWith("Para empresas"));
-
   const renderPriceInfo = () => {
     if (plan.comingSoon) {
       return null;
@@ -89,31 +72,39 @@ const PricingCard = ({
       return <div className="text-3xl font-bold">Condições sob consulta</div>;
     } else if (plan.monthlyPrice || plan.annualPrice) {
       return <>
-          {plan.monthlyPrice && <div className="flex items-baseline">
-              <span className="text-3xl font-bold text-nowrap">{plan.monthlyPrice}</span>
-            </div>}
-          
-          {plan.annualPrice && <div className="mt-1 space-y-1">
-              <div className="text-sm text-muted-foreground flex items-center">
-                <span>ou</span>
-                <span className="font-medium ml-1 text-nowrap">{plan.annualPrice}</span>
-                <span className="ml-1">à vista</span>
-                {plan.annualDiscount && <Badge variant="outline" className="ml-2 flex items-center text-green-600">
-                    <BadgePercent className="h-3 w-3 mr-1" />
-                    10% off
-                  </Badge>}
+        {plan.monthlyPrice && 
+          <div className="flex items-baseline">
+            <span className="text-3xl font-bold text-nowrap">{plan.monthlyPrice}</span>
+          </div>
+        }
+        
+        {plan.annualPrice && 
+          <div className="mt-1 space-y-1">
+            <div className="text-sm text-muted-foreground flex items-center">
+              <span>ou</span>
+              <span className="font-medium ml-1 text-nowrap">{plan.annualPrice}</span>
+              <span className="ml-1">à vista</span>
+              {plan.annualDiscount && 
+                <Badge variant="outline" className="ml-2 flex items-center text-green-600">
+                  <BadgePercent className="h-3 w-3 mr-1" />
+                  10% off
+                </Badge>
+              }
+            </div>
+            {plan.annualDiscount && 
+              <div className="text-xs text-muted-foreground">
+                Desconto aplicado em pagamento único
               </div>
-              {plan.annualDiscount && <div className="text-xs text-muted-foreground">
-                  Desconto aplicado em pagamento único
-                </div>}
-            </div>}
-        </>;
+            }
+          </div>
+        }
+      </>;
     }
     return null;
   };
 
   return (
-    <Card className={`flex h-full flex-col transition-all duration-300 hover:shadow-md ${plan.popular ? "border-primary shadow-lg relative" : ""}`}>
+    <Card className={`flex h-full flex-col transition-all duration-300 hover:shadow-md bg-card text-card-foreground ${plan.popular ? "border-primary shadow-lg relative" : ""}`}>
       {plan.popular && !plan.comingSoon && (
         <div className="absolute top-0 left-0 w-full flex justify-center">
           <Badge variant="default" className="transform -translate-y-1/2">
@@ -122,7 +113,7 @@ const PricingCard = ({
         </div>
       )}
       
-      <CardHeader className="pb-2 my-[15px] py-[5px]">
+      <CardHeader className="pb-2 py-6">
         <div className="flex flex-wrap gap-2">
           {plan.comingSoon && <Badge variant="outline" className="self-start">Em Breve</Badge>}
           {isCurrent && !plan.comingSoon && <Badge variant="secondary" className="self-start">Plano Atual</Badge>}
@@ -142,13 +133,13 @@ const PricingCard = ({
         </div>
         
         {plan.description && (
-          <p className="mt-2 text-sm text-muted-foreground my-[12px]">
+          <p className="mt-2 text-sm text-muted-foreground">
             {plan.description}
           </p>
         )}
       </CardHeader>
       
-      <div className="px-6 pb-4 my-[10px]">
+      <div className="px-6 pb-4">
         {plan.popular ? (
           <AuroraButton 
             onClick={handleSubscribe} 
@@ -170,7 +161,7 @@ const PricingCard = ({
         )}
       </div>
       
-      <CardContent className="flex-grow pt-0 my-[10px]">
+      <CardContent className="flex-grow pt-0">
         {plan.id !== "corporate_plan" && plan.documents && plan.documents.length > 0 && (
           <PlanDocuments documents={plan.documents} />
         )}
@@ -178,7 +169,7 @@ const PricingCard = ({
         <div>
           <h4 className="mb-3 border-b border-border pb-2 text-sm font-bold">Benefícios Incluídos neste plano</h4>
           <ul className="space-y-3">
-            {actualFeatures.map((feature, index) => (
+            {filteredFeatures.map((feature, index) => (
               <li key={index} className="flex items-start text-sm">
                 <span className="mr-2 text-green-500">✓</span>
                 {feature}

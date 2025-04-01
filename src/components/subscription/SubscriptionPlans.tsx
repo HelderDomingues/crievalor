@@ -56,7 +56,6 @@ const SubscriptionPlans = ({
             onSubscribe={onSubscribe}
             installments={12} // Set default to 12
             buttonLabel={buttonLabel}
-            // Nova propriedade para exibir o formato
             priceFormat="mensais em 12x"
           />
         );
