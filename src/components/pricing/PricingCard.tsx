@@ -69,9 +69,9 @@ const PricingCard = ({
     } else if (plan.comingSoon) {
       return "Em Breve";
     } else if (plan.id === "corporate_plan") {
-      return "Consultar via WhatsApp";
+      return "Falar com um consultor";
     } else {
-      return plan.cta || "Quero este plano";
+      return "Quero este plano";
     }
   };
 
@@ -79,12 +79,15 @@ const PricingCard = ({
     if (plan.comingSoon) {
       return null;
     } else if (plan.customPrice) {
-      return <div className="text-lg font-medium">Sob Consulta</div>;
+      return (
+        <div className="text-xl font-semibold">
+          Preços e Condições sob consulta
+        </div>
+      );
     } else if (plan.monthlyPrice || plan.annualPrice) {
       return <>
           {plan.monthlyPrice && <div className="flex items-baseline">
               <span className="text-3xl font-bold">{plan.monthlyPrice}</span>
-              
             </div>}
           
           {plan.annualPrice && <div className="mt-1 space-y-1">
@@ -109,8 +112,9 @@ const PricingCard = ({
   const teamSizeRecommendation = plan.features.find(feature => feature.startsWith("(Para empresas"));
   const actualFeatures = plan.features.filter(feature => !feature.startsWith("(Para empresas"));
 
-  return <Card className={`flex h-full flex-col transition-all duration-300 hover:shadow-md ${plan.popular ? "border-primary shadow-lg" : ""}`}>
-      <CardHeader className="pb-2 my-[15px] py-[5px]">
+  return (
+    <Card className={`flex h-full flex-col transition-all duration-300 hover:shadow-md ${plan.popular ? "border-primary shadow-lg" : ""}`}>
+      <CardHeader className="pb-2">
         <div className="flex flex-wrap gap-2">
           {plan.popular && !plan.comingSoon && <Badge variant="default" className="self-start">Mais Vendido</Badge>}
           {plan.comingSoon && <Badge variant="outline" className="self-start">Em Breve</Badge>}
@@ -119,21 +123,27 @@ const PricingCard = ({
         
         <h3 className="mt-2 font-bold text-3xl">{plan.name}</h3>
         
-        {teamSizeRecommendation && <div className="text-xs text-muted-foreground mt-0.5">
+        {teamSizeRecommendation && (
+          <div className="text-xs text-muted-foreground mt-0.5">
             {teamSizeRecommendation}
-          </div>}
+          </div>
+        )}
         
-        <div className="mt-2">
+        <div className="mt-4 mb-2">
           {renderPriceInfo()}
           {plan.comingSoon && <div className="text-lg font-medium text-muted-foreground">Em Breve</div>}
         </div>
-        
-        {plan.description && <p className="mt-2 text-sm text-muted-foreground my-[12px]">
-            {plan.description}
-          </p>}
       </CardHeader>
       
-      <div className="px-6 pb-4 my-[10px]">
+      {plan.description && (
+        <div className="px-6 min-h-[100px]">
+          <p className="text-sm text-muted-foreground">
+            {plan.description}
+          </p>
+        </div>
+      )}
+      
+      <div className="px-6 py-4 mt-auto">
         {plan.popular ? (
           <AuroraButton 
             onClick={handleSubscribe} 
@@ -155,20 +165,27 @@ const PricingCard = ({
         )}
       </div>
       
-      <CardContent className="flex-grow pt-0 my-[10px]">
-        {plan.id !== "corporate_plan" && plan.documents && plan.documents.length > 0 && <PlanDocuments documents={plan.documents} />}
+      <CardContent className="border-t border-border pt-4 mt-2">
+        {plan.id !== "corporate_plan" && plan.documents && plan.documents.length > 0 && (
+          <PlanDocuments documents={plan.documents} />
+        )}
         
         <div>
-          <h4 className="mb-3 border-b border-border pb-2 text-sm font-bold">Benefícios Incluídos neste plano</h4>
+          <h4 className="mb-3 border-b border-border pb-2 text-sm font-bold">
+            {plan.id === "corporate_plan" ? "Benefícios Incluídos neste plano" : "Benefícios Incluídos"}
+          </h4>
           <ul className="space-y-3">
-            {actualFeatures.map((feature, index) => <li key={index} className="flex items-start text-sm">
+            {actualFeatures.map((feature, index) => (
+              <li key={index} className="flex items-start text-sm">
                 <span className="mr-2 text-green-500">✓</span>
                 {feature}
-              </li>)}
+              </li>
+            ))}
           </ul>
         </div>
       </CardContent>
-    </Card>;
+    </Card>
+  );
 };
 
 export default PricingCard;
