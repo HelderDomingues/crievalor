@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
@@ -9,14 +8,12 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { Loader2, BadgePercent } from "lucide-react";
 import { AuroraButton } from "@/components/ui/aurora-button";
-
 interface PricingCardProps {
   plan: PricingPlan;
   isCheckingOut?: boolean;
   isCurrent?: boolean;
   onSubscribe?: () => void;
 }
-
 const PricingCard = ({
   plan,
   isCheckingOut = false,
@@ -27,7 +24,6 @@ const PricingCard = ({
   const {
     user
   } = useAuth();
-
   const paymentLinks = {
     basic_plan: {
       creditInstallments: "https://sandbox.asaas.com/c/vydr3n77kew5fd4s",
@@ -42,7 +38,6 @@ const PricingCard = ({
       cashPayment: "https://sandbox.asaas.com/c/3pdwf46bs80mpk0s"
     }
   };
-
   const handleSubscribe = () => {
     if (plan.id === "corporate_plan") {
       const message = encodeURIComponent("Olá, gostaria de obter mais informações sobre o Plano Corporativo.");
@@ -55,9 +50,7 @@ const PricingCard = ({
     }
     navigate(`/checkout?plan=${plan.id}`);
   };
-
   const isButtonDisabled = plan.comingSoon || isCheckingOut || isCurrent;
-
   const getButtonText = () => {
     if (isCheckingOut) {
       return <>
@@ -74,12 +67,11 @@ const PricingCard = ({
       return plan.cta || "Quero este plano";
     }
   };
-
   const renderPriceInfo = () => {
     if (plan.comingSoon) {
       return null;
     } else if (plan.customPrice) {
-      return <div className="text-lg font-medium">Sob Consulta</div>;
+      return <div className="text-lg font-large">Sob Consulta</div>;
     } else if (plan.monthlyPrice || plan.annualPrice) {
       return <>
           {plan.monthlyPrice && <div className="flex items-baseline">
@@ -105,19 +97,14 @@ const PricingCard = ({
     }
     return null;
   };
-
   const teamSizeRecommendation = plan.features.find(feature => feature.startsWith("(Para empresas"));
   const actualFeatures = plan.features.filter(feature => !feature.startsWith("(Para empresas"));
-
-  return (
-    <Card className={`flex h-full flex-col transition-all duration-300 hover:shadow-md ${plan.popular ? "border-primary shadow-lg relative" : ""}`}>
-      {plan.popular && !plan.comingSoon && (
-        <div className="absolute top-0 left-0 w-full flex justify-center">
+  return <Card className={`flex h-full flex-col transition-all duration-300 hover:shadow-md ${plan.popular ? "border-primary shadow-lg relative" : ""}`}>
+      {plan.popular && !plan.comingSoon && <div className="absolute top-0 left-0 w-full flex justify-center">
           <Badge variant="default" className="transform -translate-y-1/2">
             Mais Vendido
           </Badge>
-        </div>
-      )}
+        </div>}
       
       <CardHeader className="pb-2 my-[15px] py-[5px]">
         <div className="flex flex-wrap gap-2">
@@ -142,25 +129,11 @@ const PricingCard = ({
       </CardHeader>
       
       <div className="px-6 pb-4 my-[10px]">
-        {plan.popular ? (
-          <AuroraButton 
-            onClick={handleSubscribe} 
-            disabled={isButtonDisabled} 
-            className="w-full font-medium bg-blue-700 hover:bg-blue-800" 
-            glowClassName="from-blue-700 via-blue-600 to-blue-500"
-          >
+        {plan.popular ? <AuroraButton onClick={handleSubscribe} disabled={isButtonDisabled} className="w-full font-medium bg-blue-700 hover:bg-blue-800" glowClassName="from-blue-700 via-blue-600 to-blue-500">
             {getButtonText()}
-          </AuroraButton>
-        ) : (
-          <Button 
-            className="w-full" 
-            onClick={handleSubscribe} 
-            disabled={isButtonDisabled} 
-            variant={plan.comingSoon ? "outline" : "default"}
-          >
+          </AuroraButton> : <Button className="w-full" onClick={handleSubscribe} disabled={isButtonDisabled} variant={plan.comingSoon ? "outline" : "default"}>
             {getButtonText()}
-          </Button>
-        )}
+          </Button>}
       </div>
       
       <CardContent className="flex-grow pt-0 my-[10px]">
@@ -176,8 +149,6 @@ const PricingCard = ({
           </ul>
         </div>
       </CardContent>
-    </Card>
-  );
+    </Card>;
 };
-
 export default PricingCard;
