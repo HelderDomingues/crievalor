@@ -80,31 +80,120 @@ serve(async (req) => {
         continue;
       }
       
-      // Set up direct SQL policies for the bucket since RPC is not working
-      // We'll use the REST API to execute SQL directly
-      const policySetupResponse = await fetch(`${supabaseUrl}/rest/v1/rpc/setup_storage_policies`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'apikey': supabaseServiceKey,
-          'Authorization': `Bearer ${supabaseServiceKey}`
-        },
-        body: JSON.stringify({ bucket_name: bucketName })
-      });
+      // Instead of calling an RPC function, directly execute SQL to create policies
+      // We'll use direct SQL execution via edge function to avoid the RPC error
       
-      if (!policySetupResponse.ok) {
-        const errorText = await policySetupResponse.text();
-        console.error(`Error setting up policies for ${bucketName} via REST API: ${errorText}`);
+      try {
+        // Apply direct storage policies via SQL
+        const { error: policyError } = await supabase.rpc('apply_storage_policies', { 
+          bucket_name: bucketName 
+        });
         
-        // Mark as success anyway since the bucket exists and is public
+        if (policyError) {
+          console.error(`Error applying policies for ${bucketName}: ${policyError.message}`);
+          
+          // Try alternate approach with direct SQL execution
+          console.log(`Attempting direct SQL execution for bucket policies...`);
+          
+          // Create policies directly with SQL
+          // First check if policies exist and drop them if needed
+          const policySql = `
+            BEGIN;
+            
+            -- Drop any existing policies for this bucket
+            DROP POLICY IF EXISTS "Public read access for ${bucketName}" ON storage.objects;
+            DROP POLICY IF EXISTS "Auth users can upload to ${bucketName}" ON storage.objects;
+            DROP POLICY IF EXISTS "Auth users can update own ${bucketName} objects" ON storage.objects;
+            DROP POLICY IF EXISTS "Auth users can delete own ${bucketName} objects" ON storage.objects;
+            
+            -- Create policy for public read access
+            CREATE POLICY "Public read access for ${bucketName}"
+              ON storage.objects FOR SELECT
+              USING (bucket_id = '${bucketName}');
+            
+            -- Create policy for authenticated users to insert
+            CREATE POLICY "Auth users can upload to ${bucketName}"
+              ON storage.objects FOR INSERT
+              WITH CHECK (
+                bucket_id = '${bucketName}'
+                AND (auth.role() = 'authenticated' OR auth.role() = 'service_role')
+              );
+            
+            -- Create policy for authenticated users to update their own objects
+            CREATE POLICY "Auth users can update own ${bucketName} objects"
+              ON storage.objects FOR UPDATE
+              USING (
+                bucket_id = '${bucketName}'
+                AND (auth.role() = 'authenticated' OR auth.role() = 'service_role')
+              );
+            
+            -- Create policy for authenticated users to delete their own objects
+            CREATE POLICY "Auth users can delete own ${bucketName} objects"
+              ON storage.objects FOR DELETE
+              USING (
+                bucket_id = '${bucketName}'
+                AND (auth.role() = 'authenticated' OR auth.role() = 'service_role')
+              );
+              
+            COMMIT;
+          `;
+          
+          const { error: sqlError } = await supabase.rpc('exec_sql', { sql: policySql });
+          
+          if (sqlError) {
+            console.error(`Direct SQL execution failed: ${sqlError.message}`);
+            console.log(`Falling back to basic policy setup...`);
+            
+            // Attempt simple policy setup with minimal permissions
+            const simplePolicy = `
+              BEGIN;
+              -- Ensure storage.objects has RLS enabled
+              ALTER TABLE IF EXISTS storage.objects ENABLE ROW LEVEL SECURITY;
+              
+              -- Create a simple public read policy for this bucket
+              DROP POLICY IF EXISTS "Public ${bucketName} policy" ON storage.objects;
+              CREATE POLICY "Public ${bucketName} policy" 
+                ON storage.objects
+                USING (bucket_id = '${bucketName}');
+              COMMIT;
+            `;
+            
+            const { error: simpleError } = await supabase.rpc('exec_sql', { sql: simplePolicy });
+            
+            if (simpleError) {
+              console.error(`Simple policy setup failed: ${simpleError.message}`);
+              results[bucketName] = { 
+                success: true, 
+                warning: `Policies setup failed, manual setup may be required: ${simpleError.message}`
+              };
+            } else {
+              console.log(`Simple policy setup successful for ${bucketName}`);
+              results[bucketName] = { success: true };
+            }
+          } else {
+            console.log(`Direct SQL execution for policies successful for ${bucketName}`);
+            results[bucketName] = { success: true };
+          }
+        } else {
+          console.log(`Storage policies for ${bucketName} configured successfully`);
+          results[bucketName] = { success: true };
+        }
+      } catch (policySetupError) {
+        console.error(`Unexpected error setting up policies: ${policySetupError.message}`);
         results[bucketName] = { 
           success: true,
-          warning: `Policies may need manual setup: ${errorText}`
+          warning: `Unexpected error during policy setup: ${policySetupError.message}`
         };
-      } else {
-        console.log(`Storage policies for ${bucketName} configured successfully`);
-        results[bucketName] = { success: true };
       }
+    }
+    
+    // Enable RLS on storage.objects in any case
+    try {
+      const enableRlsSql = `ALTER TABLE IF EXISTS storage.objects ENABLE ROW LEVEL SECURITY;`;
+      await supabase.rpc('exec_sql', { sql: enableRlsSql });
+      console.log('RLS enabled on storage.objects table');
+    } catch (rlsError) {
+      console.error(`Error enabling RLS: ${rlsError.message}`);
     }
     
     return new Response(

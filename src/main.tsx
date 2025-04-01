@@ -3,13 +3,25 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App'
 import './index.css'
-import { createStorageBucketIfNotExists } from './services/storageService';
 import { supabase } from '@/integrations/supabase/client';
 import { upsertSystemSetting } from './services/systemSettingsService';
+import { initializeStorageBuckets } from './services/storageService';
 
-// Função para inicializar e configurar as políticas RLS
+// Initialize storage buckets first
+async function setupStorage() {
+  try {
+    console.log("Setting up storage buckets...");
+    await initializeStorageBuckets();
+    console.log("Storage setup completed");
+  } catch (error) {
+    console.error("Error during storage setup:", error);
+  }
+}
+
+// Function to set up RLS policies
 async function setupRLSPolicies() {
   try {
+    console.log("Setting up RLS policies...");
     const { data, error } = await supabase.functions.invoke('setup-rls');
     
     if (error) {
@@ -22,9 +34,10 @@ async function setupRLSPolicies() {
   }
 }
 
-// Função para inicializar configurações do sistema
+// Function to set up system settings
 async function setupSystemSettings() {
   try {
+    console.log("Setting up system settings...");
     // Inserir API Key do Asaas na tabela system_settings
     const asaasApiKey = "$aact_hmlg_000MzkwODA2MWY2OGM3MWRlMDU2NWM3MzJlNzZmNGZhZGY6OjA3NDkzNWU3LWJmYWYtNDRiMC04NzZjLTEwZGNjYTIyMTMzNzo6JGFhY2hfZThiZDMzN2UtZDIyOC00NGYyLWE0OTctMmY3OTkzYTQ4MTc4";
     const result = await upsertSystemSetting(
@@ -43,12 +56,26 @@ async function setupSystemSettings() {
   }
 }
 
-// Inicializar storage bucket, configurar políticas RLS e system settings
-createStorageBucketIfNotExists('materials');
+// Initialize in sequence
+async function initializeApp() {
+  try {
+    // First setup storage buckets
+    await setupStorage();
+    
+    // Then setup RLS policies
+    await setupRLSPolicies();
+    
+    // Finally setup system settings
+    await setupSystemSettings();
+    
+    console.log("Application initialization completed successfully");
+  } catch (error) {
+    console.error("Error during application initialization:", error);
+  }
+}
 
-// Note: No need to create logos bucket since it's already created in Supabase
-setupRLSPolicies();
-setupSystemSettings();
+// Start the initialization process but don't block rendering
+initializeApp();
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>

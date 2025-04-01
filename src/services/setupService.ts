@@ -1,5 +1,6 @@
 
 import { supabaseExtended } from "@/integrations/supabase/extendedClient";
+import { initializeStorageBuckets } from "./storageService";
 
 /**
  * Helper function to execute initial setup tasks for the application
@@ -9,15 +10,11 @@ export const executeInitialSetup = async (): Promise<void> => {
     console.log("Executando setup inicial da aplicação...");
     
     // Set up storage buckets and policies
-    const { data: storageData, error: storageError } = await supabaseExtended.functions.invoke('setup-storage-policies');
-    
-    if (storageError) {
-      console.error("Erro ao configurar políticas de armazenamento:", storageError);
-    } else {
-      console.log("Políticas de armazenamento configuradas:", storageData);
-    }
+    console.log("Configurando buckets de armazenamento...");
+    await initializeStorageBuckets();
     
     // Set up RLS policies for other tables
+    console.log("Configurando políticas RLS...");
     const { data: rlsData, error: rlsError } = await supabaseExtended.functions.invoke('setup-rls');
     
     if (rlsError) {
@@ -32,5 +29,5 @@ export const executeInitialSetup = async (): Promise<void> => {
   }
 };
 
-// Execute setup on module import
-executeInitialSetup().catch(console.error);
+// Don't auto-execute on import, this will be called from main.tsx in the proper sequence
+// executeInitialSetup().catch(console.error);

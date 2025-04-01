@@ -3,12 +3,10 @@ import { supabaseExtended } from "@/integrations/supabase/extendedClient";
 
 export const createStorageBucketIfNotExists = async (bucketName: string, options = { public: true, fileSizeLimit: 10485760 }) => {
   try {
-    // Instead of trying to create buckets directly (which requires admin privileges),
-    // we'll invoke the edge function to handle this securely
-    console.log(`Checking if bucket ${bucketName} exists...`);
-    
     // For client-side usage, just check if the bucket exists
     // The actual creation is handled by the edge function
+    console.log(`Checking if bucket ${bucketName} exists...`);
+    
     const { data: buckets, error: listError } = await supabaseExtended.storage.listBuckets();
     
     if (listError) {
@@ -17,10 +15,10 @@ export const createStorageBucketIfNotExists = async (bucketName: string, options
     }
 
     const bucketExists = buckets?.some(bucket => bucket.name === bucketName);
-    if (!bucketExists) {
-      console.log(`Bucket ${bucketName} does not exist yet. It will be created by the edge function.`);
-    } else {
+    if (bucketExists) {
       console.log(`Bucket ${bucketName} already exists.`);
+    } else {
+      console.log(`Bucket ${bucketName} not found. Will attempt to create via edge function.`);
     }
   } catch (error) {
     console.error(`Error setting up ${bucketName} storage bucket:`, error);
@@ -48,6 +46,9 @@ export const initializeStorageBuckets = async () => {
   try {
     // Use the extended client to correctly invoke the function with authentication
     console.log("Setting up storage buckets via edge function...");
+    
+    // Ensure storage.objects table has RLS enabled
+    console.log("Calling setup-storage-policies edge function...");
     const { data, error } = await supabaseExtended.functions.invoke('setup-storage-policies', {
       method: 'POST',
       headers: {
@@ -70,4 +71,5 @@ export const initializeStorageBuckets = async () => {
 };
 
 // Initialize buckets if this module is imported directly
-initializeStorageBuckets().catch(console.error);
+// initializeStorageBuckets().catch(console.error);
+// Do not auto-initialize here, we'll do it in a controlled sequence

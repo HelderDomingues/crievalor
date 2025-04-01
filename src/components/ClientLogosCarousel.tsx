@@ -21,24 +21,30 @@ const fallbackLogos = [{
   name: "Cliente 5",
   logo: "/placeholder.svg"
 }];
+
 const ClientLogosCarousel = () => {
   const [logos, setLogos] = useState(fallbackLogos);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [api, setApi] = useState<any>(null);
   const intervalRef = useRef<number | null>(null);
+
   useEffect(() => {
     const getLogos = async () => {
       try {
         setIsLoading(true);
+        
+        // Attempt to fetch logos
         const fetchedLogos = await fetchClientLogos();
         console.log("Logos obtidos no componente:", fetchedLogos);
+        
         if (fetchedLogos && fetchedLogos.length > 0) {
           setLogos(fetchedLogos);
         } else {
           console.warn("Nenhum logo encontrado, usando fallbacks");
           // Keep using fallback logos
         }
+        
         setError(null);
       } catch (err) {
         console.error("Erro ao buscar logos dos clientes:", err);
@@ -48,6 +54,7 @@ const ClientLogosCarousel = () => {
         setIsLoading(false);
       }
     };
+    
     getLogos();
   }, []);
 
@@ -68,46 +75,69 @@ const ClientLogosCarousel = () => {
         }
       }, 5000);
     }
+    
     return () => {
       if (intervalRef.current) {
         window.clearInterval(intervalRef.current);
       }
     };
   }, [api]);
+
   const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>, index: number) => {
     console.error(`Erro ao carregar imagem do logo ${index}`);
     e.currentTarget.src = "/placeholder.svg";
   };
+
   if (isLoading) {
-    return <div className="py-12 bg-background/50 relative overflow-hidden">
+    return (
+      <div className="py-12 bg-background/50 relative overflow-hidden">
         <div className="container mx-auto px-4 text-center">
           <h3 className="text-xl md:text-2xl font-medium mb-8">
             Empresas que confiam em nossa estratégia
           </h3>
           <div className="flex justify-center space-x-8">
-            {[1, 2, 3, 4, 5].map(item => <Skeleton key={item} className="h-16 w-24 rounded-md" />)}
+            {[1, 2, 3, 4, 5].map(item => (
+              <Skeleton key={item} className="h-16 w-24 rounded-md" />
+            ))}
           </div>
         </div>
-      </div>;
+      </div>
+    );
   }
-  return <div className="py-12 bg-background/50 relative overflow-hidden">
+
+  return (
+    <div className="py-12 bg-background/50 relative overflow-hidden">
       <div className="container mx-auto px-4">
         <h3 className="text-xl md:text-2xl font-medium text-center mb-8">
           Empresas que confiam em nossa estratégia
         </h3>
         
         <div className="relative mx-10"> {/* Espaço para as setas de navegação */}
-          <Carousel setApi={setApi} opts={{
-          align: "start",
-          loop: true,
-          dragFree: true
-        }} className="w-full">
+          <Carousel 
+            setApi={setApi} 
+            opts={{
+              align: "start",
+              loop: true,
+              dragFree: true
+            }} 
+            className="w-full"
+          >
             <CarouselContent className="py-4">
-              {logos.map((client, index) => <CarouselItem key={index} className="basis-1/3 md:basis-1/4 lg:basis-1/5 pl-4 px-[30px]">
+              {logos.map((client, index) => (
+                <CarouselItem 
+                  key={index} 
+                  className="basis-1/3 md:basis-1/4 lg:basis-1/5 pl-4 px-[30px]"
+                >
                   <div className="h-20 flex items-center justify-center p-2 transition-all duration-300 hover:scale-105 border border-transparent hover:border-gray-200 rounded-md">
-                    <img src={client.logo} alt={`${client.name} logo`} onError={e => handleImageError(e, index)} className="max-h-full max-w-full object-scale-down" />
+                    <img 
+                      src={client.logo} 
+                      alt={`${client.name} logo`} 
+                      onError={e => handleImageError(e, index)} 
+                      className="max-h-full max-w-full object-scale-down" 
+                    />
                   </div>
-                </CarouselItem>)}
+                </CarouselItem>
+              ))}
             </CarouselContent>
             
             {/* Setas de navegação visíveis */}
@@ -116,10 +146,14 @@ const ClientLogosCarousel = () => {
           </Carousel>
         </div>
         
-        {error && <div className="text-red-500 text-center mt-4">
+        {error && (
+          <div className="text-red-500 text-center mt-4">
             {error}
-          </div>}
+          </div>
+        )}
       </div>
-    </div>;
+    </div>
+  );
 };
+
 export default ClientLogosCarousel;

@@ -17,7 +17,11 @@ export const fetchClientLogos = async (): Promise<ClientLogo[]> => {
     // Get all files from the clientlogos bucket
     const { data: files, error } = await supabaseExtended.storage
       .from('clientlogos')
-      .list();
+      .list('', {
+        limit: 100,
+        offset: 0,
+        sortBy: { column: 'name', order: 'asc' }
+      });
     
     if (error) {
       console.error("Erro ao listar arquivos:", error);
@@ -88,6 +92,14 @@ export const uploadClientLogo = async (file: File, name: string): Promise<{url: 
     const sanitizedName = name.trim().replace(/\s+/g, '_').toLowerCase();
     const fileExt = file.name.split('.').pop();
     const fileName = `${sanitizedName}.${fileExt}`;
+    
+    // Make sure the bucket exists
+    await supabaseExtended.functions.invoke('setup-storage-policies', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
     
     // Upload file to clientlogos bucket
     const { error: uploadError } = await supabaseExtended.storage
