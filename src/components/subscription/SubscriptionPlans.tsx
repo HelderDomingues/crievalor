@@ -1,7 +1,7 @@
 
 import React from "react";
 import SubscriptionPlan from "./SubscriptionPlan";
-import { PLANS } from "@/services/subscriptionService";
+import { PLANS } from "@/services/plansService";
 
 interface SubscriptionPlansProps {
   isCheckingOut: boolean;
@@ -20,46 +20,81 @@ const SubscriptionPlans = ({
 }: SubscriptionPlansProps) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-      {Object.values(PLANS).map((plan) => {
-        // Show monthly installment price (12x) as main price
-        let priceLabel: string | undefined = undefined;
-        
-        if ('customPrice' in plan && plan.customPrice) {
-          priceLabel = "Sob Consulta";
-        } else if ('price' in plan) {
-          // Monthly installment price (12x)
-          const installmentPrice = plan.price / 12;
-          priceLabel = `R$ ${installmentPrice.toFixed(2).replace('.', ',')}`;
-        }
-        
-        // Determine base price for calculations
-        let basePrice: number | undefined = undefined;
-        if ('price' in plan) {
-          basePrice = plan.price;
-        }
-        
-        // Corporate plan needs special handling for the button label
-        const buttonLabel = ('customPrice' in plan && plan.customPrice) ? 
-          "Consultar" : 
-          "Assinar";
-        
-        return (
-          <SubscriptionPlan
-            key={plan.id}
-            id={plan.id}
-            name={plan.name}
-            price={priceLabel}
-            basePrice={basePrice}
-            features={plan.features}
-            isCurrentPlan={isPlanCurrent(plan.id)}
-            isCheckingOut={isCheckingOut}
-            onSubscribe={onSubscribe}
-            installments={12} // Set default to 12
-            buttonLabel={buttonLabel}
-            priceFormat="mensais em 12x"
-          />
-        );
-      })}
+      {/* Plano Essencial */}
+      <SubscriptionPlan
+        id="basic_plan"
+        name="Plano Essencial"
+        price="R$ 14,99"
+        basePrice={2158.80}
+        features={[
+          "Plano Estratégico simplificado",
+          "01 Sessão on line (até 50 min) com consultor",
+          "01 revisão do seu planejamento dentro do prazo de 06 meses",
+          "Acesso à comunidade exclusiva"
+        ]}
+        isCurrentPlan={isPlanCurrent("basic_plan")}
+        isCheckingOut={isCheckingOut}
+        onSubscribe={onSubscribe}
+        buttonLabel="Assinar"
+        priceFormat="mensais em 12x"
+      />
+      
+      {/* Plano Profissional */}
+      <SubscriptionPlan
+        id="pro_plan"
+        name="Plano Profissional"
+        price="R$ 33,32"
+        basePrice={4798.80}
+        features={[
+          "Plano Estratégico Aprofundado com Relatórios Completos",
+          "02 Sessões on line (até 50 min) com consultor",
+          "02 revisões do seu planejamento dentro do prazo de 06 meses",
+          "Acesso à comunidade exclusiva"
+        ]}
+        isCurrentPlan={isPlanCurrent("pro_plan")}
+        isCheckingOut={isCheckingOut}
+        onSubscribe={onSubscribe}
+        buttonLabel="Assinar"
+        priceFormat="mensais em 12x"
+      />
+      
+      {/* Plano Empresarial */}
+      <SubscriptionPlan
+        id="enterprise_plan"
+        name="Plano Empresarial"
+        price="R$ 66,66"
+        basePrice={9598.80}
+        features={[
+          "Plano Estratégico Aprofundado",
+          "04 Sessões de mentoria avançada on line",
+          "02 revisões do seu planejamento dentro do prazo de 06 meses",
+          "Análises de cenário aprofundadas",
+          "Acesso à comunidade exclusiva"
+        ]}
+        isCurrentPlan={isPlanCurrent("enterprise_plan")}
+        isCheckingOut={isCheckingOut}
+        onSubscribe={onSubscribe}
+        buttonLabel="Assinar"
+        priceFormat="mensais em 12x"
+      />
+      
+      {/* Plano Corporativo */}
+      <SubscriptionPlan
+        id="corporate_plan"
+        name="Plano Corporativo"
+        customPrice="Sob Consulta"
+        features={[
+          "Solução personalizada para grandes corporações",
+          "Consultoria dedicada",
+          "Sessões de mentoria para equipe completa",
+          "Implementação assistida"
+        ]}
+        isCurrentPlan={isPlanCurrent("corporate_plan")}
+        isCheckingOut={isCheckingOut}
+        onSubscribe={onSubscribe}
+        buttonLabel="Consultar"
+        priceFormat="mensais em 12x"
+      />
     </div>
   );
 };

@@ -3,13 +3,14 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, BadgePercent } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { AuroraButton } from "@/components/ui/aurora-button";
 
 interface SubscriptionPlanProps {
   id: string;
   name: string;
   price?: string;
+  customPrice?: string;
   basePrice?: number;
   features: string[];
   onSubscribe: (planId: string) => Promise<void>;
@@ -24,6 +25,7 @@ const SubscriptionPlan = ({
   id,
   name,
   price,
+  customPrice,
   features,
   basePrice,
   isCurrentPlan = false,
@@ -37,8 +39,18 @@ const SubscriptionPlan = ({
     onSubscribe(id);
   };
 
+  const isPopular = id === "pro_plan"; // Set the Pro Plan as the popular plan
+
   return (
-    <Card className="flex h-full flex-col transition-all duration-300 hover:shadow-md bg-card text-card-foreground border-border">
+    <Card className={`flex h-full flex-col transition-all duration-300 hover:shadow-md bg-card text-card-foreground ${isPopular ? "border-primary shadow-lg relative" : "border-border"}`}>
+      {isPopular && (
+        <div className="absolute top-0 left-0 w-full flex justify-center">
+          <Badge variant="default" className="transform -translate-y-1/2">
+            Mais Vendido
+          </Badge>
+        </div>
+      )}
+      
       <CardHeader className="pb-2">
         <div className="flex flex-wrap gap-2">
           {isCurrentPlan && (
@@ -61,9 +73,9 @@ const SubscriptionPlan = ({
           </div>
         )}
         
-        {!price && id === 'corporate_plan' && (
-          <div className="text-lg font-medium mt-4">
-            Condições sob consulta
+        {customPrice && (
+          <div className="text-3xl font-bold mt-4">
+            {customPrice}
           </div>
         )}
       </CardHeader>
