@@ -25,56 +25,10 @@ export const fetchClientLogos = async (): Promise<ClientLogo[]> => {
       throw new Error(`Failed to fetch client logos: ${error.message}`);
     }
 
-    // Debug logs para diagnóstico
     console.log("Client logos data from DB:", data);
-
-    // Processar cada logo para obter a URL pública
-    const processedLogos = await Promise.all(
-      (data || []).map(async (logo) => {
-        try {
-          // Verificar se o logo.logo_path existe
-          if (!logo.logo) {
-            console.warn(`Logo ${logo.id} has no logo defined`);
-            return {
-              ...logo,
-              logo: "/placeholder.svg" // Placeholder para logos sem imagem
-            };
-          }
-
-          // For logos that are already full URLs, just return them
-          if (logo.logo.startsWith('http')) {
-            return logo;
-          }
-
-          // Get public URL for logo stored in Supabase
-          const { data: publicUrl } = supabaseExtended.storage
-            .from("clientlogos")
-            .getPublicUrl(logo.logo);
-
-          console.log(`Logo ${logo.id} public URL:`, publicUrl);
-
-          // Add a cache-busting parameter to avoid browser caching
-          const cacheBuster = `?cache=${Date.now()}`;
-          const finalUrl = publicUrl.publicUrl + cacheBuster;
-
-          return {
-            id: logo.id,
-            name: logo.name,
-            logo: finalUrl,
-            created_at: logo.created_at
-          };
-        } catch (logoError) {
-          console.error(`Error processing logo ${logo.id}:`, logoError);
-          return {
-            ...logo,
-            logo: "/placeholder.svg" // Fallback para erro
-          };
-        }
-      })
-    );
-
-    console.log("Processed logos:", processedLogos);
-    return processedLogos;
+    
+    // With direct URLs, we don't need to process them further
+    return data || [];
   } catch (error) {
     console.error("Error in fetchClientLogos:", error);
     throw error;
@@ -82,45 +36,23 @@ export const fetchClientLogos = async (): Promise<ClientLogo[]> => {
 };
 
 /**
- * Uploads a client logo image to storage and creates a record in the database
+ * Adds a new client logo to the database
+ * @param name Client name
+ * @param logoUrl URL of the logo (external URL)
  */
-export const addClientLogo = async (name: string, file: File): Promise<void> => {
+export const addClientLogo = async (name: string, logoUrl: string): Promise<void> => {
   try {
-    // Gerar um nome de arquivo único para evitar colisões
-    const fileExtension = file.name.split('.').pop();
-    const fileName = `${Date.now()}-${Math.random().toString(36).substring(2, 9)}.${fileExtension}`;
-    const filePath = `${fileName}`;
-
-    // Upload do arquivo para o bucket 'clientlogos'
-    const { error: uploadError } = await supabaseExtended.storage
-      .from('clientlogos')
-      .upload(filePath, file, {
-        cacheControl: 'no-cache', // Prevent caching
-        upsert: false
-      });
-
-    if (uploadError) {
-      console.error("Error uploading logo:", uploadError);
-      throw new Error(`Failed to upload logo: ${uploadError.message}`);
-    }
-
-    // Inserir registro no banco de dados
-    const { error: insertError } = await supabaseExtended
+    // Insert record directly with the external URL
+    const { error } = await supabaseExtended
       .from('client_logos')
       .insert({
         name,
-        logo: filePath
+        logo: logoUrl
       });
 
-    if (insertError) {
-      console.error("Error inserting logo record:", insertError);
-      
-      // Tentar remover o arquivo já enviado em caso de erro
-      await supabaseExtended.storage
-        .from('clientlogos')
-        .remove([filePath]);
-        
-      throw new Error(`Failed to create logo record: ${insertError.message}`);
+    if (error) {
+      console.error("Error inserting logo record:", error);
+      throw new Error(`Failed to create logo record: ${error.message}`);
     }
   } catch (error) {
     console.error("Error in addClientLogo:", error);
@@ -129,11 +61,25 @@ export const addClientLogo = async (name: string, file: File): Promise<void> => 
 };
 
 /**
- * Deletes a client logo from storage and database
+ * Add a client logo using a file upload (will be converted to addClientLogo with URL)
+ * For backward compatibility
  */
-export const deleteClientLogo = async (id: string, logoPath: string): Promise<void> => {
+export const addClientLogoWithFile = async (name: string, file: File): Promise<void> => {
   try {
-    // Remover o registro do banco de dados
+    // For now, we'll just throw an error as we're moving to external URLs
+    throw new Error("File upload is no longer supported for logos. Please use external URLs.");
+  } catch (error) {
+    console.error("Error in addClientLogoWithFile:", error);
+    throw error;
+  }
+};
+
+/**
+ * Deletes a client logo from the database
+ */
+export const deleteClientLogo = async (id: string): Promise<void> => {
+  try {
+    // Remove the record from the database
     const { error: deleteError } = await supabaseExtended
       .from('client_logos')
       .delete()
@@ -143,19 +89,35 @@ export const deleteClientLogo = async (id: string, logoPath: string): Promise<vo
       console.error("Error deleting logo record:", deleteError);
       throw new Error(`Failed to delete logo record: ${deleteError.message}`);
     }
-
-    // Se tiver um caminho de arquivo, remover do storage
-    if (logoPath && !logoPath.startsWith('http')) {
-      const { error: storageError } = await supabaseExtended.storage
-        .from('clientlogos')
-        .remove([logoPath]);
-
-      if (storageError) {
-        console.warn("Error removing logo file, but database record was deleted:", storageError);
-      }
-    }
   } catch (error) {
     console.error("Error in deleteClientLogo:", error);
+    throw error;
+  }
+};
+
+/**
+ * Adds multiple client logos at once (useful for initial setup)
+ * @param logos Array of {name, logoUrl} objects
+ */
+export const addMultipleClientLogos = async (
+  logos: Array<{ name: string; logoUrl: string }>
+): Promise<void> => {
+  try {
+    const records = logos.map(logo => ({
+      name: logo.name,
+      logo: logo.logoUrl
+    }));
+
+    const { error } = await supabaseExtended
+      .from('client_logos')
+      .insert(records);
+
+    if (error) {
+      console.error("Error inserting multiple logo records:", error);
+      throw new Error(`Failed to create logo records: ${error.message}`);
+    }
+  } catch (error) {
+    console.error("Error in addMultipleClientLogos:", error);
     throw error;
   }
 };

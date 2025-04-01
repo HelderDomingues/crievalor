@@ -5,23 +5,29 @@ import { fetchClientLogos } from "@/services/clientLogosService";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 
-// Fallback logos in case of error
-const fallbackLogos = [{
-  name: "Cliente 1",
-  logo: "/placeholder.svg"
-}, {
-  name: "Cliente 2",
-  logo: "/placeholder.svg"
-}, {
-  name: "Cliente 3",
-  logo: "/placeholder.svg"
-}, {
-  name: "Cliente 4",
-  logo: "/placeholder.svg"
-}, {
-  name: "Cliente 5",
-  logo: "/placeholder.svg"
-}];
+// Wix-hosted logos as fallbacks in case the DB fails
+const fallbackLogos = [
+  {
+    name: "Cliente 1",
+    logo: "https://static.wixstatic.com/media/783feb_5c9ff869c87f45a0ae9a1913ba11671d~mv2.png"
+  },
+  {
+    name: "Cliente 2",
+    logo: "https://static.wixstatic.com/media/783feb_b67b99dff06b4cd4b4c3f4e97f254a1c~mv2.png"
+  },
+  {
+    name: "Cliente 3",
+    logo: "https://static.wixstatic.com/media/783feb_1ba035c02bef475eb478ae3b97442317~mv2.png"
+  },
+  {
+    name: "Cliente 4",
+    logo: "https://static.wixstatic.com/media/783feb_ea430c1167fa4139b4d7ff59c8eb25fc~mv2.png"
+  },
+  {
+    name: "Cliente 5",
+    logo: "https://static.wixstatic.com/media/783feb_18e1bf2634294ef2875a05c90eeb9ed1~mv2.png"
+  }
+];
 
 const ClientLogosCarousel = () => {
   const [logos, setLogos] = useState(fallbackLogos);
@@ -91,7 +97,8 @@ const ClientLogosCarousel = () => {
 
   const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>, index: number) => {
     console.error(`Erro ao carregar imagem do logo ${index}`);
-    e.currentTarget.src = "/placeholder.svg";
+    // If an image fails to load, use the first fallback instead
+    e.currentTarget.src = fallbackLogos[0].logo;
   };
 
   if (isLoading) {
@@ -140,6 +147,7 @@ const ClientLogosCarousel = () => {
                       alt={`${client.name} logo`} 
                       onError={e => handleImageError(e, index)} 
                       className="max-h-full max-w-full object-scale-down" 
+                      loading="lazy"
                     />
                   </div>
                 </CarouselItem>
