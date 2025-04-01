@@ -176,8 +176,7 @@ export const plans: PricingPlan[] = [
       "Para empresas com equipes de 11 a 50 pessoas",
       "04 Sessões de mentoria avançada on line (até 50 min) com consultor para orientações e tira dúvidas",
       "02 revisões do seu planejamento dentro do prazo de 06 meses",
-      "Acesso à comunidade exclusiva",
-      "EXTRA: Análises de cenário aprofundadas por IA por setor da organização (Financeiro/ Marketing e Gente (RH)), a cada 02 meses"
+      "Acesso à comunidade exclusiva"
     ],
     documents: [
       documentTypes.planoEstrategicoAprofundado,
@@ -201,7 +200,8 @@ export const plans: PricingPlan[] = [
     features: [
       "Para empresas com equipes acima de 51 pessoas na organização",
       "Consultoria dedicada",
-      "Sessões de mentoria para equipe completa", 
+      "Plano Estratégico Aprofundado",
+      "Mentorias especializadas para equipes", 
       "Implementação assistida"
     ],
     // Removing documents array for Corporate plan
