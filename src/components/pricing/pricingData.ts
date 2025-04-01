@@ -116,7 +116,7 @@ export const plans: PricingPlan[] = [
     monthlyPrice: "12 x de R$ 179,90",
     annualPrice: "R$ 1.942,92",
     annualDiscount: true,
-    description: "Combinação ideal de expertise humana e IA para empreendedores iniciando sua jornada estratégica. Desenvolvido para impulsionar negócios em fase inicial com orientações essenciais e objetivas para crescimento sustentável.",
+    description: "Combinação ideal de expertise humana e IA para empreendedores iniciando sua jornada estratégica",
     features: [
       "(Para empresas com equipes de 1 a 5 pessoas)",
       "01 Sessão on line (até 50 min) com consultor para orientações e tira dúvidas",
@@ -143,7 +143,7 @@ export const plans: PricingPlan[] = [
     monthlyPrice: "12 x de R$ 399,90",
     annualPrice: "R$ 4.318,92",
     annualDiscount: true,
-    description: "Para empreendedores em crescimento que precisam de estratégias mais estruturadas e acompanhamento. Inclui análises aprofundadas do mercado e concorrência, além de consultoria personalizada para superar desafios específicos do seu negócio.",
+    description: "Para empreendedores em crescimento que precisam de estratégias mais estruturadas e acompanhamento",
     features: [
       "(Para empresas com equipes de 6 a 10 pessoas)",
       "02 Sessões on line (até 50 min) com consultor para orientações e tira dúvidas",
@@ -171,7 +171,7 @@ export const plans: PricingPlan[] = [
     monthlyPrice: "12 x de R$ 799,90",
     annualPrice: "R$ 8.638,92",
     annualDiscount: true,
-    description: "Solução completa para empresas que buscam excelência estratégica e implementação assistida. Oferece acompanhamento avançado com análises periódicas de cenários por setor e mentoria especializada para maximizar resultados em todos os departamentos.",
+    description: "Solução completa para empresas que buscam excelência estratégica e implementação assistida",
     features: [
       "(Para empresas com equipes de 11 a 50 pessoas)",
       "04 Sessões de mentoria avançada on line (até 50 min) com consultor para orientações e tira dúvidas",
@@ -197,7 +197,7 @@ export const plans: PricingPlan[] = [
   {
     id: "corporate_plan",
     name: "Corporativo",
-    description: "Solução totalmente personalizada para empresas e corporações com necessidades específicas. Inclui consultoria dedicada, mentoria para equipes completas, implementação assistida e desenvolvimento de estratégias customizadas para cada departamento.",
+    description: "Solução totalmente personalizada para empresas e corporações com necessidades específicas",
     features: [
       "(Para empresas com equipes acima de 51 pessoas na organização)",
       "Consultoria dedicada",

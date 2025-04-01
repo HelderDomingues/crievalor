@@ -18,7 +18,7 @@ const PricingGrid = ({
 }: PricingGridProps) => {
   return (
     <div className="flex justify-center w-full">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 max-w-7xl mx-auto">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
         {plans.map((plan) => (
           <PricingCard 
             key={plan.id} 

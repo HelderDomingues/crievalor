@@ -69,9 +69,9 @@ const PricingCard = ({
     } else if (plan.comingSoon) {
       return "Em Breve";
     } else if (plan.id === "corporate_plan") {
-      return "Falar com um consultor";
+      return "Consultar via WhatsApp";
     } else {
-      return "Quero este plano";
+      return plan.cta || "Quero este plano";
     }
   };
 
@@ -79,15 +79,12 @@ const PricingCard = ({
     if (plan.comingSoon) {
       return null;
     } else if (plan.customPrice) {
-      return (
-        <div className="text-2xl font-semibold mt-2">
-          Preços e Condições sob consulta
-        </div>
-      );
+      return <div className="text-lg font-medium">Sob Consulta</div>;
     } else if (plan.monthlyPrice || plan.annualPrice) {
       return <>
-          {plan.monthlyPrice && <div className="flex items-baseline mt-2">
+          {plan.monthlyPrice && <div className="flex items-baseline">
               <span className="text-3xl font-bold">{plan.monthlyPrice}</span>
+              
             </div>}
           
           {plan.annualPrice && <div className="mt-1 space-y-1">
@@ -112,38 +109,31 @@ const PricingCard = ({
   const teamSizeRecommendation = plan.features.find(feature => feature.startsWith("(Para empresas"));
   const actualFeatures = plan.features.filter(feature => !feature.startsWith("(Para empresas"));
 
-  return (
-    <Card className={`flex h-full flex-col transition-all duration-300 hover:shadow-md ${plan.popular ? "border-primary shadow-lg" : ""}`}>
-      <CardHeader className="pb-2">
-        {plan.popular && !plan.comingSoon && (
-          <div className="flex justify-start">
-            <Badge variant="default" className="self-start mb-1">Mais Vendido</Badge>
-          </div>
-        )}
+  return <Card className={`flex h-full flex-col transition-all duration-300 hover:shadow-md ${plan.popular ? "border-primary shadow-lg" : ""}`}>
+      <CardHeader className="pb-2 my-[15px] py-[5px]">
+        <div className="flex flex-wrap gap-2">
+          {plan.popular && !plan.comingSoon && <Badge variant="default" className="self-start">Mais Vendido</Badge>}
+          {plan.comingSoon && <Badge variant="outline" className="self-start">Em Breve</Badge>}
+          {isCurrent && !plan.comingSoon && <Badge variant="secondary" className="self-start">Plano Atual</Badge>}
+        </div>
         
-        <h3 className={`font-bold text-3xl ${plan.popular ? "" : "mt-2"}`}>{plan.name}</h3>
+        <h3 className="mt-2 font-bold text-3xl">{plan.name}</h3>
         
-        {teamSizeRecommendation && (
-          <div className="text-xs text-muted-foreground mt-0.5">
+        {teamSizeRecommendation && <div className="text-xs text-muted-foreground mt-0.5">
             {teamSizeRecommendation}
-          </div>
-        )}
+          </div>}
         
-        <div className="mt-2 mb-2">
+        <div className="mt-2">
           {renderPriceInfo()}
           {plan.comingSoon && <div className="text-lg font-medium text-muted-foreground">Em Breve</div>}
         </div>
+        
+        {plan.description && <p className="mt-2 text-sm text-muted-foreground my-[12px]">
+            {plan.description}
+          </p>}
       </CardHeader>
       
-      {plan.description && (
-        <div className="px-6 h-[120px]">
-          <p className="text-sm text-muted-foreground">
-            {plan.description}
-          </p>
-        </div>
-      )}
-      
-      <div className="px-6 py-4 mt-auto">
+      <div className="px-6 pb-4 my-[10px]">
         {plan.popular ? (
           <AuroraButton 
             onClick={handleSubscribe} 
@@ -165,36 +155,20 @@ const PricingCard = ({
         )}
       </div>
       
-      {plan.id === "corporate_plan" ? (
-        <CardContent className="border-t border-border pt-4 mt-2">
-          <div className="mb-6">
-            <h4 className="mb-3 font-bold">
-              Benefícios Incluídos neste plano
-            </h4>
-            <ul className="space-y-3">
-              {actualFeatures.map((feature, index) => (
-                <li key={index} className="flex items-start text-sm">
-                  <span className="mr-2 text-green-500">✓</span>
-                  {feature}
-                </li>
-              ))}
-            </ul>
-          </div>
-        </CardContent>
-      ) : (
-        <CardContent className="border-t border-border pt-4 mt-2">
-          <div className="mb-6">
-            <h4 className="mb-3 font-bold">
-              Documentos Incluídos
-            </h4>
-            {plan.documents && plan.documents.length > 0 && (
-              <PlanDocuments documents={plan.documents} />
-            )}
-          </div>
-        </CardContent>
-      )}
-    </Card>
-  );
+      <CardContent className="flex-grow pt-0 my-[10px]">
+        {plan.id !== "corporate_plan" && plan.documents && plan.documents.length > 0 && <PlanDocuments documents={plan.documents} />}
+        
+        <div>
+          <h4 className="mb-3 border-b border-border pb-2 text-sm font-bold">Benefícios Incluídos neste plano</h4>
+          <ul className="space-y-3">
+            {actualFeatures.map((feature, index) => <li key={index} className="flex items-start text-sm">
+                <span className="mr-2 text-green-500">✓</span>
+                {feature}
+              </li>)}
+          </ul>
+        </div>
+      </CardContent>
+    </Card>;
 };
 
 export default PricingCard;
