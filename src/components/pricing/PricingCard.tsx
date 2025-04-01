@@ -109,10 +109,18 @@ const PricingCard = ({
   const teamSizeRecommendation = plan.features.find(feature => feature.startsWith("(Para empresas"));
   const actualFeatures = plan.features.filter(feature => !feature.startsWith("(Para empresas"));
 
-  return <Card className={`flex h-full flex-col transition-all duration-300 hover:shadow-md ${plan.popular ? "border-primary shadow-lg" : ""}`}>
+  return (
+    <Card className={`flex h-full flex-col transition-all duration-300 hover:shadow-md ${plan.popular ? "border-primary shadow-lg relative" : ""}`}>
+      {plan.popular && !plan.comingSoon && (
+        <div className="absolute top-0 left-0 w-full flex justify-center">
+          <Badge variant="default" className="transform -translate-y-1/2">
+            Mais Vendido
+          </Badge>
+        </div>
+      )}
+      
       <CardHeader className="pb-2 my-[15px] py-[5px]">
         <div className="flex flex-wrap gap-2">
-          {plan.popular && !plan.comingSoon && <Badge variant="default" className="self-start">Mais Vendido</Badge>}
           {plan.comingSoon && <Badge variant="outline" className="self-start">Em Breve</Badge>}
           {isCurrent && !plan.comingSoon && <Badge variant="secondary" className="self-start">Plano Atual</Badge>}
         </div>
@@ -168,7 +176,8 @@ const PricingCard = ({
           </ul>
         </div>
       </CardContent>
-    </Card>;
+    </Card>
+  );
 };
 
 export default PricingCard;
