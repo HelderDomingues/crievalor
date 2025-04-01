@@ -1,11 +1,8 @@
-
 import React from "react";
 import { Check, X, Zap, Clock, DollarSign, Lightbulb, CreditCard, PieChart } from "lucide-react";
 import { Button } from "@/components/ui/button";
-
 const MarComparisonSection = () => {
-  return (
-    <section className="py-20 relative bg-gradient-to-b from-secondary/20 to-background">
+  return <section className="py-20 relative bg-gradient-to-b from-secondary/20 to-background">
       {/* Background elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="blur-dot w-96 h-96 -top-48 right-0 opacity-5"></div>
@@ -82,7 +79,7 @@ const MarComparisonSection = () => {
                     <span className="font-semibold">Tempo de Entrega</span>
                   </div>
                   <div className="bg-primary/5 p-6 rounded-lg text-center h-full flex flex-col justify-center">
-                    <span className="font-bold text-lg">2-4 semanas</span>
+                    <span className="font-bold text-lg">Uma semana</span>
                     <p className="text-sm text-muted-foreground">Agilidade para implementação imediata</p>
                   </div>
                   <div className="bg-muted/30 p-6 rounded-lg text-center h-full flex flex-col justify-center">
@@ -204,8 +201,6 @@ const MarComparisonSection = () => {
           </p>
         </div>
       </div>
-    </section>
-  );
+    </section>;
 };
-
 export default MarComparisonSection;
