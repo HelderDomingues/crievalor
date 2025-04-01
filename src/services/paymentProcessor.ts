@@ -23,7 +23,7 @@ export interface PaymentResult {
   asaasCustomerId?: string;
 }
 
-// Static payment links to use directly
+// Static payment links to use directly - ensure these are correct Asaas links
 const STATIC_PAYMENT_LINKS = {
   basic_plan: {
     credit: "https://sandbox.asaas.com/c/vydr3n77kew5fd4s", 
@@ -78,7 +78,10 @@ export const paymentProcessor = {
         throw new Error(`Plano não encontrado: ${planId}`);
       }
       
-      const paymentLink = planLinks[paymentType as keyof typeof planLinks];
+      // Map payment type to the correct key in planLinks
+      const linkType = paymentType === "pix" ? "pix" : "credit";
+      const paymentLink = planLinks[linkType];
+      
       if (!paymentLink) {
         throw new Error(`Tipo de pagamento não suportado: ${paymentType}`);
       }

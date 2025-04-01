@@ -25,22 +25,6 @@ export const UnifiedCheckoutForm: React.FC<UnifiedCheckoutFormProps> = ({
 }) => {
   const [isFormVisible, setIsFormVisible] = useState(false);
   
-  // Links de pagamento estáticos para cada plano
-  const paymentLinks = {
-    basic_plan: {
-      credit_installment: "https://sandbox.asaas.com/c/vydr3n77kew5fd4s", 
-      cash_payment: "https://sandbox.asaas.com/c/fy15747uacorzbla"
-    },
-    pro_plan: {
-      credit_installment: "https://sandbox.asaas.com/c/4fcw2ezk4je61qon", 
-      cash_payment: "https://sandbox.asaas.com/c/pqnkhgvic7c25ufq"
-    },
-    enterprise_plan: {
-      credit_installment: "https://sandbox.asaas.com/c/z4vate6zwonrwoft", 
-      cash_payment: "https://sandbox.asaas.com/c/3pdwf46bs80mpk0s"
-    }
-  };
-  
   // Add animation of fade-in
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -57,17 +41,7 @@ export const UnifiedCheckoutForm: React.FC<UnifiedCheckoutFormProps> = ({
       return;
     }
     
-    // Get direct payment link based on plan and payment method
-    const planLinks = paymentLinks[plan?.id as keyof typeof paymentLinks];
-    if (planLinks) {
-      const paymentLink = planLinks[selectedPaymentMethod];
-      if (paymentLink) {
-        window.location.href = paymentLink;
-        return;
-      }
-    }
-    
-    // Fallback to the original method if no direct link is found
+    // Use the onPaymentRedirect callback to handle the payment process
     onPaymentRedirect();
   };
 

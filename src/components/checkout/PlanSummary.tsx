@@ -22,22 +22,6 @@ interface PlanSummaryProps {
   selectedPaymentType?: PaymentSelectionType;
 }
 
-// Static payment links mapping
-const STATIC_PAYMENT_LINKS = {
-  basic_plan: {
-    credit_installment: "https://sandbox.asaas.com/c/vydr3n77kew5fd4s", 
-    cash_payment: "https://sandbox.asaas.com/c/fy15747uacorzbla"
-  },
-  pro_plan: {
-    credit_installment: "https://sandbox.asaas.com/c/4fcw2ezk4je61qon", 
-    cash_payment: "https://sandbox.asaas.com/c/pqnkhgvic7c25ufq"
-  },
-  enterprise_plan: {
-    credit_installment: "https://sandbox.asaas.com/c/z4vate6zwonrwoft", 
-    cash_payment: "https://sandbox.asaas.com/c/3pdwf46bs80mpk0s"
-  }
-};
-
 const PlanSummary = ({
   planId,
   onContinue,
@@ -123,16 +107,8 @@ const PlanSummary = ({
         return;
       }
       
-      // Obter o link de pagamento estático correspondente
-      const planLinks = STATIC_PAYMENT_LINKS[planId as keyof typeof STATIC_PAYMENT_LINKS];
-      if (!planLinks) {
-        throw new Error(`Plano não encontrado: ${planId}`);
-      }
-      
-      const paymentLink = planLinks[paymentMethod];
-      if (!paymentLink) {
-        throw new Error(`Método de pagamento não suportado: ${paymentMethod}`);
-      }
+      // Mapear o método de pagamento para o tipo esperado pelo paymentProcessor
+      const paymentType: PaymentType = paymentMethod === "credit_installment" ? "credit" : "pix";
       
       // Armazenar informações para recuperação futura
       localStorage.setItem('paymentMethod', paymentMethod);
@@ -148,11 +124,23 @@ const PlanSummary = ({
         timestamp: Date.now(),
         planId: planId,
         paymentMethod,
-        processId,
-        paymentLink
+        processId
       };
       
       checkoutRecoveryService.saveRecoveryState(recoveryState);
+      
+      // Processar o pagamento usando o paymentProcessor
+      const result = await paymentProcessor.processPayment({
+        planId: planId,
+        installments: 12,  // Valor padrão para parcelamento
+        paymentType: paymentType,
+        processId,
+        recoveryState
+      });
+      
+      if (!result.success) {
+        throw new Error(result.error || "Falha ao processar pagamento");
+      }
       
       // Mostrar toast de processamento
       toast({
@@ -160,6 +148,9 @@ const PlanSummary = ({
         description: "Estamos preparando tudo para você...",
         variant: "default"
       });
+      
+      // Armazenar o estado do pagamento
+      paymentProcessor.storePaymentState(result, recoveryState);
       
       // Redirecionar para o link de pagamento
       toast({
@@ -170,7 +161,9 @@ const PlanSummary = ({
       
       // Adicionar uma pequena espera para a animação
       setTimeout(() => {
-        window.location.href = paymentLink;
+        if (result.url) {
+          window.location.href = result.url;
+        }
       }, 1000);
     } catch (error: any) {
       toast({

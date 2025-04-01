@@ -7,6 +7,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { paymentProcessor } from "@/services/paymentProcessor";
+import { useToast } from "@/hooks/use-toast";
 
 interface PaymentSelectionProps {
   onBack?: () => void;
@@ -27,6 +28,7 @@ const PaymentSelection: React.FC<PaymentSelectionProps> = ({
   planTotalPrice = 2158.80,
   planId = "basic_plan"
 }) => {
+  const { toast } = useToast();
   const creditFullPrice = planTotalPrice;
   const cashPrice = planTotalPrice * 0.9; // 10% de desconto
 
@@ -36,6 +38,13 @@ const PaymentSelection: React.FC<PaymentSelectionProps> = ({
     
     // Process the payment using the payment processor service
     try {
+      // Show processing toast
+      toast({
+        title: "Processando",
+        description: "Estamos preparando seu pagamento...",
+        variant: "default",
+      });
+
       const result = await paymentProcessor.processPayment({
         planId,
         paymentType: type,
@@ -46,15 +55,30 @@ const PaymentSelection: React.FC<PaymentSelectionProps> = ({
         // Store payment state in localStorage before redirecting
         paymentProcessor.storePaymentState(result, null);
         
-        // Redirect to payment URL
-        window.location.href = result.url;
+        // Show success toast
+        toast({
+          title: "Redirecionando",
+          description: "Você será redirecionado para a página de pagamento.",
+          variant: "default",
+        });
+
+        // Redirect to payment URL with a slight delay to show the toast
+        setTimeout(() => {
+          window.location.href = result.url as string;
+        }, 1000);
       } else {
-        console.error("Payment processing failed:", result.error);
-        // You could show an error toast here
+        toast({
+          title: "Erro",
+          description: result.error || "Ocorreu um erro ao processar o pagamento.",
+          variant: "destructive",
+        });
       }
-    } catch (error) {
-      console.error("Error processing payment:", error);
-      // You could show an error toast here
+    } catch (error: any) {
+      toast({
+        title: "Erro",
+        description: error.message || "Ocorreu um erro ao processar o pagamento.",
+        variant: "destructive",
+      });
     }
   };
 
