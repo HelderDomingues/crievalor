@@ -1,10 +1,13 @@
 
 import { supabaseExtended } from "@/integrations/supabase/extendedClient";
 
+/**
+ * Creates a storage bucket if it doesn't exist
+ * @param bucketName Name of the bucket to create
+ * @param options Optional configuration options
+ */
 export const createStorageBucketIfNotExists = async (bucketName: string, options = { public: true, fileSizeLimit: 10485760 }) => {
   try {
-    // For client-side usage, just check if the bucket exists
-    // The actual creation is handled by the edge function
     console.log(`Checking if bucket ${bucketName} exists...`);
     
     const { data: buckets, error: listError } = await supabaseExtended.storage.listBuckets();
@@ -29,14 +32,26 @@ export const createStorageBucketIfNotExists = async (bucketName: string, options
         console.log(`Bucket ${bucketName} updated to be public.`);
       }
     } else {
-      console.log(`Bucket ${bucketName} not found. Will attempt to create via edge function.`);
+      console.log(`Bucket ${bucketName} not found, attempting to create it.`);
+      const { error: createError } = await supabaseExtended.storage.createBucket(bucketName, {
+        public: options.public,
+        fileSizeLimit: options.fileSizeLimit
+      });
+      
+      if (createError) {
+        console.error(`Error creating bucket ${bucketName}: ${createError.message}`);
+      } else {
+        console.log(`Bucket ${bucketName} created successfully.`);
+      }
     }
   } catch (error) {
     console.error(`Error setting up ${bucketName} storage bucket:`, error);
   }
 };
 
-// Create the clientlogos bucket if it doesn't exist
+/**
+ * Create the clientlogos bucket if it doesn't exist
+ */
 export const createClientLogosBucketIfNotExists = async () => {
   return createStorageBucketIfNotExists('clientlogos', {
     public: true,
@@ -44,7 +59,9 @@ export const createClientLogosBucketIfNotExists = async () => {
   });
 };
 
-// Specific function for materials bucket for backward compatibility
+/**
+ * Create the materials bucket if it doesn't exist
+ */
 export const createMaterialsBucketIfNotExists = async () => {
   return createStorageBucketIfNotExists('materials', {
     public: true,
@@ -52,56 +69,21 @@ export const createMaterialsBucketIfNotExists = async () => {
   });
 };
 
-// Create required buckets when service is imported
+/**
+ * Initialize all required storage buckets and policies
+ */
 export const initializeStorageBuckets = async () => {
   try {
-    // First, manually create the buckets locally if they don't exist
-    // This is a fallback in case the edge function fails
-    try {
-      const { data: buckets, error: listError } = await supabaseExtended.storage.listBuckets();
-      
-      if (!listError) {
-        // Check if clientlogos bucket exists, create it if not
-        if (!buckets?.some(bucket => bucket.name === 'clientlogos')) {
-          const { error } = await supabaseExtended.storage.createBucket('clientlogos', {
-            public: true
-          });
-          
-          if (!error) {
-            console.log("Created clientlogos bucket manually");
-          }
-        } else {
-          // Update bucket to ensure it's public
-          await supabaseExtended.storage.updateBucket('clientlogos', {
-            public: true
-          });
-        }
-        
-        // Check if materials bucket exists, create it if not
-        if (!buckets?.some(bucket => bucket.name === 'materials')) {
-          const { error } = await supabaseExtended.storage.createBucket('materials', {
-            public: true
-          });
-          
-          if (!error) {
-            console.log("Created materials bucket manually");
-          }
-        } else {
-          // Update bucket to ensure it's public
-          await supabaseExtended.storage.updateBucket('materials', {
-            public: true
-          });
-        }
-      }
-    } catch (err) {
-      console.error("Error creating buckets manually:", err);
-    }
-
-    // Use the extended client to correctly invoke the function with authentication
-    console.log("Setting up storage buckets via edge function...");
+    console.log("Setting up storage buckets...");
     
-    // Try to call the setup-storage-policies function, but don't wait for it
-    // This is to avoid blocking the app initialization if the function fails
+    // Create required buckets
+    await createClientLogosBucketIfNotExists();
+    await createMaterialsBucketIfNotExists();
+    
+    // Setup storage policies via edge function
+    console.log("Setting up storage policies via edge function...");
+    
+    // Invoke the setup-storage-policies function without waiting
     supabaseExtended.functions.invoke('setup-storage-policies', {
       method: 'POST',
       headers: {
@@ -122,7 +104,3 @@ export const initializeStorageBuckets = async () => {
     console.error("Error initializing storage buckets:", err);
   }
 };
-
-// Initialize buckets if this module is imported directly
-// initializeStorageBuckets().catch(console.error);
-// Do not auto-initialize here, we'll do it in a controlled sequence

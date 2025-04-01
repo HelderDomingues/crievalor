@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from "react";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { fetchClientLogos } from "@/services/clientLogosService";
@@ -26,6 +25,18 @@ const fallbackLogos = [
   {
     name: "Cliente 5",
     logo: "https://static.wixstatic.com/media/783feb_18e1bf2634294ef2875a05c90eeb9ed1~mv2.png"
+  },
+  {
+    name: "Cliente 6",
+    logo: "https://static.wixstatic.com/media/783feb_913ab1cf3d824988bd6a3080105d29ff~mv2.png"
+  },
+  {
+    name: "Cliente 7",
+    logo: "https://static.wixstatic.com/media/783feb_fca6dddfe0fe402eb49b75a46638574a~mv2.png"
+  },
+  {
+    name: "Cliente 8",
+    logo: "https://static.wixstatic.com/media/783feb_df6fab1edd1f4510a4ed7a384be621f9~mv2.png"
   }
 ];
 
@@ -56,7 +67,6 @@ const ClientLogosCarousel = () => {
         setError(null);
       } catch (err) {
         console.error("Erro ao buscar logos dos clientes:", err);
-        toast.error("Não foi possível carregar os logos dos clientes");
         setError("Falha ao carregar logos dos clientes");
       } finally {
         setIsLoading(false);
@@ -125,7 +135,7 @@ const ClientLogosCarousel = () => {
           Empresas que confiam em nossa estratégia
         </h3>
         
-        <div className="relative mx-10"> {/* Espaço para as setas de navegação */}
+        <div className="relative mx-10">
           <Carousel 
             setApi={setApi} 
             opts={{
@@ -143,7 +153,7 @@ const ClientLogosCarousel = () => {
                 >
                   <div className="h-20 flex items-center justify-center p-2 transition-all duration-300 hover:scale-105 border border-transparent hover:border-gray-200 rounded-md">
                     <img 
-                      src={client.logo} 
+                      src={client.logo}
                       alt={`${client.name} logo`} 
                       onError={e => handleImageError(e, index)} 
                       className="max-h-full max-w-full object-scale-down" 
@@ -154,7 +164,6 @@ const ClientLogosCarousel = () => {
               ))}
             </CarouselContent>
             
-            {/* Setas de navegação visíveis */}
             <CarouselPrevious className="absolute -left-5 top-1/2 -translate-y-1/2 bg-white hover:bg-gray-100 shadow-md text-gray-800" />
             <CarouselNext className="absolute -right-5 top-1/2 -translate-y-1/2 bg-white hover:bg-gray-100 shadow-md text-base text-gray-800" />
           </Carousel>

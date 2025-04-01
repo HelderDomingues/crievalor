@@ -61,11 +61,7 @@ const ClientLogosAdmin = () => {
       
       // Only attempt to delete from database if it has a proper ID (not a temp ID)
       if (logoToRemove.id && !logoToRemove.id.startsWith('temp-')) {
-        // Extract the logo_path from URL if needed
-        const urlParts = logoToRemove.logo.split('/');
-        const fileName = urlParts[urlParts.length - 1].split('?')[0]; // Remove query params if any
-        
-        await deleteClientLogo(logoToRemove.id, fileName);
+        await deleteClientLogo(logoToRemove.id);
         toast.success("Logo removido com sucesso");
       }
       
@@ -113,11 +109,18 @@ const ClientLogosAdmin = () => {
           return;
         }
         
+        // Get URL from user instead of uploading the file
+        const logoUrl = prompt("Por favor, insira a URL da imagem (recomendamos hospedar em sites como Imgur, Wix, etc):");
+        if (!logoUrl) {
+          toast.error("URL não fornecida");
+          return;
+        }
+        
         // Sanitize the name for use as filename
         const logoName = logos[index].name.trim() || `cliente-${index + 1}`;
         
-        // Upload file using addClientLogo from the service
-        await addClientLogo(logoName, file);
+        // Upload using addClientLogo with URL instead of file
+        await addClientLogo(logoName, logoUrl);
         
         // Refresh the logos to get the updated list with the new logo
         await fetchLogos();
@@ -200,19 +203,19 @@ const ClientLogosAdmin = () => {
                   <Button 
                     variant="outline" 
                     onClick={() => handleUploadImage(index)}
-                    title="Fazer upload de imagem"
+                    title="Inserir URL da imagem"
                     disabled={uploading[index]}
                     className="w-full"
                   >
                     {uploading[index] ? (
                       <>
                         <Loader2 className="h-4 w-4 animate-spin mr-2" /> 
-                        Enviando...
+                        Processando...
                       </>
                     ) : (
                       <>
                         <Upload className="h-4 w-4 mr-2" /> 
-                        Fazer upload de logo
+                        Definir URL do logo
                       </>
                     )}
                   </Button>

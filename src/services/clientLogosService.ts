@@ -26,8 +26,6 @@ export const fetchClientLogos = async (): Promise<ClientLogo[]> => {
     }
 
     console.log("Client logos data from DB:", data);
-    
-    // With direct URLs, we don't need to process them further
     return data || [];
   } catch (error) {
     console.error("Error in fetchClientLogos:", error);
@@ -61,21 +59,8 @@ export const addClientLogo = async (name: string, logoUrl: string): Promise<void
 };
 
 /**
- * Add a client logo using a file upload (will be converted to addClientLogo with URL)
- * For backward compatibility
- */
-export const addClientLogoWithFile = async (name: string, file: File): Promise<void> => {
-  try {
-    // For now, we'll just throw an error as we're moving to external URLs
-    throw new Error("File upload is no longer supported for logos. Please use external URLs.");
-  } catch (error) {
-    console.error("Error in addClientLogoWithFile:", error);
-    throw error;
-  }
-};
-
-/**
  * Deletes a client logo from the database
+ * @param id ID of the logo to delete
  */
 export const deleteClientLogo = async (id: string): Promise<void> => {
   try {
