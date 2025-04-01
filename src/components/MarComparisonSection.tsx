@@ -1,8 +1,91 @@
+
 import React from "react";
 import { Check, X, Zap, Clock, DollarSign, Lightbulb, CreditCard, PieChart } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { useIsMobile } from "@/hooks/use-mobile";
+
 const MarComparisonSection = () => {
-  return <section className="py-20 relative bg-gradient-to-b from-secondary/20 to-background">
+  const isMobile = useIsMobile();
+  
+  // Data for the comparison table
+  const comparisonItems = [
+    {
+      icon: <Clock className="h-5 w-5 text-primary" />,
+      title: "Tempo de Entrega",
+      mar: {
+        value: "Uma semana",
+        description: "Agilidade para implementação imediata"
+      },
+      traditional: {
+        value: "3-6 meses",
+        description: "Processos longos e burocráticos"
+      }
+    },
+    {
+      icon: <DollarSign className="h-5 w-5 text-primary" />,
+      title: "Investimento",
+      mar: {
+        value: "A partir de R$ 179,90",
+        description: "Acessível para empresas de todos os portes"
+      },
+      traditional: {
+        value: "R$ 10.000 - R$ 100.000+",
+        description: "Custos elevados e pouco escaláveis"
+      }
+    },
+    {
+      icon: <Zap className="h-5 w-5 text-primary" />,
+      title: "Tecnologia",
+      mar: {
+        value: "IA + Expertise Humana",
+        description: "Combinação poderosa para insights precisos"
+      },
+      traditional: {
+        value: "Principalmente humana",
+        description: "Limitada pela capacidade manual"
+      }
+    },
+    {
+      icon: <Lightbulb className="h-5 w-5 text-primary" />,
+      title: "Personalização",
+      mar: {
+        value: "Altamente personalizado",
+        description: "Análise específica do seu negócio e mercado"
+      },
+      traditional: {
+        value: "Parcialmente padronizado",
+        description: "Modelos pré-formatados adaptados"
+      }
+    },
+    {
+      icon: <CreditCard className="h-5 w-5 text-primary" />,
+      title: "Pagamento",
+      mar: {
+        value: "Flexível",
+        description: "À vista com desconto ou parcelado"
+      },
+      traditional: {
+        value: "Contrato fixo",
+        description: "Geralmente com valores altos"
+      }
+    },
+    {
+      icon: <PieChart className="h-5 w-5 text-primary" />,
+      title: "Resultados",
+      mar: {
+        value: "Métricas claras e objetivas",
+        description: "KPIs específicos para seu negócio"
+      },
+      traditional: {
+        value: "Resultados subjetivos",
+        description: "Raramente com métricas específicas"
+      }
+    }
+  ];
+  
+  return (
+    <section className="py-20 relative bg-gradient-to-b from-secondary/20 to-background">
       {/* Background elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="blur-dot w-96 h-96 -top-48 right-0 opacity-5"></div>
@@ -57,120 +140,86 @@ const MarComparisonSection = () => {
           </div>
         </div>
         
-        {/* Comparison Table */}
-        <div className="relative mb-16 overflow-hidden">
-          <div className="overflow-x-auto">
-            <div className="min-w-[768px]">
-              <div className="grid grid-cols-3 gap-6 mb-8">
-                <div className="col-span-1"></div>
-                <div className="bg-primary/5 p-4 rounded-t-lg text-center">
-                  <h3 className="text-xl font-bold text-primary">MAR - Mapa para Alto Rendimento</h3>
-                </div>
-                <div className="bg-muted/30 p-4 rounded-t-lg text-center">
-                  <h3 className="text-xl font-bold text-muted-foreground">Consultoria Tradicional</h3>
-                </div>
+        {/* Comparison Table - Desktop version */}
+        {!isMobile && (
+          <div className="mb-16 rounded-lg overflow-hidden border border-border shadow-md">
+            <div className="grid grid-cols-3 gap-0">
+              <div className="p-4 bg-muted/20 flex items-center justify-center">
+                <span className="font-semibold text-lg text-center">Aspecto</span>
               </div>
-              
-              <div className="space-y-6">
-                {/* Tempo */}
-                <div className="grid grid-cols-3 gap-6 items-center">
-                  <div className="flex items-center gap-2">
-                    <Clock className="h-5 w-5 text-primary" />
-                    <span className="font-semibold">Tempo de Entrega</span>
-                  </div>
-                  <div className="bg-primary/5 p-6 rounded-lg text-center h-full flex flex-col justify-center">
-                    <span className="font-bold text-lg">Uma semana</span>
-                    <p className="text-sm text-muted-foreground">Agilidade para implementação imediata</p>
-                  </div>
-                  <div className="bg-muted/30 p-6 rounded-lg text-center h-full flex flex-col justify-center">
-                    <span className="font-bold text-lg">3-6 meses</span>
-                    <p className="text-sm text-muted-foreground">Processos longos e burocráticos</p>
-                  </div>
-                </div>
-                
-                {/* Custo */}
-                <div className="grid grid-cols-3 gap-6 items-center">
-                  <div className="flex items-center gap-2">
-                    <DollarSign className="h-5 w-5 text-primary" />
-                    <span className="font-semibold">Investimento</span>
-                  </div>
-                  <div className="bg-primary/5 p-6 rounded-lg text-center h-full flex flex-col justify-center">
-                    <span className="font-bold text-lg">A partir de R$ 179,90</span>
-                    <p className="text-sm text-muted-foreground">Acessível para empresas de todos os portes</p>
-                  </div>
-                  <div className="bg-muted/30 p-6 rounded-lg text-center h-full flex flex-col justify-center">
-                    <span className="font-bold text-lg">R$ 10.000 - R$ 100.000+</span>
-                    <p className="text-sm text-muted-foreground">Custos elevados e pouco escaláveis</p>
-                  </div>
-                </div>
-                
-                {/* Tecnologia */}
-                <div className="grid grid-cols-3 gap-6 items-center">
-                  <div className="flex items-center gap-2">
-                    <Zap className="h-5 w-5 text-primary" />
-                    <span className="font-semibold">Tecnologia</span>
-                  </div>
-                  <div className="bg-primary/5 p-6 rounded-lg text-center h-full flex flex-col justify-center">
-                    <span className="font-bold text-lg">IA + Expertise Humana</span>
-                    <p className="text-sm text-muted-foreground">Combinação poderosa para insights precisos</p>
-                  </div>
-                  <div className="bg-muted/30 p-6 rounded-lg text-center h-full flex flex-col justify-center">
-                    <span className="font-bold text-lg">Principalmente humana</span>
-                    <p className="text-sm text-muted-foreground">Limitada pela capacidade manual</p>
-                  </div>
-                </div>
-                
-                {/* Personalização */}
-                <div className="grid grid-cols-3 gap-6 items-center">
-                  <div className="flex items-center gap-2">
-                    <Lightbulb className="h-5 w-5 text-primary" />
-                    <span className="font-semibold">Personalização</span>
-                  </div>
-                  <div className="bg-primary/5 p-6 rounded-lg text-center h-full flex flex-col justify-center">
-                    <span className="font-bold text-lg">Altamente personalizado</span>
-                    <p className="text-sm text-muted-foreground">Análise específica do seu negócio e mercado</p>
-                  </div>
-                  <div className="bg-muted/30 p-6 rounded-lg text-center h-full flex flex-col justify-center">
-                    <span className="font-bold text-lg">Parcialmente padronizado</span>
-                    <p className="text-sm text-muted-foreground">Modelos pré-formatados adaptados</p>
-                  </div>
-                </div>
-                
-                {/* Flexibilidade */}
-                <div className="grid grid-cols-3 gap-6 items-center">
-                  <div className="flex items-center gap-2">
-                    <CreditCard className="h-5 w-5 text-primary" />
-                    <span className="font-semibold">Pagamento</span>
-                  </div>
-                  <div className="bg-primary/5 p-6 rounded-lg text-center h-full flex flex-col justify-center">
-                    <span className="font-bold text-lg">Flexível</span>
-                    <p className="text-sm text-muted-foreground">À vista com desconto ou parcelado</p>
-                  </div>
-                  <div className="bg-muted/30 p-6 rounded-lg text-center h-full flex flex-col justify-center">
-                    <span className="font-bold text-lg">Contrato fixo</span>
-                    <p className="text-sm text-muted-foreground">Geralmente com valores altos</p>
-                  </div>
-                </div>
-                
-                {/* Resultados */}
-                <div className="grid grid-cols-3 gap-6 items-center">
-                  <div className="flex items-center gap-2">
-                    <PieChart className="h-5 w-5 text-primary" />
-                    <span className="font-semibold">Resultados</span>
-                  </div>
-                  <div className="bg-primary/5 p-6 rounded-lg text-center h-full flex flex-col justify-center">
-                    <span className="font-bold text-lg">Métricas claras e objetivas</span>
-                    <p className="text-sm text-muted-foreground">KPIs específicos para seu negócio</p>
-                  </div>
-                  <div className="bg-muted/30 p-6 rounded-lg text-center h-full flex flex-col justify-center">
-                    <span className="font-bold text-lg">Resultados subjetivos</span>
-                    <p className="text-sm text-muted-foreground">Raramente com métricas específicas</p>
-                  </div>
-                </div>
+              <div className="p-4 bg-primary/10 text-center">
+                <h3 className="text-xl font-bold text-primary">MAR - Mapa para Alto Rendimento</h3>
+              </div>
+              <div className="p-4 bg-muted/30 text-center">
+                <h3 className="text-xl font-bold text-muted-foreground">Consultoria Tradicional</h3>
               </div>
             </div>
+            
+            <Table className="w-full">
+              <TableBody>
+                {comparisonItems.map((item, index) => (
+                  <TableRow key={index} className="border-t border-border">
+                    <TableCell className="w-1/3 p-4 bg-muted/10">
+                      <div className="flex items-center gap-3 justify-center">
+                        {item.icon}
+                        <span className="font-semibold">{item.title}</span>
+                      </div>
+                    </TableCell>
+                    <TableCell className="w-1/3 p-6 bg-gradient-to-r from-primary/5 to-primary/10">
+                      <div className="text-center">
+                        <div className="font-bold text-lg mb-1">{item.mar.value}</div>
+                        <p className="text-sm text-muted-foreground">{item.mar.description}</p>
+                      </div>
+                    </TableCell>
+                    <TableCell className="w-1/3 p-6 bg-muted/20">
+                      <div className="text-center">
+                        <div className="font-bold text-lg mb-1">{item.traditional.value}</div>
+                        <p className="text-sm text-muted-foreground">{item.traditional.description}</p>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
           </div>
-        </div>
+        )}
+        
+        {/* Comparison Cards - Mobile version */}
+        {isMobile && (
+          <div className="mb-16 space-y-6">
+            <div className="grid grid-cols-2 gap-2 mb-4">
+              <div className="bg-primary/10 p-4 rounded-lg text-center">
+                <h3 className="text-base font-bold text-primary">MAR</h3>
+              </div>
+              <div className="bg-muted/30 p-4 rounded-lg text-center">
+                <h3 className="text-base font-bold text-muted-foreground">Tradicional</h3>
+              </div>
+            </div>
+            
+            {comparisonItems.map((item, index) => (
+              <div key={index} className="border border-border rounded-lg overflow-hidden">
+                <div className="p-3 bg-muted/10 flex items-center justify-center gap-2 border-b border-border">
+                  {item.icon}
+                  <span className="font-semibold">{item.title}</span>
+                </div>
+                <div className="grid grid-cols-2">
+                  <div className="p-4 bg-gradient-to-b from-primary/5 to-primary/20 border-r border-border">
+                    <div className="text-center">
+                      <div className="font-bold text-sm mb-1">{item.mar.value}</div>
+                      <p className="text-xs text-muted-foreground">{item.mar.description}</p>
+                    </div>
+                  </div>
+                  <div className="p-4 bg-muted/20">
+                    <div className="text-center">
+                      <div className="font-bold text-sm mb-1">{item.traditional.value}</div>
+                      <p className="text-xs text-muted-foreground">{item.traditional.description}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
         
         {/* Call to Action */}
         <div className="max-w-3xl mx-auto text-center bg-card rounded-xl p-8 border border-border shadow-lg glow-border">
@@ -201,6 +250,8 @@ const MarComparisonSection = () => {
           </p>
         </div>
       </div>
-    </section>;
+    </section>
+  );
 };
+
 export default MarComparisonSection;
