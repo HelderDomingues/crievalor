@@ -1,68 +1,79 @@
 
-// supabase/functions/asaas-webhook/index.ts
-import { serve } from "https://deno.land/std@0.177.0/http/server.ts"
-import { corsHeaders } from "../_shared/cors.ts"
-import { handleWebhookEvent } from "./handlers.ts"
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.7.1"
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.38.4";
+import { handlers } from "./handlers.ts";
 
-console.log("ASAAS webhook function started - JWT VERIFICATION DISABLED")
+// Configuração do Supabase
+const supabaseUrl = Deno.env.get("SUPABASE_URL") || "";
+const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
+const asaasWebhookToken = Deno.env.get("ASAAS_WEBHOOK_TOKEN") || "";
+
+// Headers CORS para permitir requisições de qualquer origem
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+};
 
 serve(async (req) => {
-  try {
-    // Configurando CORS para permitir requisições de qualquer origem
-    if (req.method === "OPTIONS") {
-      return new Response("ok", { headers: corsHeaders })
-    }
-
-    // Verificar se o método é POST
-    if (req.method !== "POST") {
-      return new Response(
-        JSON.stringify({ error: "Method not allowed" }),
-        { 
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-          status: 405 
-        }
-      )
-    }
-
-    // Extrair o corpo da requisição
-    const body = await req.json()
-    console.log("Webhook received:", JSON.stringify(body))
-
-    // Esta é uma função de webhook do Asaas - JWT VERIFICATION DISABLED
-    // Os webhooks do Asaas não enviam tokens JWT
-    
-    // Criar cliente do Supabase sem verificação JWT
-    const supabaseClient = createClient(
-      Deno.env.get("SUPABASE_URL") ?? "",
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
-      {
-        global: {
-          headers: { Authorization: `Bearer ${Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")}` },
-        },
-      }
-    )
-
-    // Processar o evento do webhook
-    const result = await handleWebhookEvent(body, supabaseClient)
-    
-    // Retornar resposta adequada
-    return new Response(
-      JSON.stringify(result),
-      { 
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-        status: 200 
-      }
-    )
-  } catch (error) {
-    console.error("Error processing webhook:", error)
-    
-    return new Response(
-      JSON.stringify({ error: error.message }),
-      { 
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-        status: 500 
-      }
-    )
+  // Handle CORS preflight requests
+  if (req.method === "OPTIONS") {
+    return new Response("ok", { headers: corsHeaders });
   }
-})
+  
+  try {
+    // Inicializar o cliente do Supabase com a chave de serviço
+    const supabase = createClient(supabaseUrl, supabaseKey);
+    
+    // Verificar o token de autenticação do webhook (opcional para sandbox)
+    const url = new URL(req.url);
+    const token = url.searchParams.get("token");
+    
+    // Log para debugging
+    console.log("Recebido webhook do Asaas");
+    console.log("URL:", req.url);
+    console.log("Token recebido:", token);
+    console.log("Token esperado:", asaasWebhookToken);
+    
+    // Em produção, descomentar esta validação:
+    // if (token !== asaasWebhookToken) {
+    //   console.error("Token de webhook inválido");
+    //   return new Response(JSON.stringify({ error: "Unauthorized" }), { 
+    //     status: 401, 
+    //     headers: { ...corsHeaders, "Content-Type": "application/json" } 
+    //   });
+    // }
+
+    // Extrair o payload do webhook
+    const payload = await req.json();
+    console.log("Payload recebido:", JSON.stringify(payload, null, 2));
+    
+    // Identificar o tipo de evento e processar de acordo
+    const eventType = payload.event;
+    console.log("Tipo de evento:", eventType);
+    
+    // Processar o evento com os handlers correspondentes
+    if (eventType in handlers) {
+      const result = await handlers[eventType](payload, supabase);
+      console.log("Resultado do processamento:", result);
+      
+      return new Response(JSON.stringify(result), {
+        status: 200,
+        headers: { ...corsHeaders, "Content-Type": "application/json" }
+      });
+    } else {
+      console.log(`Evento não tratado: ${eventType}`);
+      return new Response(JSON.stringify({ message: `Evento não tratado: ${eventType}` }), {
+        status: 200,
+        headers: { ...corsHeaders, "Content-Type": "application/json" }
+      });
+    }
+    
+  } catch (error) {
+    console.error("Erro ao processar webhook:", error);
+    
+    return new Response(JSON.stringify({ error: error.message }), {
+      status: 500,
+      headers: { ...corsHeaders, "Content-Type": "application/json" }
+    });
+  }
+});

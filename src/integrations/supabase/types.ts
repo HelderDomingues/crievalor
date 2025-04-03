@@ -188,6 +188,203 @@ export type Database = {
         }
         Relationships: []
       }
+      quiz_answers: {
+        Row: {
+          answer: string | null
+          created_at: string
+          id: string
+          question_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          answer?: string | null
+          created_at?: string
+          id?: string
+          question_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          answer?: string | null
+          created_at?: string
+          id?: string
+          question_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quiz_answers_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "quiz_questions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "quiz_answers_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "quiz_responses_flat"
+            referencedColumns: ["question_id"]
+          },
+        ]
+      }
+      quiz_modules: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          order_number: number
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          order_number: number
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          order_number?: number
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      quiz_options: {
+        Row: {
+          created_at: string
+          id: string
+          order_number: number
+          question_id: string
+          text: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          order_number: number
+          question_id: string
+          text: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          order_number?: number
+          question_id?: string
+          text?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quiz_options_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "quiz_questions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "quiz_options_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "quiz_responses_flat"
+            referencedColumns: ["question_id"]
+          },
+        ]
+      }
+      quiz_questions: {
+        Row: {
+          created_at: string
+          hint: string | null
+          id: string
+          module_id: string
+          order_number: number
+          required: boolean
+          text: string
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          hint?: string | null
+          id?: string
+          module_id: string
+          order_number: number
+          required?: boolean
+          text: string
+          type: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          hint?: string | null
+          id?: string
+          module_id?: string
+          order_number?: number
+          required?: boolean
+          text?: string
+          type?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quiz_questions_module_id_fkey"
+            columns: ["module_id"]
+            isOneToOne: false
+            referencedRelation: "quiz_modules"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      quiz_submissions: {
+        Row: {
+          completed: boolean
+          completed_at: string | null
+          contact_consent: boolean
+          contact_preference: string | null
+          created_at: string
+          current_module: number
+          email: string | null
+          id: string
+          started_at: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          completed?: boolean
+          completed_at?: string | null
+          contact_consent?: boolean
+          contact_preference?: string | null
+          created_at?: string
+          current_module?: number
+          email?: string | null
+          id?: string
+          started_at?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          completed?: boolean
+          completed_at?: string | null
+          contact_consent?: boolean
+          contact_preference?: string | null
+          created_at?: string
+          current_module?: number
+          email?: string | null
+          id?: string
+          started_at?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       subscriptions: {
         Row: {
           asaas_customer_id: string | null
@@ -361,7 +558,23 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      quiz_responses_flat: {
+        Row: {
+          answer: string | null
+          company_name: string | null
+          completed: boolean | null
+          completed_at: string | null
+          contact_consent: boolean | null
+          email: string | null
+          full_name: string | null
+          question_id: string | null
+          question_text: string | null
+          started_at: string | null
+          submission_id: string | null
+          user_id: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       bootstrap_admin_role: {
@@ -395,6 +608,21 @@ export type Database = {
         }
         Returns: undefined
       }
+      is_admin: {
+        Args: Record<PropertyKey, never>
+        Returns: boolean
+      }
+      is_quiz_admin:
+        | {
+            Args: Record<PropertyKey, never>
+            Returns: boolean
+          }
+        | {
+            Args: {
+              user_email: string
+            }
+            Returns: boolean
+          }
       setup_asaas_customers_rls_policies: {
         Args: Record<PropertyKey, never>
         Returns: boolean
