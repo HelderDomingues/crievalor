@@ -11,37 +11,37 @@ export type Database = {
     Tables: {
       asaas_customers: {
         Row: {
-          asaas_id: string
-          cpf_cnpj: string
-          created_at: string
+          asaas_id: string | null
+          cpf_cnpj: number
+          created_at: string | null
           email: string | null
           id: string
           nome_completo: string | null
           telefone: number | null
-          updated_at: string
-          user_id: string
+          updated_at: string | null
+          user_id: string | null
         }
         Insert: {
-          asaas_id: string
-          cpf_cnpj: string
-          created_at?: string
+          asaas_id?: string | null
+          cpf_cnpj: number
+          created_at?: string | null
           email?: string | null
           id?: string
           nome_completo?: string | null
           telefone?: number | null
-          updated_at?: string
-          user_id: string
+          updated_at?: string | null
+          user_id?: string | null
         }
         Update: {
-          asaas_id?: string
-          cpf_cnpj?: string
-          created_at?: string
+          asaas_id?: string | null
+          cpf_cnpj?: number
+          created_at?: string | null
           email?: string | null
           id?: string
           nome_completo?: string | null
           telefone?: number | null
-          updated_at?: string
-          user_id?: string
+          updated_at?: string | null
+          user_id?: string | null
         }
         Relationships: []
       }

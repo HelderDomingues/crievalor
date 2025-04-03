@@ -80,6 +80,7 @@ const Mar = () => {
             <VideoSection 
               title="Conheça o MAR em detalhes" 
               description="Assista ao vídeo e descubra como o MAR pode transformar a estratégia da sua empresa."
+              videoUrl="https://www.youtube.com/embed/Lr_L7MAIUnM"
               videoPlaceholder="https://images.unsplash.com/photo-1551434678-e076c223a692?q=80&w=2070"
             />
             

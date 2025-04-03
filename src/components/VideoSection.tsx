@@ -44,11 +44,16 @@ const VideoSection: React.FC<VideoSectionProps> = ({
                 className="w-full h-full object-cover"
               />
               <div className="absolute inset-0 flex items-center justify-center">
-                <div className="bg-primary/90 text-white rounded-full p-4 cursor-pointer hover:bg-primary transition-colors">
+                <a 
+                  href="https://youtu.be/Lr_L7MAIUnM" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="bg-primary/90 text-white rounded-full p-4 cursor-pointer hover:bg-primary transition-colors"
+                >
                   <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <polygon points="5 3 19 12 5 21 5 3"></polygon>
                   </svg>
-                </div>
+                </a>
               </div>
             </div>
           )}
