@@ -124,15 +124,15 @@ export const plans: PricingPlan[] = [
       "Acesso à comunidade exclusiva"
     ],
     documents: [
-      documentTypes.planoEstrategicoSimplificado,
-      documentTypes.estrategiasNegocio,
-      documentTypes.estrategiasMarketing,
-      documentTypes.planosAcao,
-      documentTypes.analiseSegmento,
-      documentTypes.analiseConcorrencia,
-      documentTypes.posicionamentoMercado,
-      documentTypes.brandingPosicionamento,
-      documentTypes.consideracoesFinais
+      { type: documentTypes.planoEstrategicoSimplificado, available: true },
+      { type: documentTypes.estrategiasNegocio, available: true },
+      { type: documentTypes.estrategiasMarketing, available: true },
+      { type: documentTypes.planosAcao, available: true },
+      { type: documentTypes.analiseSegmento, available: false },
+      { type: documentTypes.analiseConcorrencia, available: false },
+      { type: documentTypes.posicionamentoMercado, available: false },
+      { type: documentTypes.brandingPosicionamento, available: false },
+      { type: documentTypes.consideracoesFinais, available: true }
     ],
     cta: "Quero este plano",
     ctaUrl: "/subscription?plan=basic_plan"
