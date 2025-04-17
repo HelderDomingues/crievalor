@@ -63,4 +63,3 @@ export const PlanCard: React.FC<PlanCardProps> = ({ plan, formatCurrency }) => {
     </>
   );
 };
-
