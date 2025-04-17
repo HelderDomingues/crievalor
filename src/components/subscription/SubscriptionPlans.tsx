@@ -1,100 +1,68 @@
 
 import React from "react";
-import SubscriptionPlan from "./SubscriptionPlan";
-import { plans } from "@/components/pricing/pricingData";
+import { PLANS } from "@/services/plansService";
+import { PlanCard } from "@/components/pricing/PlanCard";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
+import { PaymentType } from "@/services/marPaymentLinks";
 
 interface SubscriptionPlansProps {
   isCheckingOut: boolean;
   isPlanCurrent: (planId: string) => boolean;
   onSubscribe: (planId: string) => Promise<void>;
-  selectedInstallments?: number;
-  onInstallmentsChange?: (installments: number) => void;
+  selectedInstallments: number;
+  onInstallmentsChange: (installments: number) => void;
 }
 
-const SubscriptionPlans = ({
+const SubscriptionPlans: React.FC<SubscriptionPlansProps> = ({
   isCheckingOut,
   isPlanCurrent,
   onSubscribe,
-  selectedInstallments = 1,
+  selectedInstallments,
   onInstallmentsChange,
-}: SubscriptionPlansProps) => {
+}) => {
+  // Convert PLANS object to array for rendering
+  const plansArray = Object.values(PLANS);
+
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-      {/* Plano Essencial */}
-      <SubscriptionPlan
-        id="basic_plan"
-        name="Essencial"
-        price="12 x de R$ 179,90"
-        cashPrice="R$ 1.942,92"
-        description="Para empresas com equipes de 1 a 5 pessoas"
-        features={[
-          "01 Sessão on line (até 50 min) com consultor para orientações e tira dúvidas",
-          "01 revisão do seu planejamento dentro do prazo de 06 meses",
-          "Acesso à comunidade exclusiva"
-        ]}
-        isCurrentPlan={isPlanCurrent("basic_plan")}
-        isCheckingOut={isCheckingOut}
-        onSubscribe={onSubscribe}
-        buttonLabel="Quero este plano"
-        popular={false}
-      />
-      
-      {/* Plano Profissional */}
-      <SubscriptionPlan
-        id="pro_plan"
-        name="Profissional"
-        price="12 x de R$ 399,90"
-        cashPrice="R$ 4.318,92"
-        description="Para empresas com equipes de 6 a 10 pessoas"
-        features={[
-          "02 Sessões on line (até 50 min) com consultor para orientações e tira dúvidas",
-          "02 revisões do seu planejamento dentro do prazo de 06 meses",
-          "Acesso à comunidade exclusiva"
-        ]}
-        isCurrentPlan={isPlanCurrent("pro_plan")}
-        isCheckingOut={isCheckingOut}
-        onSubscribe={onSubscribe}
-        buttonLabel="Quero este plano"
-        popular={true}
-      />
-      
-      {/* Plano Empresarial */}
-      <SubscriptionPlan
-        id="enterprise_plan"
-        name="Empresarial"
-        price="12 x de R$ 799,90"
-        cashPrice="R$ 8.638,92"
-        description="Para empresas com equipes de 11 a 50 pessoas"
-        features={[
-          "04 Sessões de mentoria avançada on line (até 50 min) com consultor para orientações e tira dúvidas",
-          "02 revisões do seu planejamento dentro do prazo de 06 meses",
-          "Acesso à comunidade exclusiva"
-        ]}
-        isCurrentPlan={isPlanCurrent("enterprise_plan")}
-        isCheckingOut={isCheckingOut}
-        onSubscribe={onSubscribe}
-        buttonLabel="Quero este plano"
-        popular={false}
-      />
-      
-      {/* Plano Corporativo */}
-      <SubscriptionPlan
-        id="corporate_plan"
-        name="Corporativo"
-        customPrice="Condições sob consulta"
-        description="Para empresas com equipes acima de 51 pessoas na organização"
-        features={[
-          "Consultoria dedicada",
-          "Plano Estratégico Aprofundado",
-          "Mentorias especializadas para equipes", 
-          "Implementação assistida"
-        ]}
-        isCurrentPlan={isPlanCurrent("corporate_plan")}
-        isCheckingOut={isCheckingOut}
-        onSubscribe={onSubscribe}
-        buttonLabel="Consultar via WhatsApp"
-        popular={false}
-      />
+    <div>
+      <div className="mb-6 flex justify-center">
+        <div className="bg-background border rounded-lg p-4 max-w-sm w-full">
+          <Label htmlFor="installments" className="block text-sm font-medium mb-2">
+            Opções de Pagamento
+          </Label>
+          <Select
+            value={String(selectedInstallments)}
+            onValueChange={(value) => onInstallmentsChange(Number(value))}
+          >
+            <SelectTrigger id="installments" className="w-full">
+              <SelectValue placeholder="Selecione o número de parcelas" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="1">À Vista (10% de desconto)</SelectItem>
+              <SelectItem value="12">Parcelado em 12x</SelectItem>
+            </SelectContent>
+          </Select>
+          <p className="text-xs text-muted-foreground mt-2">
+            {selectedInstallments === 1
+              ? "Pagamento à vista com 10% de desconto"
+              : "Pagamento parcelado no cartão de crédito"}
+          </p>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {plansArray.map((plan) => (
+          <PlanCard
+            key={plan.id}
+            plan={plan}
+            isLoading={isCheckingOut}
+            isCurrent={isPlanCurrent(plan.id)}
+            onSubscribe={() => onSubscribe(plan.id)}
+            installments={selectedInstallments}
+          />
+        ))}
+      </div>
     </div>
   );
 };

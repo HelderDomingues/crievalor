@@ -1,82 +1,102 @@
 
+import { useToast } from "@/hooks/use-toast";
+import { PLANS } from "@/services/plansService";
+
+export type PaymentType = 'installments' | 'cash' | 'corporate';
+
 /**
- * Static payment links for MAR plans
+ * Direct payment links for each plan and payment type
  */
-
-// Tipos de pagamento
-export type PaymentType = 'installments' | 'cash';
-
-// Interface para os links de pagamento
-interface PaymentLinks {
-  installments: string; // Link para pagamento parcelado
-  cash: string; // Link para pagamento à vista com desconto
-}
-
-// Interface para os planos com seus respectivos links
-interface PlanPaymentLinks {
-  [planId: string]: PaymentLinks;
-}
-
-// Links estáticos de pagamento conforme fornecido nas instruções
-export const MAR_PAYMENT_LINKS: PlanPaymentLinks = {
+export const PAYMENT_LINKS = {
   basic_plan: {
-    installments: "https://sandbox.asaas.com/c/vydr3n77kew5fd4s", // Plano Essencial - Parcelado
-    cash: "https://sandbox.asaas.com/c/fy15747uacorzbla", // Plano Essencial - À Vista
+    installments: "https://sandbox.asaas.com/c/vydr3n77kew5fd4s", // Parcelado
+    cash: "https://sandbox.asaas.com/c/fy15747uacorzbla"         // À vista
   },
   pro_plan: {
-    installments: "https://sandbox.asaas.com/c/4fcw2ezk4je61qon", // Plano Profissional - Parcelado
-    cash: "https://sandbox.asaas.com/c/pqnkhgvic7c25ufq", // Plano Profissional - À Vista
+    installments: "https://sandbox.asaas.com/c/4fcw2ezk4je61qon", // Parcelado
+    cash: "https://sandbox.asaas.com/c/pqnkhgvic7c25ufq"          // À vista
   },
   enterprise_plan: {
-    installments: "https://sandbox.asaas.com/c/z4vate6zwonrwoft", // Plano Empresarial - Parcelado
-    cash: "https://sandbox.asaas.com/c/3pdwf46bs80mpk0s", // Plano Empresarial - À Vista
+    installments: "https://sandbox.asaas.com/c/z4vate6zwonrwoft", // Parcelado
+    cash: "https://sandbox.asaas.com/c/3pdwf46bs80mpk0s"          // À vista
   },
   corporate_plan: {
-    // O plano corporativo não tem links de pagamento, é sob consulta via WhatsApp
-    installments: "wa.me//+5547992150289",
-    cash: "wa.me//+5547992150289",
+    corporate: "https://wa.me/+5547992150289"                     // Whatsapp
   }
 };
 
 /**
- * Obtém o link de pagamento para um plano específico
- * @param planId ID do plano
- * @param paymentType Tipo de pagamento (parcelado ou à vista)
- * @returns URL do link de pagamento
+ * Redirect to the appropriate payment link based on plan and payment type
  */
-export function getPaymentLink(planId: string, paymentType: PaymentType = 'installments'): string {
-  if (!MAR_PAYMENT_LINKS[planId]) {
-    console.error(`Link de pagamento não encontrado para o plano: ${planId}`);
-    return '';
+export function redirectToPayment(planId: string, paymentType: PaymentType): void {
+  const linkMap = PAYMENT_LINKS[planId as keyof typeof PAYMENT_LINKS];
+  
+  if (!linkMap) {
+    console.error(`No payment links configured for plan: ${planId}`);
+    return;
   }
   
-  return MAR_PAYMENT_LINKS[planId][paymentType];
-}
-
-/**
- * Verifica se um plano é corporativo (tratamento especial para WhatsApp)
- * @param planId ID do plano
- * @returns true se for plano corporativo
- */
-export function isCorporatePlan(planId: string): boolean {
-  return planId === 'corporate_plan';
-}
-
-/**
- * Direciona o usuário para o link de pagamento apropriado
- * @param planId ID do plano
- * @param paymentType Tipo de pagamento (parcelado ou à vista)
- */
-export function redirectToPayment(planId: string, paymentType: PaymentType = 'installments'): void {
-  const paymentLink = getPaymentLink(planId, paymentType);
+  const paymentLink = linkMap[paymentType as keyof typeof linkMap];
   
-  if (paymentLink) {
-    // Se for plano corporativo, abrimos o WhatsApp em uma nova janela
-    if (isCorporatePlan(planId)) {
-      window.open(paymentLink, '_blank');
-    } else {
-      // Para outros planos, redirecionamos para o link de pagamento Asaas
-      window.location.href = paymentLink;
+  if (!paymentLink) {
+    console.error(`No ${paymentType} payment link found for plan: ${planId}`);
+    return;
+  }
+  
+  // Store purchase intent in localStorage
+  localStorage.setItem('checkoutPlanId', planId);
+  localStorage.setItem('checkoutPaymentType', paymentType);
+  localStorage.setItem('checkoutTimestamp', String(Date.now()));
+  
+  // Redirect to the payment link
+  window.open(paymentLink, '_blank');
+}
+
+/**
+ * Get payment link for a specific plan and payment type
+ */
+export function getPaymentLink(planId: string, paymentType: PaymentType): string | null {
+  const linkMap = PAYMENT_LINKS[planId as keyof typeof PAYMENT_LINKS];
+  
+  if (!linkMap) {
+    return null;
+  }
+  
+  return linkMap[paymentType as keyof typeof linkMap] || null;
+}
+
+/**
+ * Simplified payload tracking service
+ */
+export const paymentTrackingService = {
+  trackPaymentIntent(planId: string, paymentType: PaymentType): void {
+    const plan = PLANS[planId.toUpperCase()];
+    if (!plan) return;
+    
+    // Store basic payment intent info
+    localStorage.setItem('paymentIntent', JSON.stringify({
+      planId: planId,
+      planName: plan.name,
+      paymentType: paymentType,
+      timestamp: Date.now()
+    }));
+    
+    console.log(`Payment intent tracked for ${plan.name} with ${paymentType} payment`);
+  },
+  
+  getLastPaymentIntent(): any {
+    const intentData = localStorage.getItem('paymentIntent');
+    if (!intentData) return null;
+    
+    try {
+      return JSON.parse(intentData);
+    } catch (err) {
+      console.error('Failed to parse payment intent data:', err);
+      return null;
     }
+  },
+  
+  clearPaymentIntent(): void {
+    localStorage.removeItem('paymentIntent');
   }
-}
+};
