@@ -27,6 +27,25 @@ export const PlanCard: React.FC<PlanCardProps> = ({ plan, formatCurrency }) => {
       </div>;
   };
 
+  // Helper function to determine if a feature should be displayed as strikethrough
+  const shouldStrikethrough = (feature: string, planId: string) => {
+    if (planId !== "basic_plan") return false;
+    
+    // List of features that should be strikethrough for the basic plan
+    const basicPlanStrikethroughFeatures = [
+      "Plano Estratégico Aprofundado",
+      "02 Sessões",
+      "04 Sessões", 
+      "02 revisões",
+      "Análises de cenário aprofundadas"
+    ];
+    
+    // Check if the feature should be strikethrough
+    return basicPlanStrikethroughFeatures.some(strikeFeature => 
+      feature.includes(strikeFeature)
+    );
+  };
+
   return (
     <>
       <div className="bg-primary/5 p-4 border-b border-primary/10">
@@ -40,8 +59,10 @@ export const PlanCard: React.FC<PlanCardProps> = ({ plan, formatCurrency }) => {
         <ul className="space-y-3">
           {plan.features.map((feature: string, index: number) => (
             <li key={index} className="flex">
-              <Check className="h-5 w-5 text-primary mr-2 flex-shrink-0" />
-              <span>{feature}</span>
+              <Check className={`h-5 w-5 ${shouldStrikethrough(feature, plan.id) ? 'text-gray-400' : 'text-primary'} mr-2 flex-shrink-0`} />
+              <span className={shouldStrikethrough(feature, plan.id) ? 'text-gray-400 line-through' : ''}>
+                {feature}
+              </span>
             </li>
           ))}
         </ul>

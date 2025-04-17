@@ -109,6 +109,7 @@ export type Database = {
           plan_level: string
           thumbnail_url: string | null
           title: string
+          type: string
           updated_at: string | null
         }
         Insert: {
@@ -121,6 +122,7 @@ export type Database = {
           plan_level: string
           thumbnail_url?: string | null
           title: string
+          type?: string
           updated_at?: string | null
         }
         Update: {
@@ -133,7 +135,41 @@ export type Database = {
           plan_level?: string
           thumbnail_url?: string | null
           title?: string
+          type?: string
           updated_at?: string | null
+        }
+        Relationships: []
+      }
+      onboarding_content: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          is_active: boolean | null
+          title: string
+          updated_at: string
+          user_id: string | null
+          video_url: string | null
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          title: string
+          updated_at?: string
+          user_id?: string | null
+          video_url?: string | null
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          title?: string
+          updated_at?: string
+          user_id?: string | null
+          video_url?: string | null
         }
         Relationships: []
       }
@@ -144,6 +180,7 @@ export type Database = {
           company_address: string | null
           company_name: string | null
           cpf: string | null
+          email: string | null
           full_name: string | null
           has_asaas_customer: boolean | null
           id: string
@@ -160,6 +197,7 @@ export type Database = {
           company_address?: string | null
           company_name?: string | null
           cpf?: string | null
+          email?: string | null
           full_name?: string | null
           has_asaas_customer?: boolean | null
           id: string
@@ -176,6 +214,7 @@ export type Database = {
           company_address?: string | null
           company_name?: string | null
           cpf?: string | null
+          email?: string | null
           full_name?: string | null
           has_asaas_customer?: boolean | null
           id?: string
@@ -194,6 +233,7 @@ export type Database = {
           created_at: string
           id: string
           question_id: string
+          question_text: string | null
           updated_at: string
           user_id: string
         }
@@ -202,6 +242,7 @@ export type Database = {
           created_at?: string
           id?: string
           question_id: string
+          question_text?: string | null
           updated_at?: string
           user_id: string
         }
@@ -210,6 +251,7 @@ export type Database = {
           created_at?: string
           id?: string
           question_id?: string
+          question_text?: string | null
           updated_at?: string
           user_id?: string
         }
@@ -227,6 +269,34 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "quiz_responses_flat"
             referencedColumns: ["question_id"]
+          },
+          {
+            foreignKeyName: "quiz_answers_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "quiz_submission_details"
+            referencedColumns: ["question_id"]
+          },
+          {
+            foreignKeyName: "quiz_answers_question_text_fkey"
+            columns: ["question_text"]
+            isOneToOne: true
+            referencedRelation: "quiz_questions"
+            referencedColumns: ["text"]
+          },
+          {
+            foreignKeyName: "quiz_answers_question_text_fkey"
+            columns: ["question_text"]
+            isOneToOne: true
+            referencedRelation: "quiz_responses_flat"
+            referencedColumns: ["question_text"]
+          },
+          {
+            foreignKeyName: "quiz_answers_question_text_fkey"
+            columns: ["question_text"]
+            isOneToOne: true
+            referencedRelation: "quiz_submission_details"
+            referencedColumns: ["question_text"]
           },
         ]
       }
@@ -297,6 +367,13 @@ export type Database = {
             referencedRelation: "quiz_responses_flat"
             referencedColumns: ["question_id"]
           },
+          {
+            foreignKeyName: "quiz_options_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "quiz_submission_details"
+            referencedColumns: ["question_id"]
+          },
         ]
       }
       quiz_questions: {
@@ -305,9 +382,10 @@ export type Database = {
           hint: string | null
           id: string
           module_id: string
+          module_tittle: string | null
           order_number: number
           required: boolean
-          text: string
+          text: string | null
           type: string
           updated_at: string
         }
@@ -316,9 +394,10 @@ export type Database = {
           hint?: string | null
           id?: string
           module_id: string
+          module_tittle?: string | null
           order_number: number
           required?: boolean
-          text: string
+          text?: string | null
           type: string
           updated_at?: string
         }
@@ -327,9 +406,10 @@ export type Database = {
           hint?: string | null
           id?: string
           module_id?: string
+          module_tittle?: string | null
           order_number?: number
           required?: boolean
-          text?: string
+          text?: string | null
           type?: string
           updated_at?: string
         }
@@ -343,12 +423,170 @@ export type Database = {
           },
         ]
       }
+      quiz_respostas_completas: {
+        Row: {
+          company_name: string | null
+          completed: boolean | null
+          completed_at: string | null
+          created_at: string | null
+          email: string | null
+          full_name: string | null
+          id: string
+          m1_cargo: string | null
+          m1_email: string | null
+          m1_empresa: string | null
+          m1_nome: string | null
+          m1_telefone: string | null
+          m2_faturamento: string | null
+          m2_funcionarios: string | null
+          m2_localizacao: string | null
+          m2_segmento: string | null
+          m2_site: string | null
+          m2_tempo_atuacao: string | null
+          m3_instagram_concorrente_a: string | null
+          m3_instagram_concorrente_b: string | null
+          m3_instagram_concorrente_c: string | null
+          m3_instagram_empresa: string | null
+          m3_presenca_digital: string | null
+          m3_principais_canais: string | null
+          m4_acoes_marketing: string | null
+          m4_atuais_campanhas: string | null
+          m4_desafios_atuais: string | null
+          m4_investimento_marketing: string | null
+          m5_canais_vendas: string | null
+          m5_equipe_comercial: string | null
+          m5_estrategia_comercial: string | null
+          m5_metas_vendas: string | null
+          m5_processo_vendas: string | null
+          m5_sistema_crm: string | null
+          m6_expectativas: string | null
+          m6_prazo_resultados: string | null
+          m6_principais_desafios: string | null
+          m6_resultados_esperados: string | null
+          m7_como_conheceu: string | null
+          m7_detalhes_adicionais: string | null
+          m7_preferencia_contato: string | null
+          submission_id: string | null
+          updated_at: string | null
+          user_id: string
+          webhook_processed: boolean | null
+        }
+        Insert: {
+          company_name?: string | null
+          completed?: boolean | null
+          completed_at?: string | null
+          created_at?: string | null
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          m1_cargo?: string | null
+          m1_email?: string | null
+          m1_empresa?: string | null
+          m1_nome?: string | null
+          m1_telefone?: string | null
+          m2_faturamento?: string | null
+          m2_funcionarios?: string | null
+          m2_localizacao?: string | null
+          m2_segmento?: string | null
+          m2_site?: string | null
+          m2_tempo_atuacao?: string | null
+          m3_instagram_concorrente_a?: string | null
+          m3_instagram_concorrente_b?: string | null
+          m3_instagram_concorrente_c?: string | null
+          m3_instagram_empresa?: string | null
+          m3_presenca_digital?: string | null
+          m3_principais_canais?: string | null
+          m4_acoes_marketing?: string | null
+          m4_atuais_campanhas?: string | null
+          m4_desafios_atuais?: string | null
+          m4_investimento_marketing?: string | null
+          m5_canais_vendas?: string | null
+          m5_equipe_comercial?: string | null
+          m5_estrategia_comercial?: string | null
+          m5_metas_vendas?: string | null
+          m5_processo_vendas?: string | null
+          m5_sistema_crm?: string | null
+          m6_expectativas?: string | null
+          m6_prazo_resultados?: string | null
+          m6_principais_desafios?: string | null
+          m6_resultados_esperados?: string | null
+          m7_como_conheceu?: string | null
+          m7_detalhes_adicionais?: string | null
+          m7_preferencia_contato?: string | null
+          submission_id?: string | null
+          updated_at?: string | null
+          user_id: string
+          webhook_processed?: boolean | null
+        }
+        Update: {
+          company_name?: string | null
+          completed?: boolean | null
+          completed_at?: string | null
+          created_at?: string | null
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          m1_cargo?: string | null
+          m1_email?: string | null
+          m1_empresa?: string | null
+          m1_nome?: string | null
+          m1_telefone?: string | null
+          m2_faturamento?: string | null
+          m2_funcionarios?: string | null
+          m2_localizacao?: string | null
+          m2_segmento?: string | null
+          m2_site?: string | null
+          m2_tempo_atuacao?: string | null
+          m3_instagram_concorrente_a?: string | null
+          m3_instagram_concorrente_b?: string | null
+          m3_instagram_concorrente_c?: string | null
+          m3_instagram_empresa?: string | null
+          m3_presenca_digital?: string | null
+          m3_principais_canais?: string | null
+          m4_acoes_marketing?: string | null
+          m4_atuais_campanhas?: string | null
+          m4_desafios_atuais?: string | null
+          m4_investimento_marketing?: string | null
+          m5_canais_vendas?: string | null
+          m5_equipe_comercial?: string | null
+          m5_estrategia_comercial?: string | null
+          m5_metas_vendas?: string | null
+          m5_processo_vendas?: string | null
+          m5_sistema_crm?: string | null
+          m6_expectativas?: string | null
+          m6_prazo_resultados?: string | null
+          m6_principais_desafios?: string | null
+          m6_resultados_esperados?: string | null
+          m7_como_conheceu?: string | null
+          m7_detalhes_adicionais?: string | null
+          m7_preferencia_contato?: string | null
+          submission_id?: string | null
+          updated_at?: string | null
+          user_id?: string
+          webhook_processed?: boolean | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quiz_respostas_completas_submission_id_fkey"
+            columns: ["submission_id"]
+            isOneToOne: false
+            referencedRelation: "quiz_responses_flat"
+            referencedColumns: ["submission_id"]
+          },
+          {
+            foreignKeyName: "quiz_respostas_completas_submission_id_fkey"
+            columns: ["submission_id"]
+            isOneToOne: false
+            referencedRelation: "quiz_submissions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       quiz_submissions: {
         Row: {
           completed: boolean
           completed_at: string | null
           contact_consent: boolean
-          contact_preference: string | null
           created_at: string
           current_module: number
           email: string | null
@@ -356,12 +594,12 @@ export type Database = {
           started_at: string
           updated_at: string
           user_id: string
+          webhook_processed: boolean | null
         }
         Insert: {
           completed?: boolean
           completed_at?: string | null
           contact_consent?: boolean
-          contact_preference?: string | null
           created_at?: string
           current_module?: number
           email?: string | null
@@ -369,12 +607,12 @@ export type Database = {
           started_at?: string
           updated_at?: string
           user_id: string
+          webhook_processed?: boolean | null
         }
         Update: {
           completed?: boolean
           completed_at?: string | null
           contact_consent?: boolean
-          contact_preference?: string | null
           created_at?: string
           current_module?: number
           email?: string | null
@@ -382,6 +620,7 @@ export type Database = {
           started_at?: string
           updated_at?: string
           user_id?: string
+          webhook_processed?: boolean | null
         }
         Relationships: []
       }
@@ -472,33 +711,6 @@ export type Database = {
         }
         Relationships: []
       }
-      "Teste MAKE": {
-        Row: {
-          created_at: string
-          Email: string
-          id: number
-          Nome: string
-          Sobrenome: string
-          Whatsapp: number
-        }
-        Insert: {
-          created_at?: string
-          Email: string
-          id?: number
-          Nome: string
-          Sobrenome: string
-          Whatsapp: number
-        }
-        Update: {
-          created_at?: string
-          Email?: string
-          id?: number
-          Nome?: string
-          Sobrenome?: string
-          Whatsapp?: number
-        }
-        Relationships: []
-      }
       testimonials: {
         Row: {
           active: boolean | null
@@ -537,6 +749,7 @@ export type Database = {
           created_at: string | null
           email: string | null
           id: string
+          name: string | null
           role: string
           user_id: string | null
         }
@@ -544,6 +757,7 @@ export type Database = {
           created_at?: string | null
           email?: string | null
           id?: string
+          name?: string | null
           role: string
           user_id?: string | null
         }
@@ -551,6 +765,7 @@ export type Database = {
           created_at?: string | null
           email?: string | null
           id?: string
+          name?: string | null
           role?: string
           user_id?: string | null
         }
@@ -575,61 +790,93 @@ export type Database = {
         }
         Relationships: []
       }
+      quiz_submission_details: {
+        Row: {
+          answer: string | null
+          question_id: string | null
+          question_text: string | null
+          user_id: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       bootstrap_admin_role: {
-        Args: {
-          admin_user_id: string
-        }
+        Args: { admin_user_id: string }
         Returns: boolean
       }
+      check_and_migrate_data: {
+        Args: Record<PropertyKey, never>
+        Returns: Json
+      }
       check_if_user_is_admin: {
-        Args: {
-          user_id: string
-        }
+        Args: { user_id: string }
+        Returns: boolean
+      }
+      complete_quiz_submission: {
+        Args: { p_user_id: string }
         Returns: boolean
       }
       create_table_if_not_exists: {
-        Args: {
-          table_name: string
-          table_definition: string
-        }
+        Args: { table_name: string; table_definition: string }
+        Returns: undefined
+      }
+      execute_sql: {
+        Args: Record<PropertyKey, never>
         Returns: undefined
       }
       get_system_setting: {
+        Args: { setting_key: string }
+        Returns: string
+      }
+      get_user_emails: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          email: string
+        }[]
+      }
+      import_user_from_asaas: {
         Args: {
-          setting_key: string
+          p_email: string
+          p_nome: string
+          p_cpf_cnpj: string
+          p_telefone: string
+          p_asaas_id: string
+          p_password?: string
         }
         Returns: string
       }
       increment_material_access_count: {
-        Args: {
-          material_id: string
-        }
+        Args: { material_id: string }
         Returns: undefined
       }
       is_admin: {
         Args: Record<PropertyKey, never>
         Returns: boolean
       }
-      is_quiz_admin:
-        | {
-            Args: Record<PropertyKey, never>
-            Returns: boolean
-          }
-        | {
-            Args: {
-              user_email: string
-            }
-            Returns: boolean
-          }
+      is_quiz_admin: {
+        Args: { user_email: string }
+        Returns: boolean
+      }
+      link_user_to_asaas_customer: {
+        Args: { user_email: string; asaas_email: string }
+        Returns: boolean
+      }
+      process_quiz_completion: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
       setup_asaas_customers_rls_policies: {
         Args: Record<PropertyKey, never>
         Returns: boolean
       }
       setup_subscriptions_rls_policies: {
         Args: Record<PropertyKey, never>
-        Returns: boolean
+        Returns: undefined
+      }
+      sync_existing_users: {
+        Args: Record<PropertyKey, never>
+        Returns: number
       }
     }
     Enums: {
@@ -641,27 +888,29 @@ export type Database = {
   }
 }
 
-type PublicSchema = Database[Extract<keyof Database, "public">]
+type DefaultSchema = Database[Extract<keyof Database, "public">]
 
 export type Tables<
-  PublicTableNameOrOptions extends
-    | keyof (PublicSchema["Tables"] & PublicSchema["Views"])
+  DefaultSchemaTableNameOrOptions extends
+    | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
     | { schema: keyof Database },
-  TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
-    ? keyof (Database[PublicTableNameOrOptions["schema"]]["Tables"] &
-        Database[PublicTableNameOrOptions["schema"]]["Views"])
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof Database
+  }
+    ? keyof (Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+        Database[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
     : never = never,
-> = PublicTableNameOrOptions extends { schema: keyof Database }
-  ? (Database[PublicTableNameOrOptions["schema"]]["Tables"] &
-      Database[PublicTableNameOrOptions["schema"]]["Views"])[TableName] extends {
+> = DefaultSchemaTableNameOrOptions extends { schema: keyof Database }
+  ? (Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+      Database[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
       Row: infer R
     }
     ? R
     : never
-  : PublicTableNameOrOptions extends keyof (PublicSchema["Tables"] &
-        PublicSchema["Views"])
-    ? (PublicSchema["Tables"] &
-        PublicSchema["Views"])[PublicTableNameOrOptions] extends {
+  : DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema["Tables"] &
+        DefaultSchema["Views"])
+    ? (DefaultSchema["Tables"] &
+        DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {
         Row: infer R
       }
       ? R
@@ -669,20 +918,22 @@ export type Tables<
     : never
 
 export type TablesInsert<
-  PublicTableNameOrOptions extends
-    | keyof PublicSchema["Tables"]
+  DefaultSchemaTableNameOrOptions extends
+    | keyof DefaultSchema["Tables"]
     | { schema: keyof Database },
-  TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
-    ? keyof Database[PublicTableNameOrOptions["schema"]]["Tables"]
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof Database
+  }
+    ? keyof Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
     : never = never,
-> = PublicTableNameOrOptions extends { schema: keyof Database }
-  ? Database[PublicTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+> = DefaultSchemaTableNameOrOptions extends { schema: keyof Database }
+  ? Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
       Insert: infer I
     }
     ? I
     : never
-  : PublicTableNameOrOptions extends keyof PublicSchema["Tables"]
-    ? PublicSchema["Tables"][PublicTableNameOrOptions] extends {
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
         Insert: infer I
       }
       ? I
@@ -690,20 +941,22 @@ export type TablesInsert<
     : never
 
 export type TablesUpdate<
-  PublicTableNameOrOptions extends
-    | keyof PublicSchema["Tables"]
+  DefaultSchemaTableNameOrOptions extends
+    | keyof DefaultSchema["Tables"]
     | { schema: keyof Database },
-  TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
-    ? keyof Database[PublicTableNameOrOptions["schema"]]["Tables"]
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof Database
+  }
+    ? keyof Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
     : never = never,
-> = PublicTableNameOrOptions extends { schema: keyof Database }
-  ? Database[PublicTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+> = DefaultSchemaTableNameOrOptions extends { schema: keyof Database }
+  ? Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
       Update: infer U
     }
     ? U
     : never
-  : PublicTableNameOrOptions extends keyof PublicSchema["Tables"]
-    ? PublicSchema["Tables"][PublicTableNameOrOptions] extends {
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
         Update: infer U
       }
       ? U
@@ -711,21 +964,23 @@ export type TablesUpdate<
     : never
 
 export type Enums<
-  PublicEnumNameOrOptions extends
-    | keyof PublicSchema["Enums"]
+  DefaultSchemaEnumNameOrOptions extends
+    | keyof DefaultSchema["Enums"]
     | { schema: keyof Database },
-  EnumName extends PublicEnumNameOrOptions extends { schema: keyof Database }
-    ? keyof Database[PublicEnumNameOrOptions["schema"]]["Enums"]
+  EnumName extends DefaultSchemaEnumNameOrOptions extends {
+    schema: keyof Database
+  }
+    ? keyof Database[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
     : never = never,
-> = PublicEnumNameOrOptions extends { schema: keyof Database }
-  ? Database[PublicEnumNameOrOptions["schema"]]["Enums"][EnumName]
-  : PublicEnumNameOrOptions extends keyof PublicSchema["Enums"]
-    ? PublicSchema["Enums"][PublicEnumNameOrOptions]
+> = DefaultSchemaEnumNameOrOptions extends { schema: keyof Database }
+  ? Database[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"][EnumName]
+  : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema["Enums"]
+    ? DefaultSchema["Enums"][DefaultSchemaEnumNameOrOptions]
     : never
 
 export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
-    | keyof PublicSchema["CompositeTypes"]
+    | keyof DefaultSchema["CompositeTypes"]
     | { schema: keyof Database },
   CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
     schema: keyof Database
@@ -734,6 +989,12 @@ export type CompositeTypes<
     : never = never,
 > = PublicCompositeTypeNameOrOptions extends { schema: keyof Database }
   ? Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
-  : PublicCompositeTypeNameOrOptions extends keyof PublicSchema["CompositeTypes"]
-    ? PublicSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
+  : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema["CompositeTypes"]
+    ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
     : never
+
+export const Constants = {
+  public: {
+    Enums: {},
+  },
+} as const
