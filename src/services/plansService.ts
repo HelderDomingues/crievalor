@@ -1,3 +1,4 @@
+
 import { Plan, RegularPlan, CustomPricePlan } from "@/types/subscription";
 
 // Pricing plans
@@ -15,8 +16,10 @@ export const PLANS: Record<string, Plan> = {
       "01 revisão do seu planejamento dentro do prazo de 06 meses", 
       "Acesso à comunidade exclusiva"
     ],
-    creditPaymentUrl: "https://sandbox.asaas.com/c/vydr3n77kew5fd4s",  // Asaas payment link for credit card
-    cashPaymentUrl: "https://sandbox.asaas.com/c/fy15747uacorzbla",   // Asaas payment link for cash (10% discount)
+    paymentOptions: {
+      creditPaymentUrl: "https://sandbox.asaas.com/c/vydr3n77kew5fd4s",  // Asaas payment link for credit card
+      cashPaymentUrl: "https://sandbox.asaas.com/c/fy15747uacorzbla",   // Asaas payment link for cash (10% discount)
+    }
   },
   PRO: {
     id: "pro_plan",
@@ -31,8 +34,10 @@ export const PLANS: Record<string, Plan> = {
       "02 revisões do seu planejamento dentro do prazo de 06 meses", 
       "Acesso à comunidade exclusiva"
     ],
-    creditPaymentUrl: "https://sandbox.asaas.com/c/4fcw2ezk4je61qon",  // Asaas payment link for credit card
-    cashPaymentUrl: "https://sandbox.asaas.com/c/pqnkhgvic7c25ufq",   // Asaas payment link for cash (10% discount)
+    paymentOptions: {
+      creditPaymentUrl: "https://sandbox.asaas.com/c/4fcw2ezk4je61qon",  // Asaas payment link for credit card
+      cashPaymentUrl: "https://sandbox.asaas.com/c/pqnkhgvic7c25ufq",   // Asaas payment link for cash (10% discount)
+    }
   },
   ENTERPRISE: {
     id: "enterprise_plan",
@@ -48,8 +53,10 @@ export const PLANS: Record<string, Plan> = {
       "Análises de cenário aprofundadas",
       "Acesso à comunidade exclusiva"
     ],
-    creditPaymentUrl: "https://sandbox.asaas.com/c/z4vate6zwonrwoft",  // Asaas payment link for credit card
-    cashPaymentUrl: "https://sandbox.asaas.com/c/3pdwf46bs80mpk0s",   // Asaas payment link for cash (10% discount)
+    paymentOptions: {
+      creditPaymentUrl: "https://sandbox.asaas.com/c/z4vate6zwonrwoft",  // Asaas payment link for credit card
+      cashPaymentUrl: "https://sandbox.asaas.com/c/3pdwf46bs80mpk0s",   // Asaas payment link for cash (10% discount)
+    }
   },
   CORPORATE: {
     id: "corporate_plan",
@@ -61,7 +68,9 @@ export const PLANS: Record<string, Plan> = {
       "Sessões de mentoria para equipe completa", 
       "Implementação assistida"
     ],
-    whatsappUrl: "https://wa.me/+5547992150289",  // WhatsApp contact for corporate plan
+    contactOptions: {
+      whatsappUrl: "https://wa.me/+5547992150289",  // WhatsApp contact for corporate plan
+    }
   }
 };
 

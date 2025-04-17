@@ -151,15 +151,15 @@ export const plans: PricingPlan[] = [
       "Acesso à comunidade exclusiva"
     ],
     documents: [
-     { type: documentTypes.planoEstrategicoSimplificado, available: true },
-      { type: documentTypes.estrategiasNegocio, available: true },
-      { type: documentTypes.estrategiasMarketing, available: true },
-      { type: documentTypes.planosAcao, available: true },
-      { type: documentTypes.analiseSegmento, available: false }, // Não disponível (será riscado)
-      { type: documentTypes.analiseConcorrencia, available: false }, // Não disponível (será riscado)
-      { type: documentTypes.posicionamentoMercado, available: false }, // Não disponível (será riscado)
-      { type: documentTypes.brandingPosicionamento, available: false }, // Não disponível (será riscado)
-      { type: documentTypes.consideracoesFinais, available: true }
+      documentTypes.planoEstrategicoSimplificado,
+      documentTypes.estrategiasNegocio,
+      documentTypes.estrategiasMarketing,
+      documentTypes.planosAcao,
+      documentTypes.analiseSegmento,
+      documentTypes.analiseConcorrencia,
+      documentTypes.posicionamentoMercado,
+      documentTypes.brandingPosicionamento,
+      documentTypes.consideracoesFinais
     ],
     cta: "Quero este plano",
     ctaUrl: "/subscription?plan=pro_plan",
