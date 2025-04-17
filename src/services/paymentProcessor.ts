@@ -1,96 +1,166 @@
 
-import { RegistrationFormData } from "@/components/checkout/form/RegistrationFormSchema";
-import { redirectToPayment, paymentTrackingService } from "@/services/marPaymentLinks";
-import { PaymentType } from "@/services/marPaymentLinks";
-import { PLANS } from "@/services/plansService";
-import { plansService } from "@/services/plansService";
+import { PaymentType } from "@/components/pricing/PaymentOptions";
+import { subscriptionService } from "@/services/subscriptionService";
+import { paymentsService } from "@/services/paymentsService";
 
-export interface ProcessPaymentOptions {
+export interface PaymentProcessingOptions {
   planId: string;
   installments: number;
   paymentType: PaymentType;
-  formData?: RegistrationFormData;
-  processId: string;
+  formData?: any;
+  domain?: string;
+  processId?: string;
   recoveryState?: any;
 }
 
-export interface ProcessPaymentResult {
+export interface PaymentResult {
   success: boolean;
   url?: string;
-  error?: string;
+  payment?: any;
+  dbSubscription?: any;
   isCustomPlan?: boolean;
+  error?: string;
+  asaasCustomerId?: string;
 }
 
+// Static payment links to use directly - ensure these are correct Asaas links
+const STATIC_PAYMENT_LINKS = {
+  basic_plan: {
+    credit: "https://sandbox.asaas.com/c/vydr3n77kew5fd4s", 
+    pix: "https://sandbox.asaas.com/c/fy15747uacorzbla"
+  },
+  pro_plan: {
+    credit: "https://sandbox.asaas.com/c/4fcw2ezk4je61qon", 
+    pix: "https://sandbox.asaas.com/c/pqnkhgvic7c25ufq"
+  },
+  enterprise_plan: {
+    credit: "https://sandbox.asaas.com/c/z4vate6zwonrwoft", 
+    pix: "https://sandbox.asaas.com/c/3pdwf46bs80mpk0s"
+  }
+};
+
+// Map of payment links to plan IDs (for webhook matching)
+export const PAYMENT_LINK_TO_PLAN_MAP = {
+  "vydr3n77kew5fd4s": "basic_plan",
+  "fy15747uacorzbla": "basic_plan",
+  "4fcw2ezk4je61qon": "pro_plan",
+  "pqnkhgvic7c25ufq": "pro_plan",
+  "z4vate6zwonrwoft": "enterprise_plan",
+  "3pdwf46bs80mpk0s": "enterprise_plan"
+};
+
 export const paymentProcessor = {
-  async processPayment(options: ProcessPaymentOptions): Promise<ProcessPaymentResult> {
-    const { planId, installments, paymentType, formData, processId } = options;
-    
+  async processPayment(options: PaymentProcessingOptions): Promise<PaymentResult> {
     try {
-      console.log(`[${processId}] Starting payment process for plan ${planId}`);
+      const { planId, installments, paymentType, domain } = options;
+      const processId = options.processId || `checkout_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
       
-      // Store customer information if available
-      if (formData) {
-        localStorage.setItem('customerEmail', formData.email);
-        localStorage.setItem('customerPhone', formData.phone);
-        localStorage.setItem('customerName', formData.fullName);
-        localStorage.setItem('customerCPF', formData.cpf);
+      console.log(`[${processId}] Processing payment for plan: ${planId} with payment type: ${paymentType}`);
+      
+      // Clear any stale data from localStorage
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('cachedCustomerData');
+        localStorage.removeItem('lastFormSubmission');
       }
       
-      // Get plan details
-      const plan = PLANS[planId.toUpperCase()];
-      if (!plan) {
-        throw new Error(`Plan ${planId} does not exist`);
-      }
-      
-      // Check if it's a custom price plan
-      if (plansService.isCustomPricePlan(plan)) {
-        console.log(`[${processId}] Custom price plan ${planId} detected`);
-        
-        // Track payment intent
-        paymentTrackingService.trackPaymentIntent(planId, 'corporate');
-        
+      // Check if it's a corporate plan (special case)
+      if (planId === "corporate_plan") {
         return {
           success: true,
-          url: plan.contactOptions.whatsappUrl,
+          url: "https://wa.me/5547992150289?text=Olá,%20gostaria%20de%20obter%20mais%20informações%20sobre%20o%20Plano%20Corporativo.",
           isCustomPlan: true
         };
       }
       
-      if (!plansService.isRegularPlan(plan)) {
-        throw new Error(`Plan ${planId} is not properly configured`);
+      // Get direct payment link from static mapping
+      const planLinks = STATIC_PAYMENT_LINKS[planId as keyof typeof STATIC_PAYMENT_LINKS];
+      if (!planLinks) {
+        throw new Error(`Plano não encontrado: ${planId}`);
       }
       
-      // Determine the payment URL based on payment type
-      const effectivePaymentType = paymentType === 'cash' || installments === 1 ? 'cash' : 'installments';
-      const paymentUrl = effectivePaymentType === 'cash' 
-        ? plan.paymentOptions.cashPaymentUrl 
-        : plan.paymentOptions.creditPaymentUrl;
+      // Map payment type to the correct key in planLinks
+      const linkType = paymentType === "pix" ? "pix" : "credit";
+      const paymentLink = planLinks[linkType];
       
-      if (!paymentUrl) {
-        throw new Error(`No payment URL found for plan ${planId} with payment type ${effectivePaymentType}`);
+      if (!paymentLink) {
+        throw new Error(`Tipo de pagamento não suportado: ${paymentType}`);
       }
       
-      console.log(`[${processId}] Redirecting to payment URL: ${paymentUrl}`);
+      console.log(`[${processId}] Using static payment link: ${paymentLink}`);
       
-      // Track payment intent
-      paymentTrackingService.trackPaymentIntent(planId, effectivePaymentType);
+      // Store information in localStorage for potential recovery
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('lastPaymentUrl', paymentLink);
+        localStorage.setItem('checkoutPlanId', planId);
+        localStorage.setItem('checkoutPaymentType', paymentType);
+        localStorage.setItem('checkoutTimestamp', Date.now().toString());
+      }
       
       return {
         success: true,
-        url: paymentUrl
+        url: paymentLink
       };
-    } catch (error) {
-      console.error(`[${processId}] Error processing payment:`, error);
+    } catch (error: any) {
+      console.error(`Error during payment processing:`, error);
+      
       return {
         success: false,
-        error: error.message || 'Unknown error processing payment'
+        error: error.message || "Não foi possível iniciar o processo de pagamento."
       };
     }
   },
   
-  storePaymentState(result: ProcessPaymentResult, state: any): void {
-    // Store the result and state for recovery purposes
-    localStorage.setItem('lastPaymentResult', JSON.stringify(result));
-    localStorage.setItem('lastPaymentState', JSON.stringify(state));
+  storePaymentState(result: PaymentResult, state: any): void {
+    if (typeof window === 'undefined') return;
+    
+    // Save payment URL
+    if (result.url) {
+      localStorage.setItem('lastPaymentUrl', result.url);
+      
+      // Extract payment link code from URL if available
+      const linkMatch = result.url.match(/\/c\/([a-zA-Z0-9]+)/);
+      if (linkMatch && linkMatch[1]) {
+        const linkCode = linkMatch[1];
+        localStorage.setItem('checkoutPaymentLink', linkCode);
+        
+        // Store plan ID based on payment link
+        const planId = PAYMENT_LINK_TO_PLAN_MAP[linkCode];
+        if (planId) {
+          localStorage.setItem('checkoutPlanId', planId);
+        }
+      }
+    }
+    
+    // Save payment ID if available
+    if (result.payment) {
+      // Ensure we're storing a string for payment ID
+      const paymentId = typeof result.payment === 'object' ? result.payment.id : result.payment;
+      localStorage.setItem('checkoutPaymentId', paymentId);
+      
+      if (state) {
+        state.paymentId = paymentId;
+      }
+    }
+    
+    // Save subscription ID if available
+    if (result.dbSubscription?.id) {
+      localStorage.setItem('checkoutSubscriptionId', result.dbSubscription.id);
+      
+      if (state) {
+        state.subscriptionId = result.dbSubscription.id;
+      }
+    }
+    
+    // Save Asaas customer ID if available
+    if (result.asaasCustomerId) {
+      localStorage.setItem('asaasCustomerId', result.asaasCustomerId);
+      
+      if (state) {
+        state.asaasCustomerId = result.asaasCustomerId;
+      }
+    }
+    
+    // Store timestamp for data freshness tracking
+    localStorage.setItem('paymentStateTimestamp', Date.now().toString());
   }
 };

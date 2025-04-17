@@ -1,8 +1,5 @@
-
-import { ReactNode } from "react";
-
 export interface DocumentType {
-  icon: React.ElementType;
+  icon: ElementType;
   name: string;
   included: boolean;
 }
@@ -23,13 +20,13 @@ export interface PricingPlan {
   customPrice?: boolean;
 }
 
-// Payment interface definitions
-export interface PaymentOptions {
+// Adicione estas novas interfaces no arquivo existente
+interface PaymentOptions {
   creditPaymentUrl: string;
   cashPaymentUrl: string;
 }
 
-export interface ContactOptions {
+interface ContactOptions {
   whatsappUrl: string;
 }
 
@@ -52,42 +49,4 @@ export interface Plan {
   id: string;
   name: string;
   [key: string]: any;
-}
-
-// Add subscription types that were missing
-export interface Subscription {
-  id: string;
-  user_id: string;
-  plan_id: string;
-  status: string;
-  created_at: string;
-  updated_at: string;
-  payment_status?: string;
-  payment_id?: string;
-  external_reference?: string;
-  contract_accepted?: boolean;
-  contract_accepted_at?: string;
-  current_period_end?: string;
-  asaas_payment_link?: string;
-  installments?: number;
-  payment_details?: PaymentDetails;
-}
-
-export interface PaymentDetails {
-  billingType?: string;
-  value?: number;
-  dueDate?: string;
-  installments?: number;
-  totalValue?: number;
-  netValue?: number;
-  description?: string;
-  status?: string;
-}
-
-export interface CreateCheckoutOptions {
-  planId: string;
-  successUrl?: string;
-  cancelUrl?: string;
-  installments?: number;
-  paymentType?: string;
 }
