@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { subscriptionService } from "@/services/subscriptionService";
 import { Button } from "@/components/ui/button";
@@ -97,9 +96,48 @@ const PlanSummary = ({
     onPaymentTypeChange(paymentTypeMap[method]);
   };
   
+  const getPaymentUrl = () => {
+    if (!plan) return '';
+    
+    // For corporate plan, return WhatsApp URL
+    if (planId === "corporate_plan" && 'whatsappUrl' in plan) {
+      return plan.whatsappUrl;
+    }
+    
+    // For regular plans with direct payment links
+    if (paymentMethod === "credit_installment" && 'creditPaymentUrl' in plan) {
+      return plan.creditPaymentUrl;
+    } else if (paymentMethod === "cash_payment" && 'cashPaymentUrl' in plan) {
+      return plan.cashPaymentUrl;
+    }
+    
+    // Fallback to old method
+    return '';
+  };
+  
   const handlePaymentRedirect = async () => {
     setIsSubmitting(true);
     try {
+      // Check if we have a direct payment URL
+      const directPaymentUrl = getPaymentUrl();
+      
+      // If we have a direct payment URL, use it
+      if (directPaymentUrl) {
+        // Store information for future recovery
+        localStorage.setItem('paymentMethod', paymentMethod);
+        localStorage.setItem('paymentTimestamp', Date.now().toString());
+        localStorage.setItem('planName', plan.name);
+        
+        if ('price' in plan) {
+          localStorage.setItem('planPrice', getPaymentAmount().toString());
+        }
+        
+        // Redirect to the payment URL
+        window.location.href = directPaymentUrl;
+        return;
+      }
+      
+      // If no direct URL, use the regular payment process
       // Se for o plano corporativo, redirecionar para WhatsApp
       if (planId === "corporate_plan") {
         const message = encodeURIComponent("Olá, gostaria de obter mais informações sobre o Plano Corporativo.");

@@ -1,45 +1,46 @@
+
 import React from "react";
-import { ElementType } from "react";
-interface DocumentType {
-  icon: ElementType;
-  name: string;
-  included: boolean;
-}
+import { DocumentType } from "./types";
+
 interface PlanDocumentsProps {
-  documents: DocumentType[];
+  documents: (DocumentType | { type: DocumentType; available: boolean })[];
 }
-const PlanDocuments = ({
-  documents
-}: PlanDocumentsProps) => {
-  // Separate main planning document from other documents for hierarchy
-  const mainPlanningDocuments = documents.filter(doc => doc.name.includes("Plano Estratégico"));
-  const otherDocuments = documents.filter(doc => !doc.name.includes("Plano Estratégico"));
-  return <div className="mb-6">
-      <h4 className="text-sm mb-3 border-b border-border pb-2 font-bold">Documentos Incluídos</h4>
-      
-      {/* Main planning documents - top level in hierarchy */}
-      <ul className="space-y-3 mb-4">
-        {mainPlanningDocuments.map((doc, i) => <li key={`main-${i}`} className="flex items-start">
-            <div className={`shrink-0 mr-2 h-5 w-5 mt-0.5 ${doc.included ? 'text-green-500' : 'text-muted-foreground opacity-50'}`}>
-              <doc.icon className="h-5 w-5" />
-            </div>
-            <span className={`text-sm font-medium ${doc.included ? '' : 'text-muted-foreground line-through opacity-50'}`}>
-              {doc.name}
-            </span>
-          </li>)}
+
+const PlanDocuments: React.FC<PlanDocumentsProps> = ({ documents }) => {
+  if (!documents || documents.length === 0) return null;
+
+  // Filter out documents not available and map to correct format
+  const availableDocuments = documents
+    .filter(doc => {
+      // Handle both formats of documents
+      if ('type' in doc && 'available' in doc) {
+        return doc.available;
+      }
+      return true; // If it's just DocumentType, assume it's available
+    })
+    .map(doc => {
+      if ('type' in doc && 'available' in doc) {
+        return doc.type;
+      }
+      return doc;
+    });
+
+  return (
+    <div className="mb-4">
+      <h4 className="mb-3 border-b border-border pb-2 text-sm font-bold">Documentos Incluídos</h4>
+      <ul className="space-y-3">
+        {availableDocuments.map((doc, index) => {
+          const Icon = doc.icon;
+          return (
+            <li key={index} className="flex items-center text-sm">
+              {Icon && <Icon className="h-4 w-4 text-primary mr-2" />}
+              <span>{doc.name}</span>
+            </li>
+          );
+        })}
       </ul>
-      
-      {/* Other supporting documents - indented to show hierarchy */}
-      <ul className="space-y-3 pl-4">
-        {otherDocuments.map((doc, i) => <li key={`sub-${i}`} className="flex items-start">
-            <div className={`shrink-0 mr-2 h-5 w-5 mt-0.5 ${doc.included ? 'text-green-500' : 'text-muted-foreground opacity-50'}`}>
-              <doc.icon className="h-5 w-5" />
-            </div>
-            <span className={`text-sm ${doc.included ? '' : 'text-muted-foreground line-through opacity-50'}`}>
-              {doc.name}
-            </span>
-          </li>)}
-      </ul>
-    </div>;
+    </div>
+  );
 };
+
 export default PlanDocuments;
