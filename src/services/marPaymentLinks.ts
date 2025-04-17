@@ -2,7 +2,7 @@
 import { useToast } from "@/hooks/use-toast";
 import { PLANS } from "@/services/plansService";
 
-export type PaymentType = 'installments' | 'cash' | 'corporate';
+export type PaymentType = 'installments' | 'cash' | 'corporate' | 'credit' | 'pix';
 
 /**
  * Direct payment links for each plan and payment type
@@ -26,9 +26,25 @@ export const PAYMENT_LINKS = {
 };
 
 /**
+ * Map legacy payment types to new payment types
+ */
+export function mapPaymentType(type: string): PaymentType {
+  const mapping: Record<string, PaymentType> = {
+    'credit': 'installments',
+    'pix': 'cash',
+    'cash': 'cash'
+  };
+  
+  return mapping[type] || 'installments';
+}
+
+/**
  * Redirect to the appropriate payment link based on plan and payment type
  */
 export function redirectToPayment(planId: string, paymentType: PaymentType): void {
+  // Map legacy payment types if needed
+  const mappedType = mapPaymentType(paymentType);
+  
   const linkMap = PAYMENT_LINKS[planId as keyof typeof PAYMENT_LINKS];
   
   if (!linkMap) {
@@ -36,16 +52,16 @@ export function redirectToPayment(planId: string, paymentType: PaymentType): voi
     return;
   }
   
-  const paymentLink = linkMap[paymentType as keyof typeof linkMap];
+  const paymentLink = linkMap[mappedType as keyof typeof linkMap];
   
   if (!paymentLink) {
-    console.error(`No ${paymentType} payment link found for plan: ${planId}`);
+    console.error(`No ${mappedType} payment link found for plan: ${planId}`);
     return;
   }
   
   // Store purchase intent in localStorage
   localStorage.setItem('checkoutPlanId', planId);
-  localStorage.setItem('checkoutPaymentType', paymentType);
+  localStorage.setItem('checkoutPaymentType', mappedType);
   localStorage.setItem('checkoutTimestamp', String(Date.now()));
   
   // Redirect to the payment link
@@ -56,13 +72,16 @@ export function redirectToPayment(planId: string, paymentType: PaymentType): voi
  * Get payment link for a specific plan and payment type
  */
 export function getPaymentLink(planId: string, paymentType: PaymentType): string | null {
+  // Map legacy payment types if needed
+  const mappedType = mapPaymentType(paymentType);
+  
   const linkMap = PAYMENT_LINKS[planId as keyof typeof PAYMENT_LINKS];
   
   if (!linkMap) {
     return null;
   }
   
-  return linkMap[paymentType as keyof typeof linkMap] || null;
+  return linkMap[mappedType as keyof typeof linkMap] || null;
 }
 
 /**

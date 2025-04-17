@@ -1,9 +1,9 @@
 
 import { supabase } from "@/integrations/supabase/client";
-import { Subscription, CreateCheckoutOptions, PaymentDetails } from "@/types/subscription";
+import { Subscription, CreateCheckoutOptions, PaymentDetails, Plan } from "@/types/subscription";
 import { PLANS } from "@/services/plansService";
 import { redirectToPayment } from "@/services/marPaymentLinks";
-import { PaymentType } from "@/components/pricing/PaymentOptions";
+import { PaymentType } from "@/services/marPaymentLinks";
 
 export const subscriptionService = {
   async getCurrentSubscription(): Promise<Subscription | null> {
@@ -90,5 +90,11 @@ export const subscriptionService = {
     
     // Use the direct payment link service
     redirectToPayment(planId, paymentType);
+  },
+  
+  // Helper method to check if a user has an active subscription
+  async hasActiveSubscription(): Promise<boolean> {
+    const subscription = await this.getCurrentSubscription();
+    return subscription !== null && subscription.status === 'active';
   }
 };

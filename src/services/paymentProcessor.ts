@@ -1,20 +1,20 @@
 
 import { RegistrationFormData } from "@/components/checkout/form/RegistrationFormSchema";
 import { redirectToPayment, paymentTrackingService } from "@/services/marPaymentLinks";
-import { PaymentType } from "@/components/pricing/PaymentOptions";
+import { PaymentType } from "@/services/marPaymentLinks";
 import { PLANS } from "@/services/plansService";
 import { plansService } from "@/services/plansService";
 
-interface ProcessPaymentOptions {
+export interface ProcessPaymentOptions {
   planId: string;
   installments: number;
   paymentType: PaymentType;
-  formData: RegistrationFormData;
+  formData?: RegistrationFormData;
   processId: string;
   recoveryState?: any;
 }
 
-interface ProcessPaymentResult {
+export interface ProcessPaymentResult {
   success: boolean;
   url?: string;
   error?: string;
@@ -28,11 +28,13 @@ export const paymentProcessor = {
     try {
       console.log(`[${processId}] Starting payment process for plan ${planId}`);
       
-      // Store customer information
-      localStorage.setItem('customerEmail', formData.email);
-      localStorage.setItem('customerPhone', formData.phone);
-      localStorage.setItem('customerName', formData.fullName);
-      localStorage.setItem('customerCPF', formData.cpf);
+      // Store customer information if available
+      if (formData) {
+        localStorage.setItem('customerEmail', formData.email);
+        localStorage.setItem('customerPhone', formData.phone);
+        localStorage.setItem('customerName', formData.fullName);
+        localStorage.setItem('customerCPF', formData.cpf);
+      }
       
       // Get plan details
       const plan = PLANS[planId.toUpperCase()];

@@ -24,12 +24,12 @@ export interface PricingPlan {
 }
 
 // Payment interface definitions
-interface PaymentOptions {
+export interface PaymentOptions {
   creditPaymentUrl: string;
   cashPaymentUrl: string;
 }
 
-interface ContactOptions {
+export interface ContactOptions {
   whatsappUrl: string;
 }
 
