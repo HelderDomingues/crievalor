@@ -157,3 +157,38 @@ Latest build errors include:
 - Type system needs refinement
 - Some components need refactoring
 - Payment detail properties need standardization
+
+## Recent Refactoring:
+
+### Code Organization and File Structure:
+1. **Component Separation:**
+   - Split large components into smaller, focused ones
+   - Created dedicated directories for feature components
+   - Improved component reusability
+
+2. **Routing Organization:**
+   - Moved router configuration to separate file
+   - Improved route maintenance and organization
+   - Centralized route definitions
+
+### Files Refactored:
+1. **src/pages/Projetos.tsx:**
+   - Split into multiple components
+   - Created ProjectOverview, ProjectExamples, and ProjectCard components
+   - Improved code organization and maintainability
+
+2. **src/App.tsx:**
+   - Moved router configuration to separate file
+   - Simplified main App component
+   - Improved routing organization
+
+### Further Refactoring Needed:
+1. **Components to Refactor:**
+   - ServicesSection.tsx (needs component separation)
+   - Large read-only files need review for potential splitting
+
+2. **Code Standardization Needed:**
+   - Navigation handling (mix of Link and programmatic navigation)
+   - State management approaches
+   - Component prop interfaces
+   - Error handling patterns
