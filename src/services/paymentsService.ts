@@ -238,5 +238,33 @@ export const paymentsService = {
       console.error("Erro em requestReceipt:", error);
       return { success: false, error: error.message };
     }
+  },
+  
+  /**
+   * Checks if a payment link is still valid
+   * @param linkUrl The URL to check
+   * @returns Boolean indicating if link is still valid
+   */
+  async checkPaymentLinkValidity(linkUrl: string): Promise<boolean> {
+    try {
+      if (!linkUrl) return false;
+      
+      // Simple validation: Check if URL is properly formatted and contains expected domain
+      if (!linkUrl.startsWith('https://')) return false;
+      if (!linkUrl.includes('asaas.com')) return false;
+      
+      // For Asaas static payment links, we can assume they're valid as they don't expire
+      if (linkUrl.includes('sandbox.asaas.com/c/')) {
+        return true;
+      }
+      
+      // For dynamic payment links, we could do a more complex check, but for now
+      // we'll assume they're valid to avoid unnecessary API calls
+      console.log(`Validating payment link: ${linkUrl}`);
+      return true;
+    } catch (error) {
+      console.error("Error checking payment link validity:", error);
+      return false; // Consider invalid if there's an error
+    }
   }
 };

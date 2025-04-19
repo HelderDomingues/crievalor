@@ -47,38 +47,3 @@ export const trackPaymentAttempt = (
   // Allow if fewer than 3 attempts in 2 minutes
   return attemptsTracker[key].count <= 3;
 };
-
-/**
- * Check if a payment link is still valid
- * @param linkUrl The URL to check
- * @returns Boolean indicating if link is still valid
- */
-export const checkPaymentLinkValidity = async (linkUrl: string): Promise<boolean> => {
-  try {
-    if (!linkUrl) return false;
-    
-    // Simple validation: Check if URL is properly formatted and contains expected domain
-    if (!linkUrl.startsWith('https://')) return false;
-    if (!linkUrl.includes('asaas.com')) return false;
-    
-    // Check if the link is still accessible (link not expired or cancelled)
-    const response = await fetch(linkUrl, {
-      method: 'HEAD',
-      redirect: 'manual', // Don't follow redirects
-    });
-    
-    // If response is a redirect to login or error page, link is invalid
-    if (response.status === 302 || response.status === 301) {
-      const location = response.headers.get('location');
-      if (location && (location.includes('login') || location.includes('error'))) {
-        return false;
-      }
-    }
-    
-    // Consider valid if status is 200 or it's a payment page redirect
-    return response.ok || response.status === 302;
-  } catch (error) {
-    console.error("Error checking payment link validity:", error);
-    return false; // Consider invalid if there's an error
-  }
-};
