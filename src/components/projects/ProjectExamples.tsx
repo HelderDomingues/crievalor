@@ -2,6 +2,7 @@
 import React from "react";
 import { Briefcase, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import ProjectCard from "./ProjectCard";
 
 const ProjectExamples = () => {
   return (

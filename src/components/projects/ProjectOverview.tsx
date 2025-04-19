@@ -2,6 +2,7 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Target, Layers, Shield, Heart, Zap } from "lucide-react";
+import FeatureCard from "./FeatureCard";
 
 const ProjectOverview = () => {
   return (
