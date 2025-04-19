@@ -1,11 +1,10 @@
-
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import AdminAuth from "@/components/admin/AdminAuth";
 import { Button } from "@/components/ui/button";
-import { FileText, Image, MessageSquareQuote, Settings } from "lucide-react";
+import { FileText, Image, MessageSquareQuote, Settings, Palette } from "lucide-react";
 import AdminCard from "@/components/admin/AdminCard";
 
 const AdminSetup = () => {
@@ -41,6 +40,13 @@ const AdminSetup = () => {
                 </div>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  <AdminCard 
+                    title="Gerenciar Portfólio"
+                    icon={<Palette className="h-10 w-10" />}
+                    to="/admin-portfolio"
+                    description="Gerenciar projetos e trabalhos do portfólio"
+                  />
+                  
                   <AdminCard 
                     title="Configurações do Sistema" 
                     icon={<Settings className="h-10 w-10" />}

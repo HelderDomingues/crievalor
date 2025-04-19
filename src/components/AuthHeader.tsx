@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useAuth } from "@/context/AuthContext";
 import { Link } from "react-router-dom";
@@ -6,13 +5,12 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useProfile } from "@/hooks/useProfile";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator, DropdownMenuLabel } from "@/components/ui/dropdown-menu";
-import { User, CreditCard, LogOut, Settings, Shield } from "lucide-react";
+import { User, CreditCard, LogOut, Settings, Shield, Palette } from "lucide-react";
 
 const AuthHeader = () => {
   const { user, signOut } = useAuth();
   const { profile, isAdmin, rolesLoading } = useProfile();
 
-  // Add debug logs to help diagnose issues
   console.log("AuthHeader - User:", user?.id);
   console.log("AuthHeader - Profile:", profile);
   console.log("AuthHeader - isAdmin:", isAdmin);
@@ -57,6 +55,12 @@ const AuthHeader = () => {
                   <Link to="/admin-setup" className="flex items-center">
                     <Settings className="mr-2 h-4 w-4" />
                     <span>Painel Admin</span>
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to="/admin-portfolio" className="flex items-center">
+                    <Palette className="mr-2 h-4 w-4" />
+                    <span>Portfólio</span>
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
