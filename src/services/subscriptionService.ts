@@ -1,12 +1,13 @@
-
 import { supabase } from "@/integrations/supabase/client";
-import { Subscription, CreateCheckoutOptions, PaymentDetails } from "@/types/subscription";
+import { Subscription, CreateCheckoutOptions, PaymentDetails, Plan, RegularPlan, CustomPricePlan } from "@/types/subscription";
 import { plansService } from "./plansService";
 import { asaasCustomerService } from "./asaasCustomerService";
 import { paymentsService } from "./paymentsService";
 
 export { PLANS } from "./plansService";
-export type { Plan, Subscription, CreateCheckoutOptions, RegularPlan, CustomPricePlan } from "@/types/subscription";
+
+// Re-export types for easier importing by components
+export type { Subscription, CreateCheckoutOptions, Plan, RegularPlan, CustomPricePlan, PaymentDetails };
 
 export const subscriptionService = {
   async createCheckoutSession(options: CreateCheckoutOptions) {
