@@ -1,9 +1,11 @@
+
 import React, { useState } from "react";
 import { BadgePercent, CreditCard } from "lucide-react";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 
-export type PaymentType = "credit" | "credit_cash" | "pix" | "boleto";
+// Update PaymentType to match the expanded type in marPaymentLinks.ts
+export type PaymentType = 'installments' | 'cash' | 'credit' | 'pix' | 'credit_cash' | 'boleto';
 
 interface PaymentOptionsProps {
   onInstallmentsChange?: (installments: number) => void;

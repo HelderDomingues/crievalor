@@ -1,13 +1,17 @@
+
 import { supabase } from "@/integrations/supabase/client";
 import { Subscription, CreateCheckoutOptions, PaymentDetails, Plan, RegularPlan, CustomPricePlan } from "@/types/subscription";
 import { plansService } from "./plansService";
 import { asaasCustomerService } from "./asaasCustomerService";
 import { paymentsService } from "./paymentsService";
+import { PaymentType } from "./marPaymentLinks";
 
 export { PLANS } from "./plansService";
 
 // Re-export types for easier importing by components
 export type { Subscription, CreateCheckoutOptions, Plan, RegularPlan, CustomPricePlan, PaymentDetails };
+// Re-export PaymentType from marPaymentLinks
+export type { PaymentType } from "./marPaymentLinks";
 
 export const subscriptionService = {
   async createCheckoutSession(options: CreateCheckoutOptions) {
@@ -133,6 +137,9 @@ export const subscriptionService = {
           ? "PIX" 
           : "BOLETO";
       
+      // Convert payment type string to PaymentType for API call
+      const mappedPaymentType = (paymentType as PaymentType);
+      
       // Create payment in Asaas
       const { paymentId, paymentLink } = await paymentsService.createPayment({
         customerId,
@@ -144,7 +151,7 @@ export const subscriptionService = {
         cancelUrl,
         installments,
         billingType,
-        paymentType,
+        paymentType: mappedPaymentType,
         dueDate,
         externalReference,
         postalService: false

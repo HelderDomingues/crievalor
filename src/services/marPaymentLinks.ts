@@ -4,7 +4,7 @@
  */
 
 // Tipos de pagamento
-export type PaymentType = 'installments' | 'cash';
+export type PaymentType = 'installments' | 'cash' | 'credit' | 'pix' | 'credit_cash' | 'boleto';
 
 // Interface para os links de pagamento
 interface PaymentLinks {
@@ -50,7 +50,10 @@ export function getPaymentLink(planId: string, paymentType: PaymentType = 'insta
     return '';
   }
   
-  return MAR_PAYMENT_LINKS[planId][paymentType];
+  // Map the expanded payment types to the basic types used in payment links
+  const mappedType = paymentType === 'credit' || paymentType === 'credit_cash' ? 'installments' : 'cash';
+  
+  return MAR_PAYMENT_LINKS[planId][mappedType];
 }
 
 /**
