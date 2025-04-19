@@ -1,6 +1,8 @@
+
 # Crie Valor Website - Implementation Plan and Progress Log
 
 ## System Prompt for Implementation Consistency
+
 ```
 IMPLEMENTATION GUIDELINES:
 1. Always check TASKS.md before any implementation
@@ -9,6 +11,14 @@ IMPLEMENTATION GUIDELINES:
 4. Update TASKS.md after each completed task
 5. Log all changes and their impacts
 6. CRITICAL: Never modify payment-related code without explicit approval
+7. ALWAYS perform a comprehensive project history and impact assessment BEFORE suggesting changes:
+   - Review existing authentication and RLS policy implementations
+   - Calculate potential risks of proposed changes
+   - Prioritize low-risk, high-impact improvements
+   - Avoid unnecessary complexity
+   - Consult project logs and past challenges before recommending modifications
+8. Prioritize documentation and verification over invasive refactoring
+9. Seek user confirmation before implementing significant architectural changes
 ```
 
 ## Current Implementation Plan
