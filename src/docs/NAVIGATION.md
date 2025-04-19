@@ -1,84 +1,105 @@
 
-# Navigation Patterns and Requirements Documentation
+# Route Mapping Documentation
 
-## Core Navigation Components
+## Overview
+This document provides a comprehensive mapping of all routes in the Crie Valor application, their purposes, and navigation relationships.
 
-### 1. Header Navigation
-- Implements React Router's `Link` components for SPA navigation
-- Dynamic active state highlighting based on current route
-- Responsive mobile menu with hamburger toggle
-- Authentication state integration with profile menu
-
-### 2. Footer Navigation
-- Organized in four sections: Company, Navigation, Services, and Contact
-- Consistent React Router `Link` usage
-- Secondary links including legal pages and accessibility
-- Social media links with external navigation
-
-### 3. Page-Level Navigation
-- `useScrollToTop` hook implementation on all content pages
-- Smooth scroll behavior for within-page navigation
-- WhatsApp integration links for direct contact
-
-## Navigation Requirements
-
-### 1. Implementation Standards
-- All internal navigation MUST use React Router's `Link` component
-- External links MUST use standard `<a>` tags with proper security attributes
-- WhatsApp links MUST include encoded message parameters
-
-### 2. User Experience Requirements
-- Smooth scroll behavior for all navigation actions
-- Consistent header presence across all routes
-- Mobile-responsive navigation at all breakpoints
-- Clear visual feedback for active/current page
-
-### 3. Performance Requirements
-- No full page reloads for internal navigation
-- Immediate UI feedback for navigation actions
-- Proper route handling for non-existent paths (404)
-
-## Route Structure
+## Route Categories
 
 ### Public Routes
-- `/` - Home
-- `/mar` - MAR Program
-- `/sobre` - About
-- `/contato` - Contact
-- `/projetos` - Projects
-- `/escola-gestao` - Management School
-- `/mentorias` - Mentoring
-- `/identidade-visual` - Visual Identity
+These routes are accessible to all users without authentication.
+
+| Route | Component | Purpose | Navigation Access Points |
+|-------|-----------|---------|--------------------------|
+| `/` | `Index.tsx` | Main landing page | Header, Footer, Logo |
+| `/mar` | `Mar.tsx` | MAR Program information | Header, Footer, Services Section |
+| `/sobre` | `Sobre.tsx` | About the company | Header, Footer |
+| `/contato` | `Contato.tsx` | Contact information and form | Header, Footer, CTA buttons |
+| `/projetos` | `Projetos.tsx` | Custom projects showcase | Footer, Services Section |
+| `/escola-gestao` | `EscolaGestao.tsx` | Management School information | Footer, Services Section |
+| `/mentorias` | `Mentorias.tsx` | Mentoring services | Footer, Services Section |
+| `/identidade-visual` | `IdentidadeVisual.tsx` | Visual identity services | Footer, Services Section |
 
 ### Authentication Routes
-- `/auth` - Authentication
-- `/profile` - User Profile
-- `/subscription` - Subscription Management
+These routes handle user authentication and profile management.
 
-### Legal Routes
-- `/politica-de-privacidade` - Privacy Policy
-- `/politica-de-reembolso` - Refund Policy
-- `/termos-de-servico` - Terms of Service
-- `/acessibilidade` - Accessibility
+| Route | Component | Purpose | Auth Required | Navigation Access Points |
+|-------|-----------|---------|---------------|--------------------------|
+| `/auth` | `Auth.tsx` | User login and registration | No | Header, Authentication-dependent CTAs |
+| `/profile` | `Profile.tsx` | User profile management | Yes | Header (authenticated users) |
+| `/subscription` | `Subscription.tsx` | Subscription management | Yes | Profile menu, Header (authenticated users) |
+| `/checkout` | `Checkout.tsx` | Payment processing | Mixed* | Subscription plans |
+
+*Checkout allows initial access without authentication but requires registration during the process
+
+### Legal and Policy Routes
+These routes provide important legal and policy information.
+
+| Route | Component | Purpose | Navigation Access Points |
+|-------|-----------|---------|--------------------------|
+| `/politica-de-privacidade` | `PrivacyPolicy.tsx` | Privacy policy | Footer |
+| `/politica-de-reembolso` | `RefundPolicy.tsx` | Refund policy | Footer |
+| `/termos-de-servico` | `TermsOfService.tsx` | Terms of service | Footer |
+| `/acessibilidade` | `Accessibility.tsx` | Accessibility information | Footer |
 
 ### Administrative Routes
-- `/admin-setup` - Admin Dashboard
-- `/admin-webhooks` - Webhook Management
-- `/admin-portfolio` - Portfolio Management
-- `/admin-materials` - Materials Management
-- `/admin-logos` - Logo Management
-- `/admin-testimonials` - Testimonials Management
+These routes are restricted to users with administrative privileges.
 
-## Security Considerations
-- Protected routes require authentication
-- Admin routes require admin role verification
-- No direct URL access to protected content
-- Proper handling of authentication state changes
+| Route | Component | Purpose | Navigation Access Points |
+|-------|-----------|---------|--------------------------|
+| `/admin-setup` | `AdminSetup.tsx` | Main admin dashboard | Header dropdown (admin users) |
+| `/admin-webhooks` | `WebhookAdmin.tsx` | Webhook management | Admin dashboard, Header dropdown (admin users) |
+| `/admin-portfolio` | `PortfolioAdmin.tsx` | Portfolio management | Admin dashboard, Header dropdown (admin users) |
+| `/admin-materials` | `AdminMaterialsPage.tsx` | Materials management | Admin dashboard, Header dropdown (admin users) |
+| `/admin-logos` | `ClientLogosAdminPage.tsx` | Client logos management | Admin dashboard, Header dropdown (admin users) |
+| `/admin-testimonials` | `TestimonialsAdmin.tsx` | Testimonials management | Admin dashboard, Header dropdown (admin users) |
 
-## Testing Requirements
-- Verify all internal links use React Router
-- Confirm proper scroll behavior
-- Validate WhatsApp integration
-- Check mobile menu functionality
-- Test protected route access
-- Verify 404 handling
+## Current Navigation Implementation
+
+### Header Navigation
+The main navigation is implemented in `src/components/Header.tsx`:
+- Responsive design with mobile and desktop variations
+- Uses React Router's `Link` component for SPA navigation
+- Highlights active routes based on current location
+- Conditionally renders authentication-related options
+- WhatsApp integration for direct contact
+
+### Footer Navigation
+The footer navigation is implemented in `src/components/Footer.tsx`:
+- Organized in four sections: Company, Navigation, Services, and Contact
+- Uses React Router's `Link` component for consistent SPA behavior
+- Includes all legal routes and social media links
+
+### Navigation Hooks
+The application uses a custom `useScrollToTop` hook (`src/hooks/useScrollToTop.tsx`) for consistent scroll behavior when navigating between routes.
+
+## Special Navigation Considerations
+
+### Authentication Flow
+- Authenticated users see profile options in the header
+- Admin users have additional administrative options
+- The AuthHeader component handles conditional rendering of these elements
+
+### WhatsApp Integration
+Several components implement WhatsApp integration via direct links with prefilled messages:
+- Contact buttons in the header
+- Project inquiry buttons in project-related pages
+- Service inquiry buttons throughout the site
+
+### Protected Routes
+- Administrative routes require admin role verification
+- Profile and subscription routes require authentication
+- The current implementation uses conditional rendering in components rather than route-level protection
+
+## Recommendations
+1. Consider implementing route-level protection for authenticated routes
+2. Verify all WhatsApp integration links are correctly formatted
+3. Ensure consistent breadcrumb implementation for improved user experience
+4. Test navigation flow across all device types
+5. Implement 404 handling for non-existent routes
+
+## Next Steps
+- Verify all internal links use React Router's Link component
+- Test authenticated and administrative route access controls
+- Ensure consistent header/footer implementation across all pages
+- Document any missing routes or navigation patterns
