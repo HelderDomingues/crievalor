@@ -1,7 +1,6 @@
-
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { Target, Layers, Shield, Heart, Zap } from "lucide-react";
+import { Target, Layers, Shield, Zap } from "lucide-react";
 import FeatureCard from "./FeatureCard";
 
 const ProjectOverview = () => {
@@ -28,7 +27,16 @@ const ProjectOverview = () => {
               a diferença para o seu negócio.
             </p>
             
-            <Button size="lg" className="shadow-glow">
+            <Button 
+              size="lg" 
+              className="shadow-glow"
+              onClick={() => {
+                const message = encodeURIComponent(
+                  "Olá, gostaria de mais informações sobre projetos personalizados."
+                );
+                window.open(`https://wa.me/5547992150289?text=${message}`, '_blank');
+              }}
+            >
               Converse com um Especialista
             </Button>
           </div>
