@@ -67,7 +67,7 @@ The main navigation is implemented in `src/components/Header.tsx`:
 ### Footer Navigation
 The footer navigation is implemented in `src/components/Footer.tsx`:
 - Organized in four sections: Company, Navigation, Services, and Contact
-- Uses React Router's `Link` component for consistent SPA behavior
+- Uses React Router's `Link` component for consistent SPA behavior (Fixed April 2024)
 - Includes all legal routes and social media links
 
 ### Navigation Hooks
@@ -91,6 +91,11 @@ Several components implement WhatsApp integration via direct links with prefille
 - Profile and subscription routes require authentication
 - The current implementation uses conditional rendering in components rather than route-level protection
 
+### Link Behavior
+- All internal links now use React Router's `Link` component or the navigation functionality
+- Links that previously caused full page reloads (such as branding and mentorias pages) have been fixed
+- The `HeroContent` component correctly handles both anchor links (with smooth scrolling) and regular routing
+
 ## Recommendations
 1. Consider implementing route-level protection for authenticated routes
 2. Verify all WhatsApp integration links are correctly formatted
@@ -99,7 +104,7 @@ Several components implement WhatsApp integration via direct links with prefille
 5. Implement 404 handling for non-existent routes
 
 ## Next Steps
-- Verify all internal links use React Router's Link component
+- Verify all internal links use React Router's Link component (COMPLETED April 2024)
 - Test authenticated and administrative route access controls
-- Ensure consistent header/footer implementation across all pages
+- Ensure consistent header/footer implementation across all pages (IN PROGRESS)
 - Document any missing routes or navigation patterns
