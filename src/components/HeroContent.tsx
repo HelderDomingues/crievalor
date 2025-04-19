@@ -33,10 +33,13 @@ const HeroContent: React.FC<HeroContentProps> = ({
       if (element) {
         element.scrollIntoView({ behavior: 'smooth' });
       }
+    } else {
+      navigate(url);
     }
   };
 
   const renderButton = (text: string, url: string, isSecondary: boolean = false) => {
+    // Handle anchor links (e.g., #contact) differently from route navigation
     if (url.startsWith('#')) {
       return (
         <Button
@@ -52,6 +55,7 @@ const HeroContent: React.FC<HeroContentProps> = ({
       );
     }
 
+    // For regular routes, use Link component
     return (
       <Button
         size="lg"
