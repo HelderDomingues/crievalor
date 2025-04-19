@@ -1,194 +1,71 @@
-# Crie Valor Website - Tasks and Lessons Learned
 
-## Diretrizes de Desenvolvimento
+# Crie Valor Website - Implementation Plan and Progress Log
 
-### Política de Alterações de Design e Estrutura
-- **Diretriz Crítica:** Qualquer alteração de design, layout ou estrutura do website DEVE ser aprovada explicitamente pelo cliente antes da implementação.
-- Proibido fazer modificações que alterem a experiência do usuário sem consentimento prévio.
-- Comunicar claramente qualquer proposta de alteração antes de implementá-la.
-
-## Build Status:
-- **Current State:** The website build is ongoing with active development
-- **Recent Activity:** Implementation of subscription plans and payment processing updates
-- **Current Route:** /profile
-
-## Lessons Learned:
-
-### Code Organization and Architecture:
-1. **Modular Components:** Created reusable components like `PlanCard` to improve maintainability
-2. **Asaas Integration Evolution:**
-   - Initial approach: Full API integration with customer creation and payment processing
-   - Current approach: Simplified using direct payment links
-   - Reason for change: Reduced complexity and better user experience
-
-### Error Handling and Debugging:
-1. **Type System Improvements:**
-   - Added proper TypeScript interfaces for subscription and payment types
-   - Fixed issues with payment type definitions
-   - Resolved export/import inconsistencies
-
-2. **Build Error Solutions:**
-   - Implemented proper error boundaries
-   - Added structured error handling in payment processing
-   - Fixed component prop type mismatches
-
-## Common Issues and Solutions:
-
-### Import/Export Problems:
-```typescript
-// Problem: Module exports not properly defined
-// Before:
-export const subscriptionService = { ... }
-
-// Solution:
-export type { Subscription, Plan } from './types'
-export { PLANS, subscriptionService }
+## System Prompt for Implementation Consistency
+```
+IMPLEMENTATION GUIDELINES:
+1. Always check TASKS.md before any implementation
+2. Stay focused on the current phase and task
+3. If error fixing takes you off course, return to the plan
+4. Update TASKS.md after each completed task
+5. Log all changes and their impacts
+6. CRITICAL: Never modify payment-related code without explicit approval
 ```
 
-### Type Definition Issues:
-```typescript
-// Problem: Inconsistent payment type definitions
-type PaymentType = 'credit' | 'pix'  // Was causing type conflicts
+## Current Implementation Plan
 
-// Solution:
-export type PaymentType = 'credit' | 'cash'  // Standardized across codebase
-```
+### Phase 1: Core Functionality and Navigation (Priority)
+- [x] Fix component import errors in ProjectExamples.tsx and ProjectOverview.tsx
+- [ ] Standardize navigation implementation across all content pages
+  - [ ] Audit current navigation patterns
+  - [ ] Replace direct <a> tags with React Router's Link
+  - [ ] Implement consistent useScrollToTop usage
+  - [ ] Test navigation flow thoroughly
+- [ ] Document all navigation patterns and requirements
 
-### Component Structure:
-- Created smaller, focused components
-- Improved prop typing
-- Added proper JSDoc documentation
+### Phase 2: Route Management and User Experience
+- [ ] Create comprehensive route mapping
+- [ ] Verify all internal links and redirects
+- [ ] Ensure consistent header/footer implementation
+- [ ] Test user flow paths
+- [ ] Document all routes and their purposes
 
-## Failed Approaches:
+### Phase 3: Code Optimization and Cleanup
+- [ ] Map all component dependencies
+- [ ] Identify unused code and components
+- [ ] Document critical system relationships
+- [ ] Plan safe removal of obsolete code
+  - IMPORTANT: Preserve all payment-related functionality
+  - Lock payment implementation files
+- [ ] Implement code reuse optimizations
+- [ ] Performance testing and documentation
 
-1. **Direct Asaas API Integration:**
-   - Attempted full API integration for payment processing
-   - Issues: Complex error handling, webhook management
-   - Solution: Switched to direct payment links
+## Protected Areas (DO NOT MODIFY)
+1. Payment Processing
+   - All Asaas integration code
+   - Checkout flow components
+   - Payment link handling
+   - Subscription management
+   - User plan management
 
-2. **Inline Payment Processing:**
-   - Tried processing payments within our interface
-   - Issues: Security concerns, complex state management
-   - Solution: Redirecting to Asaas checkout
+## Change Log
 
-## Current Issues:
+### 2024-04-19
+- Fixed component import errors:
+  - Added ProjectCard import to ProjectExamples.tsx
+  - Added FeatureCard import to ProjectOverview.tsx
+- Created initial implementation plan
+- Established protected areas
 
-1. **Type Errors:**
-   - Module '"@/services/subscriptionService"' declarations
-   - PaymentType mismatches
-   - ProcessPaymentOptions incompatibilities
+## Next Steps
+1. Begin Phase 1 implementation
+2. Focus on navigation standardization
+3. Regular testing of payment functionality to ensure stability
 
-2. **Component Props:**
-   - Missing required properties
-   - Incorrect type assignments
+## Success Metrics
+- Zero build errors
+- Consistent navigation behavior
+- Maintained payment system integrity
+- Improved code organization
+- Enhanced performance metrics
 
-## Next Steps:
-
-1. **Type System:**
-   - Standardize payment type definitions
-   - Export all necessary types and interfaces
-   - Update component prop types
-
-2. **Code Cleanup:**
-   - Remove obsolete Asaas API integration code
-   - Consolidate payment processing logic
-   - Refactor large components into smaller ones
-
-## Documentation:
-
-### API Integration:
-```typescript
-// Current Approach:
-// Using direct payment links instead of API integration
-const PAYMENT_LINKS = {
-  basic_plan: {
-    credit: "https://sandbox.asaas.com/c/vydr3n77kew5fd4s",
-    pix: "https://sandbox.asaas.com/c/fy15747uacorzbla"
-  },
-  pro_plan: {
-    credit: "https://sandbox.asaas.com/c/4fcw2ezk4je61qon",
-    pix: "https://sandbox.asaas.com/c/pqnkhgvic7c25ufq"
-  },
-  enterprise_plan: {
-    credit: "https://sandbox.asaas.com/c/z4vate6zwonrwoft",
-    pix: "https://sandbox.asaas.com/c/3pdwf46bs80mpk0s"
-  }
-}
-```
-
-### Payment Flow:
-1. User selects plan
-2. Chooses payment method
-3. Redirects to Asaas checkout
-4. Webhook handles payment confirmation
-
-## Build Errors Log:
-
-Latest build errors include:
-- Missing exports in subscriptionService
-- Type mismatches in payment processing
-- Component prop type mismatches
-- PaymentDetails interface inconsistencies
-
-### Resolution Status:
-- [ ] Fix type exports in subscriptionService
-- [ ] Update payment type definitions
-- [ ] Correct component prop types
-- [ ] Standardize payment details interface
-
-## Version History:
-
-### Major Changes:
-1. Initial setup with full Asaas API integration
-2. Migration to direct payment links
-3. Implementation of subscription management
-4. Addition of payment type selection
-5. Integration of webhook handling
-
-## Testing Notes:
-
-### Test Cases:
-- Payment flow with different plan types
-- Subscription management
-- Payment type selection
-- Error handling scenarios
-
-### Known Issues:
-- Type system needs refinement
-- Some components need refactoring
-- Payment detail properties need standardization
-
-## Recent Refactoring:
-
-### Code Organization and File Structure:
-1. **Component Separation:**
-   - Split large components into smaller, focused ones
-   - Created dedicated directories for feature components
-   - Improved component reusability
-
-2. **Routing Organization:**
-   - Moved router configuration to separate file
-   - Improved route maintenance and organization
-   - Centralized route definitions
-
-### Files Refactored:
-1. **src/pages/Projetos.tsx:**
-   - Split into multiple components
-   - Created ProjectOverview, ProjectExamples, and ProjectCard components
-   - Improved code organization and maintainability
-
-2. **src/App.tsx:**
-   - Moved router configuration to separate file
-   - Simplified main App component
-   - Improved routing organization
-
-### Further Refactoring Needed:
-1. **Components to Refactor:**
-   - ServicesSection.tsx (needs component separation)
-   - Large read-only files need review for potential splitting
-
-2. **Code Standardization Needed:**
-   - Navigation handling (mix of Link and programmatic navigation)
-   - State management approaches
-   - Component prop interfaces
-   - Error handling patterns
