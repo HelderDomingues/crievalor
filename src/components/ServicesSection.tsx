@@ -1,6 +1,5 @@
-
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { 
   BookOpen, 
   Users, 
@@ -81,6 +80,13 @@ const services: Service[] = [
 ];
 
 const ServicesSection = () => {
+  const navigate = useNavigate();
+
+  const handleNavigation = (route: string) => {
+    navigate(route);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   return (
     <section className="py-16 md:py-24 bg-gradient-to-b from-background to-secondary/10 relative">
       <div className="absolute inset-0 overflow-hidden">
@@ -138,10 +144,11 @@ const ServicesSection = () => {
                       </ul>
                     )}
                     
-                    <Button variant="outline" asChild>
-                      <Link to={service.route}>
-                        Saiba mais <ArrowRight className="ml-2 h-4 w-4" />
-                      </Link>
+                    <Button 
+                      variant="outline" 
+                      onClick={() => handleNavigation(service.route)}
+                    >
+                      Saiba mais <ArrowRight className="ml-2 h-4 w-4" />
                     </Button>
                   </CardContent>
                 </Card>

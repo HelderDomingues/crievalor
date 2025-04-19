@@ -1,4 +1,3 @@
-
 import React, { useEffect } from "react";
 import {
   createBrowserRouter,
@@ -26,9 +25,8 @@ import RefundPolicy from "./pages/RefundPolicy";
 import TermsOfService from "./pages/TermsOfService";
 import Subscription from "./pages/Subscription";
 import Checkout from "./pages/Checkout";
-// Import AuthProvider from AuthContext
+import Accessibility from "./pages/Accessibility";
 import { AuthProvider } from "./context/AuthContext";
-// Import setup service to initialize application
 import "@/services/setupService";
 
 const router = createBrowserRouter([
@@ -117,11 +115,14 @@ const router = createBrowserRouter([
     path: "/profile",
     element: <Profile />,
   },
+  {
+    path: "/acessibilidade",
+    element: <Accessibility />,
+  },
 ]);
 
 function App() {
   useEffect(() => {
-    // Log initialization message
     console.log("Aplicação inicializada com sucesso");
   }, []);
 
