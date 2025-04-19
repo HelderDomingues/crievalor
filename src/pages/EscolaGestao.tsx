@@ -4,21 +4,34 @@ import Footer from "@/components/Footer";
 import HeroSection from "@/components/HeroSection";
 import ContactSection from "@/components/ContactSection";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { MapPin, Calendar, Users, Target, Award, BarChart3, CheckCircle2, ArrowRight, Phone, MessageCircle } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
+import { ArrowRight, Award, BarChart3, Calendar, CheckCircle2, MapPin, MessageCircle, Phone, Target, Users } from "lucide-react";
 import EscolaGestaoLeadForm from "@/components/EscolaGestaoLeadForm";
 
 const EscolaGestao = () => {
-  // Hero images for the carousel
   const heroImages = ["https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=2070", "https://images.unsplash.com/photo-1558021211-6d1403321394?q=80&w=2083", "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?q=80&w=2070"];
+  
   return <div className="min-h-screen flex flex-col">
       <Header />
       
       <main className="flex-grow">
         {/* Hero Section */}
-        <HeroSection title="Escola de Gestão" subtitle="Formação Executiva Presencial" description="Um programa completo de desenvolvimento de líderes e gestores com metodologias práticas e aplicação imediata." ctaText="Inscreva-se Agora" ctaUrl="#lead-form" backgroundImages={heroImages} />
-        
+        <HeroSection 
+          title="ESCOLA DE GESTÃO" 
+          subtitle="Desperte o potencial da sua equipe" 
+          description={
+            <>
+              Formação de líderes que dominam as ferramentas essenciais para gerir pessoas e processos.
+              <br/><br/>
+              Treinamentos práticos desenvolvidos por especialistas com mais de 25 anos de experiência no mercado.
+              <br/><br/>
+              Métodos testados e aprovados em centenas de empresas, garantindo resultados rápidos e mensuráveis.
+            </>
+          } 
+          ctaText="QUERO ACESSO AO MÉTODO COMPROVADO" 
+          ctaUrl="https://wa.me/+5547992150289?text=Quero%20garantir%20minha%20vaga%20na%20próxima%20turma%20da%20Escola%20de%20Gestão" 
+          backgroundImages={heroImages} 
+        />
+
         {/* About Section */}
         <section className="py-16 md:py-20 bg-secondary/30">
           <div className="container mx-auto px-4">
@@ -102,7 +115,7 @@ const EscolaGestao = () => {
                 <span className="font-medium">Metodologia</span>
               </div>
               <h2 className="text-3xl md:text-4xl font-bold mb-4">
-                Como Funciona a Escola de Gestão
+                Por que a Escola de Gestão é diferente?
               </h2>
               <p className="text-lg text-muted-foreground">
                 Um programa estruturado com metodologia prática e aplicação imediata, 
@@ -111,40 +124,34 @@ const EscolaGestao = () => {
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {/* Step 1 */}
               <div className="relative bg-card border border-border rounded-xl p-6 hover:shadow-md transition-all">
-                <div className="absolute -top-5 -left-2 bg-primary text-white w-10 h-10 rounded-full flex items-center justify-center text-xl font-bold">
+                <div className="absolute -top-5 left-1/2 -translate-x-1/2 bg-primary text-white w-10 h-10 rounded-full flex items-center justify-center text-xl font-bold">
                   1
                 </div>
-                <h3 className="text-xl font-bold mt-4 mb-3">Diagnóstico</h3>
-                <p className="text-muted-foreground mb-4">
-                  Identificação das necessidades específicas de desenvolvimento de competências da sua empresa e equipe.
+                <h3 className="text-xl font-bold mt-4 mb-3 text-center">Não é teoria genérica</h3>
+                <p className="text-muted-foreground text-center">
+                  Trazemos o que realmente funciona, testado e aprovado em centenas de empresas.
                 </p>
-                <div className="w-12 h-1 bg-primary/50 rounded-full"></div>
               </div>
               
-              {/* Step 2 */}
               <div className="relative bg-card border border-border rounded-xl p-6 hover:shadow-md transition-all">
-                <div className="absolute -top-5 -left-2 bg-primary text-white w-10 h-10 rounded-full flex items-center justify-center text-xl font-bold">
+                <div className="absolute -top-5 left-1/2 -translate-x-1/2 bg-primary text-white w-10 h-10 rounded-full flex items-center justify-center text-xl font-bold">
                   2
                 </div>
-                <h3 className="text-xl font-bold mt-4 mb-3">Capacitação</h3>
-                <p className="text-muted-foreground mb-4">
-                  Módulos presenciais com foco nas competências essenciais para gestores, com metodologia prática e aplicável.
+                <h3 className="text-xl font-bold mt-4 mb-3 text-center">Não é demorado</h3>
+                <p className="text-muted-foreground text-center">
+                  Conteúdo direto ao ponto, sem enrolação.
                 </p>
-                <div className="w-12 h-1 bg-primary/50 rounded-full"></div>
               </div>
               
-              {/* Step 3 */}
               <div className="relative bg-card border border-border rounded-xl p-6 hover:shadow-md transition-all">
-                <div className="absolute -top-5 -left-2 bg-primary text-white w-10 h-10 rounded-full flex items-center justify-center text-xl font-bold">
+                <div className="absolute -top-5 left-1/2 -translate-x-1/2 bg-primary text-white w-10 h-10 rounded-full flex items-center justify-center text-xl font-bold">
                   3
                 </div>
-                <h3 className="text-xl font-bold mt-4 mb-3">Implementação</h3>
-                <p className="text-muted-foreground mb-4">
-                  Aplicação prática dos conhecimentos com acompanhamento e suporte personalizado para gestores.
+                <h3 className="text-xl font-bold mt-4 mb-3 text-center">Não é desconectado da realidade</h3>
+                <p className="text-muted-foreground text-center">
+                  Aplicação imediata no dia a dia da sua empresa.
                 </p>
-                <div className="w-12 h-1 bg-primary/50 rounded-full"></div>
               </div>
             </div>
           </div>
@@ -167,98 +174,94 @@ const EscolaGestao = () => {
               </p>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              {/* Módulo Geral */}
               <div className="bg-card border border-border rounded-xl p-6 hover:shadow-md transition-all">
-                <h3 className="text-xl font-bold mb-3">Liderança e Gestão de Pessoas</h3>
-                <p className="text-muted-foreground mb-4">
-                  Desenvolvimento de habilidades de liderança, comunicação efetiva, feedback e gestão de equipes de alto desempenho.
-                </p>
+                <h3 className="text-xl font-bold mb-3">MÓDULO GERAL (Base Essencial para Todo Gestor)</h3>
                 <ul className="space-y-2">
-                  <li className="flex items-start">
-                    <CheckCircle2 className="h-5 w-5 text-primary mr-2 mt-0.5" />
-                    <span>Liderança situacional</span>
-                  </li>
-                  <li className="flex items-start">
-                    <CheckCircle2 className="h-5 w-5 text-primary mr-2 mt-0.5" />
-                    <span>Comunicação assertiva</span>
-                  </li>
-                  <li className="flex items-start">
-                    <CheckCircle2 className="h-5 w-5 text-primary mr-2 mt-0.5" />
-                    <span>Gestão de conflitos</span>
-                  </li>
+                  {[
+                    "Introdução a gestão: identificar habilidades e quebrar paradigmas",
+                    "Análise de Perfil",
+                    "Análise de Cenário",
+                    "Planos de ação",
+                    "Indicadores e Monitoramento",
+                    "Feedback",
+                    "Reuniões Produtivas",
+                    "Gestão do Tempo"
+                  ].map((item, index) => (
+                    <li key={index} className="flex items-start">
+                      <CheckCircle2 className="h-5 w-5 text-primary mr-2 mt-0.5" />
+                      <span>{item}</span>
+                    </li>
+                  ))}
                 </ul>
               </div>
               
+              {/* Módulo RH */}
               <div className="bg-card border border-border rounded-xl p-6 hover:shadow-md transition-all">
-                <h3 className="text-xl font-bold mb-3">Gestão Estratégica</h3>
-                <p className="text-muted-foreground mb-4">
-                  Ferramentas para tomada de decisão, planejamento estratégico e implementação de objetivos organizacionais.
-                </p>
+                <h3 className="text-xl font-bold mb-3">MÓDULO RH/GESTÃO DE PESSOAS</h3>
                 <ul className="space-y-2">
-                  <li className="flex items-start">
-                    <CheckCircle2 className="h-5 w-5 text-primary mr-2 mt-0.5" />
-                    <span>Análise de mercado regional</span>
-                  </li>
-                  <li className="flex items-start">
-                    <CheckCircle2 className="h-5 w-5 text-primary mr-2 mt-0.5" />
-                    <span>Definição de metas e KPIs</span>
-                  </li>
-                  <li className="flex items-start">
-                    <CheckCircle2 className="h-5 w-5 text-primary mr-2 mt-0.5" />
-                    <span>Gestão de projetos</span>
-                  </li>
+                  {[
+                    "Recrutamento e Seleção",
+                    "Admissão e Integração",
+                    "Desenvolvimento & Análise de Habilidades e Competências",
+                    "Feedback e PDI",
+                    "Cultura Organizacional & Indicadores de Gente",
+                    "Gestão de Cargos e Salários & Plano de Carreira",
+                    "Política de Benefícios & Programas de Saúde e Qualidade de Vida",
+                    "Educação Corporativa & Aprendizagem Contínua"
+                  ].map((item, index) => (
+                    <li key={index} className="flex items-start">
+                      <CheckCircle2 className="h-5 w-5 text-primary mr-2 mt-0.5" />
+                      <span>{item}</span>
+                    </li>
+                  ))}
                 </ul>
               </div>
               
+              {/* Módulo Comercial */}
               <div className="bg-card border border-border rounded-xl p-6 hover:shadow-md transition-all">
-                <h3 className="text-xl font-bold mb-3">Gestão Financeira</h3>
-                <p className="text-muted-foreground mb-4">
-                  Análise financeira, controle de custos e orçamentos, interpretação de demonstrativos financeiros.
-                </p>
+                <h3 className="text-xl font-bold mb-3">MÓDULO COMERCIAL</h3>
                 <ul className="space-y-2">
-                  <li className="flex items-start">
-                    <CheckCircle2 className="h-5 w-5 text-primary mr-2 mt-0.5" />
-                    <span>Indicadores financeiros</span>
-                  </li>
-                  <li className="flex items-start">
-                    <CheckCircle2 className="h-5 w-5 text-primary mr-2 mt-0.5" />
-                    <span>Análise de investimentos</span>
-                  </li>
-                  <li className="flex items-start">
-                    <CheckCircle2 className="h-5 w-5 text-primary mr-2 mt-0.5" />
-                    <span>Precificação estratégica</span>
-                  </li>
+                  {[
+                    "Estabelecimento de Metas",
+                    "Canais de vendas",
+                    "Funis de Vendas",
+                    "Integração com Marketing",
+                    "Indicadores Comerciais",
+                    "Análise e Monitoramento",
+                    "Desenvolvimento de Líderes Comerciais",
+                    "Equipes de alto rendimento e engajamento de equipe"
+                  ].map((item, index) => (
+                    <li key={index} className="flex items-start">
+                      <CheckCircle2 className="h-5 w-5 text-primary mr-2 mt-0.5" />
+                      <span>{item}</span>
+                    </li>
+                  ))}
                 </ul>
               </div>
               
+              {/* Módulo Financeiro */}
               <div className="bg-card border border-border rounded-xl p-6 hover:shadow-md transition-all">
-                <h3 className="text-xl font-bold mb-3">Gestão Comercial e Marketing</h3>
-                <p className="text-muted-foreground mb-4">
-                  Estratégias de vendas, negociação, marketing digital e relacionamento com clientes.
-                </p>
+                <h3 className="text-xl font-bold mb-3">MÓDULO FINANCEIRO</h3>
                 <ul className="space-y-2">
-                  <li className="flex items-start">
-                    <CheckCircle2 className="h-5 w-5 text-primary mr-2 mt-0.5" />
-                    <span>Técnicas de vendas consultivas</span>
-                  </li>
-                  <li className="flex items-start">
-                    <CheckCircle2 className="h-5 w-5 text-primary mr-2 mt-0.5" />
-                    <span>Marketing digital para negócios locais</span>
-                  </li>
-                  <li className="flex items-start">
-                    <CheckCircle2 className="h-5 w-5 text-primary mr-2 mt-0.5" />
-                    <span>CRM e fidelização</span>
-                  </li>
+                  {[
+                    "Teoria financeira básica",
+                    "Indicadores Financeiros e sua Aplicação",
+                    "Planejamento Financeiro e Orçamentário",
+                    "Impostos",
+                    "Fluxos de Caixa",
+                    "Dashboards BI",
+                    "DRE",
+                    "Cobrança"
+                  ].map((item, index) => (
+                    <li key={index} className="flex items-start">
+                      <CheckCircle2 className="h-5 w-5 text-primary mr-2 mt-0.5" />
+                      <span>{item}</span>
+                    </li>
+                  ))}
                 </ul>
               </div>
-            </div>
-            
-            <div className="text-center mt-12">
-              <Button asChild>
-                <a href="#lead-form">
-                  Solicitar programa completo <ArrowRight className="ml-2 h-4 w-4" />
-                </a>
-              </Button>
             </div>
           </div>
         </section>
@@ -271,6 +274,27 @@ const EscolaGestao = () => {
           </div>
           
           <div className="container mx-auto px-4 relative z-10">
+            {/* New Banner */}
+            <div className="max-w-3xl mx-auto mb-16 bg-destructive/10 rounded-xl p-8">
+              <h3 className="text-2xl font-bold text-center mb-6 text-destructive">
+                O que você perde SEM uma gestão profissional:
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {[
+                  "Equipes desalinhadas = Prejuízos mensuráveis",
+                  "Decisões no escuro = Risco financeiro",
+                  "Talento subutilizado = Potencial desperdiçado",
+                  "Time desmotivado = Rotatividade alta",
+                  "Falta de KPIs/indicadores de resultados = Navio sem bússola"
+                ].map((item, index) => (
+                  <div key={index} className="flex items-center space-x-3 p-3 bg-destructive/5 rounded-lg">
+                    <div className="h-2 w-2 rounded-full bg-destructive"></div>
+                    <p className="text-sm font-medium text-destructive">{item}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
             <div className="max-w-3xl mx-auto text-center mb-16">
               <div className="inline-flex items-center bg-primary/10 text-primary rounded-full px-4 py-2 mb-4">
                 <Award className="mr-2 h-4 w-4" />
@@ -378,8 +402,8 @@ const EscolaGestao = () => {
                       <li className="flex items-start">
                         <CheckCircle2 className="h-5 w-5 text-primary mr-3 mt-0.5" />
                         <div>
-                          <p className="font-medium">8 módulos completos</p>
-                          <p className="text-sm text-muted-foreground">Com carga horária de 8h cada</p>
+                          <p className="font-medium">04 módulos completos</p>
+                          <p className="text-sm text-muted-foreground">Com carga horária de 10h cada</p>
                         </div>
                       </li>
                       <li className="flex items-start">
@@ -497,4 +521,5 @@ const EscolaGestao = () => {
       <Footer />
     </div>;
 };
+
 export default EscolaGestao;
