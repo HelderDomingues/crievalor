@@ -26,6 +26,12 @@ const PortfolioGallery = ({ projects }: PortfolioGalleryProps) => {
     setDialogOpen(true);
   };
 
+  const handleOpenProjectUrl = (url: string | null) => {
+    if (url) {
+      window.open(url, '_blank', 'noopener,noreferrer');
+    }
+  };
+
   return (
     <div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -51,7 +57,7 @@ const PortfolioGallery = ({ projects }: PortfolioGalleryProps) => {
                     variant="outline"
                     size="icon"
                     className="rounded-full bg-background/80"
-                    onClick={() => window.open(project.projectUrl, '_blank')}
+                    onClick={() => handleOpenProjectUrl(project.projectUrl)}
                   >
                     <ExternalLink className="h-5 w-5" />
                   </Button>
@@ -119,7 +125,7 @@ const PortfolioGallery = ({ projects }: PortfolioGalleryProps) => {
                     <Button 
                       variant="link" 
                       className="px-0 mt-2"
-                      onClick={() => window.open(selectedProject.projectUrl as string, '_blank')}
+                      onClick={() => handleOpenProjectUrl(selectedProject.projectUrl)}
                     >
                       Visitar projeto <ExternalLink className="ml-2 h-4 w-4" />
                     </Button>
