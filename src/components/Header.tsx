@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, X, ChevronDown } from "lucide-react";
@@ -45,10 +44,6 @@ const Header = () => {
     { title: "Home", path: "/" },
     { title: "MAR", path: "/mar" },
     { title: "Sobre", path: "/sobre" },
-    { title: "Escola de Gestão", path: "/escola-gestao" },
-    { title: "Mentorias", path: "/mentorias" },
-    { title: "Identidade Visual", path: "/identidade-visual" },
-    { title: "Projetos", path: "/projetos" },
     { title: "Contato", path: "/contato" },
   ];
 

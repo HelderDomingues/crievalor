@@ -1,5 +1,12 @@
 # Crie Valor Website - Tasks and Lessons Learned
 
+## Diretrizes de Desenvolvimento
+
+### Política de Alterações de Design e Estrutura
+- **Diretriz Crítica:** Qualquer alteração de design, layout ou estrutura do website DEVE ser aprovada explicitamente pelo cliente antes da implementação.
+- Proibido fazer modificações que alterem a experiência do usuário sem consentimento prévio.
+- Comunicar claramente qualquer proposta de alteração antes de implementá-la.
+
 ## Build Status:
 - **Current State:** The website build is ongoing with active development
 - **Recent Activity:** Implementation of subscription plans and payment processing updates
