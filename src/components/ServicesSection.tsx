@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Link } from "react-router-dom";
 import { 
@@ -138,7 +137,7 @@ const ServicesSection = () => {
                       </ul>
                     )}
                     
-                    <Button variant="outline" asChild className="mt-4">
+                    <Button variant="outline" asChild>
                       <Link to={service.route}>
                         Saiba mais <ArrowRight className="ml-2 h-4 w-4" />
                       </Link>
