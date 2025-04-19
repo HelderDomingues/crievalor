@@ -1,6 +1,6 @@
 
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { ArrowRight, Compass } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -25,6 +25,8 @@ const HeroContent: React.FC<HeroContentProps> = ({
   secondaryCtaUrl,
   isMarHero = false
 }) => {
+  const navigate = useNavigate();
+
   const handleScroll = (url: string) => {
     if (url.startsWith('#')) {
       const element = document.getElementById(url.substring(1));
