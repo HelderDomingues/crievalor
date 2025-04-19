@@ -45,6 +45,10 @@ const Header = () => {
     { title: "Home", path: "/" },
     { title: "MAR", path: "/mar" },
     { title: "Sobre", path: "/sobre" },
+    { title: "Escola de Gestão", path: "/escola-gestao" },
+    { title: "Mentorias", path: "/mentorias" },
+    { title: "Identidade Visual", path: "/identidade-visual" },
+    { title: "Projetos", path: "/projetos" },
     { title: "Contato", path: "/contato" },
   ];
 
@@ -77,7 +81,7 @@ const Header = () => {
           </div>
 
           {/* Desktop Menu */}
-          <nav className="hidden md:flex items-center space-x-8">
+          <nav className="hidden md:flex items-center space-x-4">
             {menuItems.map((item) => (
               <Link
                 key={item.path}
@@ -99,7 +103,6 @@ const Header = () => {
               Fale Conosco
             </Button>
             
-            {/* Add AuthHeader component here */}
             <div className="ml-4">
               <AuthHeader />
             </div>
@@ -130,7 +133,7 @@ const Header = () => {
         }`}
         style={{ top: "56px" }}
       >
-        <nav className="flex flex-col p-8 space-y-6">
+        <nav className="flex flex-col p-8 space-y-4">
           {menuItems.map((item) => (
             <Link
               key={item.path}
