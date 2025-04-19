@@ -1,5 +1,6 @@
 
 import { PortfolioProject } from "@/types/portfolio";
+import { toast } from "@/components/ui/use-toast";
 
 // Esse serviço simula um CMS para gerenciar o portfólio
 // Em uma implementação real, isso se conectaria a uma API real
@@ -18,7 +19,8 @@ let projects: PortfolioProject[] = [
       "https://images.unsplash.com/photo-1600508773159-bfc7706bce35?ixlib=rb-1.2.1&auto=format&fit=crop&w=1200&q=80"
     ],
     date: "2023-09-15",
-    projectUrl: null
+    projectUrl: null,
+    tags: ["logo", "identidade visual", "branding", "tecnologia"]
   },
   {
     id: "2",
@@ -32,7 +34,8 @@ let projects: PortfolioProject[] = [
       "https://images.unsplash.com/photo-1606936635002-8643a581bd2b?ixlib=rb-1.2.1&auto=format&fit=crop&w=1200&q=80"
     ],
     date: "2023-07-20",
-    projectUrl: null
+    projectUrl: null,
+    tags: ["restaurante", "menu", "branding", "logo"]
   },
   {
     id: "3",
@@ -47,7 +50,8 @@ let projects: PortfolioProject[] = [
       "https://images.unsplash.com/photo-1579546929518-9e396f3cc809?ixlib=rb-1.2.1&auto=format&fit=crop&w=1200&q=80"
     ],
     date: "2023-05-30",
-    projectUrl: "https://example.com"
+    projectUrl: "https://example.com",
+    tags: ["e-commerce", "moda", "UI/UX", "web"]
   },
   {
     id: "4",
@@ -61,7 +65,8 @@ let projects: PortfolioProject[] = [
       "https://images.unsplash.com/photo-1607703703520-bb638e84caf2?ixlib=rb-1.2.1&auto=format&fit=crop&w=1200&q=80"
     ],
     date: "2023-03-10",
-    projectUrl: null
+    projectUrl: null,
+    tags: ["financeiro", "logo", "identidade visual", "consultoria"]
   },
   {
     id: "5",
@@ -75,7 +80,8 @@ let projects: PortfolioProject[] = [
       "https://images.unsplash.com/photo-1586717791821-3f44a563fa4c?ixlib=rb-1.2.1&auto=format&fit=crop&w=1200&q=80"
     ],
     date: "2022-11-25",
-    projectUrl: "https://example.com"
+    projectUrl: "https://example.com",
+    tags: ["app", "fitness", "mobile", "UI/UX"]
   },
   {
     id: "6",
@@ -89,61 +95,98 @@ let projects: PortfolioProject[] = [
       "https://images.unsplash.com/photo-1634942537034-2531766767a1?ixlib=rb-1.2.1&auto=format&fit=crop&w=1200&q=80"
     ],
     date: "2022-09-05",
-    projectUrl: null
+    projectUrl: null,
+    tags: ["campanha", "impresso", "digital", "energia"]
   }
 ];
 
-export const getPortfolioProjects = (): Promise<PortfolioProject[]> => {
-  return new Promise((resolve) => {
+export const getPortfolioProjects = async (): Promise<PortfolioProject[]> => {
+  try {
     // Simula uma chamada de API com um pequeno delay
-    setTimeout(() => {
-      resolve(projects);
-    }, 500);
-  });
+    await new Promise(resolve => setTimeout(resolve, 300));
+    return [...projects]; // Retorna uma cópia para evitar referências
+  } catch (error) {
+    console.error("Erro ao buscar projetos:", error);
+    toast({
+      title: "Erro ao carregar projetos",
+      description: "Não foi possível obter a lista de projetos.",
+      variant: "destructive"
+    });
+    return [];
+  }
 };
 
-export const getProjectById = (id: string): Promise<PortfolioProject | undefined> => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      const project = projects.find(p => p.id === id);
-      resolve(project);
-    }, 300);
-  });
+export const getProjectById = async (id: string): Promise<PortfolioProject | undefined> => {
+  try {
+    await new Promise(resolve => setTimeout(resolve, 200));
+    return projects.find(p => p.id === id);
+  } catch (error) {
+    console.error("Erro ao buscar projeto:", error);
+    toast({
+      title: "Erro ao carregar projeto",
+      description: "Não foi possível obter os dados do projeto.",
+      variant: "destructive"
+    });
+    return undefined;
+  }
 };
 
-export const addProject = (project: Omit<PortfolioProject, 'id'>): Promise<PortfolioProject> => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      const newProject = {
-        ...project,
-        id: Date.now().toString()
-      };
-      projects = [...projects, newProject];
-      resolve(newProject);
-    }, 500);
-  });
+export const addProject = async (project: Omit<PortfolioProject, 'id'>): Promise<PortfolioProject> => {
+  try {
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
+    const newProject = {
+      ...project,
+      id: Date.now().toString()
+    };
+    
+    projects = [...projects, newProject];
+    return newProject;
+  } catch (error) {
+    console.error("Erro ao adicionar projeto:", error);
+    toast({
+      title: "Erro ao adicionar projeto",
+      description: "Não foi possível adicionar o novo projeto.",
+      variant: "destructive"
+    });
+    throw error;
+  }
 };
 
-export const updateProject = (project: PortfolioProject): Promise<PortfolioProject> => {
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      const index = projects.findIndex(p => p.id === project.id);
-      if (index === -1) {
-        reject(new Error('Projeto não encontrado'));
-        return;
-      }
-      
-      projects[index] = project;
-      resolve(project);
-    }, 500);
-  });
+export const updateProject = async (project: PortfolioProject): Promise<PortfolioProject> => {
+  try {
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
+    const index = projects.findIndex(p => p.id === project.id);
+    if (index === -1) {
+      throw new Error('Projeto não encontrado');
+    }
+    
+    projects[index] = { ...project };
+    return project;
+  } catch (error) {
+    console.error("Erro ao atualizar projeto:", error);
+    toast({
+      title: "Erro ao atualizar projeto",
+      description: "Não foi possível salvar as alterações do projeto.",
+      variant: "destructive"
+    });
+    throw error;
+  }
 };
 
-export const deleteProject = (id: string): Promise<boolean> => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      projects = projects.filter(p => p.id !== id);
-      resolve(true);
-    }, 500);
-  });
+export const deleteProject = async (id: string): Promise<boolean> => {
+  try {
+    await new Promise(resolve => setTimeout(resolve, 500));
+    projects = projects.filter(p => p.id !== id);
+    return true;
+  } catch (error) {
+    console.error("Erro ao excluir projeto:", error);
+    toast({
+      title: "Erro ao excluir projeto",
+      description: "Não foi possível excluir o projeto.",
+      variant: "destructive"
+    });
+    throw error;
+  }
 };

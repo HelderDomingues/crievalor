@@ -19,9 +19,11 @@ interface PortfolioGalleryProps {
 
 const PortfolioGallery = ({ projects }: PortfolioGalleryProps) => {
   const [selectedProject, setSelectedProject] = useState<PortfolioProject | null>(null);
-
+  const [dialogOpen, setDialogOpen] = useState(false);
+  
   const handleSelectProject = (project: PortfolioProject) => {
     setSelectedProject(project);
+    setDialogOpen(true);
   };
 
   return (
@@ -49,11 +51,9 @@ const PortfolioGallery = ({ projects }: PortfolioGalleryProps) => {
                     variant="outline"
                     size="icon"
                     className="rounded-full bg-background/80"
-                    asChild
+                    onClick={() => window.open(project.projectUrl, '_blank')}
                   >
-                    <a href={project.projectUrl} target="_blank" rel="noopener noreferrer">
-                      <ExternalLink className="h-5 w-5" />
-                    </a>
+                    <ExternalLink className="h-5 w-5" />
                   </Button>
                 )}
               </div>
@@ -66,56 +66,70 @@ const PortfolioGallery = ({ projects }: PortfolioGalleryProps) => {
               <span className="text-sm text-muted-foreground">
                 {new Date(project.date).toLocaleDateString('pt-BR', { year: 'numeric', month: 'short' })}
               </span>
-              <Dialog>
-                <DialogTrigger asChild>
-                  <Button variant="outline" size="sm" onClick={() => handleSelectProject(project)}>
-                    Ver detalhes
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="sm:max-w-xl">
-                  {selectedProject && (
-                    <>
-                      <DialogHeader>
-                        <DialogTitle>{selectedProject.title}</DialogTitle>
-                        <DialogDescription>{selectedProject.category}</DialogDescription>
-                      </DialogHeader>
-                      <div className="mt-4">
-                        <img 
-                          src={selectedProject.coverImage} 
-                          alt={selectedProject.title}
-                          className="w-full h-auto rounded-md mb-4 object-cover" 
-                        />
-                        <div className="space-y-4">
-                          <p>{selectedProject.description}</p>
-                          {selectedProject.gallery && (
-                            <div className="grid grid-cols-2 gap-2 mt-4">
-                              {selectedProject.gallery.map((image, index) => (
-                                <img 
-                                  key={index} 
-                                  src={image} 
-                                  alt={`${selectedProject.title} - imagem ${index + 1}`}
-                                  className="w-full h-auto rounded-md" 
-                                />
-                              ))}
-                            </div>
-                          )}
-                          {selectedProject.projectUrl && (
-                            <Button variant="link" className="px-0" asChild>
-                              <a href={selectedProject.projectUrl} target="_blank" rel="noopener noreferrer">
-                                Visitar projeto <ExternalLink className="ml-2 h-4 w-4" />
-                              </a>
-                            </Button>
-                          )}
-                        </div>
-                      </div>
-                    </>
-                  )}
-                </DialogContent>
-              </Dialog>
+              <Button variant="outline" size="sm" onClick={() => handleSelectProject(project)}>
+                Ver detalhes
+              </Button>
             </CardFooter>
           </Card>
         ))}
       </div>
+
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <DialogContent className="sm:max-w-xl">
+          {selectedProject && (
+            <>
+              <DialogHeader>
+                <DialogTitle>{selectedProject.title}</DialogTitle>
+                <DialogDescription>{selectedProject.category}</DialogDescription>
+              </DialogHeader>
+              <div className="mt-4">
+                <img 
+                  src={selectedProject.coverImage} 
+                  alt={selectedProject.title}
+                  className="w-full h-auto rounded-md mb-4 object-cover" 
+                />
+                <div className="space-y-4">
+                  <p>{selectedProject.description}</p>
+                  
+                  {selectedProject.tags && selectedProject.tags.length > 0 && (
+                    <div className="flex flex-wrap gap-2 mt-2">
+                      {selectedProject.tags.map((tag, idx) => (
+                        <span key={idx} className="bg-secondary text-secondary-foreground text-xs px-2 py-1 rounded-full">
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                  
+                  {selectedProject.gallery && selectedProject.gallery.length > 0 && (
+                    <div className="grid grid-cols-2 gap-2 mt-4">
+                      {selectedProject.gallery.map((image, index) => (
+                        <img 
+                          key={index} 
+                          src={image} 
+                          alt={`${selectedProject.title} - imagem ${index + 1}`}
+                          className="w-full h-auto rounded-md cursor-pointer" 
+                          onClick={() => window.open(image, '_blank')}
+                        />
+                      ))}
+                    </div>
+                  )}
+                  
+                  {selectedProject.projectUrl && (
+                    <Button 
+                      variant="link" 
+                      className="px-0 mt-2"
+                      onClick={() => window.open(selectedProject.projectUrl as string, '_blank')}
+                    >
+                      Visitar projeto <ExternalLink className="ml-2 h-4 w-4" />
+                    </Button>
+                  )}
+                </div>
+              </div>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

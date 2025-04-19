@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -5,11 +6,14 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { PlusCircle, Pencil, Trash2, ImagePlus } from "lucide-react";
+import { PlusCircle, Pencil, Trash2, ImagePlus, Paperclip, X, Link as LinkIcon, Calendar } from "lucide-react";
 import { PortfolioProject } from "@/types/portfolio";
 import { getPortfolioProjects, addProject, updateProject, deleteProject } from "@/services/portfolioService";
 import { uploadPortfolioImage, deletePortfolioImage } from "@/services/storageService";
 import { toast } from "@/components/ui/use-toast";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
 
 const PortfolioAdmin = () => {
   const [projects, setProjects] = useState<PortfolioProject[]>([]);
@@ -17,6 +21,7 @@ const PortfolioAdmin = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedProject, setSelectedProject] = useState<PortfolioProject | null>(null);
+  const [selectedTab, setSelectedTab] = useState("basic");
   const [formData, setFormData] = useState<Partial<PortfolioProject>>({
     title: "",
     category: "",
@@ -28,6 +33,22 @@ const PortfolioAdmin = () => {
     client: "",
     tags: []
   });
+  const [isSaving, setIsSaving] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [tagsInput, setTagsInput] = useState("");
+  const [newTag, setNewTag] = useState("");
+
+  // Opções de categoria
+  const categoryOptions = [
+    "Identidade Visual",
+    "Branding",
+    "UI/UX",
+    "UI/UX & Branding",
+    "Web Design",
+    "Design Gráfico",
+    "Marketing Digital",
+    "Design"
+  ];
 
   useEffect(() => {
     const loadProjects = async () => {
@@ -48,6 +69,14 @@ const PortfolioAdmin = () => {
     loadProjects();
   }, []);
 
+  useEffect(() => {
+    if (selectedProject?.tags) {
+      setTagsInput(selectedProject.tags.join(', '));
+    } else {
+      setTagsInput("");
+    }
+  }, [selectedProject]);
+
   const resetForm = () => {
     setFormData({
       title: "",
@@ -60,6 +89,9 @@ const PortfolioAdmin = () => {
       client: "",
       tags: []
     });
+    setTagsInput("");
+    setNewTag("");
+    setSelectedTab("basic");
   };
 
   const handleOpenDialog = (project?: PortfolioProject) => {
@@ -70,6 +102,7 @@ const PortfolioAdmin = () => {
         tags: project.tags || [],
         gallery: project.gallery || []
       });
+      setTagsInput(project.tags?.join(', ') || "");
     } else {
       setSelectedProject(null);
       resetForm();
@@ -88,21 +121,47 @@ const PortfolioAdmin = () => {
     setIsDeleteDialogOpen(true);
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleTagsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const tagsString = e.target.value;
-    const tagsArray = tagsString.split(',').map(tag => tag.trim()).filter(tag => tag);
-    setFormData(prev => ({ ...prev, tags: tagsArray }));
+  const addTag = () => {
+    if (newTag.trim() !== "") {
+      const updatedTags = [...(formData.tags || []), newTag.trim()];
+      setFormData(prev => ({ ...prev, tags: updatedTags }));
+      setTagsInput(updatedTags.join(', '));
+      setNewTag("");
+    }
   };
 
-  const handleGalleryChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const galleryString = e.target.value;
-    const galleryArray = galleryString.split('\n').map(url => url.trim()).filter(url => url);
-    setFormData(prev => ({ ...prev, gallery: galleryArray }));
+  const removeTag = (tagToRemove: string) => {
+    const updatedTags = (formData.tags || []).filter(tag => tag !== tagToRemove);
+    setFormData(prev => ({ ...prev, tags: updatedTags }));
+    setTagsInput(updatedTags.join(', '));
+  };
+
+  const handleTagKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    // Permitir adicionar tag ao pressionar vírgula ou Enter
+    if (e.key === ',' || e.key === 'Enter') {
+      e.preventDefault();
+      addTag();
+    }
+  };
+
+  const handleTagsInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setNewTag(value);
+  };
+
+  const parseTagsInput = () => {
+    if (!tagsInput) return [];
+    
+    // Divide a string por vírgulas e remove espaços extras
+    return tagsInput
+      .split(',')
+      .map(tag => tag.trim())
+      .filter(tag => tag !== "");
   };
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -153,16 +212,43 @@ const PortfolioAdmin = () => {
     }
   };
 
+  const handleRemoveGalleryImage = async (imageUrl: string) => {
+    try {
+      // Apenas remover da galeria sem excluir do storage (será excluída ao salvar se não for mais usada)
+      setFormData(prev => ({
+        ...prev,
+        gallery: prev.gallery?.filter(img => img !== imageUrl)
+      }));
+    } catch (error) {
+      console.error('Error removing gallery image:', error);
+      toast({
+        title: "Erro ao remover imagem",
+        description: "Não foi possível remover a imagem da galeria.",
+        variant: "destructive"
+      });
+    }
+  };
+
   const handleSave = async () => {
     try {
+      setIsSaving(true);
+      
       if (!formData.title || !formData.coverImage) {
         toast({
           title: "Campos obrigatórios",
           description: "Título e imagem de capa são obrigatórios.",
           variant: "destructive"
         });
+        setIsSaving(false);
         return;
       }
+
+      // Processar e atualizar as tags
+      const parsedTags = parseTagsInput();
+      const projectWithTags = {
+        ...formData,
+        tags: parsedTags
+      };
 
       if (selectedProject) {
         if (selectedProject.coverImage !== formData.coverImage) {
@@ -181,7 +267,7 @@ const PortfolioAdmin = () => {
 
         const updatedProject = await updateProject({
           ...selectedProject,
-          ...formData
+          ...projectWithTags
         } as PortfolioProject);
         
         setProjects(prevProjects => 
@@ -193,7 +279,7 @@ const PortfolioAdmin = () => {
           description: "O projeto foi atualizado com sucesso."
         });
       } else {
-        const newProject = await addProject(formData as Omit<PortfolioProject, 'id'>);
+        const newProject = await addProject(projectWithTags as Omit<PortfolioProject, 'id'>);
         setProjects(prevProjects => [...prevProjects, newProject]);
         
         toast({
@@ -209,6 +295,8 @@ const PortfolioAdmin = () => {
         description: "Ocorreu um erro ao salvar o projeto.",
         variant: "destructive"
       });
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -216,6 +304,8 @@ const PortfolioAdmin = () => {
     if (!selectedProject) return;
     
     try {
+      setIsDeleting(true);
+      
       await deletePortfolioImage(selectedProject.coverImage);
       
       if (selectedProject.gallery?.length) {
@@ -238,6 +328,8 @@ const PortfolioAdmin = () => {
         description: "Ocorreu um erro ao excluir o projeto.",
         variant: "destructive"
       });
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -271,6 +363,21 @@ const PortfolioAdmin = () => {
             </CardHeader>
             <CardContent>
               <p className="line-clamp-2 text-sm text-muted-foreground">{project.description}</p>
+              
+              {project.tags && project.tags.length > 0 && (
+                <div className="flex flex-wrap gap-1 mt-2">
+                  {project.tags.slice(0, 3).map((tag, idx) => (
+                    <Badge key={idx} variant="secondary" className="text-xs">
+                      {tag}
+                    </Badge>
+                  ))}
+                  {project.tags.length > 3 && (
+                    <Badge variant="outline" className="text-xs">
+                      +{project.tags.length - 3}
+                    </Badge>
+                  )}
+                </div>
+              )}
             </CardContent>
             <CardFooter className="flex justify-between">
               <Button variant="outline" size="sm" onClick={() => handleOpenDialog(project)}>
@@ -287,159 +394,230 @@ const PortfolioAdmin = () => {
       </div>
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="sm:max-w-xl">
+        <DialogContent className="sm:max-w-2xl max-h-[90vh]">
           <DialogHeader>
             <DialogTitle>
               {selectedProject ? 'Editar Projeto' : 'Novo Projeto'}
             </DialogTitle>
           </DialogHeader>
           
-          <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="title">Título *</Label>
-                <Input
-                  id="title"
-                  name="title"
-                  value={formData.title || ''}
-                  onChange={handleChange}
-                  placeholder="Título do projeto"
-                />
-              </div>
+          <ScrollArea className="max-h-[calc(90vh-10rem)] pr-4">
+            <Tabs value={selectedTab} onValueChange={setSelectedTab} className="w-full">
+              <TabsList className="grid grid-cols-3 mb-4">
+                <TabsTrigger value="basic">Informações Básicas</TabsTrigger>
+                <TabsTrigger value="gallery">Galeria</TabsTrigger>
+                <TabsTrigger value="additional">Informações Adicionais</TabsTrigger>
+              </TabsList>
               
-              <div className="space-y-2">
-                <Label htmlFor="category">Categoria *</Label>
-                <Input
-                  id="category"
-                  name="category"
-                  value={formData.category || ''}
-                  onChange={handleChange}
-                  placeholder="Ex: Identidade Visual, UI/UX"
-                />
-              </div>
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="description">Descrição</Label>
-              <Textarea
-                id="description"
-                name="description"
-                rows={3}
-                value={formData.description || ''}
-                onChange={handleChange}
-                placeholder="Descrição do projeto"
-              />
-            </div>
-            
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="client">Cliente</Label>
-                <Input
-                  id="client"
-                  name="client"
-                  value={formData.client || ''}
-                  onChange={handleChange}
-                  placeholder="Nome do cliente"
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="date">Data</Label>
-                <Input
-                  id="date"
-                  name="date"
-                  type="date"
-                  value={formData.date || ''}
-                  onChange={handleChange}
-                />
-              </div>
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="coverImage">Imagem de Capa</Label>
-              <div className="flex items-center gap-4">
-                <Input
-                  id="coverImageUpload"
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageUpload}
-                  className="flex-1"
-                />
-                {formData.coverImage && (
-                  <div className="w-20 h-20 relative rounded overflow-hidden border border-border">
-                    <img 
-                      src={formData.coverImage} 
-                      alt="Capa" 
-                      className="w-full h-full object-cover"
+              <TabsContent value="basic" className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="title">Título *</Label>
+                  <Input
+                    id="title"
+                    name="title"
+                    value={formData.title || ''}
+                    onChange={handleChange}
+                    placeholder="Título do projeto"
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="category">Categoria *</Label>
+                  <select
+                    id="category"
+                    name="category"
+                    value={formData.category || ''}
+                    onChange={handleChange}
+                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                  >
+                    <option value="">Selecione uma categoria</option>
+                    {categoryOptions.map(option => (
+                      <option key={option} value={option}>{option}</option>
+                    ))}
+                  </select>
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="description">Descrição</Label>
+                  <Textarea
+                    id="description"
+                    name="description"
+                    rows={4}
+                    value={formData.description || ''}
+                    onChange={handleChange}
+                    placeholder="Descrição do projeto"
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="coverImage">Imagem de Capa *</Label>
+                  <div className="flex flex-col lg:flex-row items-start gap-4">
+                    <div className="flex-1 w-full">
+                      <Input
+                        id="coverImageUpload"
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageUpload}
+                        className="mb-2"
+                      />
+                      <Input
+                        id="coverImage"
+                        name="coverImage"
+                        value={formData.coverImage || ''}
+                        onChange={handleChange}
+                        placeholder="URL da imagem de capa"
+                      />
+                    </div>
+                    {formData.coverImage && (
+                      <div className="w-24 h-24 relative rounded overflow-hidden border border-border flex-shrink-0">
+                        <img 
+                          src={formData.coverImage} 
+                          alt="Capa" 
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    )}
+                  </div>
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="date">Data</Label>
+                  <div className="flex items-center">
+                    <Calendar className="h-4 w-4 mr-2 text-muted-foreground" />
+                    <Input
+                      id="date"
+                      name="date"
+                      type="date"
+                      value={formData.date || ''}
+                      onChange={handleChange}
                     />
                   </div>
-                )}
-              </div>
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="gallery">Galeria de Imagens</Label>
-              <Input
-                id="galleryUpload"
-                type="file"
-                accept="image/*"
-                multiple
-                onChange={handleGalleryImageUpload}
-              />
-              {formData.gallery && formData.gallery.length > 0 && (
-                <div className="grid grid-cols-4 gap-2 mt-2">
-                  {formData.gallery.map((img, idx) => (
-                    <div key={idx} className="relative aspect-square rounded overflow-hidden border border-border">
-                      <img 
-                        src={img} 
-                        alt={`Galeria ${idx + 1}`}
-                        className="w-full h-full object-cover"
-                      />
-                      <Button
-                        variant="destructive"
-                        size="icon"
-                        className="absolute top-1 right-1 h-6 w-6"
-                        onClick={() => {
-                          setFormData(prev => ({
-                            ...prev,
-                            gallery: prev.gallery?.filter(g => g !== img)
-                          }));
-                        }}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  ))}
                 </div>
-              )}
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="projectUrl">URL do Projeto</Label>
-              <Input
-                id="projectUrl"
-                name="projectUrl"
-                value={formData.projectUrl || ''}
-                onChange={handleChange}
-                placeholder="URL do projeto (se houver)"
-              />
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="tags">Tags (separadas por vírgula)</Label>
-              <Input
-                id="tags"
-                name="tags"
-                value={(formData.tags || []).join(', ')}
-                onChange={handleTagsChange}
-                placeholder="Ex: logo, identidade, web"
-              />
-            </div>
-          </div>
+              </TabsContent>
+              
+              <TabsContent value="gallery" className="space-y-4">
+                <div className="space-y-2">
+                  <Label>Galeria de Imagens</Label>
+                  <div className="flex items-center space-x-2">
+                    <Input
+                      id="galleryUpload"
+                      type="file"
+                      accept="image/*"
+                      multiple
+                      onChange={handleGalleryImageUpload}
+                      className="flex-1"
+                    />
+                    <Button type="button" size="sm" onClick={() => document.getElementById('galleryUpload')?.click()}>
+                      <Paperclip className="h-4 w-4 mr-2" />
+                      Adicionar
+                    </Button>
+                  </div>
+                  
+                  {formData.gallery && formData.gallery.length > 0 ? (
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mt-4">
+                      {formData.gallery.map((img, idx) => (
+                        <div key={idx} className="relative group aspect-square rounded overflow-hidden border border-border">
+                          <img 
+                            src={img} 
+                            alt={`Galeria ${idx + 1}`}
+                            className="w-full h-full object-cover"
+                          />
+                          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                            <Button
+                              variant="destructive"
+                              size="icon"
+                              className="h-8 w-8"
+                              onClick={() => handleRemoveGalleryImage(img)}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="border border-dashed border-gray-300 rounded-md p-8 mt-4 text-center">
+                      <ImagePlus className="mx-auto h-10 w-10 text-muted-foreground" />
+                      <p className="mt-2 text-sm text-muted-foreground">
+                        Nenhuma imagem adicionada à galeria
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </TabsContent>
+              
+              <TabsContent value="additional" className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="client">Cliente</Label>
+                  <Input
+                    id="client"
+                    name="client"
+                    value={formData.client || ''}
+                    onChange={handleChange}
+                    placeholder="Nome do cliente"
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="projectUrl">URL do Projeto</Label>
+                  <div className="flex items-center">
+                    <LinkIcon className="h-4 w-4 mr-2 text-muted-foreground" />
+                    <Input
+                      id="projectUrl"
+                      name="projectUrl"
+                      value={formData.projectUrl || ''}
+                      onChange={handleChange}
+                      placeholder="URL do projeto (se houver)"
+                    />
+                  </div>
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="tags">Tags</Label>
+                  <div className="flex flex-wrap gap-2 mb-2">
+                    {(formData.tags || []).map((tag, idx) => (
+                      <Badge key={idx} variant="secondary" className="gap-1 group">
+                        {tag}
+                        <X 
+                          className="h-3 w-3 cursor-pointer opacity-70 group-hover:opacity-100" 
+                          onClick={() => removeTag(tag)}
+                        />
+                      </Badge>
+                    ))}
+                  </div>
+                  <div className="flex gap-2">
+                    <Input
+                      id="newTag"
+                      value={newTag}
+                      onChange={handleTagsInputChange}
+                      onKeyDown={handleTagKeyDown}
+                      placeholder="Adicionar nova tag"
+                      className="flex-1"
+                    />
+                    <Button 
+                      type="button" 
+                      variant="outline" 
+                      size="sm"
+                      onClick={addTag}
+                    >
+                      Adicionar
+                    </Button>
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Digite uma tag e pressione Enter ou clique em Adicionar
+                  </p>
+                </div>
+              </TabsContent>
+            </Tabs>
+          </ScrollArea>
           
           <DialogFooter>
-            <Button variant="outline" onClick={handleCloseDialog}>Cancelar</Button>
-            <Button onClick={handleSave}>Salvar</Button>
+            <Button variant="outline" onClick={handleCloseDialog} disabled={isSaving}>
+              Cancelar
+            </Button>
+            <Button onClick={handleSave} disabled={isSaving}>
+              {isSaving ? "Salvando..." : "Salvar"}
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -454,11 +632,11 @@ const PortfolioAdmin = () => {
             Esta ação não pode ser desfeita.
           </p>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsDeleteDialogOpen(false)}>
+            <Button variant="outline" onClick={() => setIsDeleteDialogOpen(false)} disabled={isDeleting}>
               Cancelar
             </Button>
-            <Button variant="destructive" onClick={handleDelete}>
-              Excluir
+            <Button variant="destructive" onClick={handleDelete} disabled={isDeleting}>
+              {isDeleting ? "Excluindo..." : "Excluir"}
             </Button>
           </DialogFooter>
         </DialogContent>

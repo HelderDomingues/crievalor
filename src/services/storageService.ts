@@ -1,3 +1,4 @@
+
 import { supabaseExtended } from "@/integrations/supabase/extendedClient";
 
 /**
@@ -69,6 +70,16 @@ export const createMaterialsBucketIfNotExists = async () => {
 };
 
 /**
+ * Create the portfolio bucket if it doesn't exist
+ */
+export const createPortfolioBucketIfNotExists = async () => {
+  return createStorageBucketIfNotExists('portfolio', {
+    public: true,
+    fileSizeLimit: 20971520 // 20MB
+  });
+};
+
+/**
  * Initialize all required storage buckets and policies
  */
 export const initializeStorageBuckets = async () => {
@@ -78,6 +89,7 @@ export const initializeStorageBuckets = async () => {
     // Create required buckets
     await createClientLogosBucketIfNotExists();
     await createMaterialsBucketIfNotExists();
+    await createPortfolioBucketIfNotExists();
     
     // Setup storage policies via edge function
     console.log("Setting up storage policies via edge function...");
@@ -145,7 +157,9 @@ export const uploadPortfolioImage = async (file: File): Promise<string> => {
 export const deletePortfolioImage = async (url: string): Promise<void> => {
   try {
     // Extract file path from URL
-    const path = url.split('/').pop();
+    const urlParts = url.split('/');
+    const path = urlParts[urlParts.length - 1];
+    
     if (!path) throw new Error('Invalid URL');
     
     const { error } = await supabaseExtended.storage
