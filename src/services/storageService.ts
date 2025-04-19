@@ -1,4 +1,3 @@
-
 import { supabaseExtended } from "@/integrations/supabase/extendedClient";
 
 /**
@@ -102,5 +101,62 @@ export const initializeStorageBuckets = async () => {
     console.log("Storage setup completed");
   } catch (err) {
     console.error("Error initializing storage buckets:", err);
+  }
+};
+
+/**
+ * Upload an image to the portfolio storage bucket
+ * @param file File to upload
+ * @returns URL of the uploaded image
+ */
+export const uploadPortfolioImage = async (file: File): Promise<string> => {
+  try {
+    const fileExt = file.name.split('.').pop();
+    const fileName = `${Date.now()}.${fileExt}`;
+    const filePath = `${fileName}`;
+    
+    const { error: uploadError, data } = await supabaseExtended.storage
+      .from('portfolio')
+      .upload(filePath, file, {
+        cacheControl: '3600',
+        upsert: false
+      });
+
+    if (uploadError) {
+      throw new Error(`Error uploading file: ${uploadError.message}`);
+    }
+
+    // Get public URL
+    const { data: { publicUrl } } = supabaseExtended.storage
+      .from('portfolio')
+      .getPublicUrl(filePath);
+
+    return publicUrl;
+  } catch (error) {
+    console.error('Error uploading portfolio image:', error);
+    throw error;
+  }
+};
+
+/**
+ * Delete an image from the portfolio storage bucket
+ * @param url URL of the image to delete
+ */
+export const deletePortfolioImage = async (url: string): Promise<void> => {
+  try {
+    // Extract file path from URL
+    const path = url.split('/').pop();
+    if (!path) throw new Error('Invalid URL');
+    
+    const { error } = await supabaseExtended.storage
+      .from('portfolio')
+      .remove([path]);
+
+    if (error) {
+      throw new Error(`Error deleting file: ${error.message}`);
+    }
+  } catch (error) {
+    console.error('Error deleting portfolio image:', error);
+    throw error;
   }
 };

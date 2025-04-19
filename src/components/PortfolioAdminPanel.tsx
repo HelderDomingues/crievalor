@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -6,9 +5,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { PlusCircle, Pencil, Trash2, ImagePlus, Image } from "lucide-react";
+import { PlusCircle, Pencil, Trash2, ImagePlus } from "lucide-react";
 import { PortfolioProject } from "@/types/portfolio";
 import { getPortfolioProjects, addProject, updateProject, deleteProject } from "@/services/portfolioService";
+import { uploadPortfolioImage, deletePortfolioImage } from "@/services/storageService";
 import { toast } from "@/components/ui/use-toast";
 
 const PortfolioAdmin = () => {
@@ -29,7 +29,6 @@ const PortfolioAdmin = () => {
     tags: []
   });
 
-  // Carregar projetos
   useEffect(() => {
     const loadProjects = async () => {
       try {
@@ -106,6 +105,54 @@ const PortfolioAdmin = () => {
     setFormData(prev => ({ ...prev, gallery: galleryArray }));
   };
 
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      const publicUrl = await uploadPortfolioImage(file);
+      setFormData(prev => ({ ...prev, coverImage: publicUrl }));
+      toast({
+        title: "Imagem carregada com sucesso",
+        description: "A imagem foi salva e vinculada ao projeto."
+      });
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      toast({
+        title: "Erro ao carregar imagem",
+        description: "Não foi possível fazer upload da imagem.",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const handleGalleryImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files?.length) return;
+
+    try {
+      const uploadPromises = Array.from(files).map(file => uploadPortfolioImage(file));
+      const urls = await Promise.all(uploadPromises);
+      
+      setFormData(prev => ({
+        ...prev,
+        gallery: [...(prev.gallery || []), ...urls]
+      }));
+
+      toast({
+        title: "Imagens carregadas com sucesso",
+        description: `${files.length} imagens foram adicionadas à galeria.`
+      });
+    } catch (error) {
+      console.error('Error uploading gallery images:', error);
+      toast({
+        title: "Erro ao carregar imagens",
+        description: "Não foi possível fazer upload de algumas imagens.",
+        variant: "destructive"
+      });
+    }
+  };
+
   const handleSave = async () => {
     try {
       if (!formData.title || !formData.coverImage) {
@@ -118,7 +165,20 @@ const PortfolioAdmin = () => {
       }
 
       if (selectedProject) {
-        // Atualizar projeto existente
+        if (selectedProject.coverImage !== formData.coverImage) {
+          try {
+            await deletePortfolioImage(selectedProject.coverImage);
+          } catch (error) {
+            console.error('Error deleting old cover image:', error);
+          }
+        }
+        
+        const oldGallery = selectedProject.gallery || [];
+        const newGallery = formData.gallery || [];
+        const removedImages = oldGallery.filter(img => !newGallery.includes(img));
+        
+        await Promise.all(removedImages.map(img => deletePortfolioImage(img)));
+
         const updatedProject = await updateProject({
           ...selectedProject,
           ...formData
@@ -133,7 +193,6 @@ const PortfolioAdmin = () => {
           description: "O projeto foi atualizado com sucesso."
         });
       } else {
-        // Adicionar novo projeto
         const newProject = await addProject(formData as Omit<PortfolioProject, 'id'>);
         setProjects(prevProjects => [...prevProjects, newProject]);
         
@@ -157,6 +216,12 @@ const PortfolioAdmin = () => {
     if (!selectedProject) return;
     
     try {
+      await deletePortfolioImage(selectedProject.coverImage);
+      
+      if (selectedProject.gallery?.length) {
+        await Promise.all(selectedProject.gallery.map(img => deletePortfolioImage(img)));
+      }
+      
       await deleteProject(selectedProject.id);
       setProjects(prevProjects => prevProjects.filter(p => p.id !== selectedProject.id));
       
@@ -221,7 +286,6 @@ const PortfolioAdmin = () => {
         ))}
       </div>
 
-      {/* Diálogo para adicionar/editar projeto */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent className="sm:max-w-xl">
           <DialogHeader>
@@ -292,25 +356,21 @@ const PortfolioAdmin = () => {
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="coverImage">URL da Imagem de Capa *</Label>
-              <div className="flex space-x-2">
+              <Label htmlFor="coverImage">Imagem de Capa</Label>
+              <div className="flex items-center gap-4">
                 <Input
-                  id="coverImage"
-                  name="coverImage"
-                  value={formData.coverImage || ''}
-                  onChange={handleChange}
-                  placeholder="URL da imagem de capa"
+                  id="coverImageUpload"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageUpload}
                   className="flex-1"
                 />
                 {formData.coverImage && (
-                  <div className="w-12 h-12 rounded overflow-hidden border border-border">
+                  <div className="w-20 h-20 relative rounded overflow-hidden border border-border">
                     <img 
                       src={formData.coverImage} 
                       alt="Capa" 
                       className="w-full h-full object-cover"
-                      onError={(e) => {
-                        (e.target as HTMLImageElement).src = "https://via.placeholder.com/150?text=Erro";
-                      }}
                     />
                   </div>
                 )}
@@ -318,15 +378,40 @@ const PortfolioAdmin = () => {
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="gallery">Galeria de Imagens (uma URL por linha)</Label>
-              <Textarea
-                id="gallery"
-                name="gallery"
-                rows={4}
-                value={(formData.gallery || []).join('\n')}
-                onChange={handleGalleryChange}
-                placeholder="URL das imagens da galeria (uma por linha)"
+              <Label htmlFor="gallery">Galeria de Imagens</Label>
+              <Input
+                id="galleryUpload"
+                type="file"
+                accept="image/*"
+                multiple
+                onChange={handleGalleryImageUpload}
               />
+              {formData.gallery && formData.gallery.length > 0 && (
+                <div className="grid grid-cols-4 gap-2 mt-2">
+                  {formData.gallery.map((img, idx) => (
+                    <div key={idx} className="relative aspect-square rounded overflow-hidden border border-border">
+                      <img 
+                        src={img} 
+                        alt={`Galeria ${idx + 1}`}
+                        className="w-full h-full object-cover"
+                      />
+                      <Button
+                        variant="destructive"
+                        size="icon"
+                        className="absolute top-1 right-1 h-6 w-6"
+                        onClick={() => {
+                          setFormData(prev => ({
+                            ...prev,
+                            gallery: prev.gallery?.filter(g => g !== img)
+                          }));
+                        }}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
             
             <div className="space-y-2">
@@ -359,7 +444,6 @@ const PortfolioAdmin = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Diálogo de confirmação para exclusão */}
       <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
         <DialogContent>
           <DialogHeader>
