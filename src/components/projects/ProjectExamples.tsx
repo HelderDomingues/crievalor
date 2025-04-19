@@ -3,8 +3,11 @@ import React from "react";
 import { Briefcase, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import ProjectCard from "./ProjectCard";
+import { useScrollToTop } from "@/hooks/useScrollToTop";
 
 const ProjectExamples = () => {
+  useScrollToTop();
+
   return (
     <section id="exemplos" className="py-16 md:py-24 relative">
       <div className="container mx-auto px-4">
