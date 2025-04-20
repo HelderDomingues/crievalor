@@ -10,6 +10,11 @@ import EscolaGestaoLeadForm from "@/components/EscolaGestaoLeadForm";
 const EscolaGestao = () => {
   const heroImages = ["https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=2070", "https://images.unsplash.com/photo-1558021211-6d1403321394?q=80&w=2083", "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?q=80&w=2070"];
   
+  const heroDescription = 
+    "Formação de líderes que dominam as ferramentas essenciais para gerir pessoas e processos.\n\n" +
+    "Treinamentos práticos desenvolvidos por especialistas com mais de 25 anos de experiência no mercado.\n\n" +
+    "Métodos testados e aprovados em centenas de empresas, garantindo resultados rápidos e mensuráveis.";
+  
   return <div className="min-h-screen flex flex-col">
       <Header />
       
@@ -17,16 +22,8 @@ const EscolaGestao = () => {
         {/* Hero Section */}
         <HeroSection 
           title="ESCOLA DE GESTÃO" 
-          subtitle="Desperte o potencial da sua equipe" 
-          description={
-            <>
-              Formação de líderes que dominam as ferramentas essenciais para gerir pessoas e processos.
-              <br/><br/>
-              Treinamentos práticos desenvolvidos por especialistas com mais de 25 anos de experiência no mercado.
-              <br/><br/>
-              Métodos testados e aprovados em centenas de empresas, garantindo resultados rápidos e mensuráveis.
-            </>
-          } 
+          subtitle="Desperte o potencial da sua equipe com:" 
+          description={heroDescription}
           ctaText="QUERO ACESSO AO MÉTODO COMPROVADO" 
           ctaUrl="https://wa.me/+5547992150289?text=Quero%20garantir%20minha%20vaga%20na%20próxima%20turma%20da%20Escola%20de%20Gestão" 
           backgroundImages={heroImages} 
