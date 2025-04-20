@@ -6,6 +6,7 @@ import ContactSection from "@/components/ContactSection";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Award, BarChart3, Calendar, CheckCircle2, MapPin, MessageCircle, Phone, Target, Users } from "lucide-react";
 import EscolaGestaoLeadForm from "@/components/EscolaGestaoLeadForm";
+import VideoSection from "@/components/VideoSection";
 
 const EscolaGestao = () => {
   const heroImages = ["https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=2070", "https://images.unsplash.com/photo-1558021211-6d1403321394?q=80&w=2083", "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?q=80&w=2070"];
@@ -87,12 +88,12 @@ const EscolaGestao = () => {
                 </div>
               </div>
               
-              <div className="order-1 lg:order-2 flex justify-center">
-                <div className="relative w-full max-w-md">
-                  
-                  <img alt="Escola de Gestão" className="w-full h-auto rounded-xl shadow-lg relative z-10" src="/lovable-uploads/79fc50b5-6add-4fe3-9592-59bd9722648a.png" />
-                  <div className="absolute -bottom-5 -right-5 bg-primary/10 w-24 h-24 rounded-full"></div>
-                </div>
+              <div className="order-1 lg:order-2">
+                <VideoSection 
+                  title=""
+                  description=""
+                  videoUrl="https://www.youtube.com/embed/QJvQZuYIWt0"
+                />
               </div>
             </div>
           </div>
