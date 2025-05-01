@@ -6,6 +6,7 @@ import './index.css'
 import { supabase } from '@/integrations/supabase/client';
 import { upsertSystemSetting } from './services/systemSettingsService';
 import { initializeStorageBuckets } from './services/storageService';
+import { HelmetProvider } from 'react-helmet-async';
 
 // Initialize in sequence using a single async function
 async function initializeApp() {
@@ -69,6 +70,8 @@ initializeApp();
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
-    <App />
+    <HelmetProvider>
+      <App />
+    </HelmetProvider>
   </React.StrictMode>,
 )

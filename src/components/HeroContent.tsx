@@ -49,8 +49,8 @@ const HeroContent: React.FC<HeroContentProps> = ({
           onClick={() => handleScroll(url)}
         >
           {text}
-          {!isSecondary && !isMarHero && <ArrowRight className="ml-2 h-4 w-4" />}
-          {!isSecondary && isMarHero && <Compass className="ml-2 h-4 w-4" />}
+          {!isSecondary && !isMarHero && <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />}
+          {!isSecondary && isMarHero && <Compass className="ml-2 h-4 w-4" aria-hidden="true" />}
         </Button>
       );
     }
@@ -65,8 +65,8 @@ const HeroContent: React.FC<HeroContentProps> = ({
       >
         <Link to={url}>
           {text}
-          {!isSecondary && !isMarHero && <ArrowRight className="ml-2 h-4 w-4" />}
-          {!isSecondary && isMarHero && <Compass className="ml-2 h-4 w-4" />}
+          {!isSecondary && !isMarHero && <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />}
+          {!isSecondary && isMarHero && <Compass className="ml-2 h-4 w-4" aria-hidden="true" />}
         </Link>
       </Button>
     );

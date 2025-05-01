@@ -10,6 +10,11 @@
     <lastmod>2025-05-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>1.0</priority>
+    <image:image>
+      <image:loc>https://crievalor.com.br/lovable-uploads/d2f508b6-c101-4928-b7f7-161a378bb6e8.png</image:loc>
+      <image:title>Logo da Crie Valor</image:title>
+      <image:caption>Logotipo oficial da Crie Valor Estratégia</image:caption>
+    </image:image>
   </url>
   <url>
     <loc>https://crievalor.com.br/mar</loc>
@@ -19,6 +24,7 @@
     <image:image>
       <image:loc>https://crievalor.com.br/lovable-uploads/91e6888f-e3da-40dc-8c55-5718c15ada21.png</image:loc>
       <image:title>MAR - Mapa para Alto Rendimento</image:title>
+      <image:caption>Solução MAR para estratégias empresariais</image:caption>
     </image:image>
   </url>
   <url>

@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 
 const MainCTA = () => {
   return (
-    <section className="py-16 md:py-24 relative overflow-hidden">
+    <section className="py-16 md:py-24 relative overflow-hidden" id="transforme" aria-labelledby="transformeHeading">
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="blur-dot w-96 h-96 -top-48 -left-48 opacity-10"></div>
         <div className="blur-dot w-64 h-64 top-1/2 right-0 opacity-5"></div>
@@ -14,7 +14,7 @@ const MainCTA = () => {
       
       <div className="container mx-auto px-4 relative z-10">
         <div className="bg-card border border-border rounded-xl overflow-hidden shadow-xl p-8 md:p-12 max-w-4xl mx-auto text-center glow-border">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">
+          <h2 id="transformeHeading" className="text-3xl md:text-4xl font-bold mb-4">
             Pronto para transformar sua estratégia?
           </h2>
           <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
