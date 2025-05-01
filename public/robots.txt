@@ -1,5 +1,28 @@
 
+# Instruções para todos os robôs, crawlers e sistemas de IA
 User-agent: *
 Allow: /
 
+# Forneça informações específicas sobre o conteúdo do site
+# Isso ajuda sistemas de IA a entenderem melhor o conteúdo
+
+# Mapa do site
 Sitemap: https://crievalor.com.br/sitemap.xml
+
+# Local das páginas principais
+Allow: /mar
+Allow: /sobre
+Allow: /contato
+Allow: /projetos
+Allow: /escola-gestao
+Allow: /mentorias
+Allow: /identidade-visual
+
+# Informações sobre nossa política de indexação
+Allow: /politica-de-privacidade
+Allow: /termos-de-servico
+Allow: /politica-de-reembolso
+Allow: /acessibilidade
+
+# Especificações de frequência de rastreamento
+# Crawl-delay: 10
