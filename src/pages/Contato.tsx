@@ -25,21 +25,13 @@ const Contato = () => {
       <Helmet>
         <title>Contato | Crie Valor Estratégia</title>
         <meta name="description" content="Entre em contato com a Crie Valor Estratégia. Estamos prontos para ajudar sua empresa a alcançar resultados excepcionais." />
-        {/* Conteúdo estático para crawlers */}
-        <noscript>
-          <h1>Contato - Crie Valor Estratégia</h1>
-          <p>Entre em contato com a Crie Valor Estratégia. Estamos prontos para ajudar sua empresa a alcançar resultados excepcionais.</p>
-          <h2>Informações de Contato</h2>
-          <p>Email: contato@crievalor.com.br</p>
-          <p>Telefone: (47) 9 9215-0289</p>
-          <h2>Formulário de Contato</h2>
-          <p>Preencha nosso formulário para solicitar mais informações sobre nossos serviços.</p>
-        </noscript>
       </Helmet>
       
       <Header />
       
       <main className="flex-grow pt-16">
+        <h1 className="sr-only">Contato - Crie Valor Estratégia</h1>
+        
         {/* Hero Section */}
         <ContactHeroSection 
           contactName={contactName}
