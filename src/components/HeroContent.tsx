@@ -80,7 +80,7 @@ const HeroContent: React.FC<HeroContentProps> = ({
             <img 
               src="/lovable-uploads/91e6888f-e3da-40dc-8c55-5718c15ada21.png" 
               alt="MAR - Mapa para Alto Rendimento" 
-              className="h-24 mx-auto" 
+              className="h-48 mx-auto" 
             />
           </div>
         )}
