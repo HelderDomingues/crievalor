@@ -45,6 +45,48 @@ export type Database = {
         }
         Relationships: []
       }
+      authors: {
+        Row: {
+          avatar_url: string | null
+          bio: string | null
+          created_at: string | null
+          email: string
+          id: string
+          name: string
+          role: string | null
+          social_links: Json | null
+          updated_at: string | null
+          user_id: string | null
+          website: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string | null
+          email: string
+          id?: string
+          name: string
+          role?: string | null
+          social_links?: Json | null
+          updated_at?: string | null
+          user_id?: string | null
+          website?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string | null
+          email?: string
+          id?: string
+          name?: string
+          role?: string | null
+          social_links?: Json | null
+          updated_at?: string | null
+          user_id?: string | null
+          website?: string | null
+        }
+        Relationships: []
+      }
       client_logos: {
         Row: {
           created_at: string
@@ -66,6 +108,33 @@ export type Database = {
           logo?: string
           name?: string
           updated_at?: string
+        }
+        Relationships: []
+      }
+      image_placeholders: {
+        Row: {
+          alt_text: string | null
+          category: string
+          created_at: string | null
+          id: string
+          updated_at: string | null
+          url: string
+        }
+        Insert: {
+          alt_text?: string | null
+          category: string
+          created_at?: string | null
+          id?: string
+          updated_at?: string | null
+          url: string
+        }
+        Update: {
+          alt_text?: string | null
+          category?: string
+          created_at?: string | null
+          id?: string
+          updated_at?: string | null
+          url?: string
         }
         Relationships: []
       }

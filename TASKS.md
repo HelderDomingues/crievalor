@@ -67,6 +67,22 @@ IMPLEMENTATION GUIDELINES:
 - [ ] Implement code reuse optimizations
 - [ ] Performance testing and documentation
 
+### Phase 4: Integration and Security Fixes
+- [x] Fix Console Errors
+  - [x] Fixed CORS policy violations in Edge Functions
+  - [x] Updated setup-rls function to handle CORS properly
+  - [x] Updated setup-storage-policies function to handle CORS properly
+  - [x] Fixed ambiguous "user_id" reference in systemSettingsService
+  - [x] Updated config.toml to disable JWT verification for webhook endpoints
+- [ ] Complete Storage Security Configuration
+  - [ ] Verify bucket creation permissions
+  - [ ] Test file upload functionality
+  - [ ] Document storage access patterns
+- [ ] Verify Edge Function Integration
+  - [ ] Test asaas-webhook endpoint access
+  - [ ] Validate system settings updates
+  - [ ] Monitor for CORS violations in production
+
 ## Protected Areas (DO NOT MODIFY)
 1. Payment Processing
    - All Asaas integration code
@@ -76,6 +92,15 @@ IMPLEMENTATION GUIDELINES:
    - User plan management
 
 ## Change Log
+
+### 2024-05-09
+- Fixed critical console errors:
+  - Updated CORS headers in all Edge Functions to properly handle preflight requests
+  - Fixed ambiguous "user_id" column reference in systemSettingsService.ts
+  - Updated supabase/config.toml to disable JWT verification for webhook endpoints
+  - Enhanced Edge Functions error handling and improved logging
+  - Fixed setup-storage-policies function to properly create all required buckets including portfolio
+  - Added all CORS-related fixes to properly enable Edge Function access
 
 ### 2024-04-19
 - Fixed component import errors and HTML structure:

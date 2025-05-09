@@ -27,6 +27,7 @@ serve(async (req) => {
   const headers = new Headers({
     "Access-Control-Allow-Origin": "*",
     "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
     "Content-Type": "application/json"
   });
 
@@ -49,7 +50,12 @@ serve(async (req) => {
   try {
     // Inicializar o cliente Supabase com a chave de serviço
     // para ter permissões administrativas
-    const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY)
+    const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false
+      }
+    });
 
     const response: Response = {
       success: true,
@@ -60,6 +66,7 @@ serve(async (req) => {
     // Verificar e criar os buckets necessários
     await setupBucket("clientlogos", supabase, response)
     await setupBucket("materials", supabase, response)
+    await setupBucket("portfolio", supabase, response)
 
     // Configurar permissões diretamente via SQL
     try {
@@ -140,6 +147,34 @@ serve(async (req) => {
             FOR DELETE
             TO authenticated
             USING (bucket_id = 'materials' AND auth.jwt() ->> 'role' = 'admin');
+            
+          -- Configurar policies para portfolio
+          DROP POLICY IF EXISTS "Público pode visualizar portfolio" ON storage.objects;
+          CREATE POLICY "Público pode visualizar portfolio"
+            ON storage.objects
+            FOR SELECT
+            USING (bucket_id = 'portfolio');
+
+          DROP POLICY IF EXISTS "Admins podem fazer upload de portfolio" ON storage.objects;
+          CREATE POLICY "Admins podem fazer upload de portfolio"
+            ON storage.objects
+            FOR INSERT
+            TO authenticated
+            WITH CHECK (bucket_id = 'portfolio' AND auth.jwt() ->> 'role' = 'admin');
+
+          DROP POLICY IF EXISTS "Admins podem atualizar portfolio" ON storage.objects;
+          CREATE POLICY "Admins podem atualizar portfolio"
+            ON storage.objects
+            FOR UPDATE
+            TO authenticated
+            USING (bucket_id = 'portfolio' AND auth.jwt() ->> 'role' = 'admin');
+
+          DROP POLICY IF EXISTS "Admins podem excluir portfolio" ON storage.objects;
+          CREATE POLICY "Admins podem excluir portfolio"
+            ON storage.objects
+            FOR DELETE
+            TO authenticated
+            USING (bucket_id = 'portfolio' AND auth.jwt() ->> 'role' = 'admin');
         `
       });
 
@@ -152,7 +187,7 @@ serve(async (req) => {
     } catch (sqlError) {
       console.error('Erro ao executar SQL para configurar políticas:', sqlError);
       // Adicionar aviso, mas continuar com os outros métodos
-      for (const bucket of ['clientlogos', 'materials']) {
+      for (const bucket of ['clientlogos', 'materials', 'portfolio']) {
         if (response.results[bucket]) {
           response.results[bucket].warning = `Policies setup failed, manual setup may be required: ${sqlError.message}`;
         }
