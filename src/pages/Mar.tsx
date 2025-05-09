@@ -9,14 +9,26 @@ import MarComparisonSection from "@/components/MarComparisonSection";
 import PricingSection from "@/components/PricingSection";
 import VideoSection from "@/components/VideoSection";
 import ErrorBoundary from "@/components/ErrorBoundary";
+import SplashCursor from "@/components/SplashCursor";
 import { Anchor, LifeBuoy, Compass, Zap } from "lucide-react";
 
 const Mar = () => {
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-b from-background to-background/95">
+    <div className="min-h-screen flex flex-col bg-gradient-to-b from-background to-background/95 relative overflow-hidden">
+      {/* SplashCursor added for fluid interactive background effect */}
+      <SplashCursor 
+        BACK_COLOR={{ r: 0.05, g: 0.1, b: 0.3 }}
+        TRANSPARENT={true}
+        DENSITY_DISSIPATION={2.8}
+        VELOCITY_DISSIPATION={1.8}
+        CURL={4}
+        SPLAT_RADIUS={0.3}
+        COLOR_UPDATE_SPEED={6}
+      />
+      
       <Header />
       
-      <main className="flex-grow">
+      <main className="flex-grow relative z-10">
         <ErrorBoundary>
           <HeroSection
             title="MAR - Mapa para Alto Rendimento"
