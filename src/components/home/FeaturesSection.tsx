@@ -2,6 +2,9 @@
 import React from "react";
 import FeatureCard from "@/components/FeatureCard";
 import { Brain, Target, Zap, Lightbulb, TrendingUp, Users } from "lucide-react";
+import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { ArrowRight } from "lucide-react";
 
 const FeaturesSection = () => {
   const features = [
@@ -52,7 +55,7 @@ const FeaturesSection = () => {
       </div>
       
       <div className="container mx-auto px-4 relative z-10">
-        <div className="max-w-3xl mx-auto text-center mb-16">
+        <div className="max-w-3xl mx-auto text-center mb-12">
           <h2 id="diferenciaisHeading" className="text-3xl md:text-4xl font-bold mb-4">
             Desenvolvemos estratégias que geram resultados
           </h2>
@@ -73,6 +76,14 @@ const FeaturesSection = () => {
               iconAriaLabel={feature.ariaLabel}
             />
           ))}
+        </div>
+        
+        <div className="text-center mt-12">
+          <Button variant="outline" size="lg" asChild className="hover:bg-primary/10">
+            <Link to="/mar">
+              Descubra como podemos ajudar seu negócio <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />
+            </Link>
+          </Button>
         </div>
       </div>
     </section>

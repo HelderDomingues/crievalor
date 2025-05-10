@@ -96,8 +96,8 @@ const ServicesSection = () => {
   return (
     <section className="py-16 md:py-24 bg-gradient-to-b from-background to-secondary/10 relative" id="servicos" aria-labelledby="servicosHeading">
       <div className="absolute inset-0 overflow-hidden">
-        <div className="blur-dot w-64 h-64 bottom-20 -left-32 opacity-5"></div>
-        <div className="blur-dot w-96 h-96 top-48 -right-48 opacity-5"></div>
+        <div className="blur-dot w-64 h-64 bottom-20 -left-32 opacity-5" aria-hidden="true"></div>
+        <div className="blur-dot w-96 h-96 top-48 -right-48 opacity-5" aria-hidden="true"></div>
       </div>
       
       <div className="container mx-auto px-4 relative z-10">
@@ -124,6 +124,9 @@ const ServicesSection = () => {
                     src={service.image} 
                     alt={service.altText || service.title} 
                     className="object-cover w-full h-full"
+                    loading="lazy"
+                    width={800}
+                    height={450}
                   />
                   <div className="absolute inset-0 bg-black/20"></div>
                 </div>
@@ -150,17 +153,39 @@ const ServicesSection = () => {
                       </ul>
                     )}
                     
-                    <Button 
-                      variant="outline" 
-                      onClick={() => handleNavigation(service.route)}
-                    >
-                      Saiba mais <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />
-                    </Button>
+                    <div className="flex flex-col sm:flex-row gap-4">
+                      <Button 
+                        variant="outline" 
+                        onClick={() => handleNavigation(service.route)}
+                      >
+                        Saiba mais <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />
+                      </Button>
+                      
+                      <Button 
+                        variant="secondary"
+                        asChild
+                      >
+                        <Link to="/contato?servico=${service.title}">
+                          Solicitar proposta
+                        </Link>
+                      </Button>
+                    </div>
                   </CardContent>
                 </Card>
               </div>
             </div>
           ))}
+        </div>
+        
+        <div className="text-center mt-16">
+          <p className="text-lg mb-6">
+            Não encontrou o que procura? Entre em contato conosco para discutirmos sua necessidade específica.
+          </p>
+          <Button asChild size="lg">
+            <Link to="/contato">
+              Fale com nossos especialistas <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />
+            </Link>
+          </Button>
         </div>
       </div>
     </section>

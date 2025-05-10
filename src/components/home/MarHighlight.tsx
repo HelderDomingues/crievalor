@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 
 const MarHighlight = () => {
   return (
-    <section className="py-16 md:py-24 relative bg-gradient-to-b from-background to-secondary/20">
+    <section className="py-16 md:py-24 relative bg-gradient-to-b from-background to-secondary/20" id="mar-produto" aria-labelledby="marProdutoHeading">
       <div className="absolute inset-0 overflow-hidden">
         <div className="blur-dot w-72 h-72 -top-36 -right-36 opacity-10"></div>
       </div>
@@ -14,10 +14,10 @@ const MarHighlight = () => {
       <div className="container mx-auto px-4 relative z-10">
         <div className="text-center mb-12">
           <div className="inline-flex items-center bg-primary/10 text-primary rounded-full px-4 py-2 mb-4">
-            <Anchor className="mr-2 h-4 w-4" />
+            <Anchor className="mr-2 h-4 w-4" aria-hidden="true" />
             <span className="font-medium">Nosso Produto Principal</span>
           </div>
-          <h2 className="text-3xl md:text-5xl font-bold mb-4 animate-fade-in">
+          <h2 id="marProdutoHeading" className="text-3xl md:text-5xl font-bold mb-4 animate-fade-in">
             MAR - Mapa para Alto Rendimento
           </h2>
           <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto animate-fade-in" style={{animationDelay: "0.2s"}}>
@@ -48,7 +48,7 @@ const MarHighlight = () => {
               <div className="bg-card border border-border rounded-lg p-4 hover:shadow-md transition-all duration-300">
                 <div className="flex items-center mb-2">
                   <div className="bg-primary/10 p-2 rounded-full mr-3">
-                    <Brain className="h-5 w-5 text-primary" />
+                    <Brain className="h-5 w-5 text-primary" aria-hidden="true" />
                   </div>
                   <h4 className="font-medium">IA + Humano</h4>
                 </div>
@@ -60,7 +60,7 @@ const MarHighlight = () => {
               <div className="bg-card border border-border rounded-lg p-4 hover:shadow-md transition-all duration-300">
                 <div className="flex items-center mb-2">
                   <div className="bg-primary/10 p-2 rounded-full mr-3">
-                    <Zap className="h-5 w-5 text-primary" />
+                    <Zap className="h-5 w-5 text-primary" aria-hidden="true" />
                   </div>
                   <h4 className="font-medium">Rapidez</h4>
                 </div>
@@ -70,11 +70,18 @@ const MarHighlight = () => {
               </div>
             </div>
             
-            <Button size="lg" className="shadow-glow" asChild>
-              <Link to="/mar">
-                Conheça o MAR <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
-            </Button>
+            <div className="flex flex-col sm:flex-row gap-4">
+              <Button size="lg" className="shadow-glow" asChild>
+                <Link to="/mar">
+                  Conheça o MAR <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />
+                </Link>
+              </Button>
+              <Button variant="outline" size="lg" asChild>
+                <Link to="/mar#pricing">
+                  Ver planos e preços <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />
+                </Link>
+              </Button>
+            </div>
           </div>
           
           <div className="order-1 lg:order-2 animate-fade-in" style={{animationDelay: "0.4s"}}>
@@ -90,14 +97,14 @@ const MarHighlight = () => {
                       </div>
                     </div>
                     <div className="bg-primary/10 p-3 rounded-full">
-                      <Map className="h-6 w-6 text-primary" />
+                      <Map className="h-6 w-6 text-primary" aria-hidden="true" />
                     </div>
                   </div>
                   
                   <div className="space-y-4 mb-6">
                     <div className="p-3 bg-secondary/30 rounded-lg flex items-start gap-3">
                       <div className="bg-primary/10 p-2 rounded-full">
-                        <Brain className="h-5 w-5 text-primary" />
+                        <Brain className="h-5 w-5 text-primary" aria-hidden="true" />
                       </div>
                       <div>
                         <h4 className="font-medium">Análise Inteligente</h4>
@@ -107,7 +114,7 @@ const MarHighlight = () => {
                     
                     <div className="p-3 bg-secondary/30 rounded-lg flex items-start gap-3">
                       <div className="bg-primary/10 p-2 rounded-full">
-                        <Target className="h-5 w-5 text-primary" />
+                        <Target className="h-5 w-5 text-primary" aria-hidden="true" />
                       </div>
                       <div>
                         <h4 className="font-medium">Estratégia Personalizada</h4>
@@ -117,7 +124,7 @@ const MarHighlight = () => {
                     
                     <div className="p-3 bg-secondary/30 rounded-lg flex items-start gap-3">
                       <div className="bg-primary/10 p-2 rounded-full">
-                        <BarChart3 className="h-5 w-5 text-primary" />
+                        <BarChart3 className="h-5 w-5 text-primary" aria-hidden="true" />
                       </div>
                       <div>
                         <h4 className="font-medium">Métricas e KPIs</h4>
@@ -132,7 +139,7 @@ const MarHighlight = () => {
                         A partir de <span className="text-primary font-bold">R$ 179,90</span>
                       </p>
                       <Button variant="outline" size="sm" asChild>
-                        <Link to="/mar">Ver detalhes</Link>
+                        <Link to="/mar#pricing">Ver planos</Link>
                       </Button>
                     </div>
                   </div>

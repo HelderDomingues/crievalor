@@ -47,6 +47,7 @@ const HeroContent: React.FC<HeroContentProps> = ({
           variant={isSecondary ? "outline" : "default"}
           className={isSecondary ? "border-primary text-primary hover:bg-primary/10" : "bg-primary hover:bg-primary/90 text-primary-foreground font-medium"}
           onClick={() => handleScroll(url)}
+          aria-label={`${text} - ir para seção da página`}
         >
           {text}
           {!isSecondary && !isMarHero && <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />}
@@ -63,7 +64,7 @@ const HeroContent: React.FC<HeroContentProps> = ({
         className={isSecondary ? "border-primary text-primary hover:bg-primary/10" : "bg-primary hover:bg-primary/90 text-primary-foreground font-medium"}
         asChild
       >
-        <Link to={url}>
+        <Link to={url} aria-label={`${text} - ir para ${url}`}>
           {text}
           {!isSecondary && !isMarHero && <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />}
           {!isSecondary && isMarHero && <Compass className="ml-2 h-4 w-4" aria-hidden="true" />}
@@ -81,6 +82,8 @@ const HeroContent: React.FC<HeroContentProps> = ({
               src="/lovable-uploads/91e6888f-e3da-40dc-8c55-5718c15ada21.png" 
               alt="MAR - Mapa para Alto Rendimento" 
               className="h-48 mx-auto" 
+              width="300"
+              height="192"
             />
           </div>
         )}
@@ -92,13 +95,14 @@ const HeroContent: React.FC<HeroContentProps> = ({
         <h1 
           style={{ animationDelay: "0.2s" }} 
           className="sm:text-5xl font-bold mb-4 animate-fade-in text-3xl md:text-5xl"
+          id="heroTitle"
         >
           {title}
         </h1>
         
         <p 
           style={{ animationDelay: "0.4s" }} 
-          className="text-lg md:text-xl text-muted-foreground mb-5 animate-fade-in px-[50px]"
+          className="text-lg md:text-xl text-muted-foreground mb-5 animate-fade-in"
         >
           {description}
         </p>

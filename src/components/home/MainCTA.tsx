@@ -1,7 +1,7 @@
 
 import React from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const MainCTA = () => {
@@ -24,12 +24,17 @@ const MainCTA = () => {
           <div className="flex flex-col sm:flex-row justify-center gap-4">
             <Button size="lg" asChild>
               <Link to="/mar">
-                Conheça o MAR
+                Conheça o MAR <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />
               </Link>
             </Button>
             <Button variant="outline" size="lg" asChild>
-              <a href="#contato">
-                Fale Conosco
+              <Link to="/contato">
+                Agendar uma consulta <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />
+              </Link>
+            </Button>
+            <Button variant="secondary" size="lg" asChild>
+              <a href="https://blog.crievalor.com.br" target="_blank" rel="noopener noreferrer">
+                Visite nosso Blog <ExternalLink className="ml-2 h-4 w-4" aria-hidden="true" />
               </a>
             </Button>
           </div>

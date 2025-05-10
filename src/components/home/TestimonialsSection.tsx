@@ -1,6 +1,9 @@
 
 import React from "react";
 import TestimonialCarousel from "@/components/TestimonialCarousel";
+import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { ArrowRight } from "lucide-react";
 
 const TestimonialsSection = () => {
   return (
@@ -17,6 +20,17 @@ const TestimonialsSection = () => {
         </div>
         
         <TestimonialCarousel />
+        
+        <div className="text-center mt-12">
+          <p className="text-lg mb-6">
+            Junte-se a outros negócios de sucesso e descubra como podemos impulsionar sua empresa.
+          </p>
+          <Button asChild>
+            <Link to="/contato">
+              Fale com nosso time <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />
+            </Link>
+          </Button>
+        </div>
       </div>
     </section>
   );
