@@ -1,17 +1,21 @@
 import React, { useEffect, useRef } from "react";
+
 const HeroNetworkAnimation: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
+    
     const resizeCanvas = () => {
       canvas.width = canvas.offsetWidth;
       canvas.height = canvas.offsetHeight;
     };
     resizeCanvas();
     window.addEventListener("resize", resizeCanvas);
+    
     class Node {
       x: number;
       y: number;
@@ -67,6 +71,7 @@ const HeroNetworkAnimation: React.FC = () => {
         });
       }
     }
+    
     const nodes: Node[] = [];
     const nodeCount = Math.min(80, Math.floor(canvas.width * canvas.height / 10000));
     for (let i = 0; i < nodeCount; i++) {
@@ -79,6 +84,7 @@ const HeroNetworkAnimation: React.FC = () => {
         }
       });
     });
+    
     const dataTransmissions: any[] = [];
     function animateDataTransmission(x1: number, y1: number, x2: number, y2: number) {
       dataTransmissions.push({
@@ -90,6 +96,7 @@ const HeroNetworkAnimation: React.FC = () => {
         speed: 0.01 + Math.random() * 0.01
       });
     }
+    
     function animate() {
       if (!ctx) return;
       ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -114,11 +121,14 @@ const HeroNetworkAnimation: React.FC = () => {
       }
       requestAnimationFrame(animate);
     }
+    
     animate();
     return () => {
       window.removeEventListener("resize", resizeCanvas);
     };
   }, []);
-  return;
+  
+  return <canvas ref={canvasRef} className="absolute inset-0 w-full h-full" />;
 };
+
 export default HeroNetworkAnimation;

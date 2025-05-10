@@ -1,11 +1,15 @@
+
 import React, { useRef, useEffect } from "react";
+
 interface AIGridMeshProps {
   className?: string;
 }
+
 const AIGridMesh: React.FC<AIGridMeshProps> = ({
   className = ""
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -202,6 +206,9 @@ const AIGridMesh: React.FC<AIGridMeshProps> = ({
       window.removeEventListener("resize", resizeCanvas);
     };
   }, []);
-  return;
+
+  // Return a canvas element with the provided className
+  return <canvas ref={canvasRef} className={className} />;
 };
+
 export default AIGridMesh;

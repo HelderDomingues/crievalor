@@ -1,16 +1,20 @@
 import React, { useRef, useEffect } from "react";
+
 interface MaritimeWavesProps {
   className?: string;
 }
+
 const MaritimeWaves: React.FC<MaritimeWavesProps> = ({
   className = ""
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
+    
     let animationFrameId: number;
     let time = 0;
 
@@ -65,6 +69,9 @@ const MaritimeWaves: React.FC<MaritimeWavesProps> = ({
     ctx.fillStyle = color;
     ctx.fill();
   };
-  return;
+
+  // Return a canvas element with the provided className
+  return <canvas ref={canvasRef} className={className} />;
 };
+
 export default MaritimeWaves;
