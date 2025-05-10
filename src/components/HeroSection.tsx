@@ -1,12 +1,11 @@
+
 import React from "react";
-import MaritimeWaves from "./MaritimeWaves";
-import AIGridMesh from "./AIGridMesh";
 import HeroNetworkAnimation from "./HeroNetworkAnimation";
 import HeroContent from "./HeroContent";
-import HeroIcons from "./HeroIcons";
 import ScrollIndicator from "./ScrollIndicator";
 import HeroCarousel from "./HeroCarousel";
 import ParticleWaveBackground from "./ParticleWaveBackground";
+
 interface HeroSectionProps {
   title: string;
   subtitle: string;
@@ -20,6 +19,7 @@ interface HeroSectionProps {
   backgroundImages?: string[];
   useParticleWaves?: boolean;
 }
+
 const HeroSection: React.FC<HeroSectionProps> = props => {
   if (props.backgroundImages && props.backgroundImages.length > 0) {
     return <section className="relative min-h-screen flex items-center overflow-hidden pt-12" aria-labelledby="heroTitle">
@@ -41,18 +41,14 @@ const HeroSection: React.FC<HeroSectionProps> = props => {
         </div> : props.useParticleWaves ? <>
           <ParticleWaveBackground className="z-0" />
           <div className="absolute inset-0 bg-black/30 z-5"></div>
-        </> : <>
-          <HeroNetworkAnimation />
-          <AIGridMesh className="z-5" />
-          <MaritimeWaves className="z-10" />
-          
-        </>}
-      
-      <HeroIcons isVisible={props.isMarHero || false} />
+        </> : 
+        <HeroNetworkAnimation />
+      }
       
       <HeroContent {...props} />
       
       <ScrollIndicator />
     </section>;
 };
+
 export default HeroSection;

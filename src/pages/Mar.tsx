@@ -10,12 +10,11 @@ import PricingSection from "@/components/PricingSection";
 import VideoSection from "@/components/VideoSection";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import SplashCursor from "@/components/SplashCursor";
-import { Anchor, LifeBuoy, Compass, Zap } from "lucide-react";
 
 const Mar = () => {
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-background to-background/95 relative overflow-hidden">
-      {/* SplashCursor added for fluid interactive background effect */}
+      {/* SplashCursor adicionado para efeito interativo fluido no background */}
       <SplashCursor 
         BACK_COLOR={{ r: 0.05, g: 0.1, b: 0.3 }}
         TRANSPARENT={true}
@@ -54,7 +53,7 @@ const Mar = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
               <div className="bg-card/50 backdrop-blur-sm p-6 rounded-xl border border-border shadow-lg hover:shadow-xl transition-all hover:translate-y-[-5px] hover:border-primary/30">
                 <div className="rounded-full bg-primary/10 w-12 h-12 flex items-center justify-center mb-4">
-                  <Compass className="text-primary h-6 w-6" />
+                  <svg xmlns="http://www.w3.org/2000/svg" className="text-primary h-6 w-6" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
                 </div>
                 <h3 className="text-lg font-semibold mb-2">Direcionamento Estratégico</h3>
                 <p className="text-muted-foreground">Orientação clara para seu negócio navegar com confiança no mercado.</p>
@@ -62,7 +61,7 @@ const Mar = () => {
               
               <div className="bg-card/50 backdrop-blur-sm p-6 rounded-xl border border-border shadow-lg hover:shadow-xl transition-all hover:translate-y-[-5px] hover:border-primary/30">
                 <div className="rounded-full bg-primary/10 w-12 h-12 flex items-center justify-center mb-4">
-                  <Anchor className="text-primary h-6 w-6" />
+                  <svg xmlns="http://www.w3.org/2000/svg" className="text-primary h-6 w-6" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="19" r="2"/><path d="M12 17V9"/><path d="m4.93 10.93 1.41 1.41"/><path d="M2 12h2"/><path d="M19.07 10.93 17.66 12.34"/><path d="M22 12h-2"/><path d="M12 2v7"/><path d="m4.93 13.07 1.41-1.41"/><path d="M19.07 13.07 17.66 11.66"/></svg>
                 </div>
                 <h3 className="text-lg font-semibold mb-2">Base Sólida</h3>
                 <p className="text-muted-foreground">Fundamentação em dados e análises precisas para decisões seguras.</p>
@@ -70,7 +69,7 @@ const Mar = () => {
               
               <div className="bg-card/50 backdrop-blur-sm p-6 rounded-xl border border-border shadow-lg hover:shadow-xl transition-all hover:translate-y-[-5px] hover:border-primary/30">
                 <div className="rounded-full bg-primary/10 w-12 h-12 flex items-center justify-center mb-4">
-                  <Zap className="text-primary h-6 w-6" />
+                  <svg xmlns="http://www.w3.org/2000/svg" className="text-primary h-6 w-6" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
                 </div>
                 <h3 className="text-lg font-semibold mb-2">Resultados Acelerados</h3>
                 <p className="text-muted-foreground">Implementação ágil e eficiente para rápido retorno sobre investimento.</p>
@@ -78,7 +77,7 @@ const Mar = () => {
               
               <div className="bg-card/50 backdrop-blur-sm p-6 rounded-xl border border-border shadow-lg hover:shadow-xl transition-all hover:translate-y-[-5px] hover:border-primary/30">
                 <div className="rounded-full bg-primary/10 w-12 h-12 flex items-center justify-center mb-4">
-                  <LifeBuoy className="text-primary h-6 w-6" />
+                  <svg xmlns="http://www.w3.org/2000/svg" className="text-primary h-6 w-6" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8a2 2 0 0 1 4 0c0 2-3 3-3 3"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
                 </div>
                 <h3 className="text-lg font-semibold mb-2">Suporte Contínuo</h3>
                 <p className="text-muted-foreground">Acompanhamento personalizado durante toda a jornada de transformação.</p>
