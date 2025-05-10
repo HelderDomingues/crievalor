@@ -1,22 +1,17 @@
-
 import React, { useEffect, useRef } from "react";
-
 const HeroNetworkAnimation: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
-
     const resizeCanvas = () => {
       canvas.width = canvas.offsetWidth;
       canvas.height = canvas.offsetHeight;
     };
     resizeCanvas();
     window.addEventListener("resize", resizeCanvas);
-
     class Node {
       x: number;
       y: number;
@@ -42,13 +37,11 @@ const HeroNetworkAnimation: React.FC = () => {
         this.x += this.vx;
         this.y += this.vy;
         this.pulseValue += this.pulseSpeed;
-
         if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
         if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
       }
       draw() {
         if (!ctx) return;
-
         const pulseOpacity = (Math.sin(this.pulseValue) + 1) * 0.3 + 0.2;
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
@@ -67,7 +60,6 @@ const HeroNetworkAnimation: React.FC = () => {
             ctx.strokeStyle = `rgba(59, 130, 246, ${opacity * 0.2})`;
             ctx.lineWidth = opacity * 0.8;
             ctx.stroke();
-
             if (Math.random() < 0.001) {
               animateDataTransmission(this.x, this.y, node.x, node.y);
             }
@@ -75,14 +67,11 @@ const HeroNetworkAnimation: React.FC = () => {
         });
       }
     }
-
     const nodes: Node[] = [];
     const nodeCount = Math.min(80, Math.floor(canvas.width * canvas.height / 10000));
-
     for (let i = 0; i < nodeCount; i++) {
       nodes.push(new Node(Math.random() * canvas.width, Math.random() * canvas.height));
     }
-
     nodes.forEach(node => {
       nodes.forEach(otherNode => {
         if (node !== otherNode && Math.random() < 0.1) {
@@ -90,7 +79,6 @@ const HeroNetworkAnimation: React.FC = () => {
         }
       });
     });
-
     const dataTransmissions: any[] = [];
     function animateDataTransmission(x1: number, y1: number, x2: number, y2: number) {
       dataTransmissions.push({
@@ -102,17 +90,14 @@ const HeroNetworkAnimation: React.FC = () => {
         speed: 0.01 + Math.random() * 0.01
       });
     }
-
     function animate() {
       if (!ctx) return;
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-
       nodes.forEach(node => {
         node.update();
         node.draw();
         node.connectNodes();
       });
-
       for (let i = dataTransmissions.length - 1; i >= 0; i--) {
         const dt = dataTransmissions[i];
         dt.progress += dt.speed;
@@ -134,8 +119,6 @@ const HeroNetworkAnimation: React.FC = () => {
       window.removeEventListener("resize", resizeCanvas);
     };
   }, []);
-
-  return <canvas ref={canvasRef} className="absolute inset-0 w-full h-full z-0 opacity-40"></canvas>;
+  return;
 };
-
 export default HeroNetworkAnimation;
