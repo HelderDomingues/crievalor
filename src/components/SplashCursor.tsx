@@ -1,4 +1,3 @@
-
 import { useEffect, useRef } from "react";
 
 function SplashCursor({
@@ -19,7 +18,7 @@ function SplashCursor({
   BACK_COLOR = { r: 0.1, g: 0.2, b: 0.5 },
   TRANSPARENT = true,
 }) {
-  const canvasRef = useRef(null);
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -140,40 +139,51 @@ function SplashCursor({
         antialias: false,
         preserveDrawingBuffer: false,
       };
-      let gl = canvas.getContext("webgl2", params) as WebGL2RenderingContext;
+      
+      // Try to get WebGL2 context first
+      let gl: WebGLRenderingContext | WebGL2RenderingContext | null = canvas.getContext("webgl2", params);
       const isWebGL2 = !!gl;
-      if (!isWebGL2)
-        gl =
-          (canvas.getContext("webgl", params) ||
-          canvas.getContext("experimental-webgl", params)) as WebGLRenderingContext;
-      let halfFloat;
-      let supportLinearFiltering;
+      
+      // Fall back to WebGL1 if WebGL2 is not available
+      if (!isWebGL2) {
+        gl = canvas.getContext("webgl", params) || canvas.getContext("experimental-webgl", params);
+      }
+      
+      if (!gl) {
+        throw new Error('WebGL not supported');
+      }
+
+      let halfFloat: any;
+      let supportLinearFiltering: any;
+      
       if (isWebGL2) {
-        gl.getExtension("EXT_color_buffer_float");
-        supportLinearFiltering = gl.getExtension("OES_texture_float_linear");
+        (gl as WebGL2RenderingContext).getExtension("EXT_color_buffer_float");
+        supportLinearFiltering = (gl as WebGL2RenderingContext).getExtension("OES_texture_float_linear");
       } else {
         halfFloat = gl.getExtension("OES_texture_half_float");
-        supportLinearFiltering = gl.getExtension(
-          "OES_texture_half_float_linear"
-        );
+        supportLinearFiltering = gl.getExtension("OES_texture_half_float_linear");
       }
+      
       gl.clearColor(0.0, 0.0, 0.0, 1.0);
+      
       const halfFloatTexType = isWebGL2
-        ? gl.HALF_FLOAT
-        : halfFloat && (halfFloat as any).HALF_FLOAT_OES;
-      let formatRGBA;
-      let formatRG;
-      let formatR;
+        ? (gl as WebGL2RenderingContext).HALF_FLOAT
+        : halfFloat?.HALF_FLOAT_OES;
+        
+      let formatRGBA: FormatObject;
+      let formatRG: FormatObject;
+      let formatR: FormatObject;
 
       if (isWebGL2) {
+        const gl2 = gl as WebGL2RenderingContext;
         formatRGBA = getSupportedFormat(
           gl,
-          gl.RGBA16F,
-          gl.RGBA,
+          gl2.RGBA16F,
+          gl2.RGBA,
           halfFloatTexType
         );
-        formatRG = getSupportedFormat(gl, gl.RG16F, gl.RG, halfFloatTexType);
-        formatR = getSupportedFormat(gl, gl.R16F, gl.RED, halfFloatTexType);
+        formatRG = getSupportedFormat(gl, gl2.RG16F, gl2.RG, halfFloatTexType);
+        formatR = getSupportedFormat(gl, gl2.R16F, gl2.RED, halfFloatTexType);
       } else {
         formatRGBA = getSupportedFormat(gl, gl.RGBA, gl.RGBA, halfFloatTexType);
         formatRG = getSupportedFormat(gl, gl.RGBA, gl.RGBA, halfFloatTexType);
@@ -192,24 +202,35 @@ function SplashCursor({
       };
     }
 
-    function getSupportedFormat(gl: WebGLRenderingContext, internalFormat: number, format: number, type: number): FormatObject {
+    function getSupportedFormat(gl: WebGLRenderingContext | WebGL2RenderingContext, internalFormat: number, format: number, type: number): FormatObject {
       if (!supportRenderTextureFormat(gl, internalFormat, format, type)) {
-        switch (internalFormat) {
-          case (gl as any).R16F:
-            return getSupportedFormat(gl, (gl as any).RG16F, gl.RG || (gl as any).RG, type);
-          case (gl as any).RG16F:
-            return getSupportedFormat(gl, (gl as any).RGBA16F, gl.RGBA, type);
-          default:
-            return null as any;
+        const isWebGL2 = !!(gl as WebGL2RenderingContext).texStorage2D;
+        
+        if (isWebGL2) {
+          const gl2 = gl as WebGL2RenderingContext;
+          
+          // Handle WebGL2 specific formats
+          switch (internalFormat) {
+            case gl2.R16F:
+              return getSupportedFormat(gl, gl2.RG16F, gl2.RG, type);
+            case gl2.RG16F:
+              return getSupportedFormat(gl, gl2.RGBA16F, gl.RGBA, type);
+            default:
+              return { internalFormat: gl.RGBA, format: gl.RGBA };
+          }
+        } else {
+          // WebGL1 fallback
+          return { internalFormat: gl.RGBA, format: gl.RGBA };
         }
       }
+      
       return {
         internalFormat,
         format,
       };
     }
 
-    function supportRenderTextureFormat(gl: WebGLRenderingContext, internalFormat: number, format: number, type: number): boolean {
+    function supportRenderTextureFormat(gl: WebGLRenderingContext | WebGL2RenderingContext, internalFormat: number, format: number, type: number): boolean {
       const texture = gl.createTexture() as WebGLTexture;
       gl.bindTexture(gl.TEXTURE_2D, texture);
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
@@ -1151,15 +1172,6 @@ function SplashCursor({
       let aspectRatio = canvas.width / canvas.height;
       if (aspectRatio > 1) delta /= aspectRatio;
       return delta;
-    }
-
-    // Original random color generator
-    function generateColor(): {r: number, g: number, b: number} {
-      let c = HSVtoRGB(Math.random(), 1.0, 1.0);
-      c.r *= 0.15;
-      c.g *= 0.15;
-      c.b *= 0.15;
-      return c;
     }
 
     // Brand color generator - shades of blue and purple
