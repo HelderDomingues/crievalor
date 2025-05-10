@@ -10,6 +10,7 @@ import PricingSection from "@/components/PricingSection";
 import VideoSection from "@/components/VideoSection";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import { Helmet } from "react-helmet-async";
+import { ServiceSchema } from "@/components/seo/SchemaMarkup";
 import { useScrollToTop } from "@/hooks/useScrollToTop";
 
 const Mar = () => {
@@ -31,6 +32,17 @@ const Mar = () => {
         <meta name="twitter:image" content="https://crievalor.com.br/lovable-uploads/91e6888f-e3da-40dc-8c55-5718c15ada21.png" />
         <link rel="canonical" href="https://crievalor.com.br/mar" />
       </Helmet>
+      
+      <ServiceSchema 
+        name="MAR - Mapa para Alto Rendimento"
+        description="Um mapa estratégico que combina inteligência artificial e consultoria especializada para acelerar o crescimento de empresas com decisões precisas e personalizadas."
+        provider={{
+          name: "Crie Valor Estratégia",
+          url: "https://crievalor.com.br"
+        }}
+        url="https://crievalor.com.br/mar"
+        areaServed="Brasil"
+      />
       
       <Header />
       

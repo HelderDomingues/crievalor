@@ -7,6 +7,7 @@ import { ContactHeroSection } from "@/components/contact/ContactHeroSection";
 import { GoogleMapSection } from "@/components/contact/GoogleMapSection";
 import { ChatbotSection } from "@/components/contact/ChatbotSection";
 import { Helmet } from "react-helmet-async";
+import { LocalBusinessSchema } from "@/components/seo/SchemaMarkup";
 import { useScrollToTop } from "@/hooks/useScrollToTop";
 
 const Contato = () => {
@@ -38,6 +39,26 @@ const Contato = () => {
         <meta name="twitter:image" content="https://crievalor.com.br/og-image.png" />
         <link rel="canonical" href="https://crievalor.com.br/contato" />
       </Helmet>
+      
+      <LocalBusinessSchema 
+        name="Crie Valor Estratégia"
+        address={{
+          streetAddress: "Rua Coronel Santiago, 400",
+          addressLocality: "Joinville",
+          addressRegion: "SC",
+          postalCode: "89203-560",
+          addressCountry: "BR"
+        }}
+        telephone="+5547992150289"
+        email="contato@crievalor.com.br"
+        url="https://crievalor.com.br"
+        logo="https://crievalor.com.br/lovable-uploads/d2f508b6-c101-4928-b7f7-161a378bb6e8.png"
+        priceRange="$$$"
+        geo={{
+          latitude: -26.308,
+          longitude: -48.846
+        }}
+      />
       
       <Header />
       

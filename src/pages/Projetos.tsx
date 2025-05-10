@@ -8,6 +8,7 @@ import ProjectOverview from "@/components/projects/ProjectOverview";
 import ProjectExamples from "@/components/projects/ProjectExamples";
 import { useScrollToTop } from "@/hooks/useScrollToTop";
 import { Helmet } from "react-helmet-async";
+import { ServiceSchema } from "@/components/seo/SchemaMarkup";
 
 const Projetos = () => {
   useScrollToTop();
@@ -28,6 +29,17 @@ const Projetos = () => {
         <meta name="twitter:image" content="https://crievalor.com.br/og-image.png" />
         <link rel="canonical" href="https://crievalor.com.br/projetos" />
       </Helmet>
+      
+      <ServiceSchema 
+        name="Projetos sob Medida"
+        description="Desenvolvemos projetos especiais completamente customizados para atender às necessidades específicas do seu negócio."
+        provider={{
+          name: "Crie Valor Estratégia",
+          url: "https://crievalor.com.br"
+        }}
+        url="https://crievalor.com.br/projetos"
+        areaServed="Brasil"
+      />
       
       <Header />
       

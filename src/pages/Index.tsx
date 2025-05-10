@@ -11,8 +11,12 @@ import MarHighlight from "@/components/home/MarHighlight";
 import TestimonialsSection from "@/components/home/TestimonialsSection";
 import MainCTA from "@/components/home/MainCTA";
 import { Helmet } from "react-helmet-async";
+import { OrganizationSchema } from "@/components/seo/SchemaMarkup";
+import { useScrollToTop } from "@/hooks/useScrollToTop";
 
 const Index = () => {
+  useScrollToTop();
+  
   return (
     <div className="min-h-screen flex flex-col">
       <Helmet>
@@ -29,6 +33,11 @@ const Index = () => {
         <meta name="twitter:image" content="https://crievalor.com.br/og-image.png" />
         <link rel="canonical" href="https://crievalor.com.br" />
       </Helmet>
+      
+      <OrganizationSchema 
+        url="https://crievalor.com.br"
+        logo="https://crievalor.com.br/lovable-uploads/d2f508b6-c101-4928-b7f7-161a378bb6e8.png"
+      />
       
       <Header />
       
