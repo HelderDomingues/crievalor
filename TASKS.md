@@ -87,14 +87,29 @@ IMPLEMENTATION GUIDELINES:
   - [x] Updated setup-storage-policies function to handle CORS properly
   - [x] Fixed ambiguous "user_id" reference in systemSettingsService
   - [x] Updated config.toml to disable JWT verification for webhook endpoints
-- [ ] Complete Storage Security Configuration
-  - [ ] Verify bucket creation permissions
-  - [ ] Test file upload functionality
-  - [ ] Document storage access patterns
-- [ ] Verify Edge Function Integration
-  - [ ] Test asaas-webhook endpoint access
-  - [ ] Validate system settings updates
-  - [ ] Monitor for CORS violations in production
+
+### Phase 5: SEO and Indexation Improvements
+- [ ] Implement React Helmet for all pages
+  - [ ] Add consistent title and meta tags
+  - [ ] Add Open Graph and Twitter card metadata
+  - [ ] Verify proper implementation for social sharing
+- [ ] Add Schema.org structured data
+  - [ ] Implement Organization schema
+  - [ ] Add LocalBusiness schema for contact information
+  - [ ] Add Service schema for service pages
+  - [ ] Implement FAQ schema for common questions
+- [ ] Create and optimize sitemap
+  - [ ] Create comprehensive sitemap.xml
+  - [ ] Add sitemap reference in robots.txt
+  - [ ] Ensure all important routes are included
+- [ ] Enhance image accessibility
+  - [ ] Add descriptive alt text for all images
+  - [ ] Implement lazy loading for non-critical images
+  - [ ] Optimize image dimensions and quality for mobile
+- [ ] Improve content structure
+  - [ ] Optimize heading hierarchy (H1, H2, etc.)
+  - [ ] Enhance internal linking strategy
+  - [ ] Add clear CTAs to all service pages
 
 ## Protected Areas (DO NOT MODIFY)
 1. Payment Processing
@@ -117,9 +132,13 @@ IMPLEMENTATION GUIDELINES:
   - Added external blog link to Footer component
   - Implemented proper external link handling with target="_blank" and rel="noopener noreferrer"
 - Fixed TypeScript errors:
-  - Corrected SplashCursor.tsx TypeScript errors (removed non-existent BLOOM_RESOLUTION and BLOOM_ITERATIONS)
+  - Corrected SplashCursor.tsx TypeScript errors (removed non-existent properties)
   - Fixed component return types to properly satisfy React.FC type requirements
   - Updated TASKS.md to reflect completed tasks and current progress
+- Added SEO improvement plan:
+  - Created detailed step-by-step plan for enhancing website SEO
+  - Added Phase 5 to TASKS.md with specific SEO tasks
+  - Prepared for Helmet implementation across all pages
 
 ### 2024-05-09
 - Fixed critical console errors:
@@ -163,9 +182,11 @@ IMPLEMENTATION GUIDELINES:
   - Resolved issue with links to branding and mentorias pages causing full page reloads
 
 ## Next Steps
-1. Continue with Phase 2
-2. Test user flow paths
-3. Document all routes and their purposes
+1. Implement React Helmet for all pages
+2. Add Schema.org structured data
+3. Create and optimize sitemap
+4. Enhance image accessibility
+5. Improve content structure
 
 ## Success Metrics
 - Zero build errors
@@ -173,3 +194,4 @@ IMPLEMENTATION GUIDELINES:
 - Maintained payment system integrity
 - Improved code organization
 - Enhanced performance metrics
+- Better SEO scores and indexation

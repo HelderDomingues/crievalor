@@ -7,8 +7,11 @@ import PortfolioGallery from "@/components/PortfolioGallery";
 import ContactSection from "@/components/ContactSection";
 import { getPortfolioProjects } from "@/services/portfolioService";
 import { PortfolioProject } from "@/types/portfolio";
+import { Helmet } from "react-helmet-async";
+import { useScrollToTop } from "@/hooks/useScrollToTop";
 
 const IdentidadeVisual = () => {
+  useScrollToTop();
   const [projects, setProjects] = useState<PortfolioProject[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -37,6 +40,21 @@ const IdentidadeVisual = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
+      <Helmet>
+        <title>Identidade Visual | Crie Valor Estratégia</title>
+        <meta name="description" content="Criamos identidades visuais memoráveis que refletem a essência da sua marca e causam impacto no seu público-alvo." />
+        <meta property="og:title" content="Identidade Visual | Crie Valor Estratégia" />
+        <meta property="og:description" content="Criamos identidades visuais memoráveis que refletem a essência da sua marca e causam impacto no seu público-alvo." />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://crievalor.com.br/identidade-visual" />
+        <meta property="og:image" content="https://crievalor.com.br/og-image.png" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Identidade Visual | Crie Valor" />
+        <meta name="twitter:description" content="Design estratégico: identidades visuais memoráveis para sua marca." />
+        <meta name="twitter:image" content="https://crievalor.com.br/og-image.png" />
+        <link rel="canonical" href="https://crievalor.com.br/identidade-visual" />
+      </Helmet>
+      
       <Header />
       
       <main className="flex-grow">

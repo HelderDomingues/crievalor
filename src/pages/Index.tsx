@@ -18,6 +18,16 @@ const Index = () => {
       <Helmet>
         <title>Crie Valor Estratégia | Consultoria e Marketing para empresas</title>
         <meta name="description" content="Transforme sua empresa com o MAR: Mapa para Alto Rendimento. Consultoria estratégica, marketing e ferramentas de inteligência artificial para impulsionar seus resultados." />
+        <meta property="og:title" content="Crie Valor Estratégia | Consultoria e Marketing para empresas" />
+        <meta property="og:description" content="Transforme sua empresa com o MAR: Mapa para Alto Rendimento. Consultoria estratégica, marketing e ferramentas de inteligência artificial para impulsionar seus resultados." />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://crievalor.com.br" />
+        <meta property="og:image" content="https://crievalor.com.br/og-image.png" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Crie Valor Estratégia | Consultoria e Marketing" />
+        <meta name="twitter:description" content="Transforme sua empresa com o MAR: Mapa para Alto Rendimento. Consultoria estratégica para resultados excepcionais." />
+        <meta name="twitter:image" content="https://crievalor.com.br/og-image.png" />
+        <link rel="canonical" href="https://crievalor.com.br" />
       </Helmet>
       
       <Header />

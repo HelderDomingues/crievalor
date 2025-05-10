@@ -17,6 +17,16 @@ const Projetos = () => {
       <Helmet>
         <title>Projetos sob Medida | Crie Valor Estratégia</title>
         <meta name="description" content="Desenvolvemos projetos especiais completamente customizados para atender às necessidades específicas do seu negócio." />
+        <meta property="og:title" content="Projetos sob Medida | Crie Valor Estratégia" />
+        <meta property="og:description" content="Desenvolvemos projetos especiais completamente customizados para atender às necessidades específicas do seu negócio." />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://crievalor.com.br/projetos" />
+        <meta property="og:image" content="https://crievalor.com.br/og-image.png" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Projetos sob Medida | Crie Valor" />
+        <meta name="twitter:description" content="Soluções completamente personalizadas para as necessidades específicas do seu negócio." />
+        <meta name="twitter:image" content="https://crievalor.com.br/og-image.png" />
+        <link rel="canonical" href="https://crievalor.com.br/projetos" />
       </Helmet>
       
       <Header />

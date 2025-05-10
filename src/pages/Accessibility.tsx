@@ -3,10 +3,29 @@ import React from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import HeroContent from "@/components/HeroContent";
+import { Helmet } from "react-helmet-async";
+import { useScrollToTop } from "@/hooks/useScrollToTop";
 
 const Accessibility = () => {
+  useScrollToTop();
+
   return (
     <div className="min-h-screen flex flex-col">
+      <Helmet>
+        <title>Acessibilidade | Crie Valor Estratégia</title>
+        <meta name="description" content="Nosso compromisso em tornar nosso conteúdo acessível para todos os usuários, independentemente de suas habilidades." />
+        <meta property="og:title" content="Acessibilidade | Crie Valor Estratégia" />
+        <meta property="og:description" content="Nosso compromisso em tornar nosso conteúdo acessível para todos os usuários, independentemente de suas habilidades." />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://crievalor.com.br/acessibilidade" />
+        <meta property="og:image" content="https://crievalor.com.br/og-image.png" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Acessibilidade | Crie Valor" />
+        <meta name="twitter:description" content="Nosso compromisso com a acessibilidade web para todos os usuários." />
+        <meta name="twitter:image" content="https://crievalor.com.br/og-image.png" />
+        <link rel="canonical" href="https://crievalor.com.br/acessibilidade" />
+      </Helmet>
+      
       <Header />
       
       <main className="flex-grow pt-16">
@@ -54,4 +73,3 @@ const Accessibility = () => {
 };
 
 export default Accessibility;
-
