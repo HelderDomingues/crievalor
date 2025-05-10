@@ -25,11 +25,18 @@ const TestimonialsSection = () => {
           <p className="text-lg mb-6">
             Junte-se a outros negócios de sucesso e descubra como podemos impulsionar sua empresa.
           </p>
-          <Button asChild>
-            <Link to="/contato">
-              Fale com nosso time <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />
-            </Link>
-          </Button>
+          <div className="flex flex-col sm:flex-row justify-center gap-4">
+            <Button asChild>
+              <Link to="/mar" aria-label="Conhecer planos MAR - Descubra nossas soluções estratégicas">
+                Conhecer planos MAR <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />
+              </Link>
+            </Button>
+            <Button variant="outline" asChild>
+              <Link to="/contato" aria-label="Fale com nosso time - Entre em contato para uma consulta personalizada">
+                Fale com nosso time <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />
+              </Link>
+            </Button>
+          </div>
         </div>
       </div>
     </section>

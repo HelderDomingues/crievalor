@@ -56,6 +56,44 @@ const HeroContent: React.FC<HeroContentProps> = ({
       );
     }
 
+    // Special case for whatsapp links
+    if (url.startsWith('https://wa.me') || url.startsWith('wa.me')) {
+      return (
+        <Button
+          size="lg"
+          variant={isSecondary ? "outline" : "default"}
+          className={isSecondary ? "border-primary text-primary hover:bg-primary/10" : "bg-primary hover:bg-primary/90 text-primary-foreground font-medium"}
+          as="a"
+          href={url}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={`${text} - abrir WhatsApp em nova janela`}
+        >
+          {text}
+          {!isSecondary && <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />}
+        </Button>
+      );
+    }
+
+    // For external links 
+    if (url.startsWith('http')) {
+      return (
+        <Button
+          size="lg"
+          variant={isSecondary ? "outline" : "default"}
+          className={isSecondary ? "border-primary text-primary hover:bg-primary/10" : "bg-primary hover:bg-primary/90 text-primary-foreground font-medium"}
+          as="a"
+          href={url}
+          target="_blank" 
+          rel="noopener noreferrer"
+          aria-label={`${text} - abrir em nova janela`}
+        >
+          {text}
+          {!isSecondary && <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />}
+        </Button>
+      );
+    }
+
     // For regular routes, use Link component
     return (
       <Button
@@ -64,7 +102,7 @@ const HeroContent: React.FC<HeroContentProps> = ({
         className={isSecondary ? "border-primary text-primary hover:bg-primary/10" : "bg-primary hover:bg-primary/90 text-primary-foreground font-medium"}
         asChild
       >
-        <Link to={url} aria-label={`${text} - ir para ${url}`}>
+        <Link to={url} aria-label={`${text} - ir para ${url.replace('/', '')}`}>
           {text}
           {!isSecondary && !isMarHero && <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />}
           {!isSecondary && isMarHero && <Compass className="ml-2 h-4 w-4" aria-hidden="true" />}
@@ -84,6 +122,7 @@ const HeroContent: React.FC<HeroContentProps> = ({
               className="h-48 mx-auto" 
               width="300"
               height="192"
+              loading="eager"
             />
           </div>
         )}

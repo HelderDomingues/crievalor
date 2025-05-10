@@ -78,10 +78,15 @@ const FeaturesSection = () => {
           ))}
         </div>
         
-        <div className="text-center mt-12">
+        <div className="text-center mt-12 flex flex-col sm:flex-row justify-center gap-4">
           <Button variant="outline" size="lg" asChild className="hover:bg-primary/10">
-            <Link to="/mar">
-              Descubra como podemos ajudar seu negócio <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />
+            <Link to="/mar" aria-label="Descubra o MAR - Mapa para Alto Rendimento">
+              Descubra o MAR <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />
+            </Link>
+          </Button>
+          <Button variant="secondary" size="lg" asChild>
+            <Link to="/projetos" aria-label="Conheça nossos projetos - Veja casos de sucesso">
+              Conheça nossos projetos <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />
             </Link>
           </Button>
         </div>

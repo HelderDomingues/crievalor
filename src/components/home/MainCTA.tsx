@@ -23,17 +23,22 @@ const MainCTA = () => {
           </p>
           <div className="flex flex-col sm:flex-row justify-center gap-4">
             <Button size="lg" asChild>
-              <Link to="/mar">
+              <Link to="/mar" aria-label="Conheça o MAR - Saiba mais sobre o Mapa para Alto Rendimento">
                 Conheça o MAR <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />
               </Link>
             </Button>
             <Button variant="outline" size="lg" asChild>
-              <Link to="/contato">
+              <Link to="/contato" aria-label="Agendar uma consulta - Fale com nossos especialistas">
                 Agendar uma consulta <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />
               </Link>
             </Button>
             <Button variant="secondary" size="lg" asChild>
-              <a href="https://blog.crievalor.com.br" target="_blank" rel="noopener noreferrer">
+              <a 
+                href="https://blog.crievalor.com.br" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                aria-label="Visite nosso Blog - Conteúdos sobre estratégia e marketing"
+              >
                 Visite nosso Blog <ExternalLink className="ml-2 h-4 w-4" aria-hidden="true" />
               </a>
             </Button>
