@@ -14,16 +14,7 @@ import SplashCursor from "@/components/SplashCursor";
 const Mar = () => {
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-background to-background/95 relative overflow-hidden">
-      {/* SplashCursor adicionado para efeito interativo fluido no background */}
-      <SplashCursor 
-        BACK_COLOR={{ r: 0.05, g: 0.1, b: 0.3 }}
-        TRANSPARENT={true}
-        DENSITY_DISSIPATION={2.8}
-        VELOCITY_DISSIPATION={1.8}
-        CURL={4}
-        SPLAT_RADIUS={0.3}
-        COLOR_UPDATE_SPEED={6}
-      />
+      {/* Background SplashCursor moved to hero section */}
       
       <Header />
       
@@ -38,6 +29,7 @@ const Mar = () => {
             secondaryCtaText="Descubra o MAR ideal para você"
             secondaryCtaUrl="#pricing"
             isMarHero={true}
+            useSplashCursor={true}
           />
         </ErrorBoundary>
         
