@@ -42,6 +42,10 @@ IMPLEMENTATION GUIDELINES:
   - [x] Documented route structure
   - [x] Specified implementation standards
   - [x] Outlined security considerations
+- [x] Add blog link to main menu and footer
+  - [x] Added external blog link to Header component
+  - [x] Added external blog link to Footer component
+  - [x] Implemented proper external link handling with target="_blank"
 
 ### Phase 2: Route Management and User Experience
 - [x] Create comprehensive route mapping
@@ -53,11 +57,16 @@ IMPLEMENTATION GUIDELINES:
   - [x] Verified and fixed Footer.tsx links to correctly use Link components
   - [x] Ensured proper React Router navigation for all internal links
   - [x] Fixed issue with branding (identidade-visual) and mentorias links
-- [ ] Ensure consistent header/footer implementation
+- [x] Ensure consistent header/footer implementation
+  - [x] Fixed TypeScript errors in component files
+  - [x] Corrected blog link implementation in header and footer
 - [ ] Test user flow paths
 - [ ] Document all routes and their purposes
 
 ### Phase 3: Code Optimization and Cleanup
+- [x] Fix TypeScript errors in animation components
+  - [x] Fixed SplashCursor.tsx TypeScript errors
+  - [x] Ensured components return proper React nodes
 - [ ] Map all component dependencies
 - [ ] Identify unused code and components
 - [ ] Document critical system relationships
@@ -92,6 +101,16 @@ IMPLEMENTATION GUIDELINES:
    - User plan management
 
 ## Change Log
+
+### 2024-05-10
+- Added blog link to navigation:
+  - Added external blog link (https://blog.crievalor.com.br) to Header component
+  - Added external blog link to Footer component
+  - Implemented proper external link handling with target="_blank" and rel="noopener noreferrer"
+- Fixed TypeScript errors:
+  - Corrected SplashCursor.tsx TypeScript errors (removed non-existent BLOOM_RESOLUTION and BLOOM_ITERATIONS)
+  - Fixed component return types to properly satisfy React.FC type requirements
+  - Updated TASKS.md to reflect completed tasks and current progress
 
 ### 2024-05-09
 - Fixed critical console errors:
@@ -136,8 +155,8 @@ IMPLEMENTATION GUIDELINES:
 
 ## Next Steps
 1. Continue with Phase 2
-2. Ensure consistent header/footer implementation across all pages
-3. Test user flow paths
+2. Test user flow paths
+3. Document all routes and their purposes
 
 ## Success Metrics
 - Zero build errors

@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, X, ChevronDown } from "lucide-react";
@@ -43,6 +44,7 @@ const Header = () => {
   const menuItems = [
     { title: "Home", path: "/" },
     { title: "MAR", path: "/mar" },
+    { title: "Blog", path: "https://blog.crievalor.com.br", external: true },
     { title: "Sobre", path: "/sobre" },
     { title: "Contato", path: "/contato" },
   ];
@@ -78,17 +80,29 @@ const Header = () => {
           {/* Desktop Menu */}
           <nav className="hidden md:flex items-center space-x-4">
             {menuItems.map((item) => (
-              <Link
-                key={item.path}
-                to={item.path}
-                className={`text-sm transition-all hover:text-primary ${
-                  isActive(item.path)
-                    ? "text-primary font-medium"
-                    : "text-foreground/80"
-                } link-underline`}
-              >
-                {item.title}
-              </Link>
+              item.external ? (
+                <a
+                  key={item.path}
+                  href={item.path}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm transition-all hover:text-primary text-foreground/80 link-underline"
+                >
+                  {item.title}
+                </a>
+              ) : (
+                <Link
+                  key={item.path}
+                  to={item.path}
+                  className={`text-sm transition-all hover:text-primary ${
+                    isActive(item.path)
+                      ? "text-primary font-medium"
+                      : "text-foreground/80"
+                  } link-underline`}
+                >
+                  {item.title}
+                </Link>
+              )
             ))}
             <Button
               size="sm"
@@ -130,18 +144,31 @@ const Header = () => {
       >
         <nav className="flex flex-col p-8 space-y-4">
           {menuItems.map((item) => (
-            <Link
-              key={item.path}
-              to={item.path}
-              className={`text-lg py-2 border-b border-border ${
-                isActive(item.path)
-                  ? "text-primary font-medium"
-                  : "text-foreground/80"
-              }`}
-              onClick={() => setIsMenuOpen(false)}
-            >
-              {item.title}
-            </Link>
+            item.external ? (
+              <a
+                key={item.path}
+                href={item.path}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-lg py-2 border-b border-border text-foreground/80"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                {item.title}
+              </a>
+            ) : (
+              <Link
+                key={item.path}
+                to={item.path}
+                className={`text-lg py-2 border-b border-border ${
+                  isActive(item.path)
+                    ? "text-primary font-medium"
+                    : "text-foreground/80"
+                }`}
+                onClick={() => setIsMenuOpen(false)}
+              >
+                {item.title}
+              </Link>
+            )
           ))}
           <Button 
             className="mt-4 bg-primary text-primary-foreground hover:bg-primary/90 transition-all"

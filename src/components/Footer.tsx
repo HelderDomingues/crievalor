@@ -67,6 +67,16 @@ const Footer = () => {
                 </Link>
               </li>
               <li>
+                <a 
+                  href="https://blog.crievalor.com.br" 
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-muted-foreground hover:text-primary transition-colors text-sm"
+                >
+                  Blog
+                </a>
+              </li>
+              <li>
                 <Link to="/sobre" className="text-muted-foreground hover:text-primary transition-colors text-sm">
                   Sobre Nós
                 </Link>
