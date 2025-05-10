@@ -6,18 +6,19 @@ function SplashCursor({
   SIM_RESOLUTION = 128,
   DYE_RESOLUTION = 1440,
   CAPTURE_RESOLUTION = 512,
-  DENSITY_DISSIPATION = 3.5,
-  VELOCITY_DISSIPATION = 2,
-  PRESSURE = 0.1,
+  DENSITY_DISSIPATION = 3,
+  VELOCITY_DISSIPATION = 1.8,
+  PRESSURE = 0.2,
   PRESSURE_ITERATIONS = 20,
-  CURL = 3,
+  CURL = 30,
   SPLAT_RADIUS = 0.2,
   SPLAT_FORCE = 6000,
   SHADING = true,
-  COLOR_UPDATE_SPEED = 10,
-  // Using primary blue color from the theme
-  BACK_COLOR = { r: 0.1, g: 0.2, b: 0.5 },
+  COLOR_UPDATE_SPEED = 8,
+  // Using primary blue and purple colors from the theme
+  BACK_COLOR = { r: 0.02, g: 0.02, b: 0.05 },
   TRANSPARENT = true,
+  fullScreen = false,
 }) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
@@ -125,6 +126,8 @@ function SplashCursor({
     };
 
     let pointers: Pointer[] = [pointerPrototype()];
+    let splatStack: number[] = [];
+    let bloomFramebuffers: FBO[] = [];
 
     const { gl, ext } = getWebGLContext(canvas);
     if (!ext.supportLinearFiltering) {
@@ -415,17 +418,12 @@ function SplashCursor({
       varying vec2 vT;
       varying vec2 vB;
       uniform sampler2D uTexture;
-      uniform sampler2D uDithering;
-      uniform vec2 ditherScale;
+      uniform sampler2D uBloom;
       uniform vec2 texelSize;
-
-      vec3 linearToGamma (vec3 color) {
-          color = max(color, vec3(0));
-          return max(1.055 * pow(color, vec3(0.416666667)) - 0.055, vec3(0));
-      }
 
       void main () {
           vec3 c = texture2D(uTexture, vUv).rgb;
+          
           #ifdef SHADING
               vec3 lc = texture2D(uTexture, vL).rgb;
               vec3 rc = texture2D(uTexture, vR).rgb;
@@ -446,6 +444,69 @@ function SplashCursor({
           gl_FragColor = vec4(c, a);
       }
     `;
+
+    const bloomPrefilterShader = compileShader(
+      gl.FRAGMENT_SHADER,
+      `
+        precision mediump float;
+        precision mediump sampler2D;
+
+        varying vec2 vUv;
+        uniform sampler2D uTexture;
+        uniform vec3 curve;
+        uniform float threshold;
+
+        void main () {
+            vec3 c = texture2D(uTexture, vUv).rgb;
+            float br = max(c.r, max(c.g, c.b));
+            float rq = clamp(br - curve.x, 0.0, curve.y);
+            rq = curve.z * rq * rq;
+            c *= max(rq, br - threshold) / max(br, 0.0001);
+            gl_FragColor = vec4(c, 0.0);
+        }
+      `
+    );
+
+    const bloomBlurShader = compileShader(
+      gl.FRAGMENT_SHADER,
+      `
+        precision mediump float;
+        precision mediump sampler2D;
+
+        varying vec2 vL;
+        varying vec2 vR;
+        varying vec2 vT;
+        varying vec2 vB;
+        uniform sampler2D uTexture;
+
+        void main () {
+            vec4 sum = vec4(0.0);
+            sum += texture2D(uTexture, vL);
+            sum += texture2D(uTexture, vR);
+            sum += texture2D(uTexture, vT);
+            sum += texture2D(uTexture, vB);
+            sum *= 0.25;
+            gl_FragColor = sum;
+        }
+      `
+    );
+
+    const bloomFinalShader = compileShader(
+      gl.FRAGMENT_SHADER,
+      `
+        precision mediump float;
+        precision mediump sampler2D;
+
+        varying vec2 vUv;
+        uniform sampler2D uTexture;
+        uniform float intensity;
+
+        void main () {
+            vec3 c = texture2D(uTexture, vUv).rgb;
+            gl_FragColor = vec4(c * intensity, 0.0);
+        }
+      `
+    );
 
     const splatShader = compileShader(
       gl.FRAGMENT_SHADER,
@@ -680,22 +741,6 @@ function SplashCursor({
       };
     })();
 
-    let dye: DoubleFBO, velocity: DoubleFBO, divergence: FBO, curl: FBO, pressure: DoubleFBO;
-
-    const copyProgram = new Program(baseVertexShader, copyShader);
-    const clearProgram = new Program(baseVertexShader, clearShader);
-    const splatProgram = new Program(baseVertexShader, splatShader);
-    const advectionProgram = new Program(baseVertexShader, advectionShader);
-    const divergenceProgram = new Program(baseVertexShader, divergenceShader);
-    const curlProgram = new Program(baseVertexShader, curlShader);
-    const vorticityProgram = new Program(baseVertexShader, vorticityShader);
-    const pressureProgram = new Program(baseVertexShader, pressureShader);
-    const gradienSubtractProgram = new Program(
-      baseVertexShader,
-      gradientSubtractShader
-    );
-    const displayMaterial = new Material(baseVertexShader, displayShaderSource);
-
     function initFramebuffers() {
       let simRes = getResolution(config.SIM_RESOLUTION);
       let dyeRes = getResolution(config.DYE_RESOLUTION);
@@ -706,7 +751,7 @@ function SplashCursor({
       const filtering = ext.supportLinearFiltering ? gl.LINEAR : gl.NEAREST;
       gl.disable(gl.BLEND);
 
-      if (!dye)
+      if (dye == null)
         dye = createDoubleFBO(
           dyeRes.width,
           dyeRes.height,
@@ -726,7 +771,7 @@ function SplashCursor({
           filtering
         );
 
-      if (!velocity)
+      if (velocity == null)
         velocity = createDoubleFBO(
           simRes.width,
           simRes.height,
@@ -770,6 +815,42 @@ function SplashCursor({
         texType,
         gl.NEAREST
       );
+
+      initBloomFramebuffers();
+    }
+
+    function initBloomFramebuffers() {
+      let res = getResolution(config.BLOOM_RESOLUTION);
+      const texType = ext.halfFloatTexType;
+      const rgba = ext.formatRGBA;
+      const filtering = ext.supportLinearFiltering ? gl.LINEAR : gl.NEAREST;
+
+      bloom = createFBO(
+        res.width,
+        res.height,
+        rgba.internalFormat,
+        rgba.format,
+        texType,
+        filtering
+      );
+
+      bloomFramebuffers.length = 0;
+      for (let i = 0; i < config.BLOOM_ITERATIONS; i++) {
+        let width = res.width >> (i + 1);
+        let height = res.height >> (i + 1);
+
+        if (width < 2 || height < 2) break;
+
+        let fbo = createFBO(
+          width,
+          height,
+          rgba.internalFormat,
+          rgba.format,
+          texType,
+          filtering
+        );
+        bloomFramebuffers.push(fbo);
+      }
     }
 
     function createFBO(w: number, h: number, internalFormat: number, format: number, type: number, param: number): FBO {
@@ -903,6 +984,33 @@ function SplashCursor({
       }
       return hash;
     }
+
+    let dye: DoubleFBO;
+    let velocity: DoubleFBO;
+    let divergence: FBO;
+    let curl: FBO;
+    let pressure: DoubleFBO;
+    let bloom: FBO;
+
+    const copyProgram = new Program(baseVertexShader, copyShader);
+    const clearProgram = new Program(baseVertexShader, clearShader);
+    const splatProgram = new Program(baseVertexShader, splatShader);
+    const advectionProgram = new Program(baseVertexShader, advectionShader);
+    const divergenceProgram = new Program(baseVertexShader, divergenceShader);
+    const curlProgram = new Program(baseVertexShader, curlShader);
+    const vorticityProgram = new Program(baseVertexShader, vorticityShader);
+    const pressureProgram = new Program(baseVertexShader, pressureShader);
+    const gradienSubtractProgram = new Program(
+      baseVertexShader,
+      gradientSubtractShader
+    );
+    const bloomPrefilterProgram = new Program(
+      baseVertexShader,
+      bloomPrefilterShader
+    );
+    const bloomBlurProgram = new Program(baseVertexShader, bloomBlurShader);
+    const bloomFinalProgram = new Program(baseVertexShader, bloomFinalShader);
+    const displayMaterial = new Material(baseVertexShader, displayShaderSource);
 
     function step(dt: number) {
       gl.disable(gl.BLEND);
@@ -1059,20 +1167,6 @@ function SplashCursor({
       return [input.r, input.g, input.b];
     }
 
-    function multipleSplats(amount: number) {
-      for (let i = 0; i < amount; i++) {
-        const color = generateColor();
-        color.r *= 10.0;
-        color.g *= 10.0;
-        color.b *= 10.0;
-        const x = Math.random();
-        const y = Math.random();
-        const dx = 1000 * (Math.random() - 0.5);
-        const dy = 1000 * (Math.random() - 0.5);
-        splat(x, y, dx, dy, color);
-      }
-    }
-
     function splat(x: number, y: number, dx: number, dy: number, color: { r: number; g: number; b: number }) {
       splatProgram.bind();
       gl.uniform1i(splatProgram.uniforms.uTarget, dye.read.attach(0));
@@ -1093,12 +1187,12 @@ function SplashCursor({
       velocity.swap();
     }
 
-    function generateColor() {
-      const c = HSVtoRGB(Math.random(), 1.0, 1.0);
-      c.r *= 0.15;
-      c.g *= 0.15;
-      c.b *= 0.15;
-      return c;
+    function generateBlueAndPurpleColor() {
+      // Generate colors in the blue and purple spectrum
+      let h = Math.random() * 0.2 + 0.6; // Hue between 0.6-0.8 (blue to purple)
+      let s = 0.65 + Math.random() * 0.3; // Saturation
+      let v = 0.65 + Math.random() * 0.3; // Brightness
+      return HSVtoRGB(h, s, v);
     }
 
     function HSVtoRGB(h: number, s: number, v: number) {
@@ -1176,7 +1270,7 @@ function SplashCursor({
       pointer.prevTexcoordY = pointer.texcoordY;
       pointer.deltaX = 0;
       pointer.deltaY = 0;
-      pointer.color = generateColor();
+      pointer.color = generateBlueAndPurpleColor(); // Use our blue/purple colors
     }
 
     function updatePointerUpData(pointer: Pointer) {
@@ -1189,19 +1283,37 @@ function SplashCursor({
       else pointer.deltaY /= aspectRatio;
     }
 
-    // Handle browser events
+    // Handle browser events for the entire document if in fullscreen mode
+    const targetElement = fullScreen ? document : canvas;
+
     function onMouseMove(e: MouseEvent) {
+      let posX, posY;
+      
+      if (fullScreen) {
+        posX = e.clientX;
+        posY = e.clientY;
+      } else {
+        const rect = canvas.getBoundingClientRect();
+        posX = e.clientX - rect.left;
+        posY = e.clientY - rect.top;
+      }
+
       const pointer = pointers[0];
-      if (!pointer.down) return;
-      const posX = scaleByPixelRatio(e.offsetX);
-      const posY = scaleByPixelRatio(e.offsetY);
       updatePointerMoveData(pointer, posX, posY, canvas);
     }
 
     function onMouseDown(e: MouseEvent) {
-      e.preventDefault();
-      const posX = scaleByPixelRatio(e.offsetX);
-      const posY = scaleByPixelRatio(e.offsetY);
+      let posX, posY;
+      
+      if (fullScreen) {
+        posX = e.clientX;
+        posY = e.clientY;
+      } else {
+        const rect = canvas.getBoundingClientRect();
+        posX = e.clientX - rect.left;
+        posY = e.clientY - rect.top;
+      }
+
       updatePointerDownData(pointers[0], -1, posX, posY, canvas);
     }
 
@@ -1213,8 +1325,17 @@ function SplashCursor({
       e.preventDefault();
       const touches = e.targetTouches;
       for (let i = 0; i < Math.min(touches.length, pointers.length); i++) {
-        const posX = scaleByPixelRatio(touches[i].clientX - canvas.getBoundingClientRect().left);
-        const posY = scaleByPixelRatio(touches[i].clientY - canvas.getBoundingClientRect().top);
+        let posX, posY;
+        
+        if (fullScreen) {
+          posX = touches[i].clientX;
+          posY = touches[i].clientY;
+        } else {
+          const rect = canvas.getBoundingClientRect();
+          posX = touches[i].clientX - rect.left;
+          posY = touches[i].clientY - rect.top;
+        }
+
         updatePointerMoveData(pointers[i], posX, posY, canvas);
       }
     }
@@ -1223,8 +1344,17 @@ function SplashCursor({
       e.preventDefault();
       const touches = e.targetTouches;
       for (let i = 0; i < Math.min(touches.length, pointers.length); i++) {
-        const posX = scaleByPixelRatio(touches[i].clientX - canvas.getBoundingClientRect().left);
-        const posY = scaleByPixelRatio(touches[i].clientY - canvas.getBoundingClientRect().top);
+        let posX, posY;
+        
+        if (fullScreen) {
+          posX = touches[i].clientX;
+          posY = touches[i].clientY;
+        } else {
+          const rect = canvas.getBoundingClientRect();
+          posX = touches[i].clientX - rect.left;
+          posY = touches[i].clientY - rect.top;
+        }
+
         updatePointerDownData(pointers[i], touches[i].identifier, posX, posY, canvas);
       }
     }
@@ -1265,21 +1395,26 @@ function SplashCursor({
     })();
 
     function resizeCanvas() {
-      const pixelRatio = window.devicePixelRatio || 1;
-      canvas.width = Math.floor(canvas.clientWidth * pixelRatio);
-      canvas.height = Math.floor(canvas.clientHeight * pixelRatio);
-      if (gl) {
-        gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
-        if (dye && velocity) initFramebuffers();
+      if (canvas) {
+        const pixelRatio = window.devicePixelRatio || 1;
+        canvas.width = Math.floor(canvas.clientWidth * pixelRatio);
+        canvas.height = Math.floor(canvas.clientHeight * pixelRatio);
+        
+        if (gl) {
+          gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
+          if (dye && velocity) initFramebuffers();
+        }
       }
     }
 
-    canvas.addEventListener('mousemove', onMouseMove);
-    canvas.addEventListener('mousedown', onMouseDown);
-    window.addEventListener('mouseup', onMouseUp);
-    canvas.addEventListener('touchmove', onTouchMove);
-    canvas.addEventListener('touchstart', onTouchStart);
-    window.addEventListener('touchend', onTouchEnd);
+    // Add event listeners
+    targetElement.addEventListener('mousemove', onMouseMove);
+    targetElement.addEventListener('mousedown', onMouseDown);
+    targetElement.addEventListener('mouseup', onMouseUp);
+    canvas.addEventListener('mouseleave', () => updatePointerUpData(pointers[0]));
+    targetElement.addEventListener('touchmove', onTouchMove as EventListener);
+    targetElement.addEventListener('touchstart', onTouchStart as EventListener);
+    targetElement.addEventListener('touchend', onTouchEnd as EventListener);
     window.addEventListener('resize', resizeCanvas);
 
     // Initial resize and setup
@@ -1287,9 +1422,17 @@ function SplashCursor({
     
     // Set up initial state
     initFramebuffers();
-    multipleSplats(parseInt((Math.random() * 20).toString()) + 5);
     
-    // Check if we're at the edge of the velocity buffer
+    // Automatically add some splats initially
+    for (let i = 0; i < 5; i++) {
+      const color = generateBlueAndPurpleColor();
+      const x = Math.random();
+      const y = Math.random();
+      const dx = 2000 * (Math.random() - 0.5);
+      const dy = 2000 * (Math.random() - 0.5);
+      splat(x, y, dx, dy, color);
+    }
+    
     let lastUpdateTime = Date.now();
     let colorUpdateTimer = 0.0;
     let pointer = pointers[0];
@@ -1310,16 +1453,21 @@ function SplashCursor({
         }
       }
 
-      // Periodically change colors
+      // Periodically update colors
       colorUpdateTimer += dt * config.COLOR_UPDATE_SPEED;
       if (colorUpdateTimer >= 1) {
         colorUpdateTimer = 0;
-        pointer.color = generateColor();
+        pointer.color = generateBlueAndPurpleColor(); // Blue/purple theme
       }
 
-      // Add random splats
-      if (Math.random() < 0.01) {
-        multipleSplats(parseInt((Math.random() * 4).toString()) + 1);
+      // Add small random splats occasionally for more dynamic effect
+      if (Math.random() < 0.005) {
+        const color = generateBlueAndPurpleColor();
+        const x = Math.random();
+        const y = Math.random();
+        const dx = 1000 * (Math.random() - 0.5);
+        const dy = 1000 * (Math.random() - 0.5);
+        splat(x, y, dx, dy, color);
       }
 
       // Update and render fluid simulation
@@ -1333,21 +1481,22 @@ function SplashCursor({
 
     // Clean up event listeners when component unmounts
     return () => {
-      canvas.removeEventListener('mousemove', onMouseMove);
-      canvas.removeEventListener('mousedown', onMouseDown);
-      window.removeEventListener('mouseup', onMouseUp);
-      canvas.removeEventListener('touchmove', onTouchMove);
-      canvas.removeEventListener('touchstart', onTouchStart);
-      window.removeEventListener('touchend', onTouchEnd);
+      targetElement.removeEventListener('mousemove', onMouseMove);
+      targetElement.removeEventListener('mousedown', onMouseDown);
+      targetElement.removeEventListener('mouseup', onMouseUp);
+      canvas.removeEventListener('mouseleave', () => updatePointerUpData(pointers[0]));
+      targetElement.removeEventListener('touchmove', onTouchMove as EventListener);
+      targetElement.removeEventListener('touchstart', onTouchStart as EventListener);
+      targetElement.removeEventListener('touchend', onTouchEnd as EventListener);
       window.removeEventListener('resize', resizeCanvas);
     };
-  }, [SIM_RESOLUTION, DYE_RESOLUTION, CAPTURE_RESOLUTION, DENSITY_DISSIPATION, VELOCITY_DISSIPATION, PRESSURE, PRESSURE_ITERATIONS, CURL, SPLAT_RADIUS, SPLAT_FORCE, SHADING, COLOR_UPDATE_SPEED, BACK_COLOR, TRANSPARENT]);
+  }, [SIM_RESOLUTION, DYE_RESOLUTION, CAPTURE_RESOLUTION, DENSITY_DISSIPATION, VELOCITY_DISSIPATION, PRESSURE, PRESSURE_ITERATIONS, CURL, SPLAT_RADIUS, SPLAT_FORCE, SHADING, COLOR_UPDATE_SPEED, BACK_COLOR, TRANSPARENT, fullScreen]);
 
   return (
     <canvas 
       ref={canvasRef}
-      className="absolute inset-0 w-full h-full z-0"
-      style={{ display: "block", width: "100%", height: "100%" }}
+      className={`${fullScreen ? "fixed inset-0 w-full h-full z-[5]" : "absolute inset-0 w-full h-full z-0"}`}
+      style={{ display: "block" }}
     />
   );
 }
