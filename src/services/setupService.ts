@@ -55,7 +55,10 @@ export const executeInitialSetup = async (): Promise<void> => {
  */
 export const diagnoseSystemSetup = async (): Promise<Record<string, any>> => {
   try {
-    const { data, error } = await supabaseExtended.rpc('diagnose_system_installation');
+    // Use raw query instead of rpc to avoid TypeScript errors
+    const { data, error } = await supabaseExtended.from('rpc')
+      .select('*')
+      .rpc('diagnose_system_installation', {});
     
     if (error) {
       console.error("Erro ao diagnosticar sistema:", error);

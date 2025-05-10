@@ -11,9 +11,13 @@ export const createStorageBucketIfNotExists = async (bucketName: string, options
   try {
     console.log(`Verificando/criando bucket ${bucketName}...`);
     
-    const { data, error } = await supabaseExtended.rpc("create_bucket_if_not_exists", {
-      bucket_name: bucketName,
-      is_public: options.public
+    // Use direct SQL query through Edge Function instead of RPC
+    const { data, error } = await supabaseExtended.functions.invoke('setup-storage-policies', {
+      body: {
+        action: 'create_bucket',
+        bucket_name: bucketName,
+        is_public: options.public
+      }
     });
     
     if (error) {
@@ -24,8 +28,11 @@ export const createStorageBucketIfNotExists = async (bucketName: string, options
     console.log(`Bucket ${bucketName} configurado com sucesso`);
     
     // Configurar políticas para o bucket
-    const { data: policyData, error: policyError } = await supabaseExtended.rpc("setup_storage_bucket_policies", {
-      bucket_name: bucketName
+    const { data: policyData, error: policyError } = await supabaseExtended.functions.invoke('setup-storage-policies', {
+      body: {
+        action: 'setup_policies',
+        bucket_name: bucketName
+      }
     });
     
     if (policyError) {

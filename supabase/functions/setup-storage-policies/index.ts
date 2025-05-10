@@ -1,276 +1,180 @@
 
-// supabase/functions/setup-storage-policies/index.ts
-import { serve } from "https://deno.land/std@0.177.0/http/server.ts"
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.7.1"
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.38.4";
 
-// Importante: este tipo de função deve ser executada com a chave de serviço
-// para ter permissões para configurar o banco de dados
-const SUPABASE_URL = Deno.env.get("SUPABASE_URL") || ""
-const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || ""
+// Configurações do Supabase
+const supabaseUrl = Deno.env.get("SUPABASE_URL") || "";
+const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
 
-console.log("Setup storage policies function loaded")
-
-interface PolicySetupResult {
-  success: boolean;
-  message?: string;
-  warning?: string;
-}
-
-interface Response {
-  success: boolean;
-  message: string;
-  results: Record<string, PolicySetupResult>;
-}
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Methods": "POST, GET, OPTIONS"
+};
 
 serve(async (req) => {
-  // Add CORS headers
-  const headers = new Headers({
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-    "Access-Control-Allow-Methods": "POST, OPTIONS",
-    "Content-Type": "application/json"
-  });
-
-  // Handle OPTIONS request for CORS preflight
+  console.log("Setup storage policies function loaded");
+  
+  // Lidar com requisições OPTIONS (CORS)
   if (req.method === "OPTIONS") {
-    return new Response(null, {
-      headers,
-      status: 204,
-    });
-  }
-
-  // Responder somente a POST requests
-  if (req.method !== "POST") {
-    return new Response(
-      JSON.stringify({ error: "Method not allowed" }),
-      { headers, status: 405 }
-    )
+    return new Response(null, { headers: corsHeaders, status: 204 });
   }
 
   try {
-    // Inicializar o cliente Supabase com a chave de serviço
-    // para ter permissões administrativas
-    const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
-      auth: {
-        autoRefreshToken: false,
-        persistSession: false
-      }
-    });
-
-    const response: Response = {
-      success: true,
-      message: "Storage buckets configured successfully",
-      results: {}
-    }
-
-    // Verificar e criar os buckets necessários
-    await setupBucket("clientlogos", supabase, response)
-    await setupBucket("materials", supabase, response)
-    await setupBucket("portfolio", supabase, response)
-
-    // Configurar permissões diretamente via SQL
-    try {
-      // Aplicar políticas de acesso público para leitura e acesso autenticado para modificações
-      const storageResult = await supabase.rpc('exec_sql', {
-        sql: `
-          -- Criar função de verificação de proprietário para files
-          CREATE OR REPLACE FUNCTION storage.is_owner(
-            bucket_id text,
-            name text,
-            owner_id uuid
-          )
-          RETURNS BOOLEAN AS $$
-          BEGIN
-            RETURN EXISTS (
-              SELECT 1 FROM storage.objects
-              WHERE
-                storage.objects.bucket_id = is_owner.bucket_id AND
-                storage.objects.name = is_owner.name AND
-                storage.objects.owner = is_owner.owner_id
-            );
-          END
-          $$ LANGUAGE plpgsql;
-
-          -- Configurar policies para clientlogos
-          DROP POLICY IF EXISTS "Público pode visualizar logos de clientes" ON storage.objects;
-          CREATE POLICY "Público pode visualizar logos de clientes"
-            ON storage.objects
-            FOR SELECT
-            USING (bucket_id = 'clientlogos');
-
-          DROP POLICY IF EXISTS "Usuários autenticados podem fazer upload de logos" ON storage.objects;
-          CREATE POLICY "Usuários autenticados podem fazer upload de logos"
-            ON storage.objects
-            FOR INSERT
-            TO authenticated
-            WITH CHECK (bucket_id = 'clientlogos');
-
-          DROP POLICY IF EXISTS "Proprietários e admins podem atualizar logos" ON storage.objects;
-          CREATE POLICY "Proprietários e admins podem atualizar logos"
-            ON storage.objects
-            FOR UPDATE
-            TO authenticated
-            USING (bucket_id = 'clientlogos' AND (storage.is_owner(bucket_id, name, auth.uid()) OR auth.jwt() ->> 'role' = 'admin'));
-
-          DROP POLICY IF EXISTS "Proprietários e admins podem excluir logos" ON storage.objects;
-          CREATE POLICY "Proprietários e admins podem excluir logos"
-            ON storage.objects
-            FOR DELETE
-            TO authenticated
-            USING (bucket_id = 'clientlogos' AND (storage.is_owner(bucket_id, name, auth.uid()) OR auth.jwt() ->> 'role' = 'admin'));
-
-          -- Configurar policies para materials
-          DROP POLICY IF EXISTS "Usuários autenticados podem visualizar materiais" ON storage.objects;
-          CREATE POLICY "Usuários autenticados podem visualizar materiais"
-            ON storage.objects
-            FOR SELECT
-            TO authenticated
-            USING (bucket_id = 'materials');
-
-          DROP POLICY IF EXISTS "Admins podem fazer upload de materiais" ON storage.objects;
-          CREATE POLICY "Admins podem fazer upload de materiais"
-            ON storage.objects
-            FOR INSERT
-            TO authenticated
-            WITH CHECK (bucket_id = 'materials' AND auth.jwt() ->> 'role' = 'admin');
-
-          DROP POLICY IF EXISTS "Admins podem atualizar materiais" ON storage.objects;
-          CREATE POLICY "Admins podem atualizar materiais"
-            ON storage.objects
-            FOR UPDATE
-            TO authenticated
-            USING (bucket_id = 'materials' AND auth.jwt() ->> 'role' = 'admin');
-
-          DROP POLICY IF EXISTS "Admins podem excluir materiais" ON storage.objects;
-          CREATE POLICY "Admins podem excluir materiais"
-            ON storage.objects
-            FOR DELETE
-            TO authenticated
-            USING (bucket_id = 'materials' AND auth.jwt() ->> 'role' = 'admin');
-            
-          -- Configurar policies para portfolio
-          DROP POLICY IF EXISTS "Público pode visualizar portfolio" ON storage.objects;
-          CREATE POLICY "Público pode visualizar portfolio"
-            ON storage.objects
-            FOR SELECT
-            USING (bucket_id = 'portfolio');
-
-          DROP POLICY IF EXISTS "Admins podem fazer upload de portfolio" ON storage.objects;
-          CREATE POLICY "Admins podem fazer upload de portfolio"
-            ON storage.objects
-            FOR INSERT
-            TO authenticated
-            WITH CHECK (bucket_id = 'portfolio' AND auth.jwt() ->> 'role' = 'admin');
-
-          DROP POLICY IF EXISTS "Admins podem atualizar portfolio" ON storage.objects;
-          CREATE POLICY "Admins podem atualizar portfolio"
-            ON storage.objects
-            FOR UPDATE
-            TO authenticated
-            USING (bucket_id = 'portfolio' AND auth.jwt() ->> 'role' = 'admin');
-
-          DROP POLICY IF EXISTS "Admins podem excluir portfolio" ON storage.objects;
-          CREATE POLICY "Admins podem excluir portfolio"
-            ON storage.objects
-            FOR DELETE
-            TO authenticated
-            USING (bucket_id = 'portfolio' AND auth.jwt() ->> 'role' = 'admin');
-        `
-      });
-
-      if (storageResult.error) {
-        console.error('Erro ao configurar políticas:', storageResult.error);
-        throw new Error(`Erro ao configurar políticas SQL: ${storageResult.error.message}`);
-      }
-
-      console.log('Políticas de storage configuradas com sucesso via SQL');
-    } catch (sqlError) {
-      console.error('Erro ao executar SQL para configurar políticas:', sqlError);
-      // Adicionar aviso, mas continuar com os outros métodos
-      for (const bucket of ['clientlogos', 'materials', 'portfolio']) {
-        if (response.results[bucket]) {
-          response.results[bucket].warning = `Policies setup failed, manual setup may be required: ${sqlError.message}`;
-        }
-      }
-    }
-
-    return new Response(
-      JSON.stringify(response),
-      { headers }
-    )
-  } catch (error) {
-    console.error("Error in setup-storage-policies function:", error)
-
-    return new Response(
-      JSON.stringify({
-        success: false,
-        message: `Error setting up storage policies: ${error.message}`,
-        error: error.message
-      }),
-      { headers, status: 500 }
-    )
-  }
-})
-
-async function setupBucket(
-  bucketName: string,
-  supabase: any,
-  response: Response
-): Promise<void> {
-  try {
-    console.log(`Setting up ${bucketName} bucket...`)
+    // Inicializar cliente Supabase com chave de serviço para ter permissões de admin
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
     
-    // Verificar se o bucket existe
+    let body = {};
+    try {
+      body = await req.json();
+    } catch (e) {
+      body = {};
+    }
+    
+    const action = body.action || "setup_all";
+    const bucketName = body.bucket_name;
+    const isPublic = body.is_public || true;
+    
+    let result = {};
+    
+    // Com base na ação solicitada, realizar a operação correspondente
+    if (action === "create_bucket" && bucketName) {
+      result = await createBucket(supabase, bucketName, isPublic);
+    } 
+    else if (action === "setup_policies" && bucketName) {
+      result = await setupBucketPolicies(supabase, bucketName);
+    }
+    else {
+      // Configuração padrão - configurar todos os buckets necessários
+      result = await setupAllBuckets(supabase);
+    }
+    
+    return new Response(
+      JSON.stringify(result),
+      {
+        status: 200,
+        headers: { ...corsHeaders, "Content-Type": "application/json" }
+      }
+    );
+  } catch (error) {
+    console.error(`Erro ao configurar políticas: ${error.message}`);
+    return new Response(
+      JSON.stringify({ error: error.message }),
+      {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" }
+      }
+    );
+  }
+});
+
+// Função para criar um bucket se não existir
+async function createBucket(supabase, bucketName, isPublic = true) {
+  try {
+    // Verificar se o bucket já existe
     const { data: existingBuckets, error: listError } = await supabase
       .storage
-      .listBuckets()
+      .listBuckets();
     
     if (listError) {
-      throw new Error(`Error listing buckets: ${listError.message}`)
+      return { 
+        success: false, 
+        message: `Error listing buckets: ${listError.message}`,
+        error: listError 
+      };
     }
     
-    const bucketExists = existingBuckets.some(
-      (bucket: any) => bucket.name === bucketName
-    )
+    const bucketExists = existingBuckets.some(bucket => bucket.name === bucketName);
     
-    if (!bucketExists) {
-      // Criar o bucket se não existir
-      const { error: createError } = await supabase
-        .storage
-        .createBucket(bucketName, {
-          public: true,
-          fileSizeLimit: 10 * 1024 * 1024, // 10MB
-          allowedMimeTypes: ['image/*', 'application/pdf']
-        })
-      
-      if (createError) {
-        throw new Error(`Error creating bucket ${bucketName}: ${createError.message}`)
-      }
-      
-      console.log(`Bucket ${bucketName} created successfully`)
-    } else {
-      console.log(`Bucket ${bucketName} already exists`)
+    if (bucketExists) {
+      console.log(`Bucket ${bucketName} already exists`);
+      return { 
+        success: true, 
+        message: `Bucket ${bucketName} already exists`, 
+        exists: true 
+      };
     }
     
-    // Atualizar as configurações do bucket para torná-lo público
-    const { error: updateError } = await supabase
+    // Criar bucket se não existir
+    const { data, error } = await supabase
       .storage
-      .updateBucket(bucketName, {
-        public: true
-      })
+      .createBucket(bucketName, {
+        public: isPublic
+      });
     
-    if (updateError) {
-      throw new Error(`Error updating bucket ${bucketName}: ${updateError.message}`)
+    if (error) {
+      return { 
+        success: false, 
+        message: `Error creating bucket ${bucketName}: ${error.message}`,
+        error: error 
+      };
     }
     
-    response.results[bucketName] = {
-      success: true
-    }
+    return { 
+      success: true, 
+      message: `Bucket ${bucketName} created successfully`, 
+      data: data 
+    };
   } catch (error) {
-    console.error(`Error setting up bucket ${bucketName}:`, error)
-    response.results[bucketName] = {
-      success: false,
-      message: error.message
+    return { 
+      success: false, 
+      message: `Exception creating bucket ${bucketName}: ${error.message}`,
+      error: error 
+    };
+  }
+}
+
+// Função para configurar políticas de acesso a um bucket
+async function setupBucketPolicies(supabase, bucketName) {
+  try {
+    const { data, error } = await supabase.rpc('setup_storage_bucket_policies', { 
+      bucket_name: bucketName 
+    });
+    
+    if (error) {
+      return { 
+        success: false, 
+        message: `Error setting up policies for bucket ${bucketName}: ${error.message}`,
+        error: error 
+      };
+    }
+    
+    return { 
+      success: true, 
+      message: `Policies configured successfully for bucket ${bucketName}`, 
+      data: data 
+    };
+  } catch (error) {
+    return { 
+      success: false, 
+      message: `Exception setting up policies for bucket ${bucketName}: ${error.message}`,
+      error: error 
+    };
+  }
+}
+
+// Função para configurar todos os buckets necessários
+async function setupAllBuckets(supabase) {
+  const buckets = ['clientlogos', 'materials', 'portfolio', 'avatars'];
+  const results = {};
+  
+  for (const bucket of buckets) {
+    console.log(`Setting up ${bucket} bucket...`);
+    
+    // Criar bucket
+    const createResult = await createBucket(supabase, bucket, true);
+    results[`${bucket}_create`] = createResult;
+    
+    // Configurar políticas
+    if (createResult.success) {
+      const policiesResult = await setupBucketPolicies(supabase, bucket);
+      results[`${bucket}_policies`] = policiesResult;
     }
   }
+  
+  return {
+    success: true,
+    message: "Storage buckets and policies setup completed",
+    results: results
+  };
 }
