@@ -45,12 +45,17 @@ const MaterialCard: React.FC<MaterialCardProps> = ({ material, onAccess }) => {
         {material.thumbnail_url ? (
           <img 
             src={material.thumbnail_url} 
-            alt={material.title} 
+            alt={`Capa do material: ${material.title}`} 
             className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+            loading="lazy"
+            width="400"
+            height="250"
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center bg-gradient-to-r from-gray-100 to-gray-200">
-            <span className="text-xl font-semibold text-gray-500">{material.title.charAt(0)}</span>
+            <span className="text-xl font-semibold text-gray-500" aria-label={`Primeira letra do título: ${material.title.charAt(0)}`}>
+              {material.title.charAt(0)}
+            </span>
           </div>
         )}
       </div>
@@ -70,7 +75,7 @@ const MaterialCard: React.FC<MaterialCardProps> = ({ material, onAccess }) => {
         </p>
         <div className="flex items-center text-xs text-muted-foreground">
           <div className="flex items-center mr-4">
-            <Eye className="mr-1 h-3 w-3" />
+            <Eye className="mr-1 h-3 w-3" aria-hidden="true" />
             <span>{material.access_count} acessos</span>
           </div>
           <span>Adicionado em {formatDate(material.created_at)}</span>
@@ -81,8 +86,9 @@ const MaterialCard: React.FC<MaterialCardProps> = ({ material, onAccess }) => {
         <Button 
           className="w-full" 
           onClick={onAccess}
+          aria-label={`Acessar material: ${material.title}`}
         >
-          <Download className="mr-2 h-4 w-4" />
+          <Download className="mr-2 h-4 w-4" aria-hidden="true" />
           Acessar Material
         </Button>
       </CardFooter>

@@ -57,6 +57,10 @@ const HeroCarousel = ({ images, interval = 5000, children }: HeroCarouselProps) 
                   src={image} 
                   alt={`Slide ${index + 1}`} 
                   className="object-cover w-full h-full"
+                  loading={index === 0 ? "eager" : "lazy"}
+                  width="1920"
+                  height="1080"
+                  aria-hidden={current !== index}
                 />
               </div>
             </CarouselItem>

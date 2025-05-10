@@ -24,14 +24,16 @@ interface HeroSectionProps {
 
 const HeroSection: React.FC<HeroSectionProps> = props => {
   if (props.backgroundImages && props.backgroundImages.length > 0) {
-    return <section className="relative min-h-screen flex items-center overflow-hidden pt-12" aria-labelledby="heroTitle">
+    return (
+      <section className="relative min-h-screen flex items-center overflow-hidden pt-12" aria-labelledby="heroTitle">
         <div className="absolute inset-0 z-0 h-full">
           <HeroCarousel images={props.backgroundImages}>
             <HeroContent {...props} />
           </HeroCarousel>
         </div>
         <ScrollIndicator />
-      </section>;
+      </section>
+    );
   }
   
   return (
@@ -39,20 +41,42 @@ const HeroSection: React.FC<HeroSectionProps> = props => {
       {props.backgroundVideo ? (
         <div className="absolute inset-0 z-0">
           <div className="absolute inset-0 bg-black/60 z-10"></div>
-          <video autoPlay muted loop playsInline className="absolute w-full h-full object-cover" poster="/placeholder.svg" aria-label={`Vídeo de fundo: ${props.title}`}>
-            {props.backgroundVideo === 'home' ? <source src="https://elements-video-cover-images-0.imgix.net/files/127898251/preview.mp4?auto=compress&crop=edges&fit=crop&fm=webm&h=630&w=1200&s=c02f382afdd899a14a67fa1c8d348947" type="video/mp4" /> : <source src={`/videos/${props.backgroundVideo}`} type="video/mp4" />}
+          <video 
+            autoPlay 
+            muted 
+            loop 
+            playsInline 
+            className="absolute w-full h-full object-cover" 
+            poster="/placeholder.svg" 
+            aria-label={`Vídeo de fundo: ${props.title}`}
+            preload="metadata"
+          >
+            {props.backgroundVideo === 'home' ? (
+              <source 
+                src="https://elements-video-cover-images-0.imgix.net/files/127898251/preview.mp4?auto=compress&crop=edges&fit=crop&fm=webm&h=630&w=1200&s=c02f382afdd899a14a67fa1c8d348947" 
+                type="video/mp4" 
+              />
+            ) : (
+              <source src={`/videos/${props.backgroundVideo}`} type="video/mp4" />
+            )}
+            <track 
+              kind="captions" 
+              srcLang="pt-BR" 
+              label="Português (Brasil)" 
+              default 
+            />
             Seu navegador não suporta vídeos.
           </video>
         </div>
       ) : props.useParticleWaves ? (
         <>
           <ParticleWaveBackground className="z-0" />
-          <div className="absolute inset-0 bg-black/30 z-5"></div>
+          <div className="absolute inset-0 bg-black/30 z-5" aria-hidden="true"></div>
         </>
       ) : props.useMaritimeWaves ? (
         <div className="absolute inset-0 z-0">
-          <MaritimeWaves className="w-full h-full" />
-          <div className="absolute inset-0 bg-black/30 z-5"></div>
+          <MaritimeWaves className="w-full h-full" aria-label="Ondas digitais em movimento, representando o conceito de MAR (Mapa para Alto Rendimento)" />
+          <div className="absolute inset-0 bg-black/30 z-5" aria-hidden="true"></div>
         </div>
       ) : (
         <HeroNetworkAnimation />
