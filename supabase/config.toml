@@ -8,5 +8,3 @@ verify_jwt = false
 [functions.setup-rls]
 verify_jwt = false
 
-[functions.setup-storage-policies]
-verify_jwt = false

@@ -5,36 +5,21 @@ import App from './App'
 import './index.css'
 import { supabase } from '@/integrations/supabase/client';
 import { upsertSystemSetting } from './services/systemSettingsService';
-import { initializeStorageBuckets } from './services/storageService';
+import { executeInitialSetup } from './services/setupService';
 import { HelmetProvider } from 'react-helmet-async';
 
-// Initialize in sequence using a single async function
+// Initialize in sequence using a single async function with improved error handling
 async function initializeApp() {
   try {
     console.log("Iniciando a sequência de inicialização da aplicação...");
     
-    // First setup RLS policies - isso deve vir antes de qualquer operação de storage
-    console.log("Setting up RLS policies...");
+    // First setup RLS policies and storage buckets - agora unificado em uma única função
+    console.log("Setting up RLS policies and storage buckets...");
     try {
-      const { data, error } = await supabase.functions.invoke('setup-rls');
-      
-      if (error) {
-        console.error("Erro ao configurar políticas RLS:", error);
-      } else {
-        console.log("Políticas RLS configuradas com sucesso:", data);
-      }
-    } catch (rlsError) {
-      console.error("Erro crítico ao chamar edge function setup-rls:", rlsError);
-      // Continue mesmo com erro para não bloquear o carregamento da aplicação
-    }
-    
-    // Then setup storage buckets
-    console.log("Setting up storage buckets...");
-    try {
-      await initializeStorageBuckets();
-      console.log("Storage setup completed");
-    } catch (storageError) {
-      console.error("Error during storage setup:", storageError);
+      const setupResult = await executeInitialSetup();
+      console.log("Configuração inicial completa");
+    } catch (setupError) {
+      console.error("Erro crítico ao executar setup inicial:", setupError);
       // Continue mesmo com erro para não bloquear o carregamento da aplicação
     }
     

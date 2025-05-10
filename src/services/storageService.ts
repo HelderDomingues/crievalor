@@ -1,51 +1,43 @@
 
 import { supabaseExtended } from "@/integrations/supabase/extendedClient";
+import { v4 as uuidv4 } from "uuid";
 
 /**
- * Creates a storage bucket if it doesn't exist
+ * Creates a storage bucket if it doesn't exist using the safer function
  * @param bucketName Name of the bucket to create
  * @param options Optional configuration options
  */
 export const createStorageBucketIfNotExists = async (bucketName: string, options = { public: true, fileSizeLimit: 10485760 }) => {
   try {
-    console.log(`Checking if bucket ${bucketName} exists...`);
+    console.log(`Verificando/criando bucket ${bucketName}...`);
     
-    const { data: buckets, error: listError } = await supabaseExtended.storage.listBuckets();
+    const { data, error } = await supabaseExtended.rpc("create_bucket_if_not_exists", {
+      bucket_name: bucketName,
+      is_public: options.public
+    });
     
-    if (listError) {
-      console.error(`Error checking buckets: ${listError.message}`);
-      return;
+    if (error) {
+      console.error(`Erro ao criar/verificar bucket ${bucketName}: ${error.message}`);
+      return false;
     }
-
-    const bucketExists = buckets?.some(bucket => bucket.name === bucketName);
-    if (bucketExists) {
-      console.log(`Bucket ${bucketName} already exists.`);
-      
-      // Update bucket to ensure it's public even if it exists
-      const { error: updateError } = await supabaseExtended.storage.updateBucket(bucketName, {
-        public: true
-      });
-      
-      if (updateError) {
-        console.error(`Error updating bucket ${bucketName}: ${updateError.message}`);
-      } else {
-        console.log(`Bucket ${bucketName} updated to be public.`);
-      }
-    } else {
-      console.log(`Bucket ${bucketName} not found, attempting to create it.`);
-      const { error: createError } = await supabaseExtended.storage.createBucket(bucketName, {
-        public: options.public,
-        fileSizeLimit: options.fileSizeLimit
-      });
-      
-      if (createError) {
-        console.error(`Error creating bucket ${bucketName}: ${createError.message}`);
-      } else {
-        console.log(`Bucket ${bucketName} created successfully.`);
-      }
+    
+    console.log(`Bucket ${bucketName} configurado com sucesso`);
+    
+    // Configurar políticas para o bucket
+    const { data: policyData, error: policyError } = await supabaseExtended.rpc("setup_storage_bucket_policies", {
+      bucket_name: bucketName
+    });
+    
+    if (policyError) {
+      console.error(`Erro ao configurar políticas para ${bucketName}: ${policyError.message}`);
+      return false;
     }
+    
+    console.log(`Políticas para ${bucketName} configuradas com sucesso`);
+    return true;
   } catch (error) {
-    console.error(`Error setting up ${bucketName} storage bucket:`, error);
+    console.error(`Erro ao configurar bucket ${bucketName}:`, error);
+    return false;
   }
 };
 
@@ -80,39 +72,42 @@ export const createPortfolioBucketIfNotExists = async () => {
 };
 
 /**
- * Initialize all required storage buckets and policies
+ * Create the avatars bucket if it doesn't exist
+ */
+export const createAvatarsBucketIfNotExists = async () => {
+  return createStorageBucketIfNotExists('avatars', {
+    public: true,
+    fileSizeLimit: 5242880 // 5MB
+  });
+};
+
+/**
+ * Initialize all required storage buckets
+ * Uses the improved setup-rls unified function
  */
 export const initializeStorageBuckets = async () => {
   try {
     console.log("Setting up storage buckets...");
     
-    // Create required buckets
-    await createClientLogosBucketIfNotExists();
-    await createMaterialsBucketIfNotExists();
-    await createPortfolioBucketIfNotExists();
-    
-    // Setup storage policies via edge function
-    console.log("Setting up storage policies via edge function...");
-    
-    // Invoke the setup-storage-policies function without waiting
-    supabaseExtended.functions.invoke('setup-storage-policies', {
+    // This will be handled by the setup-rls function, but we'll call it here
+    // for backward compatibility and debug purposes
+    const { data, error } = await supabaseExtended.functions.invoke('setup-rls', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       }
-    }).then(({ data, error }) => {
-      if (error) {
-        console.error("Error setting up storage policies:", error);
-      } else {
-        console.log("Storage policies set up successfully:", data);
-      }
-    }).catch(err => {
-      console.error("Failed to invoke setup-storage-policies:", err);
     });
     
-    console.log("Storage setup completed");
+    if (error) {
+      console.error("Error setting up storage and RLS policies:", error);
+      return false;
+    } else {
+      console.log("Storage and RLS policies set up successfully:", data);
+      return true;
+    }
   } catch (err) {
     console.error("Error initializing storage buckets:", err);
+    return false;
   }
 };
 
