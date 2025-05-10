@@ -63,14 +63,17 @@ const HeroContent: React.FC<HeroContentProps> = ({
           size="lg"
           variant={isSecondary ? "outline" : "default"}
           className={isSecondary ? "border-primary text-primary hover:bg-primary/10" : "bg-primary hover:bg-primary/90 text-primary-foreground font-medium"}
-          as="a"
-          href={url}
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label={`${text} - abrir WhatsApp em nova janela`}
+          asChild
         >
-          {text}
-          {!isSecondary && <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />}
+          <a
+            href={url}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={`${text} - abrir WhatsApp em nova janela`}
+          >
+            {text}
+            {!isSecondary && <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />}
+          </a>
         </Button>
       );
     }
@@ -82,14 +85,17 @@ const HeroContent: React.FC<HeroContentProps> = ({
           size="lg"
           variant={isSecondary ? "outline" : "default"}
           className={isSecondary ? "border-primary text-primary hover:bg-primary/10" : "bg-primary hover:bg-primary/90 text-primary-foreground font-medium"}
-          as="a"
-          href={url}
-          target="_blank" 
-          rel="noopener noreferrer"
-          aria-label={`${text} - abrir em nova janela`}
+          asChild
         >
-          {text}
-          {!isSecondary && <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />}
+          <a
+            href={url}
+            target="_blank" 
+            rel="noopener noreferrer"
+            aria-label={`${text} - abrir em nova janela`}
+          >
+            {text}
+            {!isSecondary && <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />}
+          </a>
         </Button>
       );
     }
