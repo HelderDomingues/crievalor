@@ -5,7 +5,6 @@ import HeroContent from "./HeroContent";
 import ScrollIndicator from "./ScrollIndicator";
 import HeroCarousel from "./HeroCarousel";
 import ParticleWaveBackground from "./ParticleWaveBackground";
-import SplashCursor from "./SplashCursor";
 import MaritimeWaves from "./MaritimeWaves";
 
 interface HeroSectionProps {
@@ -20,7 +19,6 @@ interface HeroSectionProps {
   backgroundVideo?: string;
   backgroundImages?: string[];
   useParticleWaves?: boolean;
-  useSplashCursor?: boolean;
   useMaritimeWaves?: boolean;
 }
 
@@ -51,11 +49,6 @@ const HeroSection: React.FC<HeroSectionProps> = props => {
           <ParticleWaveBackground className="z-0" />
           <div className="absolute inset-0 bg-black/30 z-5"></div>
         </>
-      ) : props.useSplashCursor ? (
-        <div className="absolute inset-0 z-0">
-          <SplashCursor fullScreen={true} />
-          <div className="absolute inset-0 bg-black/30 z-5"></div>
-        </div>
       ) : props.useMaritimeWaves ? (
         <div className="absolute inset-0 z-0">
           <MaritimeWaves className="w-full h-full" />

@@ -26,7 +26,7 @@ const Mar = () => {
             secondaryCtaText="Descubra o MAR ideal para você"
             secondaryCtaUrl="#pricing"
             isMarHero={true}
-            useSplashCursor={true}
+            useMaritimeWaves={true}
           />
         </ErrorBoundary>
         

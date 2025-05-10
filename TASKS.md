@@ -67,6 +67,10 @@ IMPLEMENTATION GUIDELINES:
 - [x] Fix TypeScript errors in animation components
   - [x] Fixed SplashCursor.tsx TypeScript errors
   - [x] Ensured components return proper React nodes
+- [x] Remove SplashCursor component to fix WebGL errors
+  - [x] Updated HeroSection to remove SplashCursor option
+  - [x] Changed Mar page to use MaritimeWaves animation instead of SplashCursor
+  - [x] Fixed WebGL framebuffer operation errors
 - [ ] Map all component dependencies
 - [ ] Identify unused code and components
 - [ ] Document critical system relationships
@@ -103,6 +107,11 @@ IMPLEMENTATION GUIDELINES:
 ## Change Log
 
 ### 2024-05-10
+- Removed SplashCursor component from the site:
+  - Removed SplashCursor option from HeroSection component
+  - Updated Mar page to use MaritimeWaves animation instead
+  - Fixed WebGL framebuffer operation errors (260+ warnings)
+  - Improved site performance and loading speed
 - Added blog link to navigation:
   - Added external blog link (https://blog.crievalor.com.br) to Header component
   - Added external blog link to Footer component
