@@ -55,10 +55,11 @@ export const executeInitialSetup = async (): Promise<void> => {
  */
 export const diagnoseSystemSetup = async (): Promise<Record<string, any>> => {
   try {
-    // Use raw query instead of rpc to avoid TypeScript errors
-    const { data, error } = await supabaseExtended.from('rpc')
-      .select('*')
-      .rpc('diagnose_system_installation', {});
+    // Use direct function invocation instead of raw query to avoid TypeScript errors
+    const { data, error } = await supabaseExtended.functions.invoke('diagnose-system', {
+      method: 'POST',
+      body: { action: 'diagnose_installation' }
+    });
     
     if (error) {
       console.error("Erro ao diagnosticar sistema:", error);
@@ -68,7 +69,7 @@ export const diagnoseSystemSetup = async (): Promise<Record<string, any>> => {
     return { success: true, data };
   } catch (error) {
     console.error("Exceção ao diagnosticar sistema:", error);
-    return { success: false, error: error.message };
+    return { success: false, error: error instanceof Error ? error.message : String(error) };
   }
 };
 
