@@ -9,6 +9,7 @@ import ClientLogosCarousel from "@/components/ClientLogosCarousel";
 import FeaturesSection from "@/components/home/FeaturesSection";
 import MarHighlight from "@/components/home/MarHighlight";
 import TestimonialsSection from "@/components/home/TestimonialsSection";
+import PartnersSection from "@/components/home/PartnersSection";
 import MainCTA from "@/components/home/MainCTA";
 import { Helmet } from "react-helmet-async";
 import { OrganizationSchema } from "@/components/seo/SchemaMarkup";
@@ -79,6 +80,9 @@ const Index = () => {
         
         {/* Testimonials Section */}
         <TestimonialsSection />
+        
+        {/* Partners Section */}
+        <PartnersSection />
         
         {/* CTA Section */}
         <MainCTA />
