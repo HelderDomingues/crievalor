@@ -4,6 +4,7 @@ import { RouterProvider } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import { router } from "./routes";
 import "@/services/setupService";
+import CookieConsent from "./components/CookieConsent";
 
 function App() {
   useEffect(() => {
@@ -14,6 +15,7 @@ function App() {
     <React.StrictMode>
       <AuthProvider>
         <RouterProvider router={router} />
+        <CookieConsent />
       </AuthProvider>
     </React.StrictMode>
   );
