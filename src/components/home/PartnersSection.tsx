@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Link } from "react-router-dom";
 import { ExternalLink } from "lucide-react";
@@ -35,8 +36,8 @@ const PartnersSection: React.FC = () => {
           </p>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-4xl mx-auto">
-          {partners.map(partner => <a key={partner.name} href={partner.url} target="_blank" rel="noopener noreferrer" className="flex flex-col items-center justify-center p-6 bg-card hover:bg-accent/10 rounded-lg border border-border transition-colors duration-300" aria-label={`Visite o site da ${partner.name}`}>
+        <div className="flex justify-center gap-8 mx-auto max-w-4xl">
+          {partners.map(partner => <a key={partner.name} href={partner.url} target="_blank" rel="noopener noreferrer" className="flex flex-col items-center justify-center p-6 bg-card hover:bg-accent/10 rounded-lg border border-border transition-colors duration-300 w-full max-w-xs" aria-label={`Visite o site da ${partner.name}`}>
               <div className="h-28 flex items-center justify-center mb-4 w-full">
                 <img src={partner.logo} alt={partner.alt} className="max-h-full max-w-full object-contain" />
               </div>
