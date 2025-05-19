@@ -20,16 +20,16 @@ interface PlanPaymentLinks {
 // Links estáticos de pagamento conforme fornecido nas instruções
 export const MAR_PAYMENT_LINKS: PlanPaymentLinks = {
   basic_plan: {
-    installments: "https://sandbox.asaas.com/c/vydr3n77kew5fd4s", // Plano Essencial - Parcelado
-    cash: "https://sandbox.asaas.com/c/fy15747uacorzbla", // Plano Essencial - À Vista
+    installments: "https://www.asaas.com/c/9bgw7ub8gzruadi5", // Plano Essencial - Parcelado
+    cash: "https://www.asaas.com/c/b3goj9dh51cw78ko", // Plano Essencial - À Vista
   },
   pro_plan: {
-    installments: "https://sandbox.asaas.com/c/4fcw2ezk4je61qon", // Plano Profissional - Parcelado
-    cash: "https://sandbox.asaas.com/c/pqnkhgvic7c25ufq", // Plano Profissional - À Vista
+    installments: "https://www.asaas.com/c/rb9ayqo3l1y7hlym", // Plano Profissional - Parcelado
+    cash: "https://www.asaas.com/c/tywf1vy9r3wcvgq1", // Plano Profissional - À Vista
   },
   enterprise_plan: {
-    installments: "https://sandbox.asaas.com/c/z4vate6zwonrwoft", // Plano Empresarial - Parcelado
-    cash: "https://sandbox.asaas.com/c/3pdwf46bs80mpk0s", // Plano Empresarial - À Vista
+    installments: "https://www.asaas.com/c/7djyx165i9enjota", // Plano Empresarial - Parcelado
+    cash: "https://www.asaas.com/c/w8pd9qazz99tjsvc", // Plano Empresarial - À Vista
   },
   corporate_plan: {
     // O plano corporativo não tem links de pagamento, é sob consulta via WhatsApp
