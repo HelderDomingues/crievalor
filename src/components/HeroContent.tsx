@@ -77,7 +77,7 @@ const HeroContent: React.FC<HeroContentProps> = ({
   return <div className="container mx-auto px-4 relative z-30">
       <div className="max-w-3xl mx-auto text-center">
         {isMarHero && <div className="mb-5 animate-fade-in">
-            <img alt="MAR - Mapa para Alto Rendimento" className="h-48 mx-auto" width="300" height="192" loading="eager" src="https://iili.io/3vlTe6l.png" />
+            <img alt="MAR - Mapa para Alto Rendimento" width="300" height="192" loading="eager" src="https://iili.io/3vlTe6l.png" className="h-48 mx-auto object-contain" />
           </div>}
         
         <div className="bg-primary/10 text-primary rounded-full px-4 py-2 inline-block mb-3 animate-fade-in">
