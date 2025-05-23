@@ -81,7 +81,7 @@ const Mar = () => {
             <VideoSection 
               title="Gestão eficiente é necessidade!" 
               description="Assista ao vídeo e descubra como o MAR pode transformar a estratégia da sua empresa."
-              videoUrl="https://www.youtube.com/embed/Lr_L7MAIUnM"
+              videoUrl="https://www.youtube.com/embed/Y22PDZ7-zhY"
               videoPlaceholder="https://images.unsplash.com/photo-1551434678-e076c223a692?q=80&w=2070"
             />
             
