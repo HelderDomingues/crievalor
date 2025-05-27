@@ -56,11 +56,6 @@ const documentTypes: Record<string, DocumentType> = {
     name: "02 revisões do seu planejamento dentro do prazo de 06 meses",
     included: true 
   },
-  comunidade: {
-    icon: Users,
-    name: "Acesso à comunidade exclusiva",
-    included: false
-  },
   estrategiasNegocio: {
     icon: Briefcase,
     name: "Estratégias de negócio personalizadas",
