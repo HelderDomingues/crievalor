@@ -26,7 +26,7 @@ const MarComparisonSection = () => {
       icon: <DollarSign className="h-5 w-5 text-primary" />,
       title: "Investimento",
       mar: {
-        value: "A partir de R$ 179,90",
+        value: "A partir de R$ 1.942,92 (à vista)",
         description: "Acessível para empresas de todos os portes"
       },
       traditional: {
