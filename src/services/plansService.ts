@@ -7,7 +7,7 @@ export const PLANS: Record<string, Plan> = {
     id: "basic_plan",
     name: "Plano Essencial",
     price: 179.90,
-    priceLabel: "12x de R$ 179,90",
+    priceLabel: "até 12x de R$ 179,90",
     totalPrice: 2158.80, // 12 * 179.90
     cashPrice: 1942.92, // 10% discount on total
     features: [
@@ -25,7 +25,7 @@ export const PLANS: Record<string, Plan> = {
     id: "pro_plan",
     name: "Plano Profissional",
     price: 399.90,
-    priceLabel: "12x de R$ 399,90",
+    priceLabel: "até 12x de R$ 399,90",
     totalPrice: 4798.80, // 12 * 399.90
     cashPrice: 4318.92, // 10% discount on total
     features: [
@@ -43,7 +43,7 @@ export const PLANS: Record<string, Plan> = {
     id: "enterprise_plan",
     name: "Plano Empresarial",
     price: 799.90,
-    priceLabel: "12x de R$ 799,90",
+    priceLabel: "até 12x de R$ 799,90",
     totalPrice: 9598.80, // 12 * 799.90
     cashPrice: 8638.92, // 10% discount on total
     features: [
