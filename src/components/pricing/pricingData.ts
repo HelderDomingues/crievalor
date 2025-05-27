@@ -108,7 +108,7 @@ export const plans: PricingPlan[] = [
   {
     id: "basic_plan",
     name: "Essencial",
-    monthlyPrice: "Até 12 x de R$ 179,90",
+    monthlyPrice: "Até 12x de R$ 179,90",
     annualPrice: "R$ 1.942,92",
     annualDiscount: true,
     description: "Combinação ideal de expertise humana e IA para empreendedores iniciando sua jornada estratégica",
@@ -116,7 +116,6 @@ export const plans: PricingPlan[] = [
       "Para empresas com equipes de 1 a 5 pessoas",
       "01 Sessão on line (até 50 min) com consultor para orientações e tira dúvidas",
       "01 revisão do seu planejamento dentro do prazo de 06 meses",
-      "Acesso à comunidade exclusiva"
     ],
     documents: [
       {...documentTypes.planoEstrategicoSimplificado, included: true },
@@ -135,7 +134,7 @@ export const plans: PricingPlan[] = [
   {
     id: "pro_plan",
     name: "Profissional",
-    monthlyPrice: "Até 12 x de R$ 399,90",
+    monthlyPrice: "Até 12x de R$ 399,90",
     annualPrice: "R$ 4.318,92",
     annualDiscount: true,
     description: "Para empreendedores em crescimento que precisam de estratégias mais estruturadas",
@@ -143,7 +142,6 @@ export const plans: PricingPlan[] = [
       "Para empresas com equipes de 6 a 10 pessoas",
       "02 Sessões on line (até 50 min) com consultor para orientações e tira dúvidas",
       "02 revisões do seu planejamento dentro do prazo de 06 meses",
-      "Acesso à comunidade exclusiva"
     ],
     documents: [
       documentTypes.planoEstrategicoSimplificado,
@@ -163,7 +161,7 @@ export const plans: PricingPlan[] = [
   {
     id: "enterprise_plan",
     name: "Empresarial",
-    monthlyPrice: "Até 12 x de R$ 799,90",
+    monthlyPrice: "Até 12x de R$ 799,90",
     annualPrice: "R$ 8.638,92",
     annualDiscount: true,
     description: "Solução completa para empresas que buscam excelência estratégica e implementação assistida",
@@ -171,7 +169,6 @@ export const plans: PricingPlan[] = [
       "Para empresas com equipes de 11 a 50 pessoas",
       "04 Sessões de mentoria avançada on line (até 50 min) com consultor para orientações e tira dúvidas",
       "02 revisões do seu planejamento dentro do prazo de 06 meses",
-      "Acesso à comunidade exclusiva"
     ],
     documents: [
       documentTypes.planoEstrategicoAprofundado,
