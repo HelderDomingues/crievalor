@@ -140,7 +140,7 @@ export const plans: PricingPlan[] = [
   {
     id: "pro_plan",
     name: "Profissional",
-    monthlyPrice: "até 12 x de R$ 399,90",
+    monthlyPrice: "Até 12 x de R$ 399,90",
     annualPrice: "R$ 4.318,92",
     annualDiscount: true,
     description: "Para empreendedores em crescimento que precisam de estratégias mais estruturadas",
@@ -168,7 +168,7 @@ export const plans: PricingPlan[] = [
   {
     id: "enterprise_plan",
     name: "Empresarial",
-    monthlyPrice: "até 12 x de R$ 799,90",
+    monthlyPrice: "Até 12 x de R$ 799,90",
     annualPrice: "R$ 8.638,92",
     annualDiscount: true,
     description: "Solução completa para empresas que buscam excelência estratégica e implementação assistida",
