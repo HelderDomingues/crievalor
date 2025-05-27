@@ -59,7 +59,7 @@ const documentTypes: Record<string, DocumentType> = {
   comunidade: {
     icon: Users,
     name: "Acesso à comunidade exclusiva",
-    included: true
+    included: false
   },
   estrategiasNegocio: {
     icon: Briefcase,
