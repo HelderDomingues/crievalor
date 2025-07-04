@@ -53,7 +53,7 @@ const PricingSection = () => {
         </div>
         
         <div className="flex justify-center">
-          <div className="max-w-md">
+          <div className="w-full max-w-2xl">
             <PricingGrid plans={plans} onSubscribe={handleSubscribe} />
           </div>
         </div>
