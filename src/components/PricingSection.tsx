@@ -15,13 +15,6 @@ const PricingSection = () => {
   }, []);
   
   const handleSubscribe = (planId: string) => {
-    if (planId === "corporate_plan") {
-      // Abrir diretamente o WhatsApp com mensagem predefinida
-      const message = encodeURIComponent("Olá, gostaria de obter mais informações sobre o Plano Corporativo.");
-      window.open(`https://wa.me/5547992150289?text=${message}`, '_blank');
-      return;
-    }
-    
     // Direct all users straight to checkout with plan selected, regardless of auth status
     // The checkout flow will handle authentication if needed
     navigate(`/checkout?plan=${planId}`);
@@ -30,21 +23,44 @@ const PricingSection = () => {
   return (
     <section id="pricing" className="py-20 bg-gradient-to-b from-muted/30 to-background">
       <div className="container mx-auto px-4">
-        <div className="max-w-3xl mx-auto text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            Escolha o MAR ideal para o seu negócio
+        <div className="max-w-4xl mx-auto text-center mb-16">
+          <div className="inline-flex items-center justify-center p-2 bg-primary/10 rounded-full mb-6">
+            <span className="text-primary font-medium px-4 py-2 bg-primary/20 rounded-full text-sm">
+              ✨ Oferta Especial
+            </span>
+          </div>
+          <h2 className="text-4xl md:text-5xl font-bold mb-6">
+            Transforme seu negócio com o 
+            <span className="text-primary"> MAR</span>
           </h2>
-          <p className="text-lg text-muted-foreground">
-            Oferecemos diferentes níveis de serviço para atender às necessidades específicas 
-            do seu negócio, desde empreendedores iniciantes até grandes corporações.
+          <p className="text-xl text-muted-foreground mb-8">
+            A combinação perfeita de expertise humana e inteligência artificial para criar o planejamento estratégico que seu negócio precisa para crescer de forma sustentável.
           </p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 text-sm text-muted-foreground">
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+              Pagamento parcelado em até 12x
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+              10% de desconto à vista
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+              Suporte especializado incluído
+            </div>
+          </div>
         </div>
         
-        <PricingGrid plans={plans} onSubscribe={handleSubscribe} />
+        <div className="flex justify-center">
+          <div className="max-w-md">
+            <PricingGrid plans={plans} onSubscribe={handleSubscribe} />
+          </div>
+        </div>
 
         <div className="mt-12 text-center">
           <p className="text-muted-foreground text-sm max-w-2xl mx-auto">
-            Todos os planos são pagos uma única vez e incluem todo o suporte descrito. 
+            Investimento único com todo o suporte descrito. 
             Opções de parcelamento em até 12x no cartão de crédito ou pagamento à vista com 10% de desconto.
           </p>
         </div>
