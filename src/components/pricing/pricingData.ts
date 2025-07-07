@@ -108,9 +108,9 @@ export const plans: PricingPlan[] = [
   {
     id: "pro_plan",
     name: "", // Nome removido conforme solicitado
-    monthlyPrice: "Até 12x de R$ 399,90",
-    annualPrice: "R$ 4.318,92",
-    annualDiscount: true,
+    monthlyPrice: "R$ 899,00 em Até 10x",
+    annualPrice: "R$ 899,00",
+    annualDiscount: false,
     description: "Combinação ideal de expertise humana e IA para empreendedores que buscam estratégias estruturadas para crescimento sustentável",
     features: [
       "Para empresas com equipes de 6 a 10 pessoas",
