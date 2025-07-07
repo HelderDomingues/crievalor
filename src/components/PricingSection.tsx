@@ -1,27 +1,24 @@
-
 import React, { useEffect } from "react";
 import { plans } from "./pricing/pricingData";
 import PricingGrid from "./pricing/PricingGrid";
 import { useAuth } from "@/context/AuthContext";
 import { useNavigate } from "react-router-dom";
-
 const PricingSection = () => {
-  const { user } = useAuth();
+  const {
+    user
+  } = useAuth();
   const navigate = useNavigate();
-  
+
   // Add scroll to top effect when component mounts
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
-  
   const handleSubscribe = (planId: string) => {
     // Direct all users straight to checkout with plan selected, regardless of auth status
     // The checkout flow will handle authentication if needed
     navigate(`/checkout?plan=${planId}`);
   };
-  
-  return (
-    <section id="pricing" className="py-20 bg-gradient-to-b from-muted/30 to-background">
+  return <section id="pricing" className="py-20 bg-gradient-to-b from-muted/30 to-background">
       <div className="container mx-auto px-4">
         <div className="max-w-4xl mx-auto text-center mb-16">
           <div className="inline-flex items-center justify-center p-2 bg-primary/10 rounded-full mb-6">
@@ -59,14 +56,9 @@ const PricingSection = () => {
         </div>
 
         <div className="mt-12 text-center">
-          <p className="text-muted-foreground text-sm max-w-2xl mx-auto">
-            Investimento único com todo o suporte descrito. 
-            Opções de parcelamento em até 12x no cartão de crédito ou pagamento à vista com 10% de desconto.
-          </p>
+          <p className="text-muted-foreground text-sm max-w-2xl mx-auto">Investimento único com todo o suporte descrito. Opções de parcelamento em até 10x no cartão de crédito ou pagamento à vista com 12% de desconto.</p>
         </div>
       </div>
-    </section>
-  );
+    </section>;
 };
-
 export default PricingSection;
