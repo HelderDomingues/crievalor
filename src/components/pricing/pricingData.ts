@@ -111,10 +111,8 @@ export const plans: PricingPlan[] = [
     monthlyPrice: "R$ 899,00 em Até 10x",
     annualPrice: "R$ 899,00",
     annualDiscount: false,
-    description: "Combinação ideal de expertise humana e IA para empreendedores que buscam estratégias estruturadas para crescimento sustentável",
+    description: "Para empreendedores que buscam estratégias estruturadas para crescimento sustentável",
     features: [
-      "Para empresas com equipes de 6 a 10 pessoas",
-      "02 Sessões on line (até 50 min) com consultor para orientações e tira dúvidas",
       "02 revisões do seu planejamento dentro do prazo de 06 meses",
     ],
     documents: [
@@ -128,8 +126,8 @@ export const plans: PricingPlan[] = [
       documentTypes.brandingPosicionamento,
       documentTypes.consideracoesFinais
     ],
-    cta: "Quero este plano",
+    cta: "Contratar Agora",
     ctaUrl: "/subscription?plan=pro_plan",
-    popular: true
+    popular: false
   }
 ];
