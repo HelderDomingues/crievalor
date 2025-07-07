@@ -91,7 +91,7 @@ const PricingCard = ({
     <Card className="flex h-full flex-col transition-all duration-300 hover:shadow-xl bg-card text-card-foreground border-primary shadow-lg relative">
       <div className="absolute top-0 left-0 w-full flex justify-center">
         <Badge variant="default" className="transform -translate-y-1/2 bg-primary">
-          Mais Escolhido
+          Contrate Agora
         </Badge>
       </div>
       

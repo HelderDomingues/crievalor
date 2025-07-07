@@ -91,9 +91,9 @@ const documentTypes: Record<string, DocumentType> = {
     name: "Branding/Posicionamento de Marca",
     included: true
   },
-  consideracoesFinais: {
+  presencaDigital: {
     icon: FileText,
-    name: "Considerações Finais/Orientações estratégicas",
+    name: "Análise do Instagram e Website da Empresa",
     included: true
   },
   analisesCenario: {
@@ -116,15 +116,15 @@ export const plans: PricingPlan[] = [
       "02 revisões do seu planejamento dentro do prazo de 06 meses",
     ],
     documents: [
-      documentTypes.planoEstrategicoSimplificado,
+      documentTypes.planoEstrategicoAprofundado,
+      documentTypes.planosAcao,
       documentTypes.estrategiasNegocio,
       documentTypes.estrategiasMarketing,
-      documentTypes.planosAcao,
       documentTypes.analiseSegmento,
       documentTypes.analiseConcorrencia,
       documentTypes.posicionamentoMercado,
       documentTypes.brandingPosicionamento,
-      documentTypes.consideracoesFinais
+      documentTypes.presencaDigital
     ],
     cta: "Contratar Agora",
     ctaUrl: "/subscription?plan=pro_plan",

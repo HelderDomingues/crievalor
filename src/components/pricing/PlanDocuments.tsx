@@ -11,7 +11,7 @@ const PlanDocuments: React.FC<PlanDocumentsProps> = ({ documents }) => {
 
   return (
     <div className="mb-4">
-      <h4 className="mb-3 border-b border-border pb-2 text-sm font-bold">Documentos Incluídos</h4>
+      <h4 className="mb-3 border-b border-border pb-2 text-sm font-bold">Análises Incluídas</h4>
       <ul className="space-y-3">
         {documents.map((doc, index) => {
           const Icon = doc.icon;
