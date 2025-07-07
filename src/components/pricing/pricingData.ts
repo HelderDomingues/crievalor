@@ -109,7 +109,7 @@ export const plans: PricingPlan[] = [
     id: "pro_plan",
     name: "", // Nome removido conforme solicitado
     monthlyPrice: "Em Até 10x de R$89,90",
-    annualPrice: "R$ 899,00",
+    annualPrice: "R$ 799,00",
     annualDiscount: false,
     description: "Para empreendedores que buscam estratégias estruturadas para crescimento sustentável",
     features: [
