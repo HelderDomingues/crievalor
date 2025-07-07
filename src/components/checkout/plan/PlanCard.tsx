@@ -13,7 +13,7 @@ export const PlanCard: React.FC<PlanCardProps> = ({ plan, formatCurrency }) => {
     if (!('price' in plan)) return null;
     return <div className="mt-1">
         <div className="flex items-baseline">
-          <span className="text-sm mr-1">até 12x de</span>
+          <span className="text-sm mr-1">até 10x de</span>
           <span className="text-3xl font-bold">
             R$ {formatCurrency(plan.price)}
           </span>
