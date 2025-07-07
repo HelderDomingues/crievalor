@@ -1,7 +1,9 @@
+
 import React from "react";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { CreditCard, BanknoteIcon } from "lucide-react";
 import { CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+
 interface PaymentMethodSectionProps {
   paymentMethod: "credit_installment" | "cash_payment";
   onPaymentMethodChange: (value: "credit_installment" | "cash_payment") => void;
@@ -9,6 +11,7 @@ interface PaymentMethodSectionProps {
   getPaymentAmount: () => number;
   formatCurrency: (value: number) => string;
 }
+
 export const PaymentMethodSection: React.FC<PaymentMethodSectionProps> = ({
   paymentMethod,
   onPaymentMethodChange,
@@ -16,7 +19,8 @@ export const PaymentMethodSection: React.FC<PaymentMethodSectionProps> = ({
   getPaymentAmount,
   formatCurrency
 }) => {
-  return <>
+  return (
+    <>
       <CardHeader>
         <CardTitle>Escolha a forma de pagamento</CardTitle>
         <CardDescription>
@@ -24,17 +28,21 @@ export const PaymentMethodSection: React.FC<PaymentMethodSectionProps> = ({
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <RadioGroup value={paymentMethod} onValueChange={value => onPaymentMethodChange(value as "credit_installment" | "cash_payment")} className="space-y-4">
+        <RadioGroup 
+          value={paymentMethod} 
+          onValueChange={value => onPaymentMethodChange(value as "credit_installment" | "cash_payment")} 
+          className="space-y-4"
+        >
           <div className="flex items-center space-x-2 border rounded-md p-3 hover:bg-primary/10 dark:hover:bg-primary/20 cursor-pointer transition-colors">
             <RadioGroupItem value="credit_installment" id="payment-credit-installment" />
             <label htmlFor="payment-credit-installment" className="flex items-center cursor-pointer w-full">
               <CreditCard className="mr-2 h-4 w-4 text-primary" />
               <div className="flex-1">
                 <p className="font-medium">Cartão de Crédito Em Até 10X</p>
-                <p className="text-sm text-muted-foreground">Parcele em até 12x sem juros</p>
+                <p className="text-sm text-muted-foreground">Parcele em até 10x sem juros</p>
               </div>
               {'price' in plan && <div className="text-right">
-                  <p className="text-base font-bold text-primary">12x R$ {formatCurrency(plan.price)}</p>
+                  <p className="text-base font-bold text-primary">10x R$ {formatCurrency(plan.price)}</p>
                   <p className="text-xs text-muted-foreground">total: R$ {formatCurrency(plan.totalPrice)}</p>
                 </div>}
             </label>
@@ -46,7 +54,7 @@ export const PaymentMethodSection: React.FC<PaymentMethodSectionProps> = ({
               <BanknoteIcon className="mr-2 h-4 w-4 text-primary" />
               <div className="flex-1">
                 <p className="font-medium">
-                  Pagamento à Vista <span className="text-green-600 font-semibold whitespace-nowrap">(12% de Desconto)</span>
+                  Pagamento à Vista <span className="text-green-600 font-semibold whitespace-nowrap">(10% de Desconto)</span>
                 </p>
                 <p className="text-sm text-muted-foreground">
                   Cartão, PIX ou Boleto com desconto
@@ -67,5 +75,6 @@ export const PaymentMethodSection: React.FC<PaymentMethodSectionProps> = ({
           </div>
         </div>
       </CardContent>
-    </>;
+    </>
+  );
 };
