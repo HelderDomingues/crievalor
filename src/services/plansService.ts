@@ -24,10 +24,10 @@ export const PLANS: Record<string, Plan> = {
   PRO: {
     id: "pro_plan",
     name: "Plano Profissional",
-    price: 399.90,
-    priceLabel: "até 12x de R$ 399,90",
-    totalPrice: 4798.80, // 12 * 399.90
-    cashPrice: 4318.92, // 10% discount on total
+    price: 89.90,
+    priceLabel: "até 10x de R$ 89,90",
+    totalPrice: 899.0, // 10 * 89.90
+    cashPrice: 799.00, // 12% discount on total
     features: [
       "Plano Estratégico Aprofundado com Relatórios Completos", 
       "02 Sessões on line (até 50 min) com consultor", 
