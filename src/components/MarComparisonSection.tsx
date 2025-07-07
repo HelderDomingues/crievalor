@@ -234,7 +234,7 @@ const MarComparisonSection = () => {
           <div className="flex flex-col sm:flex-row justify-center gap-4">
             <Button size="lg" className="shadow-glow" asChild>
               <a href="#pricing">
-                Escolha seu plano MAR
+                Contrate o MAR agora 
               </a>
             </Button>
             <Button variant="outline" size="lg" asChild>
