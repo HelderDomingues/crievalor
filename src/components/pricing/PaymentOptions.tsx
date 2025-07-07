@@ -59,7 +59,7 @@ const PaymentOptions = ({
             <RadioGroupItem value="pix" id="pix" />
             <Label htmlFor="pix" className="flex items-center cursor-pointer">
               <BadgePercent className="h-4 w-4 mr-2" />
-              <span>Pagamento à vista (10% de desconto)</span>
+              <span>Pagamento à vista (12% de desconto)</span>
             </Label>
           </div>
         </RadioGroup>
@@ -80,7 +80,7 @@ const PaymentOptions = ({
           
           <p className="text-sm text-muted-foreground mb-3">
             {paymentType === "credit"
-              ? "Pague em até 12x sem juros no cartão de crédito."
+              ? "Pague em até 10x sem juros no cartão de crédito."
               : "Pague o valor integral em uma única parcela com desconto."}
           </p>
           
@@ -94,7 +94,7 @@ const PaymentOptions = ({
             
             {paymentType === "pix" && (
               <div className="flex items-center">
-                <span className="text-sm">Cartão, PIX ou Boleto com 10% de desconto</span>
+                <span className="text-sm">Cartão, PIX ou Boleto com 12% de desconto</span>
               </div>
             )}
           </div>
