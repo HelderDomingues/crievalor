@@ -215,7 +215,7 @@ const PlanSummary = ({
 
   return <div className={`space-y-6 transition-opacity duration-500 ${isVisible ? 'opacity-100' : 'opacity-0'}`}>
       <div className="text-center mb-8 slide-up">
-        <h1 className="text-3xl font-bold">Você escolheu o plano {plan.name}</h1>
+        <h1 className="text-3xl font-bold">Parbéns, por escolher seguir com clareza e direção </h1>
         <p className="text-muted-foreground mt-2">
           Confirme os detalhes do seu plano e escolha a forma de pagamento.
         </p>
