@@ -19,22 +19,22 @@ const Mar = () => {
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-background to-background/95 relative overflow-hidden">
       <Helmet>
         <title>MAR - Mapa para Alto Rendimento | Crie Valor</title>
-        <meta name="description" content="MAR - Um mapa estratégico que combina inteligência artificial e consultoria especializada para acelerar o crescimento de empresas com decisões precisas e personalizadas." />
+        <meta name="description" content="MAR - Um mapa estratégico feito para acelerar o crescimento de empresas com decisões precisas e personalizadas." />
         <meta property="og:title" content="MAR - Mapa para Alto Rendimento | Crie Valor" />
-        <meta property="og:description" content="Um mapa estratégico que combina inteligência artificial e consultoria especializada para acelerar o crescimento de empresas com decisões precisas." />
+        <meta property="og:description" content="Um mapa estratégico feito para acelerar o crescimento de empresas com decisões precisas." />
         <meta property="og:type" content="product" />
         <meta property="og:url" content="https://crievalor.com.br/mar" />
         <meta property="og:image" content="https://crievalor.com.br/lovable-uploads/91e6888f-e3da-40dc-8c55-5718c15ada21.png" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="MAR - Mapa para Alto Rendimento | Crie Valor" />
-        <meta name="twitter:description" content="Estratégias que funcionam: IA + consultoria especializada para acelerar seu crescimento empresarial." />
+        <meta name="twitter:description" content="Estratégias que funcionam: consultoria especializada para acelerar seu crescimento empresarial." />
         <meta name="twitter:image" content="https://crievalor.com.br/lovable-uploads/91e6888f-e3da-40dc-8c55-5718c15ada21.png" />
         <link rel="canonical" href="https://crievalor.com.br/mar" />
       </Helmet>
       
       <ServiceSchema 
         name="MAR - Mapa para Alto Rendimento"
-        description="Um mapa estratégico que combina inteligência artificial e consultoria especializada para acelerar o crescimento de empresas com decisões precisas e personalizadas."
+        description="Um mapa estratégico criado exclusivamente para acelerar o crescimento de empresas com decisões precisas e personalizadas."
         provider={{
           name: "Crie Valor Estratégia",
           url: "https://crievalor.com.br"
@@ -50,10 +50,10 @@ const Mar = () => {
           <HeroSection
             title="MAR - Mapa para Alto Rendimento"
             subtitle="Estratégias que Funcionam"
-            description="Um mapa estratégico que combina inteligência artificial e consultoria especializada para acelerar o crescimento de empresas com decisões precisas e personalizadas."
-            ctaText="Quer o meu MAR agora!"
+            description="Um mapa estratégico criado para acelerar o crescimento de empresas com decisões precisas e personalizadas."
+            ctaText="Quero Saber mais"
             ctaUrl="#mar-explanation"
-            secondaryCtaText="Descubra o MAR ideal para você"
+            secondaryCtaText="Contrate o MAR agora"
             secondaryCtaUrl="#pricing"
             isMarHero={true}
             useMaritimeWaves={true}
