@@ -282,12 +282,15 @@ IMPLEMENTATION GUIDELINES:
   - Added all CORS-related fixes to properly enable Edge Function access
 
 ## Next Steps
-1. Add additional Schema.org types to relevant pages (FAQ, Service)
-2. Implement BreadcrumbList schema for navigation structure
-3. Add structured data for videos
-4. Create FAQ sections for key services
-5. Enhance conversion optimization with strategic keywords
-6. Monitor and evaluate system stability after RLS fixes
+1. WhatsApp Business Implementation (Priority) - Ver WHATSAPP_BUSINESS_TASKS.md
+2. Reformulação completa do copy (substituir referências à IA)
+3. Implementação de landing pages de captação
+4. Add additional Schema.org types to relevant pages (FAQ, Service)
+5. Implement BreadcrumbList schema for navigation structure
+6. Add structured data for videos
+7. Create FAQ sections for key services
+8. Enhance conversion optimization with strategic keywords
+9. Monitor and evaluate system stability after RLS fixes
 
 ## Success Metrics
 - Zero build errors

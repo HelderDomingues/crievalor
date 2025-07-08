@@ -5,6 +5,7 @@ import { AuthProvider } from "./context/AuthContext";
 import { router } from "./routes";
 import "@/services/setupService";
 import CookieConsent from "./components/CookieConsent";
+import WhatsAppBusiness from "./components/WhatsAppBusiness";
 
 function App() {
   useEffect(() => {
@@ -16,6 +17,7 @@ function App() {
       <AuthProvider>
         <RouterProvider router={router} />
         <CookieConsent />
+        <WhatsAppBusiness />
       </AuthProvider>
     </React.StrictMode>
   );
