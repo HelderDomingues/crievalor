@@ -106,10 +106,20 @@ const Header = () => {
             ))}
             <Button
               size="sm"
-              className="ml-2 bg-primary text-primary-foreground hover:bg-primary/90 transition-all"
+              variant="outline"
+              className="ml-2"
               onClick={handleWhatsAppContact}
             >
               Fale Conosco
+            </Button>
+            <Button
+              size="sm"
+              className="ml-2 bg-primary text-primary-foreground hover:bg-primary/90 transition-all shadow-glow"
+              asChild
+            >
+              <Link to="/diagnostico-gratuito">
+                Diagnóstico Gratuito
+              </Link>
             </Button>
             
             <div className="ml-4">
@@ -171,10 +181,19 @@ const Header = () => {
             )
           ))}
           <Button 
-            className="mt-4 bg-primary text-primary-foreground hover:bg-primary/90 transition-all"
+            variant="outline"
+            className="mt-4"
             onClick={handleWhatsAppContact}
           >
             Fale Conosco
+          </Button>
+          <Button 
+            className="bg-primary text-primary-foreground hover:bg-primary/90 transition-all shadow-glow"
+            asChild
+          >
+            <Link to="/diagnostico-gratuito" onClick={() => setIsMenuOpen(false)}>
+              Diagnóstico Gratuito
+            </Link>
           </Button>
         </nav>
       </div>

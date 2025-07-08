@@ -24,6 +24,7 @@ import TermsOfService from "@/pages/TermsOfService";
 import Subscription from "@/pages/Subscription";
 import Checkout from "@/pages/Checkout";
 import Accessibility from "@/pages/Accessibility";
+import DiagnosticoGratuito from "@/pages/DiagnosticoGratuito";
 
 export const router = createBrowserRouter([
   {
@@ -114,5 +115,9 @@ export const router = createBrowserRouter([
   {
     path: "/acessibilidade",
     element: <Accessibility />,
+  },
+  {
+    path: "/diagnostico-gratuito",
+    element: <DiagnosticoGratuito />,
   },
 ]);

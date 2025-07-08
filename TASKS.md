@@ -289,7 +289,7 @@ IMPLEMENTATION GUIDELINES:
 - [x] ✅ Implementar CTAs em primeira pessoa (MEU, EU) com foco em benefícios
 - [x] ✅ Renomear "Escola de Gestão" para "Oficina de Líderes"
 - [x] ✅ Reformular copy para linguagem emocional e orientada a pessoas
-- [ ] Criar landing page "Diagnóstico Gratuito" com copy otimizado
+- [x] ✅ Criar landing page "Diagnóstico Gratuito" com copy otimizado
 
 #### Fase 7.2: WhatsApp Business Implementation ⏳
 - [x] ✅ Criar estrutura de dados no Supabase para conversas e leads
@@ -307,16 +307,16 @@ IMPLEMENTATION GUIDELINES:
 - [ ] Reorganizar ordem: Hero → MAR → Mentorias → Oficina → Branding → Projetos → Blog → Social Proof → CTA Final
 - [ ] Adicionar elementos de conversão em cada seção
 
-#### Fase 7.4: Landing Page Diagnóstico Gratuito ⏳
-- [ ] Criar página "/diagnostico-gratuito" otimizada para conversão
-- [ ] Especificar entregáveis do diagnóstico
-- [ ] Explicar processo e cronograma
-- [ ] Demonstrar valor da entrega
-- [ ] Formulário otimizado com campos mínimos
-- [ ] Integração com sistema de leads e WhatsApp
+#### Fase 7.4: Landing Page Diagnóstico Gratuito ✅ CONCLUÍDO
+- [x] ✅ Criar página "/diagnostico-gratuito" otimizada para conversão
+- [x] ✅ Especificar entregáveis do diagnóstico
+- [x] ✅ Explicar processo e cronograma
+- [x] ✅ Demonstrar valor da entrega
+- [x] ✅ Formulário otimizado com campos mínimos
+- [x] ✅ Integração com sistema de leads e WhatsApp
 
 #### Fase 7.5: Navegação e UX Otimizada ⏳
-- [ ] Atualizar Header com CTA permanente "Diagnóstico Gratuito"
+- [x] ✅ Atualizar Header com CTA permanente "Diagnóstico Gratuito"
 - [ ] Implementar dropdown "Serviços" agrupando os 5 principais
 - [ ] Manter Blog como link externo + seção interna
 - [ ] Adicionar seção FAQ em TODAS as páginas de serviço (5-8 perguntas cada)
