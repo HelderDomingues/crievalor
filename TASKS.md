@@ -281,16 +281,62 @@ IMPLEMENTATION GUIDELINES:
   - Fixed setup-storage-policies function to properly create all required buckets including portfolio
   - Added all CORS-related fixes to properly enable Edge Function access
 
-## Next Steps
-1. WhatsApp Business Implementation (Priority) - Ver WHATSAPP_BUSINESS_TASKS.md
-2. Reformulação completa do copy (substituir referências à IA)
-3. Implementação de landing pages de captação
-4. Add additional Schema.org types to relevant pages (FAQ, Service)
-5. Implement BreadcrumbList schema for navigation structure
-6. Add structured data for videos
-7. Create FAQ sections for key services
-8. Enhance conversion optimization with strategic keywords
-9. Monitor and evaluate system stability after RLS fixes
+### Phase 7: REESTRUTURAÇÃO COMPLETA PARA CONVERSÃO (PRIORIDADE CRÍTICA)
+
+#### Fase 7.1: Reformulação do Copy e Messaging ⏳
+- [ ] Substituir TODAS as referências à "IA" por "Sistema Proprietário de Inteligência Organizacional"
+- [ ] Atualizar copy focado em PESSOAS, não empresas - linguagem emocional
+- [ ] Implementar CTAs em primeira pessoa (MEU, EU) com foco em benefícios
+- [ ] Renomear "Escola de Gestão" para "Oficina de Líderes"
+- [ ] Criar mensagens de urgência e prova social
+- [ ] Desenvolver copy para landing page "Diagnóstico Gratuito"
+
+#### Fase 7.2: WhatsApp Business Implementation ⏳
+- [x] ✅ Criar estrutura de dados no Supabase para conversas e leads
+- [x] ✅ Implementar componente WhatsApp flutuante com logging avançado
+- [ ] Configurar WhatsApp Business API
+- [ ] Implementar webhook para mensagens recebidas
+- [ ] Sistema de qualificação automática de leads
+- [ ] Dashboard de monitoramento de conversas
+- [ ] Preparar base para agente SDR automatizado
+
+#### Fase 7.3: Nova Estrutura Homepage (Conversão) ⏳
+- [ ] Hero Section com carrossel (MAR + Mentorias) - UI tipo streaming
+- [ ] Transformar serviços de cards para seções completas
+- [ ] Implementar seção "Blog Preview" conectada ao blog.crievalor.com.br
+- [ ] Reorganizar ordem: Hero → MAR → Mentorias → Oficina → Branding → Projetos → Blog → Social Proof → CTA Final
+- [ ] Adicionar elementos de conversão em cada seção
+
+#### Fase 7.4: Landing Page Diagnóstico Gratuito ⏳
+- [ ] Criar página "/diagnostico-gratuito" otimizada para conversão
+- [ ] Especificar entregáveis do diagnóstico
+- [ ] Explicar processo e cronograma
+- [ ] Demonstrar valor da entrega
+- [ ] Formulário otimizado com campos mínimos
+- [ ] Integração com sistema de leads e WhatsApp
+
+#### Fase 7.5: Navegação e UX Otimizada ⏳
+- [ ] Atualizar Header com CTA permanente "Diagnóstico Gratuito"
+- [ ] Implementar dropdown "Serviços" agrupando os 5 principais
+- [ ] Manter Blog como link externo + seção interna
+- [ ] Adicionar seção FAQ em TODAS as páginas de serviço (5-8 perguntas cada)
+- [ ] Implementar breadcrumbs e melhorias de navegação
+
+#### Fase 7.6: Otimizações de Conversão ⏳
+- [ ] WhatsApp flutuante sempre visível e otimizado
+- [ ] Elementos de urgência e escassez
+- [ ] Prova social dinâmica (depoimentos, cases)
+- [ ] Formulários otimizados com validação
+- [ ] A/B testing nos CTAs principais
+- [ ] Pixels de remarketing e analytics
+
+## Next Steps (Implementação Incremental)
+1. **CRÍTICO**: Reformulação do copy (Fase 7.1) - Iniciar imediatamente
+2. **ALTA**: Completar WhatsApp Business API (Fase 7.2)
+3. **ALTA**: Desenvolver landing page diagnóstico (Fase 7.4)
+4. **MÉDIA**: Reestruturar homepage (Fase 7.3)
+5. **MÉDIA**: Otimizar navegação e UX (Fase 7.5)
+6. **BAIXA**: Implementar otimizações avançadas (Fase 7.6)
 
 ## Success Metrics
 - Zero build errors

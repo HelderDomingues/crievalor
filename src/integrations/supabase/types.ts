@@ -116,6 +116,77 @@ export type Database = {
         }
         Relationships: []
       }
+      diagnostic_requests: {
+        Row: {
+          company_name: string | null
+          company_size: string | null
+          completed_date: string | null
+          created_at: string | null
+          current_revenue: string | null
+          desired_results: string | null
+          email: string
+          id: string
+          lead_id: string | null
+          main_challenge: string | null
+          metadata: Json | null
+          name: string
+          phone: string
+          report_generated: boolean | null
+          scheduled_date: string | null
+          status: string | null
+          timeline: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          company_name?: string | null
+          company_size?: string | null
+          completed_date?: string | null
+          created_at?: string | null
+          current_revenue?: string | null
+          desired_results?: string | null
+          email: string
+          id?: string
+          lead_id?: string | null
+          main_challenge?: string | null
+          metadata?: Json | null
+          name: string
+          phone: string
+          report_generated?: boolean | null
+          scheduled_date?: string | null
+          status?: string | null
+          timeline?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          company_name?: string | null
+          company_size?: string | null
+          completed_date?: string | null
+          created_at?: string | null
+          current_revenue?: string | null
+          desired_results?: string | null
+          email?: string
+          id?: string
+          lead_id?: string | null
+          main_challenge?: string | null
+          metadata?: Json | null
+          name?: string
+          phone?: string
+          report_generated?: boolean | null
+          scheduled_date?: string | null
+          status?: string | null
+          timeline?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "diagnostic_requests_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       image_placeholders: {
         Row: {
           alt_text: string | null
@@ -142,6 +213,68 @@ export type Database = {
           url?: string
         }
         Relationships: []
+      }
+      leads: {
+        Row: {
+          company_name: string | null
+          created_at: string | null
+          email: string | null
+          id: string
+          lead_source: string
+          metadata: Json | null
+          name: string | null
+          notes: string | null
+          phone: string
+          qualification: string | null
+          service_interest: string | null
+          status: string | null
+          updated_at: string | null
+          user_id: string | null
+          whatsapp_conversation_id: string | null
+        }
+        Insert: {
+          company_name?: string | null
+          created_at?: string | null
+          email?: string | null
+          id?: string
+          lead_source?: string
+          metadata?: Json | null
+          name?: string | null
+          notes?: string | null
+          phone: string
+          qualification?: string | null
+          service_interest?: string | null
+          status?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+          whatsapp_conversation_id?: string | null
+        }
+        Update: {
+          company_name?: string | null
+          created_at?: string | null
+          email?: string | null
+          id?: string
+          lead_source?: string
+          metadata?: Json | null
+          name?: string | null
+          notes?: string | null
+          phone?: string
+          qualification?: string | null
+          service_interest?: string | null
+          status?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+          whatsapp_conversation_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "leads_whatsapp_conversation_id_fkey"
+            columns: ["whatsapp_conversation_id"]
+            isOneToOne: false
+            referencedRelation: "whatsapp_conversations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       material_accesses: {
         Row: {
@@ -844,6 +977,95 @@ export type Database = {
           user_id?: string | null
         }
         Relationships: []
+      }
+      whatsapp_conversations: {
+        Row: {
+          conversation_status: string | null
+          created_at: string | null
+          id: string
+          last_message_at: string | null
+          lead_qualification: string | null
+          metadata: Json | null
+          phone_number: string
+          source: string | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          conversation_status?: string | null
+          created_at?: string | null
+          id?: string
+          last_message_at?: string | null
+          lead_qualification?: string | null
+          metadata?: Json | null
+          phone_number: string
+          source?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          conversation_status?: string | null
+          created_at?: string | null
+          id?: string
+          last_message_at?: string | null
+          lead_qualification?: string | null
+          metadata?: Json | null
+          phone_number?: string
+          source?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      whatsapp_messages: {
+        Row: {
+          content: string | null
+          conversation_id: string | null
+          created_at: string | null
+          direction: string
+          id: string
+          media_url: string | null
+          message_id: string | null
+          message_type: string | null
+          metadata: Json | null
+          phone_number: string
+          status: string | null
+        }
+        Insert: {
+          content?: string | null
+          conversation_id?: string | null
+          created_at?: string | null
+          direction: string
+          id?: string
+          media_url?: string | null
+          message_id?: string | null
+          message_type?: string | null
+          metadata?: Json | null
+          phone_number: string
+          status?: string | null
+        }
+        Update: {
+          content?: string | null
+          conversation_id?: string | null
+          created_at?: string | null
+          direction?: string
+          id?: string
+          media_url?: string | null
+          message_id?: string | null
+          message_type?: string | null
+          metadata?: Json | null
+          phone_number?: string
+          status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "whatsapp_messages_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "whatsapp_conversations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
