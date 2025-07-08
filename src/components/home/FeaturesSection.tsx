@@ -11,7 +11,7 @@ const FeaturesSection = () => {
     {
       icon: Users,
       title: "Expertise Humana",
-      description: "Consultores experientes refinam e personalizam as estratégias geradas pela IA.",
+      description: "Consultores experientes refinam e personalizam as estratégias geradas pelo nosso sistema proprietário.",
       ariaLabel: "Ícone representando pessoas, simbolizando a expertise humana"
     }, 
     {
@@ -22,9 +22,9 @@ const FeaturesSection = () => {
     }, 
     {
       icon: Brain,
-      title: "Inteligência Artificial",
-      description: "Utilizamos algoritmos avançados para processar e analisar dados de mercado com precisão e velocidade.",
-      ariaLabel: "Ícone de cérebro, representando inteligência artificial"
+      title: "Sistema Proprietário",
+      description: "Utilizamos nossa metodologia exclusiva para processar e analisar dados de mercado com precisão e velocidade únicas.",
+      ariaLabel: "Ícone de cérebro, representando sistema proprietário de inteligência"
     }, 
     {
       icon: Zap,

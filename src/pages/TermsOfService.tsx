@@ -27,7 +27,7 @@ const TermsOfService = () => {
             <h2 className="text-2xl font-semibold mt-8 mb-4">2. Descrição dos Serviços</h2>
             <p>
               A Crie Valor oferece serviços de consultoria estratégica, incluindo o MAR - Mapa para Alto Rendimento, 
-              uma ferramenta que combina inteligência artificial com expertise humana para gerar planos estratégicos 
+              uma ferramenta que combina nossa metodologia proprietária com expertise humana para gerar planos estratégicos 
               personalizados para empresas.
             </p>
             

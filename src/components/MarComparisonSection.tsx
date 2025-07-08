@@ -38,7 +38,7 @@ const MarComparisonSection = () => {
       icon: <Zap className="h-5 w-5 text-primary" />,
       title: "Tecnologia",
       mar: {
-        value: "IA + Expertise Humana",
+        value: "Sistema Proprietário + Expertise Humana",
         description: "Combinação poderosa para insights precisos"
       },
       traditional: {

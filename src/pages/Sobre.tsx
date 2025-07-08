@@ -140,7 +140,7 @@ const Sobre = () => {
               
               <div className="prose prose-invert max-w-none">
                 <p className="text-lg">
-                  Na intersecção entre criatividade humana e inteligência artificial, descobrimos um novo horizonte para a consultoria estratégica. Nascemos do encontro entre a visão criativa da publicidade e a profundidade analítica da psicologia organizacional, e hoje evoluímos ao integrar tecnologias que amplificam o potencial humano.
+                  Na intersecção entre criatividade humana e nossa metodologia proprietária, descobrimos um novo horizonte para a consultoria estratégica. Nascemos do encontro entre a visão criativa da publicidade e a profundidade analítica da psicologia organizacional, e hoje evoluímos ao integrar tecnologias que amplificam o potencial humano.
                 </p>
                 
                 <p className="text-lg">
@@ -148,7 +148,7 @@ const Sobre = () => {
                 </p>
                 
                 <p className="text-lg">
-                  Nossa jornada agora abraça a inovação com tecnologias de ponta, transformando-nos em pioneiros de um modelo híbrido que preserva o que há de mais valioso - a compreensão humana das emoções e contextos - enquanto potencializa resultados através da capacidade analítica da inteligência artificial.
+                  Nossa jornada agora abraça a inovação com tecnologias de ponta, transformando-nos em pioneiros de um modelo híbrido que preserva o que há de mais valioso - a compreensão humana das emoções e contextos - enquanto potencializa resultados através da capacidade analítica da nossa metodologia proprietária.
                 </p>
                 
                 <p className="text-lg">
@@ -196,7 +196,7 @@ const Sobre = () => {
                 {
                   icon: Anchor,
                   title: "MAR - Mapa para Alto Rendimento",
-                  description: "Uma ferramenta que utiliza inteligência artificial para criar planos estratégicos sob medida, visando otimizar operações, aumentar vendas e alcançar objetivos empresariais."
+                  description: "Uma ferramenta que utiliza nossa metodologia proprietária para criar planos estratégicos sob medida, visando otimizar suas operações, aumentar suas vendas e alcançar seus objetivos empresariais."
                 },
                 {
                   icon: Building,
@@ -210,8 +210,8 @@ const Sobre = () => {
                 },
                 {
                   icon: Users,
-                  title: "Escola de Gestão",
-                  description: "Programas de treinamento e desenvolvimento onde profissionais podem aprimorar suas habilidades de liderança e gestão com especialistas de mercado."
+                  title: "Oficina de Líderes",
+                  description: "Programas de desenvolvimento onde você pode aprimorar suas habilidades de liderança e gestão com nossos especialistas de mercado."
                 },
                 {
                   icon: Lightbulb,

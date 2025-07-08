@@ -22,11 +22,11 @@ const EscolaGestao = () => {
       <main className="flex-grow">
         {/* Hero Section */}
         <HeroSection 
-          title="ESCOLA DE GESTÃO" 
-          subtitle="Desperte o potencial da sua equipe com:" 
+          title="OFICINA DE LÍDERES" 
+          subtitle="Desperte SEU potencial de liderança com:" 
           description={heroDescription}
-          ctaText="QUERO ACESSO AO MÉTODO COMPROVADO" 
-          ctaUrl="https://wa.me/+5547992150289?text=Quero%20garantir%20minha%20vaga%20na%20próxima%20turma%20da%20Escola%20de%20Gestão" 
+          ctaText="QUERO TRANSFORMAR MINHA LIDERANÇA" 
+          ctaUrl="https://wa.me/+5547992150289?text=Quero%20garantir%20minha%20vaga%20na%20próxima%20turma%20da%20Oficina%20de%20Líderes" 
           backgroundImages={heroImages} 
         />
 
@@ -49,11 +49,11 @@ const EscolaGestao = () => {
                 </h2>
                 
                 <p className="text-lg text-muted-foreground mb-4">
-                  A Escola de Gestão é um programa completo de desenvolvimento de competências gerenciais voltado exclusivamente para empresas e profissionais da região do Baixo Vale do Itajaí em Santa Catarina.
+                  A Oficina de Líderes é um programa completo de desenvolvimento de competências de liderança voltado exclusivamente para você, profissional e empresário da região do Baixo Vale do Itajaí em Santa Catarina.
                 </p>
                 
                 <p className="text-lg text-muted-foreground mb-6">
-                  Nosso programa visa transformar gestores em líderes estratégicos através de módulos práticos ministrados por especialistas com vasta experiência empresarial.
+                  Nosso programa visa transformar você em um líder estratégico através de módulos práticos ministrados por especialistas com vasta experiência empresarial.
                 </p>
                 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
@@ -113,11 +113,11 @@ const EscolaGestao = () => {
                 <span className="font-medium">Metodologia</span>
               </div>
               <h2 className="text-3xl md:text-4xl font-bold mb-4">
-                Por que a Escola de Gestão é diferente?
+                Por que a Oficina de Líderes é diferente?
               </h2>
               <p className="text-lg text-muted-foreground">
                 Um programa estruturado com metodologia prática e aplicação imediata, 
-                desenvolvido especialmente para as necessidades empresariais da nossa região.
+                desenvolvido especialmente para suas necessidades como líder da nossa região.
               </p>
             </div>
             
@@ -299,10 +299,10 @@ const EscolaGestao = () => {
                 <span className="font-medium">Resultados Comprovados</span>
               </div>
               <h2 className="text-3xl md:text-4xl font-bold mb-4">
-                Benefícios para sua Empresa
+                Benefícios para VOCÊ e sua Empresa
               </h2>
               <p className="text-lg text-muted-foreground">
-                Ao investir na capacitação dos seus gestores com a Escola de Gestão, sua empresa obtém 
+                Ao investir no desenvolvimento da sua liderança com a Oficina de Líderes, você e sua empresa obtém 
                 resultados imediatos e de longo prazo.
               </p>
             </div>
@@ -382,7 +382,7 @@ const EscolaGestao = () => {
                     <span className="font-medium">Informações do Programa</span>
                   </div>
                   <h2 className="text-3xl font-bold mb-4">
-                    Detalhes da Escola de Gestão
+                    Detalhes da Oficina de Líderes
                   </h2>
                 </div>
                 
@@ -491,7 +491,7 @@ const EscolaGestao = () => {
                   </h2>
                   <p className="text-lg text-muted-foreground">
                     Preencha o formulário abaixo para receber mais informações sobre a
-                    Escola de Gestão e garantir sua vaga.
+                    Oficina de Líderes e garantir sua vaga.
                   </p>
                 </div>
                 

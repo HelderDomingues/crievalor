@@ -31,7 +31,7 @@ const PricingSection = () => {
             <span className="text-primary"> MAR</span>
           </h2>
           <p className="text-xl text-muted-foreground mb-8">
-            A combinação perfeita de expertise humana e inteligência artificial para criar o planejamento estratégico que seu negócio precisa para crescer de forma sustentável.
+            A combinação perfeita de expertise humana e nossa metodologia proprietária para criar o planejamento estratégico que você precisa para fazer seu negócio crescer de forma sustentável.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 text-sm text-muted-foreground">
             <div className="flex items-center gap-2">

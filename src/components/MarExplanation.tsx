@@ -40,25 +40,25 @@ const MarExplanation = () => {
   const steps = [
     {
       title: "Coleta de Dados",
-      description: "Utilizamos IA para coletar e analisar dados internos e externos da sua empresa de forma rápida e precisa.",
+      description: "Utilizamos nosso sistema proprietário para coletar e analisar dados internos e externos da sua empresa de forma rápida e precisa.",
       icon: BarChart3,
       bgColor: "bg-blue-600"
     },
     {
       title: "Análise de Mercado",
-      description: "Nossa IA processa milhares de informações para identificar tendências, oportunidades e ameaças do seu mercado.",
+      description: "Nossa tecnologia proprietária processa milhares de informações para identificar tendências, oportunidades e ameaças do seu mercado.",
       icon: Target,
       bgColor: "bg-indigo-600"
     },
     {
-      title: "Processamento por IA",
+      title: "Processamento Inteligente",
       description: "Algoritmos avançados processam os dados para gerar insights estratégicos preliminares.",
       icon: Brain,
       bgColor: "bg-violet-600"
     },
     {
       title: "Refinamento Humano",
-      description: "Consultores experientes revisam, refinam e personalizam as estratégias geradas pela IA.",
+      description: "Consultores experientes revisam, refinam e personalizam as estratégias geradas pelo nosso sistema proprietário.",
       icon: User,
       bgColor: "bg-purple-600"
     },
@@ -83,7 +83,7 @@ const MarExplanation = () => {
     },
     {
       title: "Precisão",
-      description: "Análises baseadas em dados reais e processamento avançado de IA.",
+      description: "Análises baseadas em dados reais e processamento avançado da nossa metodologia proprietária.",
       icon: Target
     },
     {
@@ -101,8 +101,8 @@ const MarExplanation = () => {
             Como funciona o MAR?
           </h2>
           <p className="text-lg text-muted-foreground">
-            O Mapa para Alto Rendimento combina o melhor da inteligência artificial com a
-            experiência de consultores humanos para criar estratégias poderosas e acionáveis.
+            O Mapa para Alto Rendimento combina o melhor da nossa metodologia proprietária com a
+            experiência de consultores humanos para criar estratégias poderosas que transformam seu negócio.
           </p>
         </div>
 

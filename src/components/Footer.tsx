@@ -19,7 +19,7 @@ const Footer = () => {
               />
             </Link>
             <p className="text-muted-foreground text-sm">
-              Transformando negócios através da inteligência artificial e estratégia 
+              Transformando sua empresa através da nossa metodologia proprietária de inteligência organizacional 
               de alto rendimento para empresas de todos os tamanhos.
             </p>
             <div className="flex space-x-4 pt-2">
@@ -99,7 +99,7 @@ const Footer = () => {
               </li>
               <li>
                 <Link to="/escola-gestao" className="text-muted-foreground hover:text-primary transition-colors text-sm">
-                  Escola de Gestão
+                  Oficina de Líderes
                 </Link>
               </li>
               <li>

@@ -25,8 +25,8 @@ export interface Service {
 const services: Service[] = [
   {
     icon: BookOpen,
-    title: "Escola de Gestão",
-    description: "Cursos e treinamentos para aprimorar habilidades de liderança e gestão.",
+    title: "Oficina de Líderes",
+    description: "Desenvolva suas habilidades de liderança e transforme seu potencial em resultados extraordinários.",
     route: "/escola-gestao",
     color: "bg-emerald-500/10 text-emerald-500",
     details: [

@@ -22,9 +22,9 @@ const Index = () => {
     <div className="min-h-screen flex flex-col">
       <Helmet>
         <title>Crie Valor Estratégia | Consultoria e Marketing para empresas</title>
-        <meta name="description" content="Transforme sua empresa com o MAR: Mapa para Alto Rendimento. Consultoria estratégica, marketing e ferramentas de inteligência artificial para impulsionar seus resultados." />
+        <meta name="description" content="Transforme sua empresa com o MAR: Mapa para Alto Rendimento. Consultoria estratégica, marketing e metodologia proprietária para impulsionar seus resultados." />
         <meta property="og:title" content="Crie Valor Estratégia | Consultoria e Marketing para empresas" />
-        <meta property="og:description" content="Transforme sua empresa com o MAR: Mapa para Alto Rendimento. Consultoria estratégica, marketing e ferramentas de inteligência artificial para impulsionar seus resultados." />
+        <meta property="og:description" content="Transforme sua empresa com o MAR: Mapa para Alto Rendimento. Consultoria estratégica, marketing e metodologia proprietária para impulsionar seus resultados." />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://crievalor.com.br" />
         <meta property="og:image" content="https://crievalor.com.br/og-image.png" />
@@ -48,7 +48,7 @@ const Index = () => {
         <HeroSection 
           title="Transforme sua empresa com estratégias personalizadas" 
           subtitle="Bem-vindo(a) à Crie Valor" 
-          description="Somos especialistas em desenvolver estratégias de alto impacto que combinam a expertise humana com o poder da inteligência artificial." 
+          description="Somos especialistas em desenvolver estratégias de alto impacto que combinam a expertise humana com o poder da nossa metodologia proprietária." 
           ctaText="Conheça o MAR" 
           ctaUrl="/mar" 
           secondaryCtaText="Fale Conosco" 

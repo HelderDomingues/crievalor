@@ -53,7 +53,7 @@ export const OrganizationSchema: React.FC<OrganizationSchemaProps> = ({
   url, 
   logo, 
   name = "Crie Valor Estratégia",
-  description = "Consultoria estratégica combinando expertise humana e inteligência artificial para transformação empresarial."
+  description = "Consultoria estratégica combinando expertise humana e nossa metodologia proprietária para transformação empresarial."
 }) => {
   const schemaData = {
     "@context": "https://schema.org",

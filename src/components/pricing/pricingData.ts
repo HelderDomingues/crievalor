@@ -98,7 +98,7 @@ const documentTypes: Record<string, DocumentType> = {
   },
   analisesCenario: {
     icon: Radar,
-    name: "Análises de cenário aprofundadas por IA por setor (Financeiro/ Marketing e Gente (RH)), a cada 02 meses",
+    name: "Análises de cenário aprofundadas por nossa metodologia proprietária por setor (Financeiro/ Marketing e Gente (RH)), a cada 02 meses",
     included: true
   }
 };

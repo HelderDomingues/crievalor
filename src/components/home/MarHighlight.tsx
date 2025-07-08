@@ -21,7 +21,7 @@ const MarHighlight = () => {
             MAR - Mapa para Alto Rendimento
           </h2>
           <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto animate-fade-in" style={{animationDelay: "0.2s"}}>
-            A solução que combina <strong>inteligência artificial</strong> e <strong>consultoria humana</strong> para criar estratégias de negócios excepcionais.
+            A solução que combina <strong>nossa metodologia proprietária</strong> e <strong>consultoria humana especializada</strong> para criar estratégias de negócios excepcionais que transformam seu futuro.
           </p>
         </div>
         
@@ -50,7 +50,7 @@ const MarHighlight = () => {
                   <div className="bg-primary/10 p-2 rounded-full mr-3">
                     <Brain className="h-5 w-5 text-primary" aria-hidden="true" />
                   </div>
-                  <h4 className="font-medium">IA + Humano</h4>
+                  <h4 className="font-medium">Sistema + Humano</h4>
                 </div>
                 <p className="text-sm text-muted-foreground">
                   Combine o melhor dos dois mundos para resultados superiores
@@ -108,7 +108,7 @@ const MarHighlight = () => {
                       </div>
                       <div>
                         <h4 className="font-medium">Análise Inteligente</h4>
-                        <p className="text-sm text-muted-foreground">IA + expertise humana para insights precisos</p>
+                        <p className="text-sm text-muted-foreground">Sistema proprietário + expertise humana para insights únicos</p>
                       </div>
                     </div>
                     
