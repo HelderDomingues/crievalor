@@ -364,7 +364,7 @@ const InteractiveGalaxyHeroCarousel = () => {
                         <Button 
                           asChild 
                           size="lg" 
-                          className={`text-xl px-8 py-6 bg-gradient-to-r ${slide.accentColor.replace('text-', 'from-')} to-white text-black hover:scale-105 transition-all duration-300 ${slide.glowColor} shadow-2xl font-bold border-2 border-white/10`}
+                          className={`text-xl px-8 py-6 bg-gradient-to-r ${slide.accentColor.replace('text-', 'from-')} to-white text-white hover:scale-105 transition-all duration-300 ${slide.glowColor} shadow-2xl font-bold border-2 border-white/10`}
                         >
                           <Link to={slide.ctaUrl}>
                             {slide.ctaText} <ArrowRight className="ml-3 h-6 w-6" />
