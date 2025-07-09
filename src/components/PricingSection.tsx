@@ -27,7 +27,7 @@ const PricingSection = () => {
             </span>
           </div>
           <h2 className="text-4xl md:text-5xl font-bold mb-6">
-            Transforme seu negócio com o 
+            Acerte a rota do seu negócio com o 
             <span className="text-primary"> MAR</span>
           </h2>
           <p className="text-xl text-muted-foreground mb-8">
