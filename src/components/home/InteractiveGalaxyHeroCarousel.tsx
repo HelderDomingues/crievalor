@@ -451,9 +451,9 @@ const InteractiveGalaxyHeroCarousel = () => {
             ))}
           </CarouselContent>
           
-          {/* Enhanced navigation */}
-          <CarouselPrevious className="left-8 bg-black/30 backdrop-blur-sm border-white/20 text-white hover:bg-white/10" />
-          <CarouselNext className="right-8 bg-black/30 backdrop-blur-sm border-white/20 text-white hover:bg-white/10" />
+          {/* Enhanced navigation with responsive positioning */}
+          <CarouselPrevious className="left-4 lg:left-8 top-1/2 lg:top-1/2 -translate-y-1/2 bg-black/30 backdrop-blur-sm border-white/20 text-white hover:bg-white/10 z-20" />
+          <CarouselNext className="right-4 lg:right-8 top-1/2 lg:top-1/2 -translate-y-1/2 bg-black/30 backdrop-blur-sm border-white/20 text-white hover:bg-white/10 z-20" />
         </Carousel>
 
         {/* Slide indicators */}
