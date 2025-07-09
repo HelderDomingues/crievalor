@@ -98,7 +98,7 @@ export const WhatsAppBusiness: React.FC<WhatsAppBusinessProps> = ({
       {!isOpen && (
         <Button
           onClick={() => setIsOpen(true)}
-          className="relative bg-green-500 hover:bg-green-600 text-white rounded-full w-14 h-14 shadow-lg hover:shadow-xl transition-all duration-300 animate-pulse"
+          className="relative bg-green-500 hover:bg-green-600 text-white rounded-full w-14 h-14 shadow-lg hover:shadow-xl transition-all duration-300"
           aria-label="Abrir WhatsApp Business"
         >
           <MessageCircle className="h-6 w-6" />
