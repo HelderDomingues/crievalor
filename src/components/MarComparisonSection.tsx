@@ -1,91 +1,80 @@
-
 import React from "react";
 import { Check, X, Zap, Clock, DollarSign, Lightbulb, CreditCard, PieChart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useIsMobile } from "@/hooks/use-mobile";
-
 const MarComparisonSection = () => {
   const isMobile = useIsMobile();
-  
+
   // Data for the comparison table
-  const comparisonItems = [
-    {
-      icon: <Clock className="h-5 w-5 text-primary" />,
-      title: "Tempo de Entrega",
-      mar: {
-        value: "Uma semana",
-        description: "Agilidade para implementação imediata"
-      },
-      traditional: {
-        value: "3-6 meses",
-        description: "Processos longos e burocráticos"
-      }
+  const comparisonItems = [{
+    icon: <Clock className="h-5 w-5 text-primary" />,
+    title: "Tempo de Entrega",
+    mar: {
+      value: "Uma semana",
+      description: "Agilidade para implementação imediata"
     },
-    {
-      icon: <DollarSign className="h-5 w-5 text-primary" />,
-      title: "Investimento",
-      mar: {
-        value: "R$ 799,00 à vista ou 10x de R$ 89,90",
-        description: "Acessível para empresas de todos os portes"
-      },
-      traditional: {
-        value: "R$ 10.000 - R$ 100.000+",
-        description: "Custos elevados e pouco escaláveis"
-      }
-    },
-    {
-      icon: <Zap className="h-5 w-5 text-primary" />,
-      title: "Tecnologia",
-      mar: {
-        value: "Sistema Proprietário + Expertise Humana",
-        description: "Combinação poderosa para insights precisos"
-      },
-      traditional: {
-        value: "Principalmente humana",
-        description: "Limitada pela capacidade manual"
-      }
-    },
-    {
-      icon: <Lightbulb className="h-5 w-5 text-primary" />,
-      title: "Personalização",
-      mar: {
-        value: "Altamente personalizado",
-        description: "Análise específica do seu negócio e mercado"
-      },
-      traditional: {
-        value: "Parcialmente padronizado",
-        description: "Modelos pré-formatados adaptados"
-      }
-    },
-    {
-      icon: <CreditCard className="h-5 w-5 text-primary" />,
-      title: "Pagamento",
-      mar: {
-        value: "Flexível",
-        description: "À vista com desconto ou parcelado"
-      },
-      traditional: {
-        value: "Contrato fixo",
-        description: "Geralmente com valores altos"
-      }
-    },
-    {
-      icon: <PieChart className="h-5 w-5 text-primary" />,
-      title: "Resultados",
-      mar: {
-        value: "Métricas claras e objetivas",
-        description: "KPIs específicos para seu negócio"
-      },
-      traditional: {
-        value: "Resultados subjetivos",
-        description: "Raramente com métricas específicas"
-      }
+    traditional: {
+      value: "3-6 meses",
+      description: "Processos longos e burocráticos"
     }
-  ];
-  
-  return (
-    <section className="py-20 relative bg-gradient-to-b from-secondary/20 to-background">
+  }, {
+    icon: <DollarSign className="h-5 w-5 text-primary" />,
+    title: "Investimento",
+    mar: {
+      value: "R$ 799,00 à vista ou 10x de R$ 89,90",
+      description: "Acessível para empresas de todos os portes"
+    },
+    traditional: {
+      value: "R$ 10.000 - R$ 100.000+",
+      description: "Custos elevados e pouco escaláveis"
+    }
+  }, {
+    icon: <Zap className="h-5 w-5 text-primary" />,
+    title: "Tecnologia",
+    mar: {
+      value: "Sistema Proprietário + Expertise Humana",
+      description: "Combinação poderosa para insights precisos"
+    },
+    traditional: {
+      value: "Principalmente humana",
+      description: "Limitada pela capacidade manual"
+    }
+  }, {
+    icon: <Lightbulb className="h-5 w-5 text-primary" />,
+    title: "Personalização",
+    mar: {
+      value: "Altamente personalizado",
+      description: "Análise específica do seu negócio e mercado"
+    },
+    traditional: {
+      value: "Parcialmente padronizado",
+      description: "Modelos pré-formatados adaptados"
+    }
+  }, {
+    icon: <CreditCard className="h-5 w-5 text-primary" />,
+    title: "Pagamento",
+    mar: {
+      value: "Flexível",
+      description: "À vista com desconto ou parcelado"
+    },
+    traditional: {
+      value: "Contrato fixo",
+      description: "Geralmente com valores altos"
+    }
+  }, {
+    icon: <PieChart className="h-5 w-5 text-primary" />,
+    title: "Resultados",
+    mar: {
+      value: "Métricas claras e objetivas",
+      description: "KPIs específicos para seu negócio"
+    },
+    traditional: {
+      value: "Resultados subjetivos",
+      description: "Raramente com métricas específicas"
+    }
+  }];
+  return <section className="py-20 relative bg-gradient-to-b from-secondary/20 to-background">
       {/* Background elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="blur-dot w-96 h-96 -top-48 right-0 opacity-5"></div>
@@ -141,8 +130,7 @@ const MarComparisonSection = () => {
         </div>
         
         {/* Comparison Table - Desktop version */}
-        {!isMobile && (
-          <div className="mb-16 rounded-lg overflow-hidden border border-border shadow-md">
+        {!isMobile && <div className="mb-16 rounded-lg overflow-hidden border border-border shadow-md">
             <div className="grid grid-cols-3 gap-0">
               <div className="p-4 bg-muted/20 flex items-center justify-center">
                 <span className="font-semibold text-lg text-center">Aspecto</span>
@@ -157,8 +145,7 @@ const MarComparisonSection = () => {
             
             <Table className="w-full">
               <TableBody>
-                {comparisonItems.map((item, index) => (
-                  <TableRow key={index} className="border-t border-border">
+                {comparisonItems.map((item, index) => <TableRow key={index} className="border-t border-border">
                     <TableCell className="w-1/3 p-4 bg-muted/10">
                       <div className="flex items-center gap-3 justify-center">
                         {item.icon}
@@ -177,16 +164,13 @@ const MarComparisonSection = () => {
                         <p className="text-sm text-muted-foreground">{item.traditional.description}</p>
                       </div>
                     </TableCell>
-                  </TableRow>
-                ))}
+                  </TableRow>)}
               </TableBody>
             </Table>
-          </div>
-        )}
+          </div>}
         
         {/* Comparison Cards - Mobile version */}
-        {isMobile && (
-          <div className="mb-16 space-y-6">
+        {isMobile && <div className="mb-16 space-y-6">
             <div className="grid grid-cols-2 gap-2 mb-4">
               <div className="bg-primary/10 p-4 rounded-lg text-center">
                 <h3 className="text-base font-bold text-primary">MAR</h3>
@@ -196,8 +180,7 @@ const MarComparisonSection = () => {
               </div>
             </div>
             
-            {comparisonItems.map((item, index) => (
-              <div key={index} className="border border-border rounded-lg overflow-hidden">
+            {comparisonItems.map((item, index) => <div key={index} className="border border-border rounded-lg overflow-hidden">
                 <div className="p-3 bg-muted/10 flex items-center justify-center gap-2 border-b border-border">
                   {item.icon}
                   <span className="font-semibold">{item.title}</span>
@@ -216,16 +199,12 @@ const MarComparisonSection = () => {
                     </div>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
-        )}
+              </div>)}
+          </div>}
         
         {/* Call to Action */}
         <div className="max-w-3xl mx-auto text-center bg-card rounded-xl p-8 border border-border shadow-lg glow-border">
-          <h3 className="text-2xl md:text-3xl font-bold mb-4">
-            Transforme sua estratégia agora com o MAR
-          </h3>
+          <h3 className="text-2xl md:text-3xl font-bold mb-4">Tenha clareza estratégica agora com o MAR</h3>
           <p className="text-lg mb-6">
             Líderes visionários como você já descobriram o poder do MAR para acelerar a tomada de decisão 
             e obter vantagem competitiva no mercado. A cada dia que passa sem uma estratégia clara, 
@@ -250,8 +229,6 @@ const MarComparisonSection = () => {
           </p>
         </div>
       </div>
-    </section>
-  );
+    </section>;
 };
-
 export default MarComparisonSection;
