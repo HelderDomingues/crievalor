@@ -4,7 +4,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ContactSection from "@/components/ContactSection";
 import ClientLogosCarousel from "@/components/ClientLogosCarousel";
-import HeroCarousel from "@/components/home/HeroCarousel";
+import InteractiveGalaxyHeroCarousel from "@/components/home/InteractiveGalaxyHeroCarousel";
 import MarHighlight from "@/components/home/MarHighlight";
 import TestimonialsSection from "@/components/home/TestimonialsSection";
 import PartnersSection from "@/components/home/PartnersSection";
@@ -46,7 +46,7 @@ const Index = () => {
         <h1 className="sr-only">Crie Valor Estratégia - Consultoria e Marketing para empresas</h1>
         
         {/* Hero Carrossel - MAR + Mentorias */}
-        <HeroCarousel />
+        <InteractiveGalaxyHeroCarousel />
         
         {/* MAR Product Highlight - Seção dedicada */}
         <MarHighlight />
