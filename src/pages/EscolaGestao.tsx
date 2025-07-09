@@ -513,6 +513,49 @@ const EscolaGestao = () => {
           </div>
         </section>
         
+        {/* FAQ Section */}
+        <section className="py-16 md:py-24 bg-secondary/10">
+          <div className="container mx-auto px-4">
+            <div className="max-w-3xl mx-auto">
+              <h2 className="text-3xl md:text-4xl font-bold mb-8 text-center">
+                Perguntas Frequentes
+              </h2>
+              
+              <div className="space-y-6">
+                <div className="bg-card rounded-lg p-6 shadow-sm">
+                  <h3 className="text-xl font-semibold mb-3">A Oficina de Líderes é presencial ou online?</h3>
+                  <p className="text-muted-foreground">A Oficina de Líderes é 100% presencial, realizada exclusivamente na região do Baixo Vale do Itajaí/SC. Acreditamos que o networking e a troca de experiências presenciais são fundamentais para o desenvolvimento de líderes.</p>
+                </div>
+                
+                <div className="bg-card rounded-lg p-6 shadow-sm">
+                  <h3 className="text-xl font-semibold mb-3">Qual é a carga horária total do curso?</h3>
+                  <p className="text-muted-foreground">O programa tem carga horária de 120 horas, distribuídas em módulos semanais de 4 horas cada, ao longo de 6 meses. Incluímos também atividades práticas e networking entre os participantes.</p>
+                </div>
+                
+                <div className="bg-card rounded-lg p-6 shadow-sm">
+                  <h3 className="text-xl font-semibold mb-3">Preciso ter experiência prévia em gestão?</h3>
+                  <p className="text-muted-foreground">Não é necessário ter experiência prévia. O programa é estruturado desde conceitos básicos até técnicas avançadas, sendo adequado tanto para novos gestores quanto para líderes experientes que buscam aperfeiçoamento.</p>
+                </div>
+                
+                <div className="bg-card rounded-lg p-6 shadow-sm">
+                  <h3 className="text-xl font-semibold mb-3">Quantas pessoas participam de cada turma?</h3>
+                  <p className="text-muted-foreground">Mantemos turmas reduzidas com máximo de 20 participantes para garantir atenção personalizada, qualidade nas discussões e maior aproveitamento do conteúdo por cada participante.</p>
+                </div>
+                
+                <div className="bg-card rounded-lg p-6 shadow-sm">
+                  <h3 className="text-xl font-semibold mb-3">Recebo certificado ao final do curso?</h3>
+                  <p className="text-muted-foreground">Sim, ao concluir a Oficina de Líderes, você recebe certificado de conclusão reconhecido, além de acesso vitalício ao material didático e à comunidade de ex-alunos para networking contínuo.</p>
+                </div>
+                
+                <div className="bg-card rounded-lg p-6 shadow-sm">
+                  <h3 className="text-xl font-semibold mb-3">Quando será a próxima turma?</h3>
+                  <p className="text-muted-foreground">As turmas iniciam trimestralmente. Para saber sobre a próxima turma disponível e garantir sua vaga, entre em contato conosco através do WhatsApp ou preencha o formulário de interesse.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+        
         <ContactSection />
       </main>
       

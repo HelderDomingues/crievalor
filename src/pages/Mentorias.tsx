@@ -161,6 +161,44 @@ const Mentorias = () => {
           </div>
         </section>
         
+        {/* FAQ Section */}
+        <section className="py-16 md:py-24 bg-secondary/10">
+          <div className="container mx-auto px-4">
+            <div className="max-w-3xl mx-auto">
+              <h2 className="text-3xl md:text-4xl font-bold mb-8 text-center">
+                Perguntas Frequentes
+              </h2>
+              
+              <div className="space-y-6">
+                <div className="bg-card rounded-lg p-6 shadow-sm">
+                  <h3 className="text-xl font-semibold mb-3">Como funcionam as sessões de mentoria?</h3>
+                  <p className="text-muted-foreground">As sessões são individuais e personalizadas, com duração de 1 hora cada. Realizamos encontros semanais ou quinzenais, dependendo das necessidades específicas e disponibilidade do mentoreado.</p>
+                </div>
+                
+                <div className="bg-card rounded-lg p-6 shadow-sm">
+                  <h3 className="text-xl font-semibold mb-3">Qual é a duração do programa de mentoria?</h3>
+                  <p className="text-muted-foreground">O programa tem duração mínima de 3 meses, podendo se estender conforme os objetivos estabelecidos. A maioria dos clientes obtém resultados significativos entre 6 a 12 meses de acompanhamento.</p>
+                </div>
+                
+                <div className="bg-card rounded-lg p-6 shadow-sm">
+                  <h3 className="text-xl font-semibold mb-3">Quem são os mentores da Crie Valor?</h3>
+                  <p className="text-muted-foreground">Nossa equipe é formada por profissionais com mais de 15 anos de experiência em liderança empresarial, gestão de equipes e desenvolvimento organizacional em empresas de diversos portes e segmentos.</p>
+                </div>
+                
+                <div className="bg-card rounded-lg p-6 shadow-sm">
+                  <h3 className="text-xl font-semibold mb-3">Como são definidos os objetivos da mentoria?</h3>
+                  <p className="text-muted-foreground">Na primeira sessão, realizamos um diagnóstico completo para identificar pontos de melhoria, definir metas claras e estabelecer indicadores de progresso que serão acompanhados ao longo do processo.</p>
+                </div>
+                
+                <div className="bg-card rounded-lg p-6 shadow-sm">
+                  <h3 className="text-xl font-semibold mb-3">É possível fazer mentoria em grupo?</h3>
+                  <p className="text-muted-foreground">Sim, oferecemos modalidades de mentoria em grupo para equipes de liderança. Essa abordagem é ideal para alinhamento de objetivos e desenvolvimento conjunto de competências em líderes da mesma organização.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* Contact Section */}
         <ContactSection />
       </main>

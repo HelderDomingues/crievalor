@@ -3,6 +3,12 @@ import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, X, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import AuthHeader from "@/components/AuthHeader";
 
 const Header = () => {
@@ -43,10 +49,17 @@ const Header = () => {
 
   const menuItems = [
     { title: "Home", path: "/" },
-    { title: "MAR", path: "/mar" },
     { title: "Blog", path: "https://blog.crievalor.com.br", external: true },
     { title: "Sobre", path: "/sobre" },
     { title: "Contato", path: "/contato" },
+  ];
+
+  const servicesItems = [
+    { title: "MAR", path: "/mar" },
+    { title: "Identidade Visual", path: "/identidade-visual" },
+    { title: "Mentorias", path: "/mentorias" },
+    { title: "Escola de Gestão", path: "/escola-gestao" },
+    { title: "Projetos sob Medida", path: "/projetos" },
   ];
 
   const handleWhatsAppContact = () => {
@@ -104,6 +117,30 @@ const Header = () => {
                 </Link>
               )
             ))}
+            
+            {/* Services Dropdown */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button className="flex items-center text-sm transition-all hover:text-primary text-foreground/80 link-underline">
+                  Serviços
+                  <ChevronDown className="ml-1 h-3 w-3" />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-48 bg-background border border-border shadow-lg">
+                {servicesItems.map((service) => (
+                  <DropdownMenuItem key={service.path} asChild>
+                    <Link
+                      to={service.path}
+                      className={`block px-3 py-2 text-sm transition-colors hover:bg-secondary hover:text-primary ${
+                        isActive(service.path) ? "text-primary font-medium" : "text-foreground"
+                      }`}
+                    >
+                      {service.title}
+                    </Link>
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
             <Button
               size="sm"
               variant="outline"
@@ -180,6 +217,27 @@ const Header = () => {
               </Link>
             )
           ))}
+          
+          {/* Mobile Services Menu */}
+          <div className="space-y-2">
+            <div className="text-lg font-medium py-2 text-primary border-b border-border">
+              Serviços
+            </div>
+            {servicesItems.map((service) => (
+              <Link
+                key={service.path}
+                to={service.path}
+                className={`text-base py-2 pl-4 block ${
+                  isActive(service.path)
+                    ? "text-primary font-medium"
+                    : "text-foreground/70"
+                }`}
+                onClick={() => setIsMenuOpen(false)}
+              >
+                {service.title}
+              </Link>
+            ))}
+          </div>
           <Button 
             variant="outline"
             className="mt-4"

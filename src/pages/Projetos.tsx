@@ -58,6 +58,45 @@ const Projetos = () => {
         
         <ProjectOverview />
         <ProjectExamples />
+        
+        {/* FAQ Section */}
+        <section className="py-16 md:py-24 bg-secondary/10">
+          <div className="container mx-auto px-4">
+            <div className="max-w-3xl mx-auto">
+              <h2 className="text-3xl md:text-4xl font-bold mb-8 text-center">
+                Perguntas Frequentes
+              </h2>
+              
+              <div className="space-y-6">
+                <div className="bg-card rounded-lg p-6 shadow-sm">
+                  <h3 className="text-xl font-semibold mb-3">Como funciona o desenvolvimento de projetos sob medida?</h3>
+                  <p className="text-muted-foreground">Iniciamos com um diagnóstico detalhado das suas necessidades específicas, seguido pela elaboração de uma proposta customizada. O projeto é desenvolvido em etapas com acompanhamento contínuo e entregas parciais.</p>
+                </div>
+                
+                <div className="bg-card rounded-lg p-6 shadow-sm">
+                  <h3 className="text-xl font-semibold mb-3">Qual é o prazo para desenvolvimento de um projeto?</h3>
+                  <p className="text-muted-foreground">O prazo varia conforme a complexidade e escopo do projeto. Projetos simples podem ser entregues em 30-45 dias, enquanto projetos mais complexos podem levar de 3 a 6 meses para conclusão.</p>
+                </div>
+                
+                <div className="bg-card rounded-lg p-6 shadow-sm">
+                  <h3 className="text-xl font-semibold mb-3">Que tipo de projetos vocês desenvolvem?</h3>
+                  <p className="text-muted-foreground">Desenvolvemos uma ampla gama de projetos: sistemas de gestão customizados, processos operacionais específicos, estratégias de mercado únicas, soluções digitais personalizadas e qualquer demanda que requeira abordagem sob medida.</p>
+                </div>
+                
+                <div className="bg-card rounded-lg p-6 shadow-sm">
+                  <h3 className="text-xl font-semibold mb-3">Como é feito o acompanhamento do projeto?</h3>
+                  <p className="text-muted-foreground">Mantemos comunicação constante através de reuniões periódicas, relatórios de progresso e acesso a uma plataforma onde você pode acompanhar o desenvolvimento em tempo real.</p>
+                </div>
+                
+                <div className="bg-card rounded-lg p-6 shadow-sm">
+                  <h3 className="text-xl font-semibold mb-3">Oferecem suporte pós-entrega?</h3>
+                  <p className="text-muted-foreground">Sim, todos os projetos incluem período de garantia e suporte pós-entrega. Também oferecemos treinamento para sua equipe e documentação completa para facilitar a implementação e manutenção.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+        
         <ContactSection />
       </main>
       

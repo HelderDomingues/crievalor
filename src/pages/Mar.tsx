@@ -111,6 +111,51 @@ const Mar = () => {
           </div>
         </ErrorBoundary>
         
+        {/* FAQ Section */}
+        <ErrorBoundary>
+          <section className="py-16 md:py-24 bg-secondary/10">
+            <div className="container mx-auto px-4">
+              <div className="max-w-3xl mx-auto">
+                <h2 className="text-3xl md:text-4xl font-bold mb-8 text-center">
+                  Perguntas Frequentes sobre o MAR
+                </h2>
+                
+                <div className="space-y-6">
+                  <div className="bg-card rounded-lg p-6 shadow-sm">
+                    <h3 className="text-xl font-semibold mb-3">O que exatamente é o MAR?</h3>
+                    <p className="text-muted-foreground">O MAR (Mapa para Alto Rendimento) é uma consultoria estratégica personalizada que cria um roadmap específico para acelerar o crescimento da sua empresa através de análises precisas e planos de ação customizados.</p>
+                  </div>
+                  
+                  <div className="bg-card rounded-lg p-6 shadow-sm">
+                    <h3 className="text-xl font-semibold mb-3">Quanto tempo leva para ver resultados com o MAR?</h3>
+                    <p className="text-muted-foreground">Os primeiros insights e direcionamentos são entregues em até 30 dias. Resultados mensuráveis começam a aparecer entre 60-90 dias, dependendo da implementação das estratégias recomendadas.</p>
+                  </div>
+                  
+                  <div className="bg-card rounded-lg p-6 shadow-sm">
+                    <h3 className="text-xl font-semibold mb-3">O MAR funciona para qualquer tipo de empresa?</h3>
+                    <p className="text-muted-foreground">Sim, nossa metodologia é adaptável para empresas de todos os portes e segmentos. Personalizamos as análises e estratégias conforme o perfil, mercado de atuação e objetivos específicos de cada negócio.</p>
+                  </div>
+                  
+                  <div className="bg-card rounded-lg p-6 shadow-sm">
+                    <h3 className="text-xl font-semibold mb-3">Como é o processo de implementação do MAR?</h3>
+                    <p className="text-muted-foreground">O processo inclui: diagnóstico inicial, análise estratégica, desenvolvimento do mapa personalizado, apresentação dos resultados e acompanhamento da implementação com suporte contínuo.</p>
+                  </div>
+                  
+                  <div className="bg-card rounded-lg p-6 shadow-sm">
+                    <h3 className="text-xl font-semibold mb-3">Qual é a diferença do MAR para outras consultorias?</h3>
+                    <p className="text-muted-foreground">O MAR oferece soluções práticas e implementáveis, não apenas teorias. Focamos em resultados mensuráveis, com acompanhamento próximo e metodologia testada em centenas de empresas ao longo de 25 anos.</p>
+                  </div>
+                  
+                  <div className="bg-card rounded-lg p-6 shadow-sm">
+                    <h3 className="text-xl font-semibold mb-3">Posso parcelar o investimento no MAR?</h3>
+                    <p className="text-muted-foreground">Sim, oferecemos opções de parcelamento em até 12x no cartão de crédito, além de descontos para pagamento à vista. Consulte as condições específicas para cada plano.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </ErrorBoundary>
+
         <ErrorBoundary>
           <ContactSection />
         </ErrorBoundary>
