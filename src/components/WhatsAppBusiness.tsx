@@ -152,6 +152,14 @@ export const WhatsAppBusiness: React.FC<WhatsAppBusinessProps> = ({
                   <Button
                     variant="outline"
                     className="w-full justify-start text-sm"
+                    onClick={() => handleQuickStart('Oficina de Líderes')}
+                  >
+                    👥 Oficina de Líderes
+                  </Button>
+                  
+                  <Button
+                    variant="outline"
+                    className="w-full justify-start text-sm"
                     onClick={() => handleQuickStart('Mentorias em Gestão e Marketing')}
                   >
                     👨‍💼 Mentorias Empresariais
