@@ -202,8 +202,8 @@ const InteractiveGalaxyHeroCarousel = () => {
     {
       id: 'crie-valor',
       icon: Building2,
-      title: 'Crie Valor',
-      subtitle: 'Transformamos empresas em marcas de alto rendimento',
+      title: 'Transformamos empresas em marcas de alto rendimento',
+      subtitle: 'Somos especialistas em crescimento empresarial',
       description: 'Somos especialistas em crescimento empresarial. Combinamos estratégia, tecnologia e conhecimento para acelerar seus resultados e criar valor duradouro.',
       ctaText: 'Sobre a Crie Valor',
       ctaUrl: '/sobre',
