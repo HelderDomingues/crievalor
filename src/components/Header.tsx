@@ -58,7 +58,7 @@ const Header = () => {
     { title: "MAR", path: "/mar" },
     { title: "Identidade Visual", path: "/identidade-visual" },
     { title: "Mentorias", path: "/mentorias" },
-    { title: "Escola de Gestão", path: "/escola-gestao" },
+    { title: "Oficina de Líderes", path: "/oficina-de-lideres" },
     { title: "Projetos sob Medida", path: "/projetos" },
   ];
 

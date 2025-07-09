@@ -16,7 +16,7 @@ These routes are accessible to all users without authentication.
 | `/sobre` | `Sobre.tsx` | About the company | Header, Footer |
 | `/contato` | `Contato.tsx` | Contact information and form | Header, Footer, CTA buttons |
 | `/projetos` | `Projetos.tsx` | Custom projects showcase | Footer, Services Section |
-| `/escola-gestao` | `EscolaGestao.tsx` | Management School information | Footer, Services Section |
+| `/oficina-de-lideres` | `OficinaLideres.tsx` | Leadership Workshop information | Footer, Services Section |
 | `/mentorias` | `Mentorias.tsx` | Mentoring services | Footer, Services Section |
 | `/identidade-visual` | `IdentidadeVisual.tsx` | Visual identity services | Footer, Services Section |
 

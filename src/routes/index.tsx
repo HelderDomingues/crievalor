@@ -15,7 +15,7 @@ import Mar from "@/pages/Mar";
 import Sobre from "@/pages/Sobre";
 import Contato from "@/pages/Contato";
 import Projetos from "@/pages/Projetos";
-import EscolaGestao from "@/pages/EscolaGestao";
+import OficinaLideres from "@/pages/OficinaLideres";
 import Mentorias from "@/pages/Mentorias";
 import IdentidadeVisual from "@/pages/IdentidadeVisual";
 import PrivacyPolicy from "@/pages/PrivacyPolicy";
@@ -50,8 +50,12 @@ export const router = createBrowserRouter([
     element: <Projetos />,
   },
   {
+    path: "/oficina-de-lideres",
+    element: <OficinaLideres />,
+  },
+  {
     path: "/escola-gestao",
-    element: <EscolaGestao />,
+    element: <OficinaLideres />,
   },
   {
     path: "/mentorias",

@@ -5,10 +5,10 @@ import HeroSection from "@/components/HeroSection";
 import ContactSection from "@/components/ContactSection";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Award, BarChart3, Calendar, CheckCircle2, MapPin, MessageCircle, Phone, Target, Users } from "lucide-react";
-import EscolaGestaoLeadForm from "@/components/EscolaGestaoLeadForm";
+import OficinaLideresLeadForm from "@/components/OficinaLideresLeadForm";
 import VideoSection from "@/components/VideoSection";
 
-const EscolaGestao = () => {
+const OficinaLideres = () => {
   const heroImages = ["https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=2070", "https://images.unsplash.com/photo-1558021211-6d1403321394?q=80&w=2083", "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?q=80&w=2070"];
   
   const heroDescription = 
@@ -495,7 +495,7 @@ const EscolaGestao = () => {
                   </p>
                 </div>
                 
-                <EscolaGestaoLeadForm />
+                <OficinaLideresLeadForm />
                 
                 <div className="mt-8 pt-6 border-t border-border">
                   <h4 className="font-medium mb-2">Prefere falar diretamente conosco?</h4>
@@ -563,4 +563,4 @@ const EscolaGestao = () => {
     </div>;
 };
 
-export default EscolaGestao;
+export default OficinaLideres;

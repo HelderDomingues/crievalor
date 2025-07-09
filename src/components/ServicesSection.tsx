@@ -27,7 +27,7 @@ const services: Service[] = [
     icon: BookOpen,
     title: "Oficina de Líderes",
     description: "Desenvolva suas habilidades de liderança e transforme seu potencial em resultados extraordinários.",
-    route: "/escola-gestao",
+    route: "/oficina-de-lideres",
     color: "bg-emerald-500/10 text-emerald-500",
     details: [
       "Formação de líderes e gestores",

@@ -32,7 +32,7 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
-const EscolaGestaoLeadForm = () => {
+const OficinaLideresLeadForm = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
 
@@ -188,4 +188,4 @@ const EscolaGestaoLeadForm = () => {
   );
 };
 
-export default EscolaGestaoLeadForm;
+export default OficinaLideresLeadForm;
