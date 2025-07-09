@@ -2,37 +2,31 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Target, Users, Lightbulb, Palette, Building2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-  CarouselApi,
-} from '@/components/ui/carousel';
-
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious, CarouselApi } from '@/components/ui/carousel';
 interface InteractiveBackgroundProps {
   type: 'neural' | 'growth' | 'energy' | 'design' | 'institutional';
-  mousePosition: { x: number; y: number };
+  mousePosition: {
+    x: number;
+    y: number;
+  };
 }
-
-const InteractiveBackground: React.FC<InteractiveBackgroundProps> = ({ type, mousePosition }) => {
+const InteractiveBackground: React.FC<InteractiveBackgroundProps> = ({
+  type,
+  mousePosition
+}) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animationRef = useRef<number>();
-
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
-
     const resizeCanvas = () => {
       canvas.width = canvas.offsetWidth;
       canvas.height = canvas.offsetHeight;
     };
     resizeCanvas();
     window.addEventListener('resize', resizeCanvas);
-
     let particles: any[] = [];
     let time = 0;
 
@@ -40,7 +34,6 @@ const InteractiveBackground: React.FC<InteractiveBackgroundProps> = ({ type, mou
     const initParticles = () => {
       particles = [];
       const particleCount = type === 'institutional' ? 75 : type === 'neural' ? 60 : type === 'growth' ? 80 : type === 'energy' ? 100 : 70;
-      
       for (let i = 0; i < particleCount; i++) {
         particles.push({
           x: Math.random() * canvas.width,
@@ -56,7 +49,6 @@ const InteractiveBackground: React.FC<InteractiveBackgroundProps> = ({ type, mou
         });
       }
     };
-
     const getParticleColor = (type: string, index: number) => {
       switch (type) {
         case 'institutional':
@@ -73,31 +65,25 @@ const InteractiveBackground: React.FC<InteractiveBackgroundProps> = ({ type, mou
           return 'hsl(200, 70%, 60%)';
       }
     };
-
     const animate = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       time += 0.01;
 
       // Background gradient
-      const gradient = ctx.createRadialGradient(
-        mousePosition.x, mousePosition.y, 0,
-        mousePosition.x, mousePosition.y, 300
-      );
+      const gradient = ctx.createRadialGradient(mousePosition.x, mousePosition.y, 0, mousePosition.x, mousePosition.y, 300);
       gradient.addColorStop(0, 'rgba(0, 0, 20, 0.1)');
       gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
       ctx.fillStyle = gradient;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
-
       particles.forEach((particle, i) => {
         // Mouse attraction - mais suave
         const dx = mousePosition.x - particle.x;
         const dy = mousePosition.y - particle.y;
         const distance = Math.sqrt(dx * dx + dy * dy);
-        
         if (distance < 120) {
           const force = (120 - distance) / 120 * 0.15;
-          particle.speedX += (dx / distance) * force * 0.005;
-          particle.speedY += (dy / distance) * force * 0.005;
+          particle.speedX += dx / distance * force * 0.005;
+          particle.speedY += dy / distance * force * 0.005;
         }
 
         // Update position
@@ -112,7 +98,10 @@ const InteractiveBackground: React.FC<InteractiveBackgroundProps> = ({ type, mou
         if (particle.y > canvas.height) particle.y = 0;
 
         // Add trail
-        particle.trail.push({ x: particle.x, y: particle.y });
+        particle.trail.push({
+          x: particle.x,
+          y: particle.y
+        });
         if (particle.trail.length > 10) particle.trail.shift();
 
         // Draw trail
@@ -132,7 +121,6 @@ const InteractiveBackground: React.FC<InteractiveBackgroundProps> = ({ type, mou
             const dx = particle.x - other.x;
             const dy = particle.y - other.y;
             const distance = Math.sqrt(dx * dx + dy * dy);
-            
             if (distance < 100) {
               const opacity = (100 - distance) / 100 * 0.3;
               ctx.beginPath();
@@ -148,15 +136,11 @@ const InteractiveBackground: React.FC<InteractiveBackgroundProps> = ({ type, mou
         // Draw particle
         const pulse = Math.sin(particle.pulsePhase) * 0.3 + 0.7;
         const size = particle.size * pulse;
-        
+
         // Glow effect
-        const glowGradient = ctx.createRadialGradient(
-          particle.x, particle.y, 0,
-          particle.x, particle.y, size * 3
-        );
+        const glowGradient = ctx.createRadialGradient(particle.x, particle.y, 0, particle.x, particle.y, size * 3);
         glowGradient.addColorStop(0, particle.color.replace(')', ', 0.8)').replace('hsl', 'hsla'));
         glowGradient.addColorStop(1, particle.color.replace(')', ', 0)').replace('hsl', 'hsla'));
-        
         ctx.beginPath();
         ctx.arc(particle.x, particle.y, size * 3, 0, Math.PI * 2);
         ctx.fillStyle = glowGradient;
@@ -168,13 +152,10 @@ const InteractiveBackground: React.FC<InteractiveBackgroundProps> = ({ type, mou
         ctx.fillStyle = particle.color;
         ctx.fill();
       });
-
       animationRef.current = requestAnimationFrame(animate);
     };
-
     initParticles();
     animate();
-
     return () => {
       window.removeEventListener('resize', resizeCanvas);
       if (animationRef.current) {
@@ -182,108 +163,95 @@ const InteractiveBackground: React.FC<InteractiveBackgroundProps> = ({ type, mou
       }
     };
   }, [type, mousePosition]);
-
-  return (
-    <canvas
-      ref={canvasRef}
-      className="absolute inset-0 w-full h-full opacity-60"
-      style={{ pointerEvents: 'none' }}
-    />
-  );
+  return <canvas ref={canvasRef} className="absolute inset-0 w-full h-full opacity-60" style={{
+    pointerEvents: 'none'
+  }} />;
 };
-
 const InteractiveGalaxyHeroCarousel = () => {
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [mousePosition, setMousePosition] = useState({
+    x: 0,
+    y: 0
+  });
   const containerRef = useRef<HTMLDivElement>(null);
-
-  const slides = [
-    {
-      id: 'crie-valor',
-      icon: Building2,
-      title: 'Transformamos empresas em marcas de alto rendimento',
-      subtitle: 'Somos especialistas em crescimento empresarial',
-      description: 'Somos especialistas em crescimento empresarial. Combinamos estratégia, tecnologia e conhecimento para acelerar seus resultados e criar valor duradouro.',
-      ctaText: 'Sobre a Crie Valor',
-      ctaUrl: '/sobre',
-      secondaryCtaText: 'Falar com um Consultor',
-      secondaryCtaUrl: 'https://wa.me/5547992150289?text=Tenho%20interesse%20em%20conhecer%20mais%20sobre%20a%20Crie%20Valor',
-      backgroundType: 'institutional' as const,
-      gradientColors: 'from-indigo-900/20 via-purple-900/10 to-slate-900/20',
-      accentColor: 'text-indigo-400',
-      glowColor: 'shadow-indigo-500/20'
-    },
-    {
-      id: 'mar',
-      icon: Target,
-      title: 'MAR: Mapa para Alto Rendimento',
-      subtitle: 'Transforme sua empresa com nossa metodologia proprietária',
-      description: 'Descubra como nosso sistema exclusivo pode acelerar seus resultados e levar sua empresa ao próximo nível de crescimento sustentável.',
-      ctaText: 'Conhecer o MAR',
-      ctaUrl: '/mar',
-      secondaryCtaText: 'Diagnóstico Gratuito',
-      secondaryCtaUrl: '/diagnostico-gratuito',
-      backgroundType: 'neural' as const,
-      gradientColors: 'from-blue-900/20 via-indigo-900/10 to-purple-900/20',
-      accentColor: 'text-blue-400',
-      glowColor: 'shadow-blue-500/20'
-    },
-    {
-      id: 'mentorias',
-      icon: Users,
-      title: 'Mentorias Empresariais',
-      subtitle: 'Desenvolva todo o potencial da sua liderança',
-      description: 'Acelere seu crescimento profissional com acompanhamento 1:1 de especialistas em gestão, marketing e recursos humanos.',
-      ctaText: 'Conhecer Mentorias',
-      ctaUrl: '/mentorias',
-      secondaryCtaText: 'Conversar no WhatsApp',
-      secondaryCtaUrl: 'https://wa.me/5547992150289?text=Tenho%20interesse%20em%20saber%20mais%20sobre%20as%20Mentorias%20Empresariais',
-      backgroundType: 'growth' as const,
-      gradientColors: 'from-green-900/20 via-emerald-900/10 to-teal-900/20',
-      accentColor: 'text-green-400',
-      glowColor: 'shadow-green-500/20'
-    },
-    {
-      id: 'oficina',
-      icon: Lightbulb,
-      title: 'Oficina de Líderes',
-      subtitle: 'Desenvolva habilidades de liderança excepcionais',
-      description: 'Programa intensivo para formar líderes capazes de inspirar, motivar e conduzir equipes ao sucesso em qualquer cenário.',
-      ctaText: 'Conhecer Oficina',
-      ctaUrl: '/oficina-lideres',
-      secondaryCtaText: 'Conversar no WhatsApp',
-      secondaryCtaUrl: 'https://wa.me/5547992150289?text=Tenho%20interesse%20em%20saber%20mais%20sobre%20a%20Oficina%20de%20Líderes',
-      backgroundType: 'energy' as const,
-      gradientColors: 'from-purple-900/20 via-pink-900/10 to-red-900/20',
-      accentColor: 'text-purple-400',
-      glowColor: 'shadow-purple-500/20'
-    },
-    {
-      id: 'identidade',
-      icon: Palette,
-      title: 'Identidade Visual',
-      subtitle: 'Crie uma marca que conecta e converte',
-      description: 'Desenvolvemos identidades visuais únicas que refletem a essência da sua marca e criam conexões duradouras com seu público.',
-      ctaText: 'Ver Portfólio',
-      ctaUrl: '/identidade-visual',
-      secondaryCtaText: 'Solicitar Orçamento',
-      secondaryCtaUrl: 'https://wa.me/5547992150289?text=Tenho%20interesse%20em%20saber%20mais%20sobre%20Identidade%20Visual',
-      backgroundType: 'design' as const,
-      gradientColors: 'from-orange-900/20 via-yellow-900/10 to-red-900/20',
-      accentColor: 'text-orange-400',
-      glowColor: 'shadow-orange-500/20'
-    }
-  ];
-
+  const slides = [{
+    id: 'crie-valor',
+    icon: Building2,
+    title: 'Transformamos empresas em marcas de alto rendimento',
+    subtitle: 'Somos especialistas em crescimento empresarial',
+    description: 'Somos especialistas em crescimento empresarial. Combinamos estratégia, tecnologia e conhecimento para acelerar seus resultados e criar valor duradouro.',
+    ctaText: 'Sobre a Crie Valor',
+    ctaUrl: '/sobre',
+    secondaryCtaText: 'Falar com um Consultor',
+    secondaryCtaUrl: 'https://wa.me/5547992150289?text=Tenho%20interesse%20em%20conhecer%20mais%20sobre%20a%20Crie%20Valor',
+    backgroundType: 'institutional' as const,
+    gradientColors: 'from-indigo-900/20 via-purple-900/10 to-slate-900/20',
+    accentColor: 'text-indigo-400',
+    glowColor: 'shadow-indigo-500/20'
+  }, {
+    id: 'mar',
+    icon: Target,
+    title: 'MAR: Mapa para Alto Rendimento',
+    subtitle: 'Transforme sua empresa com nossa metodologia proprietária',
+    description: 'Descubra como nosso sistema exclusivo pode acelerar seus resultados e levar sua empresa ao próximo nível de crescimento sustentável.',
+    ctaText: 'Conhecer o MAR',
+    ctaUrl: '/mar',
+    secondaryCtaText: 'Diagnóstico Gratuito',
+    secondaryCtaUrl: '/diagnostico-gratuito',
+    backgroundType: 'neural' as const,
+    gradientColors: 'from-blue-900/20 via-indigo-900/10 to-purple-900/20',
+    accentColor: 'text-blue-400',
+    glowColor: 'shadow-blue-500/20'
+  }, {
+    id: 'mentorias',
+    icon: Users,
+    title: 'Mentorias Empresariais',
+    subtitle: 'Desenvolva todo o potencial da sua liderança',
+    description: 'Acelere seu crescimento profissional com acompanhamento 1:1 de especialistas em gestão, marketing e recursos humanos.',
+    ctaText: 'Conhecer Mentorias',
+    ctaUrl: '/mentorias',
+    secondaryCtaText: 'Conversar no WhatsApp',
+    secondaryCtaUrl: 'https://wa.me/5547992150289?text=Tenho%20interesse%20em%20saber%20mais%20sobre%20as%20Mentorias%20Empresariais',
+    backgroundType: 'growth' as const,
+    gradientColors: 'from-green-900/20 via-emerald-900/10 to-teal-900/20',
+    accentColor: 'text-green-400',
+    glowColor: 'shadow-green-500/20'
+  }, {
+    id: 'oficina',
+    icon: Lightbulb,
+    title: 'Oficina de Líderes',
+    subtitle: 'Desenvolva habilidades de liderança excepcionais',
+    description: 'Programa intensivo para formar líderes capazes de inspirar, motivar e conduzir equipes ao sucesso em qualquer cenário.',
+    ctaText: 'Conhecer Oficina',
+    ctaUrl: '/oficina-lideres',
+    secondaryCtaText: 'Conversar no WhatsApp',
+    secondaryCtaUrl: 'https://wa.me/5547992150289?text=Tenho%20interesse%20em%20saber%20mais%20sobre%20a%20Oficina%20de%20Líderes',
+    backgroundType: 'energy' as const,
+    gradientColors: 'from-purple-900/20 via-pink-900/10 to-red-900/20',
+    accentColor: 'text-purple-400',
+    glowColor: 'shadow-purple-500/20'
+  }, {
+    id: 'identidade',
+    icon: Palette,
+    title: 'Identidade Visual',
+    subtitle: 'Crie uma marca que conecta e converte',
+    description: 'Desenvolvemos identidades visuais únicas que refletem a essência da sua marca e criam conexões duradouras com seu público.',
+    ctaText: 'Ver Portfólio',
+    ctaUrl: '/identidade-visual',
+    secondaryCtaText: 'Solicitar Orçamento',
+    secondaryCtaUrl: 'https://wa.me/5547992150289?text=Tenho%20interesse%20em%20saber%20mais%20sobre%20Identidade%20Visual',
+    backgroundType: 'design' as const,
+    gradientColors: 'from-orange-900/20 via-yellow-900/10 to-red-900/20',
+    accentColor: 'text-orange-400',
+    glowColor: 'shadow-orange-500/20'
+  }];
   useEffect(() => {
     if (!api) return;
-
     api.on('select', () => {
       setCurrent(api.selectedScrollSnap());
     });
   }, [api]);
-
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       if (containerRef.current) {
@@ -294,28 +262,18 @@ const InteractiveGalaxyHeroCarousel = () => {
         });
       }
     };
-
     const container = containerRef.current;
     if (container) {
       container.addEventListener('mousemove', handleMouseMove);
       return () => container.removeEventListener('mousemove', handleMouseMove);
     }
   }, []);
-
   const currentSlide = slides[current];
-
-  return (
-    <section 
-      ref={containerRef}
-      className="relative min-h-screen flex items-center overflow-hidden bg-gradient-to-br from-gray-900 via-slate-900 to-black"
-    >
+  return <section ref={containerRef} className="relative min-h-screen flex items-center overflow-hidden bg-gradient-to-br from-gray-900 via-slate-900 to-black">
 
       {/* Interactive background */}
       <div className="absolute inset-0">
-        <InteractiveBackground 
-          type={currentSlide.backgroundType} 
-          mousePosition={mousePosition}
-        />
+        <InteractiveBackground type={currentSlide.backgroundType} mousePosition={mousePosition} />
       </div>
 
       {/* Base gradient */}
@@ -323,29 +281,21 @@ const InteractiveGalaxyHeroCarousel = () => {
 
       {/* Cosmic dust overlay */}
       <div className="absolute inset-0 opacity-30">
-        {[...Array(100)].map((_, i) => (
-          <div
-            key={i}
-            className="absolute w-1 h-1 bg-white rounded-full animate-pulse"
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-              animationDelay: `${Math.random() * 3}s`,
-              animationDuration: `${2 + Math.random() * 2}s`
-            }}
-          />
-        ))}
+        {[...Array(100)].map((_, i) => <div key={i} className="absolute w-1 h-1 bg-white rounded-full animate-pulse" style={{
+        left: `${Math.random() * 100}%`,
+        top: `${Math.random() * 100}%`,
+        animationDelay: `${Math.random() * 3}s`,
+        animationDuration: `${2 + Math.random() * 2}s`
+      }} />)}
       </div>
 
       <div className="container mx-auto px-4 relative z-10">
-        <Carousel 
-          className="w-full max-w-7xl mx-auto" 
-          setApi={setApi}
-          opts={{ align: "start", loop: true }}
-        >
+        <Carousel className="w-full max-w-7xl mx-auto" setApi={setApi} opts={{
+        align: "start",
+        loop: true
+      }}>
           <CarouselContent>
-            {slides.map((slide, index) => (
-              <CarouselItem key={slide.id}>
+            {slides.map((slide, index) => <CarouselItem key={slide.id}>
                 <div className="min-h-[90vh] flex items-center">
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center w-full py-20">
                     {/* Content */}
@@ -353,9 +303,9 @@ const InteractiveGalaxyHeroCarousel = () => {
                       {/* Icon with glow */}
                       <div className="flex items-center gap-6">
                         <div className={`relative rounded-full bg-black/30 backdrop-blur-sm p-6 border border-white/10 ${slide.glowColor} shadow-2xl`}>
-                          {React.createElement(slide.icon, { 
-                            className: `h-12 w-12 ${slide.accentColor}` 
-                          })}
+                          {React.createElement(slide.icon, {
+                        className: `h-12 w-12 ${slide.accentColor}`
+                      })}
                           <div className={`absolute inset-0 rounded-full bg-gradient-to-r ${slide.accentColor.replace('text-', 'from-')} to-transparent opacity-20 blur-xl`} />
                         </div>
                         <div className={`h-px bg-gradient-to-r ${slide.accentColor.replace('text-', 'from-')} to-transparent flex-1`} />
@@ -368,9 +318,7 @@ const InteractiveGalaxyHeroCarousel = () => {
                             {slide.title}
                           </span>
                         </h1>
-                        <p className={`text-2xl lg:text-3xl font-medium ${slide.accentColor}`}>
-                          {slide.subtitle}
-                        </p>
+                        
                         <p className="text-xl text-gray-300 leading-relaxed max-w-2xl">
                           {slide.description}
                         </p>
@@ -378,30 +326,17 @@ const InteractiveGalaxyHeroCarousel = () => {
 
                       {/* CTAs with enhanced styling */}
                       <div className="flex flex-col sm:flex-row gap-6 pt-8">
-                        <Button 
-                          asChild 
-                          size="lg" 
-                          className={`text-xl px-8 py-6 bg-gradient-to-r ${slide.accentColor.replace('text-', 'from-')} to-white text-white hover:scale-105 transition-all duration-300 ${slide.glowColor} shadow-2xl font-bold border-2 border-white/10`}
-                        >
+                        <Button asChild size="lg" className={`text-xl px-8 py-6 bg-gradient-to-r ${slide.accentColor.replace('text-', 'from-')} to-white text-white hover:scale-105 transition-all duration-300 ${slide.glowColor} shadow-2xl font-bold border-2 border-white/10`}>
                           <Link to={slide.ctaUrl}>
                             {slide.ctaText} <ArrowRight className="ml-3 h-6 w-6" />
                           </Link>
                         </Button>
-                        <Button 
-                          asChild 
-                          variant="outline" 
-                          size="lg" 
-                          className="text-xl px-8 py-6 border-2 border-white/40 bg-black/40 backdrop-blur-sm text-white hover:bg-white/20 hover:border-white/60 hover:scale-105 transition-all duration-300 font-semibold"
-                        >
-                          {slide.secondaryCtaUrl.startsWith('http') ? (
-                            <a href={slide.secondaryCtaUrl} target="_blank" rel="noopener noreferrer">
+                        <Button asChild variant="outline" size="lg" className="text-xl px-8 py-6 border-2 border-white/40 bg-black/40 backdrop-blur-sm text-white hover:bg-white/20 hover:border-white/60 hover:scale-105 transition-all duration-300 font-semibold">
+                          {slide.secondaryCtaUrl.startsWith('http') ? <a href={slide.secondaryCtaUrl} target="_blank" rel="noopener noreferrer">
                               {slide.secondaryCtaText}
-                            </a>
-                          ) : (
-                            <Link to={slide.secondaryCtaUrl}>
+                            </a> : <Link to={slide.secondaryCtaUrl}>
                               {slide.secondaryCtaText}
-                            </Link>
-                          )}
+                            </Link>}
                         </Button>
                       </div>
                     </div>
@@ -410,45 +345,32 @@ const InteractiveGalaxyHeroCarousel = () => {
                     <div className="relative flex items-center justify-center">
                       <div className="relative w-96 h-96">
                         {/* Outer glow rings */}
-                        {[...Array(3)].map((_, i) => (
-                          <div
-                            key={i}
-                            className={`absolute inset-0 rounded-full border-2 ${slide.accentColor.replace('text-', 'border-')} opacity-20 animate-pulse`}
-                            style={{
-                              transform: `scale(${1 + i * 0.2})`,
-                              animationDelay: `${i * 0.5}s`,
-                              animationDuration: '3s'
-                            }}
-                          />
-                        ))}
+                        {[...Array(3)].map((_, i) => <div key={i} className={`absolute inset-0 rounded-full border-2 ${slide.accentColor.replace('text-', 'border-')} opacity-20 animate-pulse`} style={{
+                      transform: `scale(${1 + i * 0.2})`,
+                      animationDelay: `${i * 0.5}s`,
+                      animationDuration: '3s'
+                    }} />)}
                         
                         {/* Central orb */}
                         <div className="absolute inset-8 rounded-full bg-gradient-to-br from-black/50 to-black/80 backdrop-blur-xl border border-white/10 flex items-center justify-center">
                           <div className="absolute inset-4 rounded-full bg-gradient-to-br from-white/5 to-transparent" />
                           <div className="absolute inset-8 rounded-full bg-gradient-to-br from-white/10 to-transparent" />
-                          {React.createElement(slide.icon, { 
-                            className: `h-32 w-32 ${slide.accentColor} relative z-10` 
-                          })}
+                          {React.createElement(slide.icon, {
+                        className: `h-32 w-32 ${slide.accentColor} relative z-10`
+                      })}
                         </div>
 
                         {/* Floating particles around the orb */}
-                        {[...Array(8)].map((_, i) => (
-                          <div
-                            key={i}
-                            className={`absolute w-2 h-2 ${slide.accentColor.replace('text-', 'bg-')} rounded-full`}
-                            style={{
-                              left: `${50 + 40 * Math.cos(i * Math.PI / 4)}%`,
-                              top: `${50 + 40 * Math.sin(i * Math.PI / 4)}%`,
-                              animation: `orbit 8s linear infinite ${i * 0.5}s`
-                            }}
-                          />
-                        ))}
+                        {[...Array(8)].map((_, i) => <div key={i} className={`absolute w-2 h-2 ${slide.accentColor.replace('text-', 'bg-')} rounded-full`} style={{
+                      left: `${50 + 40 * Math.cos(i * Math.PI / 4)}%`,
+                      top: `${50 + 40 * Math.sin(i * Math.PI / 4)}%`,
+                      animation: `orbit 8s linear infinite ${i * 0.5}s`
+                    }} />)}
                       </div>
                     </div>
                   </div>
                 </div>
-              </CarouselItem>
-            ))}
+              </CarouselItem>)}
           </CarouselContent>
           
           {/* Enhanced navigation with responsive positioning - moved to top area */}
@@ -458,17 +380,7 @@ const InteractiveGalaxyHeroCarousel = () => {
 
         {/* Slide indicators */}
         <div className="flex justify-center gap-3 mt-12">
-          {slides.map((_, index) => (
-            <button
-              key={index}
-              onClick={() => api?.scrollTo(index)}
-              className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                index === current 
-                  ? `${currentSlide.accentColor.replace('text-', 'bg-')} scale-125` 
-                  : 'bg-white/30 hover:bg-white/50'
-              }`}
-            />
-          ))}
+          {slides.map((_, index) => <button key={index} onClick={() => api?.scrollTo(index)} className={`w-3 h-3 rounded-full transition-all duration-300 ${index === current ? `${currentSlide.accentColor.replace('text-', 'bg-')} scale-125` : 'bg-white/30 hover:bg-white/50'}`} />)}
         </div>
 
         {/* Scroll indicator */}
@@ -479,8 +391,6 @@ const InteractiveGalaxyHeroCarousel = () => {
         </div>
       </div>
 
-    </section>
-  );
+    </section>;
 };
-
 export default InteractiveGalaxyHeroCarousel;
