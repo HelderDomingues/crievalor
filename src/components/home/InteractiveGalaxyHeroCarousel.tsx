@@ -291,17 +291,7 @@ const InteractiveGalaxyHeroCarousel = () => {
     <section 
       ref={containerRef}
       className="relative min-h-screen flex items-center overflow-hidden bg-gradient-to-br from-gray-900 via-slate-900 to-black"
-      style={{ cursor: 'none' }}
     >
-      {/* Custom cursor */}
-      <div 
-        className="fixed w-6 h-6 bg-white/20 rounded-full pointer-events-none z-50 mix-blend-difference"
-        style={{
-          left: mousePosition.x - 12,
-          top: mousePosition.y - 12,
-          transition: 'all 0.1s ease-out'
-        }}
-      />
 
       {/* Interactive background */}
       <div className="absolute inset-0">
