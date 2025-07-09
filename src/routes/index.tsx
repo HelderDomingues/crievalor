@@ -25,6 +25,7 @@ import Subscription from "@/pages/Subscription";
 import Checkout from "@/pages/Checkout";
 import Accessibility from "@/pages/Accessibility";
 import DiagnosticoGratuito from "@/pages/DiagnosticoGratuito";
+import WhatsAppDashboard from "@/pages/WhatsAppDashboard";
 
 export const router = createBrowserRouter([
   {
@@ -119,5 +120,9 @@ export const router = createBrowserRouter([
   {
     path: "/diagnostico-gratuito",
     element: <DiagnosticoGratuito />,
+  },
+  {
+    path: "/admin-whatsapp",
+    element: <WhatsAppDashboard />,
   },
 ]);
