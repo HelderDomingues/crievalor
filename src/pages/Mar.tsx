@@ -138,7 +138,7 @@ const Mar = () => {
                   
                   <div className="bg-card rounded-lg p-6 shadow-sm">
                     <h3 className="text-xl font-semibold mb-3">Como é o processo de implementação do MAR?</h3>
-                    <p className="text-muted-foreground">O processo inclui: diagnóstico inicial, análise estratégica, desenvolvimento do mapa personalizado, apresentação dos resultados e acompanhamento da implementação com suporte contínuo.</p>
+                    <p className="text-muted-foreground">O processo inclui: diagnóstico inicial, análise estratégica, desenvolvimento do mapa personalizado e apresentação dos resultados.</p>
                   </div>
                   
                   <div className="bg-card rounded-lg p-6 shadow-sm">
@@ -148,7 +148,7 @@ const Mar = () => {
                   
                   <div className="bg-card rounded-lg p-6 shadow-sm">
                     <h3 className="text-xl font-semibold mb-3">Posso parcelar o investimento no MAR?</h3>
-                    <p className="text-muted-foreground">Sim, oferecemos opções de parcelamento em até 12x no cartão de crédito, além de descontos para pagamento à vista. Consulte as condições específicas para cada plano.</p>
+                    <p className="text-muted-foreground">Sim, oferecemos opções de parcelamento em até 10x no cartão de crédito, além de descontos para pagamento à vista. Consulte as condições específicas para cada plano.</p>
                   </div>
                 </div>
               </div>
