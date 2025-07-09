@@ -5,6 +5,7 @@ import Footer from "@/components/Footer";
 import ContactSection from "@/components/ContactSection";
 import ClientLogosCarousel from "@/components/ClientLogosCarousel";
 import InteractiveGalaxyHeroCarousel from "@/components/home/InteractiveGalaxyHeroCarousel";
+import MentoriasSection from "@/components/home/MentoriasSection";
 import MarHighlight from "@/components/home/MarHighlight";
 import TestimonialsSection from "@/components/home/TestimonialsSection";
 import PartnersSection from "@/components/home/PartnersSection";
@@ -50,6 +51,9 @@ const Index = () => {
         
         {/* MAR Product Highlight - Seção dedicada */}
         <MarHighlight />
+        
+        {/* Mentorias Section - Seção dedicada */}
+        <MentoriasSection />
         
         {/* Services Sections - Seções completas */}
         <ServicesSections />

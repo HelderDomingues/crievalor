@@ -87,15 +87,15 @@ const InteractiveBackground: React.FC<InteractiveBackgroundProps> = ({ type, mou
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       particles.forEach((particle, i) => {
-        // Mouse attraction
+        // Mouse attraction - mais suave
         const dx = mousePosition.x - particle.x;
         const dy = mousePosition.y - particle.y;
         const distance = Math.sqrt(dx * dx + dy * dy);
         
-        if (distance < 150) {
-          const force = (150 - distance) / 150 * 0.3;
-          particle.speedX += (dx / distance) * force * 0.01;
-          particle.speedY += (dy / distance) * force * 0.01;
+        if (distance < 120) {
+          const force = (120 - distance) / 120 * 0.15;
+          particle.speedX += (dx / distance) * force * 0.005;
+          particle.speedY += (dy / distance) * force * 0.005;
         }
 
         // Update position
@@ -364,7 +364,7 @@ const InteractiveGalaxyHeroCarousel = () => {
                         <Button 
                           asChild 
                           size="lg" 
-                          className={`text-xl px-8 py-6 bg-gradient-to-r ${slide.accentColor.replace('text-', 'from-')} to-white text-black hover:scale-105 transition-all duration-300 ${slide.glowColor} shadow-2xl font-semibold`}
+                          className={`text-xl px-8 py-6 bg-gradient-to-r ${slide.accentColor.replace('text-', 'from-')} to-white text-black hover:scale-105 transition-all duration-300 ${slide.glowColor} shadow-2xl font-bold border-2 border-white/10`}
                         >
                           <Link to={slide.ctaUrl}>
                             {slide.ctaText} <ArrowRight className="ml-3 h-6 w-6" />
@@ -374,7 +374,7 @@ const InteractiveGalaxyHeroCarousel = () => {
                           asChild 
                           variant="outline" 
                           size="lg" 
-                          className="text-xl px-8 py-6 border-2 border-white/20 bg-black/20 backdrop-blur-sm text-white hover:bg-white/10 hover:scale-105 transition-all duration-300"
+                          className="text-xl px-8 py-6 border-2 border-white/40 bg-black/40 backdrop-blur-sm text-white hover:bg-white/20 hover:border-white/60 hover:scale-105 transition-all duration-300 font-semibold"
                         >
                           {slide.secondaryCtaUrl.startsWith('http') ? (
                             <a href={slide.secondaryCtaUrl} target="_blank" rel="noopener noreferrer">
