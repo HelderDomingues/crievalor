@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, Target, Users, Lightbulb, Palette } from 'lucide-react';
+import { ArrowRight, Target, Users, Lightbulb, Palette, Building2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import {
   Carousel,
@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/carousel';
 
 interface InteractiveBackgroundProps {
-  type: 'neural' | 'growth' | 'energy' | 'design';
+  type: 'neural' | 'growth' | 'energy' | 'design' | 'institutional';
   mousePosition: { x: number; y: number };
 }
 
@@ -39,7 +39,7 @@ const InteractiveBackground: React.FC<InteractiveBackgroundProps> = ({ type, mou
     // Initialize particles based on type
     const initParticles = () => {
       particles = [];
-      const particleCount = type === 'neural' ? 60 : type === 'growth' ? 80 : type === 'energy' ? 100 : 70;
+      const particleCount = type === 'institutional' ? 75 : type === 'neural' ? 60 : type === 'growth' ? 80 : type === 'energy' ? 100 : 70;
       
       for (let i = 0; i < particleCount; i++) {
         particles.push({
@@ -59,6 +59,8 @@ const InteractiveBackground: React.FC<InteractiveBackgroundProps> = ({ type, mou
 
     const getParticleColor = (type: string, index: number) => {
       switch (type) {
+        case 'institutional':
+          return `hsl(${260 + Math.sin(index * 0.09) * 20}, 65%, 65%)`;
         case 'neural':
           return `hsl(${200 + Math.sin(index * 0.1) * 30}, 70%, 60%)`;
         case 'growth':
@@ -197,6 +199,21 @@ const InteractiveGalaxyHeroCarousel = () => {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const slides = [
+    {
+      id: 'crie-valor',
+      icon: Building2,
+      title: 'Crie Valor',
+      subtitle: 'Transformamos empresas em marcas de alto rendimento',
+      description: 'Somos especialistas em crescimento empresarial. Combinamos estratégia, tecnologia e conhecimento para acelerar seus resultados e criar valor duradouro.',
+      ctaText: 'Sobre a Crie Valor',
+      ctaUrl: '/sobre',
+      secondaryCtaText: 'Falar com um Consultor',
+      secondaryCtaUrl: 'https://wa.me/5547992150289?text=Tenho%20interesse%20em%20conhecer%20mais%20sobre%20a%20Crie%20Valor',
+      backgroundType: 'institutional' as const,
+      gradientColors: 'from-indigo-900/20 via-purple-900/10 to-slate-900/20',
+      accentColor: 'text-indigo-400',
+      glowColor: 'shadow-indigo-500/20'
+    },
     {
       id: 'mar',
       icon: Target,
