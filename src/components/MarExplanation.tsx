@@ -73,7 +73,7 @@ const MarExplanation = () => {
   const benefits = [
     {
       title: "Velocidade",
-      description: "Reduza o tempo de desenvolvimento estratégico de meses para semanas.",
+      description: "Reduza o tempo de desenvolvimento estratégico de meses para dias.",
       icon: Clock
     },
     {
@@ -102,7 +102,7 @@ const MarExplanation = () => {
           </h2>
           <p className="text-lg text-muted-foreground">
             O Mapa para Alto Rendimento combina o melhor da nossa metodologia proprietária com a
-            experiência de consultores humanos para criar estratégias poderosas que transformam seu negócio.
+            experiência de consultores humanos para criar estratégias poderosas que impulsionam seu negócio.
           </p>
         </div>
 
