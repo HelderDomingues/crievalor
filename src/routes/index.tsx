@@ -26,6 +26,10 @@ import Checkout from "@/pages/Checkout";
 import Accessibility from "@/pages/Accessibility";
 import DiagnosticoGratuito from "@/pages/DiagnosticoGratuito";
 import WhatsAppDashboard from "@/pages/WhatsAppDashboard";
+import Palestra from "@/pages/Palestra";
+import PalestraSucesso from "@/pages/PalestraSucesso";
+import LecturesAdmin from "@/pages/LecturesAdmin";
+import EventLeadsAdmin from "@/pages/EventLeadsAdmin";
 
 export const router = createBrowserRouter([
   {
@@ -128,5 +132,21 @@ export const router = createBrowserRouter([
   {
     path: "/admin-whatsapp",
     element: <WhatsAppDashboard />,
+  },
+  {
+    path: "/palestra",
+    element: <Palestra />,
+  },
+  {
+    path: "/palestra/sucesso",
+    element: <PalestraSucesso />,
+  },
+  {
+    path: "/admin-lectures",
+    element: <LecturesAdmin />,
+  },
+  {
+    path: "/admin-event-leads",
+    element: <EventLeadsAdmin />,
   },
 ]);

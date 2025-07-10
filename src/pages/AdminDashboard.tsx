@@ -5,7 +5,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import AdminAuth from "@/components/admin/AdminAuth";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Settings, FileText, WebhookIcon, Briefcase, Users } from "lucide-react";
+import { Settings, FileText, WebhookIcon, Briefcase, Users, Calendar, UserCheck } from "lucide-react";
 
 const AdminDashboard = () => {
   return (
@@ -100,6 +100,46 @@ const AdminDashboard = () => {
                 </Card>
               </Link>
               
+              {/* Palestras & Eventos */}
+              <Link to="/admin-lectures">
+                <Card className="h-full hover:shadow-md transition-shadow cursor-pointer">
+                  <CardHeader>
+                    <CardTitle className="flex items-center">
+                      <Calendar className="mr-2 h-5 w-5 text-primary" />
+                      Palestras & Eventos
+                    </CardTitle>
+                    <CardDescription>
+                      Gerenciar palestras e eventos
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm text-muted-foreground">
+                      Crie e gerencie palestras disponíveis no sistema de captura de leads.
+                    </p>
+                  </CardContent>
+                </Card>
+              </Link>
+
+              {/* Leads de Palestras */}
+              <Link to="/admin-event-leads">
+                <Card className="h-full hover:shadow-md transition-shadow cursor-pointer">
+                  <CardHeader>
+                    <CardTitle className="flex items-center">
+                      <UserCheck className="mr-2 h-5 w-5 text-primary" />
+                      Leads de Palestras
+                    </CardTitle>
+                    <CardDescription>
+                      Visualizar leads capturados
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm text-muted-foreground">
+                      Visualize e gerencie os leads capturados através das palestras.
+                    </p>
+                  </CardContent>
+                </Card>
+              </Link>
+
               {/* System Settings */}
               <Link to="/admin-settings">
                 <Card className="h-full hover:shadow-md transition-shadow cursor-pointer">

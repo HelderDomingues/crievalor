@@ -187,6 +187,62 @@ export type Database = {
           },
         ]
       }
+      event_leads: {
+        Row: {
+          company_name: string | null
+          created_at: string
+          email: string
+          id: string
+          instagram: string | null
+          lecture_date: string | null
+          lecture_id: string | null
+          material_sent: boolean
+          name: string
+          notes: string | null
+          phone: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          company_name?: string | null
+          created_at?: string
+          email: string
+          id?: string
+          instagram?: string | null
+          lecture_date?: string | null
+          lecture_id?: string | null
+          material_sent?: boolean
+          name: string
+          notes?: string | null
+          phone: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          company_name?: string | null
+          created_at?: string
+          email?: string
+          id?: string
+          instagram?: string | null
+          lecture_date?: string | null
+          lecture_id?: string | null
+          material_sent?: boolean
+          name?: string
+          notes?: string | null
+          phone?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_leads_lecture_id_fkey"
+            columns: ["lecture_id"]
+            isOneToOne: false
+            referencedRelation: "lectures"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       image_placeholders: {
         Row: {
           alt_text: string | null
@@ -275,6 +331,36 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      lectures: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          is_active: boolean
+          speaker: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          speaker?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          speaker?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
       material_accesses: {
         Row: {
