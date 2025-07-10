@@ -64,7 +64,7 @@ const Header = () => {
 
   const handleWhatsAppContact = () => {
     const message = encodeURIComponent("Olá, gostaria de obter mais informações sobre os serviços da Crie Valor.");
-    window.open(`https://wa.me/5547992150289?text=${message}`, '_blank');
+    window.open(`https://wa.me/5547996542991text=${message}`, '_blank');
   };
 
   return (
