@@ -116,16 +116,16 @@ const Palestra = () => {
       <Header />
       
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-primary via-primary-foreground to-secondary pt-24 pb-16">
-        <div className="absolute inset-0 bg-grid-white/10 bg-[size:20px_20px] [mask-image:radial-gradient(ellipse_at_center,white,transparent)]" />
+      <section className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 pt-24 pb-16">
+        <div className="absolute inset-0 bg-grid-white/5 bg-[size:20px_20px] [mask-image:radial-gradient(ellipse_at_center,white,transparent)]" />
         <div className="container mx-auto px-4 relative">
           <div className="max-w-4xl mx-auto text-center">
             <div className="inline-flex items-center gap-2 text-white/90 mb-6 bg-white/10 backdrop-blur-sm rounded-full px-4 py-2">
-              <Calendar className="h-5 w-5" />
-              <span className="text-sm font-medium uppercase tracking-wider">Capacitação Empresarial</span>
+              <Calendar className="h-5 w-5 text-white" />
+              <span className="text-sm font-medium uppercase tracking-wider text-white">Capacitação Empresarial</span>
             </div>
             <h1 className="text-5xl md:text-6xl font-bold text-white mb-6 leading-tight">
-              Palestras que <span className="text-secondary">Transformam</span> Negócios
+              Palestras que <span className="text-yellow-400">impulsionam vidas</span> e negócios
             </h1>
             <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto leading-relaxed">
               Conteúdo estratégico, insights práticos e networking qualificado. 
@@ -133,16 +133,16 @@ const Palestra = () => {
             </p>
             <div className="flex flex-col sm:flex-row gap-3 items-center justify-center text-white/80 text-sm">
               <div className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-secondary rounded-full" />
-                <span>Material Exclusivo</span>
+                <div className="w-2 h-2 bg-yellow-400 rounded-full" />
+                <span className="text-white">Material Exclusivo</span>
               </div>
               <div className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-secondary rounded-full" />
-                <span>Certificado de Participação</span>
+                <div className="w-2 h-2 bg-yellow-400 rounded-full" />
+                <span className="text-white">Certificado de Participação</span>
               </div>
               <div className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-secondary rounded-full" />
-                <span>Networking Qualificado</span>
+                <div className="w-2 h-2 bg-yellow-400 rounded-full" />
+                <span className="text-white">Networking Qualificado</span>
               </div>
             </div>
           </div>
