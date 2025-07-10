@@ -30,8 +30,8 @@ const STATIC_PAYMENT_LINKS = {
     pix: "https://sandbox.asaas.com/c/fy15747uacorzbla"
   },
   pro_plan: {
-    credit: "https://sandbox.asaas.com/c/4fcw2ezk4je61qon", 
-    pix: "https://sandbox.asaas.com/c/pqnkhgvic7c25ufq"
+    credit: "https://www.asaas.com/c/rb9ayqo3l1y7hlym", 
+    pix: "https://www.asaas.com/c/tywf1vy9r3wcvgq1"
   },
   enterprise_plan: {
     credit: "https://sandbox.asaas.com/c/z4vate6zwonrwoft", 
