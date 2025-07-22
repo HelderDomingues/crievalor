@@ -4,7 +4,7 @@ import { createBrowserRouter } from "react-router-dom";
 import Index from "@/pages/Index";
 import NotFound from "@/pages/NotFound";
 import AdminSetup from "@/pages/AdminSetup";
-import WebhookAdmin from "@/pages/WebhookAdmin";
+
 import PortfolioAdmin from "@/pages/PortfolioAdmin";
 import AdminMaterialsPage from "@/pages/AdminMaterials";
 import ClientLogosAdminPage from "@/pages/ClientLogosAdminPage";
@@ -93,10 +93,6 @@ export const router = createBrowserRouter([
   {
     path: "/admin-setup",
     element: <AdminSetup />,
-  },
-  {
-    path: "/admin-webhooks",
-    element: <WebhookAdmin />,
   },
   {
     path: "/admin-portfolio",

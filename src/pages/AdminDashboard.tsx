@@ -5,7 +5,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import AdminAuth from "@/components/admin/AdminAuth";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Settings, FileText, WebhookIcon, Briefcase, Users, Calendar, UserCheck, Stethoscope } from "lucide-react";
+import { Settings, FileText, Briefcase, Users, Calendar, UserCheck, Stethoscope } from "lucide-react";
 
 const AdminDashboard = () => {
   return (
@@ -80,25 +80,6 @@ const AdminDashboard = () => {
                 </Card>
               </Link>
               
-              {/* Webhooks Admin */}
-              <Link to="/admin-webhooks">
-                <Card className="h-full hover:shadow-md transition-shadow cursor-pointer">
-                  <CardHeader>
-                    <CardTitle className="flex items-center">
-                      <WebhookIcon className="mr-2 h-5 w-5 text-primary" />
-                      Webhooks
-                    </CardTitle>
-                    <CardDescription>
-                      Gerenciar webhooks
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-sm text-muted-foreground">
-                      Configure os webhooks para integração com sistemas externos.
-                    </p>
-                  </CardContent>
-                </Card>
-              </Link>
               
               {/* Palestras & Eventos */}
               <Link to="/admin-lectures">

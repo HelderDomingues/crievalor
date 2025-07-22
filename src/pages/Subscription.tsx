@@ -55,7 +55,7 @@ const SubscriptionPage = () => {
   }, [success, canceled, toast]);
 
   useEffect(() => {
-    if (selectedTab && selectedTab !== "overview" && selectedTab !== "plans" && selectedTab !== "details") {
+    if (selectedTab && selectedTab !== "overview" && selectedTab !== "details") {
       navigate("/subscription?tab=overview", { replace: true });
     }
   }, [selectedTab, navigate]);
@@ -187,7 +187,6 @@ const SubscriptionPage = () => {
           <Tabs value={selectedTab} onValueChange={handleTabChange} className="space-y-8">
             <TabsList>
               <TabsTrigger value="overview">Visão Geral</TabsTrigger>
-              <TabsTrigger value="plans">Planos</TabsTrigger>
               <TabsTrigger value="details">Detalhes da Assinatura</TabsTrigger>
             </TabsList>
             
@@ -249,39 +248,6 @@ const SubscriptionPage = () => {
               </div>
             </TabsContent>
             
-            <TabsContent value="plans">
-              <SubscriptionPlans
-                isCheckingOut={isCheckingOut || processingPayment}
-                isPlanCurrent={isPlanCurrent}
-                onSubscribe={handleSubscribe}
-                selectedInstallments={1}
-                onInstallmentsChange={handleInstallmentsChange}
-              />
-              
-              {selectedPlanId && selectedPlanId !== "corporate_plan" && (
-                <div id="payment-options" className="mt-8 scroll-mt-16">
-                  <h2 className="text-2xl font-semibold mb-4">Opções de pagamento para {subscriptionService.getPlanFromId(selectedPlanId)?.name || "plano selecionado"}</h2>
-                  
-                  <PaymentOptions 
-                    onInstallmentsChange={handleInstallmentsChange}
-                    onPaymentTypeChange={handlePaymentTypeChange}
-                    selectedInstallments={selectedInstallments}
-                    selectedPaymentType={selectedPaymentType}
-                  />
-                  
-                  <div className="mt-6 text-center">
-                    <CheckoutController 
-                      planId={selectedPlanId}
-                      installments={selectedInstallments}
-                      paymentType={selectedPaymentType}
-                      buttonText="Continuar com o pagamento"
-                      className="px-8 py-3 text-lg"
-                      size="lg"
-                    />
-                  </div>
-                </div>
-              )}
-            </TabsContent>
             
             <TabsContent value="details">
               <SubscriptionDetails />
