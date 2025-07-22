@@ -5,7 +5,7 @@ import { Helmet } from "react-helmet-async";
 import { useScrollToTop } from "@/hooks/useScrollToTop";
 import { Button } from "@/components/ui/button";
 import { CheckCircle, Clock, FileText, Users, Zap, ArrowRight } from "lucide-react";
-import OficinaLideresLeadForm from "@/components/OficinaLideresLeadForm";
+import DiagnosticForm from "@/components/DiagnosticForm";
 
 const DiagnosticoGratuito = () => {
   useScrollToTop();
@@ -260,7 +260,7 @@ const DiagnosticoGratuito = () => {
             </div>
             
             <div className="max-w-2xl mx-auto">
-              <OficinaLideresLeadForm />
+              <DiagnosticForm />
             </div>
           </div>
         </section>
