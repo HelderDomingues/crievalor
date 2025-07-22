@@ -27,6 +27,7 @@ type FormValues = z.infer<typeof formSchema>;
 
 const DiagnosticForm = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
   const { toast } = useToast();
 
   const form = useForm<FormValues>({
@@ -74,12 +75,12 @@ const DiagnosticForm = () => {
         throw error;
       }
 
+      setIsSubmitted(true);
+      
       toast({
         title: "Solicitação enviada com sucesso!",
         description: "Nossa equipe entrará em contato em até 4 horas para agendar seu diagnóstico.",
       });
-
-      form.reset();
     } catch (error) {
       console.error("Error submitting diagnostic request:", error);
       toast({
@@ -91,6 +92,29 @@ const DiagnosticForm = () => {
       setIsSubmitting(false);
     }
   };
+
+  if (isSubmitted) {
+    return (
+      <div className="bg-card border border-border rounded-xl p-8 shadow-lg text-center">
+        <div className="max-w-md mx-auto">
+          <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            </svg>
+          </div>
+          <h3 className="text-xl font-semibold text-foreground mb-2">
+            Solicitação Enviada com Sucesso!
+          </h3>
+          <p className="text-muted-foreground mb-4">
+            Obrigado pelo seu interesse! Nossa equipe especializada entrará em contato em até 4 horas para agendar seu diagnóstico gratuito.
+          </p>
+          <p className="text-sm text-muted-foreground">
+            Verifique também sua caixa de spam para não perder nosso contato.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <Form {...form}>

@@ -5,7 +5,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import AdminAuth from "@/components/admin/AdminAuth";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Settings, FileText, WebhookIcon, Briefcase, Users, Calendar, UserCheck } from "lucide-react";
+import { Settings, FileText, WebhookIcon, Briefcase, Users, Calendar, UserCheck, Stethoscope } from "lucide-react";
 
 const AdminDashboard = () => {
   return (
@@ -135,6 +135,26 @@ const AdminDashboard = () => {
                   <CardContent>
                     <p className="text-sm text-muted-foreground">
                       Visualize e gerencie os leads capturados através das palestras.
+                    </p>
+                  </CardContent>
+                </Card>
+              </Link>
+
+              {/* Diagnósticos Gratuitos */}
+              <Link to="/admin-diagnostic-requests">
+                <Card className="h-full hover:shadow-md transition-shadow cursor-pointer">
+                  <CardHeader>
+                    <CardTitle className="flex items-center">
+                      <Stethoscope className="mr-2 h-5 w-5 text-primary" />
+                      Diagnósticos Gratuitos
+                    </CardTitle>
+                    <CardDescription>
+                      Gerenciar solicitações de diagnóstico
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm text-muted-foreground">
+                      Visualize e gerencie as solicitações de diagnóstico gratuito.
                     </p>
                   </CardContent>
                 </Card>
