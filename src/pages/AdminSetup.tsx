@@ -4,7 +4,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import AdminAuth from "@/components/admin/AdminAuth";
 import { Button } from "@/components/ui/button";
-import { FileText, Image, MessageSquareQuote, Settings, Palette } from "lucide-react";
+import { FileText, Image, MessageSquareQuote, Palette, Calendar, UserCheck, Stethoscope } from "lucide-react";
 import AdminCard from "@/components/admin/AdminCard";
 
 const AdminSetup = () => {
@@ -48,13 +48,6 @@ const AdminSetup = () => {
                   />
                   
                   <AdminCard 
-                    title="Configurações do Sistema" 
-                    icon={<Settings className="h-10 w-10" />}
-                    to="/admin-webhooks"
-                    description="Gerenciar webhooks e outras configurações do sistema"
-                  />
-                  
-                  <AdminCard 
                     title="Materiais Exclusivos" 
                     icon={<FileText className="h-10 w-10" />}
                     to="/admin-materials"
@@ -64,7 +57,7 @@ const AdminSetup = () => {
                   <AdminCard 
                     title="Logos de Clientes" 
                     icon={<Image className="h-10 w-10" />}
-                    to="/admin-logos"
+                    to="/admin-client-logos"
                     description="Gerenciar logos de clientes exibidos na página inicial"
                   />
 
@@ -73,6 +66,27 @@ const AdminSetup = () => {
                     icon={<MessageSquareQuote className="h-10 w-10" />}
                     to="/admin-testimonials"
                     description="Gerenciar depoimentos de clientes exibidos na página inicial"
+                  />
+
+                  <AdminCard 
+                    title="Palestras & Eventos" 
+                    icon={<Calendar className="h-10 w-10" />}
+                    to="/admin-lectures"
+                    description="Crie e gerencie palestras disponíveis no sistema de captura de leads"
+                  />
+
+                  <AdminCard 
+                    title="Leads de Palestras" 
+                    icon={<UserCheck className="h-10 w-10" />}
+                    to="/admin-event-leads"
+                    description="Visualize e gerencie os leads capturados através das palestras"
+                  />
+
+                  <AdminCard 
+                    title="Diagnósticos Gratuitos" 
+                    icon={<Stethoscope className="h-10 w-10" />}
+                    to="/admin-diagnostic-requests"
+                    description="Visualize e gerencie as solicitações de diagnóstico gratuito"
                   />
                 </div>
               </div>
