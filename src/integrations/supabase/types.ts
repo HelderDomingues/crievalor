@@ -1245,7 +1245,7 @@ export type Database = {
         Returns: boolean
       }
       process_quiz_completion: {
-        Args: Record<PropertyKey, never>
+        Args: Record<PropertyKey, never> | { p_user_id: string }
         Returns: undefined
       }
       setup_asaas_customers_rls_policies: {
