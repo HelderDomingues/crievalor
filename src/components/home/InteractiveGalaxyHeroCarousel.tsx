@@ -1,39 +1,47 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, Target, Users, Lightbulb, Palette, Building2 } from 'lucide-react';
+import { ArrowRight, Target, Users, Lightbulb, Palette, Brain, Zap } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious, CarouselApi } from '@/components/ui/carousel';
+
 interface InteractiveBackgroundProps {
-  type: 'neural' | 'growth' | 'energy' | 'design' | 'institutional';
+  type: 'neural' | 'growth' | 'energy' | 'design' | 'institutional' | 'lumia' | 'ecosystem';
   mousePosition: {
     x: number;
     y: number;
   };
 }
+
 const InteractiveBackground: React.FC<InteractiveBackgroundProps> = ({
   type,
   mousePosition
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animationRef = useRef<number>();
+
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
+
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
+
     const resizeCanvas = () => {
       canvas.width = canvas.offsetWidth;
       canvas.height = canvas.offsetHeight;
     };
+
     resizeCanvas();
     window.addEventListener('resize', resizeCanvas);
+
     let particles: any[] = [];
     let time = 0;
 
     // Initialize particles based on type
     const initParticles = () => {
       particles = [];
-      const particleCount = type === 'institutional' ? 75 : type === 'neural' ? 60 : type === 'growth' ? 80 : type === 'energy' ? 100 : 70;
+      const particleCount = type === 'institutional' ? 75 : type === 'neural' ? 60 : type === 'growth' ? 80 : type === 'energy' ? 100 : type === 'lumia' ? 90 : type === 'ecosystem' ? 85 : 70;
+      
       for (let i = 0; i < particleCount; i++) {
         particles.push({
           x: Math.random() * canvas.width,
@@ -49,6 +57,7 @@ const InteractiveBackground: React.FC<InteractiveBackgroundProps> = ({
         });
       }
     };
+
     const getParticleColor = (type: string, index: number) => {
       switch (type) {
         case 'institutional':
@@ -61,10 +70,15 @@ const InteractiveBackground: React.FC<InteractiveBackgroundProps> = ({
           return `hsl(${300 + Math.sin(index * 0.12) * 50}, 80%, 65%)`;
         case 'design':
           return `hsl(${30 + Math.sin(index * 0.08) * 60}, 70%, 60%)`;
+        case 'lumia':
+          return `hsl(${280 + Math.sin(index * 0.11) * 40}, 75%, 65%)`;
+        case 'ecosystem':
+          return `hsl(${220 + Math.sin(index * 0.13) * 50}, 80%, 60%)`;
         default:
           return 'hsl(200, 70%, 60%)';
       }
     };
+
     const animate = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       time += 0.01;
@@ -75,6 +89,7 @@ const InteractiveBackground: React.FC<InteractiveBackgroundProps> = ({
       gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
       ctx.fillStyle = gradient;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
+
       particles.forEach((particle, i) => {
         // Mouse attraction - mais suave
         const dx = mousePosition.x - particle.x;
@@ -105,7 +120,7 @@ const InteractiveBackground: React.FC<InteractiveBackgroundProps> = ({
         if (particle.trail.length > 10) particle.trail.shift();
 
         // Draw trail
-        if (type === 'energy' || type === 'design') {
+        if (type === 'energy' || type === 'design' || type === 'lumia') {
           particle.trail.forEach((point: any, index: number) => {
             const alpha = index / particle.trail.length * 0.3;
             ctx.beginPath();
@@ -152,10 +167,13 @@ const InteractiveBackground: React.FC<InteractiveBackgroundProps> = ({
         ctx.fillStyle = particle.color;
         ctx.fill();
       });
+
       animationRef.current = requestAnimationFrame(animate);
     };
+
     initParticles();
     animate();
+
     return () => {
       window.removeEventListener('resize', resizeCanvas);
       if (animationRef.current) {
@@ -163,10 +181,12 @@ const InteractiveBackground: React.FC<InteractiveBackgroundProps> = ({
       }
     };
   }, [type, mousePosition]);
+
   return <canvas ref={canvasRef} className="absolute inset-0 w-full h-full opacity-60" style={{
     pointerEvents: 'none'
   }} />;
 };
+
 const InteractiveGalaxyHeroCarousel = () => {
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
@@ -175,30 +195,45 @@ const InteractiveGalaxyHeroCarousel = () => {
     y: 0
   });
   const containerRef = useRef<HTMLDivElement>(null);
+
   const slides = [{
-    id: 'crie-valor',
-    icon: Building2,
-    title: 'Transformamos empresas em marcas de alto rendimento',
-    subtitle: 'Somos especialistas em crescimento empresarial',
-    description: 'Somos especialistas em crescimento empresarial. Combinamos estratégia, tecnologia e conhecimento para acelerar seus resultados e criar valor duradouro.',
-    ctaText: 'Sobre a Crie Valor',
-    ctaUrl: '/sobre',
-    secondaryCtaText: 'Falar com um Consultor',
-    secondaryCtaUrl: 'https://wa.me/5547992150289?text=Tenho%20interesse%20em%20conhecer%20mais%20sobre%20a%20Crie%20Valor',
-    backgroundType: 'institutional' as const,
-    gradientColors: 'from-indigo-900/20 via-purple-900/10 to-slate-900/20',
-    accentColor: 'text-indigo-400',
-    glowColor: 'shadow-indigo-500/20'
+    id: 'ecosystem',
+    icon: Brain,
+    title: 'Ecossistema de Inteligência Organizacional',
+    subtitle: 'Estratégia, clareza e ação — em um só lugar',
+    description: 'O MAR analisa profundamente seu negócio. O Lumia transforma estratégia em execução com consultores virtuais em Vendas, Marketing, Operações e Finanças. Some a isso a definição de Propósito (Simon Sinek) — e ganhe direção com impacto.',
+    ctaText: 'Conheça o Lumia',
+    ctaUrl: '/lumia',
+    secondaryCtaText: 'Entenda o MAR',
+    secondaryCtaUrl: '/mar',
+    backgroundType: 'ecosystem' as const,
+    gradientColors: 'from-blue-900/20 via-purple-900/10 to-indigo-900/20',
+    accentColor: 'text-blue-400',
+    glowColor: 'shadow-blue-500/20'
+  }, {
+    id: 'lumia',
+    icon: Zap,
+    title: 'Lumia: consultoria virtual sob medida',
+    subtitle: '4 especialistas, um plano claro e acionável',
+    description: 'Consultores virtuais calibrados pelo MAR e pelo contexto da sua empresa. Respostas práticas, análises, recomendações e acompanhamento de resultados — na velocidade do seu negócio.',
+    ctaText: 'Experimente o Lumia',
+    ctaUrl: '/lumia',
+    secondaryCtaText: 'Falar com um especialista',
+    secondaryCtaUrl: 'https://wa.me/5547992150289?text=Tenho%20interesse%20em%20conhecer%20o%20Lumia',
+    backgroundType: 'lumia' as const,
+    gradientColors: 'from-purple-900/20 via-violet-900/10 to-pink-900/20',
+    accentColor: 'text-purple-400',
+    glowColor: 'shadow-purple-500/20'
   }, {
     id: 'mar',
     icon: Target,
-    title: 'MAR: Mapa para Alto Rendimento',
-    subtitle: 'Transforme sua empresa com nossa metodologia proprietária',
-    description: 'Descubra como nosso sistema exclusivo pode acelerar seus resultados e levar sua empresa ao próximo nível de crescimento sustentável.',
-    ctaText: 'Conhecer o MAR',
+    title: 'MAR — Mapa de Alto Rendimento',
+    subtitle: 'Diagnóstico profundo e plano estratégico completo',
+    description: 'Metodologia proprietária, testada em +10 anos e +500 empresas. Decisões embasadas, prioridades claras e metas mensuráveis para crescer com consistência.',
+    ctaText: 'Ver como funciona',
     ctaUrl: '/mar',
-    secondaryCtaText: 'Diagnóstico Gratuito',
-    secondaryCtaUrl: '/diagnostico-gratuito',
+    secondaryCtaText: 'Agendar avaliação',
+    secondaryCtaUrl: '/contato',
     backgroundType: 'neural' as const,
     gradientColors: 'from-blue-900/20 via-indigo-900/10 to-purple-900/20',
     accentColor: 'text-blue-400',
@@ -246,12 +281,15 @@ const InteractiveGalaxyHeroCarousel = () => {
     accentColor: 'text-orange-400',
     glowColor: 'shadow-orange-500/20'
   }];
+
   useEffect(() => {
     if (!api) return;
+
     api.on('select', () => {
       setCurrent(api.selectedScrollSnap());
     });
   }, [api]);
+
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       if (containerRef.current) {
@@ -262,15 +300,18 @@ const InteractiveGalaxyHeroCarousel = () => {
         });
       }
     };
+
     const container = containerRef.current;
     if (container) {
       container.addEventListener('mousemove', handleMouseMove);
       return () => container.removeEventListener('mousemove', handleMouseMove);
     }
   }, []);
-  const currentSlide = slides[current];
-  return <section ref={containerRef} className="relative min-h-screen flex items-center overflow-hidden bg-gradient-to-br from-gray-900 via-slate-900 to-black">
 
+  const currentSlide = slides[current];
+
+  return (
+    <section ref={containerRef} className="relative min-h-screen flex items-center overflow-hidden bg-gradient-to-br from-gray-900 via-slate-900 to-black">
       {/* Interactive background */}
       <div className="absolute inset-0">
         <InteractiveBackground type={currentSlide.backgroundType} mousePosition={mousePosition} />
@@ -281,21 +322,28 @@ const InteractiveGalaxyHeroCarousel = () => {
 
       {/* Cosmic dust overlay */}
       <div className="absolute inset-0 opacity-30">
-        {[...Array(100)].map((_, i) => <div key={i} className="absolute w-1 h-1 bg-white rounded-full animate-pulse" style={{
-        left: `${Math.random() * 100}%`,
-        top: `${Math.random() * 100}%`,
-        animationDelay: `${Math.random() * 3}s`,
-        animationDuration: `${2 + Math.random() * 2}s`
-      }} />)}
+        {[...Array(100)].map((_, i) => (
+          <div
+            key={i}
+            className="absolute w-1 h-1 bg-white rounded-full animate-pulse"
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+              animationDelay: `${Math.random() * 3}s`,
+              animationDuration: `${2 + Math.random() * 2}s`
+            }}
+          />
+        ))}
       </div>
 
       <div className="container mx-auto px-4 relative z-10">
         <Carousel className="w-full max-w-7xl mx-auto" setApi={setApi} opts={{
-        align: "start",
-        loop: true
-      }}>
+          align: "start",
+          loop: true
+        }}>
           <CarouselContent>
-            {slides.map((slide, index) => <CarouselItem key={slide.id}>
+            {slides.map((slide, index) => (
+              <CarouselItem key={slide.id}>
                 <div className="min-h-[90vh] flex items-center">
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center w-full py-20">
                     {/* Content */}
@@ -304,8 +352,8 @@ const InteractiveGalaxyHeroCarousel = () => {
                       <div className="flex items-center gap-6">
                         <div className={`relative rounded-full bg-black/30 backdrop-blur-sm p-6 border border-white/10 ${slide.glowColor} shadow-2xl`}>
                           {React.createElement(slide.icon, {
-                        className: `h-12 w-12 ${slide.accentColor}`
-                      })}
+                            className: `h-12 w-12 ${slide.accentColor}`
+                          })}
                           <div className={`absolute inset-0 rounded-full bg-gradient-to-r ${slide.accentColor.replace('text-', 'from-')} to-transparent opacity-20 blur-xl`} />
                         </div>
                         <div className={`h-px bg-gradient-to-r ${slide.accentColor.replace('text-', 'from-')} to-transparent flex-1`} />
@@ -332,11 +380,15 @@ const InteractiveGalaxyHeroCarousel = () => {
                           </Link>
                         </Button>
                         <Button asChild variant="outline" size="lg" className="text-xl px-8 py-6 border-2 border-white/40 bg-black/40 backdrop-blur-sm text-white hover:bg-white/20 hover:border-white/60 hover:scale-105 transition-all duration-300 font-semibold">
-                          {slide.secondaryCtaUrl.startsWith('http') ? <a href={slide.secondaryCtaUrl} target="_blank" rel="noopener noreferrer">
+                          {slide.secondaryCtaUrl.startsWith('http') ? (
+                            <a href={slide.secondaryCtaUrl} target="_blank" rel="noopener noreferrer">
                               {slide.secondaryCtaText}
-                            </a> : <Link to={slide.secondaryCtaUrl}>
+                            </a>
+                          ) : (
+                            <Link to={slide.secondaryCtaUrl}>
                               {slide.secondaryCtaText}
-                            </Link>}
+                            </Link>
+                          )}
                         </Button>
                       </div>
                     </div>
@@ -345,32 +397,45 @@ const InteractiveGalaxyHeroCarousel = () => {
                     <div className="relative flex items-center justify-center">
                       <div className="relative w-96 h-96">
                         {/* Outer glow rings */}
-                        {[...Array(3)].map((_, i) => <div key={i} className={`absolute inset-0 rounded-full border-2 ${slide.accentColor.replace('text-', 'border-')} opacity-20 animate-pulse`} style={{
-                      transform: `scale(${1 + i * 0.2})`,
-                      animationDelay: `${i * 0.5}s`,
-                      animationDuration: '3s'
-                    }} />)}
+                        {[...Array(3)].map((_, i) => (
+                          <div
+                            key={i}
+                            className={`absolute inset-0 rounded-full border-2 ${slide.accentColor.replace('text-', 'border-')} opacity-20 animate-pulse`}
+                            style={{
+                              transform: `scale(${1 + i * 0.2})`,
+                              animationDelay: `${i * 0.5}s`,
+                              animationDuration: '3s'
+                            }}
+                          />
+                        ))}
                         
                         {/* Central orb */}
                         <div className="absolute inset-8 rounded-full bg-gradient-to-br from-black/50 to-black/80 backdrop-blur-xl border border-white/10 flex items-center justify-center">
                           <div className="absolute inset-4 rounded-full bg-gradient-to-br from-white/5 to-transparent" />
                           <div className="absolute inset-8 rounded-full bg-gradient-to-br from-white/10 to-transparent" />
                           {React.createElement(slide.icon, {
-                        className: `h-32 w-32 ${slide.accentColor} relative z-10`
-                      })}
+                            className: `h-32 w-32 ${slide.accentColor} relative z-10`
+                          })}
                         </div>
 
                         {/* Floating particles around the orb */}
-                        {[...Array(8)].map((_, i) => <div key={i} className={`absolute w-2 h-2 ${slide.accentColor.replace('text-', 'bg-')} rounded-full`} style={{
-                      left: `${50 + 40 * Math.cos(i * Math.PI / 4)}%`,
-                      top: `${50 + 40 * Math.sin(i * Math.PI / 4)}%`,
-                      animation: `orbit 8s linear infinite ${i * 0.5}s`
-                    }} />)}
+                        {[...Array(8)].map((_, i) => (
+                          <div
+                            key={i}
+                            className={`absolute w-2 h-2 ${slide.accentColor.replace('text-', 'bg-')} rounded-full`}
+                            style={{
+                              left: `${50 + 40 * Math.cos(i * Math.PI / 4)}%`,
+                              top: `${50 + 40 * Math.sin(i * Math.PI / 4)}%`,
+                              animation: `orbit 8s linear infinite ${i * 0.5}s`
+                            }}
+                          />
+                        ))}
                       </div>
                     </div>
                   </div>
                 </div>
-              </CarouselItem>)}
+              </CarouselItem>
+            ))}
           </CarouselContent>
           
           {/* Enhanced navigation with responsive positioning - moved to top area */}
@@ -380,17 +445,29 @@ const InteractiveGalaxyHeroCarousel = () => {
 
         {/* Slide indicators */}
         <div className="flex justify-center gap-3 mt-12">
-          {slides.map((_, index) => <button key={index} onClick={() => api?.scrollTo(index)} className={`w-3 h-3 rounded-full transition-all duration-300 ${index === current ? `${currentSlide.accentColor.replace('text-', 'bg-')} scale-125` : 'bg-white/30 hover:bg-white/50'}`} />)}
+          {slides.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => api?.scrollTo(index)}
+              className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                index === current 
+                  ? `${currentSlide.accentColor.replace('text-', 'bg-')} scale-125` 
+                  : 'bg-white/30 hover:bg-white/50'
+              }`}
+            />
+          ))}
         </div>
 
         {/* Scroll indicator */}
         <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
-          <div className="w-6 h-12 border-2 border-white/30 rounded-full flex justify-center">
-            <div className="w-1 h-4 bg-white/50 rounded-full mt-2 animate-pulse" />
+          <div className="w-6 h-10 border-2 border-white/30 rounded-full flex justify-center">
+            <div className="w-1 h-3 bg-white/50 rounded-full mt-2 animate-pulse"></div>
           </div>
         </div>
       </div>
 
-    </section>;
+    </section>
+  );
 };
+
 export default InteractiveGalaxyHeroCarousel;

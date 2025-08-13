@@ -32,6 +32,7 @@ import LecturesAdmin from "@/pages/LecturesAdmin";
 import EventLeadsAdmin from "@/pages/EventLeadsAdmin";
 import DiagnosticRequestsAdminPage from "@/pages/DiagnosticRequestsAdmin";
 import AdminDashboard from "@/pages/AdminDashboard";
+import Lumia from "@/pages/Lumia";
 
 export const router = createBrowserRouter([
   {
@@ -42,6 +43,10 @@ export const router = createBrowserRouter([
   {
     path: "/mar",
     element: <Mar />,
+  },
+  {
+    path: "/lumia",
+    element: <Lumia />,
   },
   {
     path: "/sobre",

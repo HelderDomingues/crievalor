@@ -7,6 +7,7 @@ import ClientLogosCarousel from "@/components/ClientLogosCarousel";
 import InteractiveGalaxyHeroCarousel from "@/components/home/InteractiveGalaxyHeroCarousel";
 import MentoriasSection from "@/components/home/MentoriasSection";
 import MarHighlight from "@/components/home/MarHighlight";
+import LumiaHighlight from "@/components/home/LumiaHighlight";
 import TestimonialsSection from "@/components/home/TestimonialsSection";
 import PartnersSection from "@/components/home/PartnersSection";
 import ServicesSections from "@/components/home/ServicesSections";
@@ -51,6 +52,9 @@ const Index = () => {
         
         {/* MAR Product Highlight - Seção dedicada */}
         <MarHighlight />
+        
+        {/* Lumia Product Highlight - Nova seção do ecossistema */}
+        <LumiaHighlight />
         
         {/* Mentorias Section - Seção dedicada */}
         <MentoriasSection />

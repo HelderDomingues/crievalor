@@ -56,6 +56,7 @@ const Header = () => {
 
   const servicesItems = [
     { title: "MAR", path: "/mar" },
+    { title: "Lumia", path: "/lumia" },
     { title: "Identidade Visual", path: "/identidade-visual" },
     { title: "Mentorias", path: "/mentorias" },
     { title: "Oficina de Líderes", path: "/oficina-de-lideres" },
