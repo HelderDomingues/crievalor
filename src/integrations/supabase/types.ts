@@ -7,7 +7,7 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instanciate createClient with right options
+  // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
     PostgrestVersion: "12.2.3 (519615d)"
@@ -1200,11 +1200,11 @@ export type Database = {
         Returns: boolean
       }
       create_table_if_not_exists: {
-        Args: { table_name: string; table_definition: string }
+        Args: { table_definition: string; table_name: string }
         Returns: undefined
       }
       execute_sql: {
-        Args: Record<PropertyKey, never>
+        Args: Record<PropertyKey, never> | { sql_query: string }
         Returns: undefined
       }
       get_system_setting: {
@@ -1219,12 +1219,12 @@ export type Database = {
       }
       import_user_from_asaas: {
         Args: {
+          p_asaas_id: string
+          p_cpf_cnpj: string
           p_email: string
           p_nome: string
-          p_cpf_cnpj: string
-          p_telefone: string
-          p_asaas_id: string
           p_password?: string
+          p_telefone: string
         }
         Returns: string
       }
@@ -1241,7 +1241,7 @@ export type Database = {
         Returns: boolean
       }
       link_user_to_asaas_customer: {
-        Args: { user_email: string; asaas_email: string }
+        Args: { asaas_email: string; user_email: string }
         Returns: boolean
       }
       process_quiz_completion: {
