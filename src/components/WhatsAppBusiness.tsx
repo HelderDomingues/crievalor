@@ -144,9 +144,25 @@ export const WhatsAppBusiness: React.FC<WhatsAppBusinessProps> = ({
                   <Button
                     variant="outline"
                     className="w-full justify-start text-sm"
-                    onClick={() => handleQuickStart('MAR - Sistema de Inteligência Organizacional')}
+                    onClick={() => handleQuickStart('MAR - Mapa de Alto Rendimento')}
                   >
                     🎯 Conhecer o MAR
+                  </Button>
+                  
+                  <Button
+                    variant="outline"
+                    className="w-full justify-start text-sm"
+                    onClick={() => handleQuickStart('Lumia - Consultores Virtuais')}
+                  >
+                    ⚡ Lumia Consultores Virtuais
+                  </Button>
+                  
+                  <Button
+                    variant="outline"
+                    className="w-full justify-start text-sm"
+                    onClick={() => handleQuickStart('Mentor de Propósito - Descubra seu Por Quê')}
+                  >
+                    🧭 Mentor de Propósito
                   </Button>
                   
                   <Button
@@ -160,7 +176,7 @@ export const WhatsAppBusiness: React.FC<WhatsAppBusinessProps> = ({
                   <Button
                     variant="outline"
                     className="w-full justify-start text-sm"
-                    onClick={() => handleQuickStart('Mentorias em Gestão e Marketing')}
+                    onClick={() => handleQuickStart('Mentorias Empresariais')}
                   >
                     👨‍💼 Mentorias Empresariais
                   </Button>
@@ -168,9 +184,9 @@ export const WhatsAppBusiness: React.FC<WhatsAppBusinessProps> = ({
                   <Button
                     variant="outline"
                     className="w-full justify-start text-sm"
-                    onClick={() => handleQuickStart('Branding e Identidade Visual')}
+                    onClick={() => handleQuickStart('Identidade Visual')}
                   >
-                    🎨 Branding & Identidade
+                    🎨 Identidade Visual
                   </Button>
                   
                   <Button
