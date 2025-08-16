@@ -33,6 +33,7 @@ import EventLeadsAdmin from "@/pages/EventLeadsAdmin";
 import DiagnosticRequestsAdminPage from "@/pages/DiagnosticRequestsAdmin";
 import AdminDashboard from "@/pages/AdminDashboard";
 import Lumia from "@/pages/Lumia";
+import MentorProposito from "@/pages/MentorProposito";
 
 export const router = createBrowserRouter([
   {
@@ -59,6 +60,10 @@ export const router = createBrowserRouter([
   {
     path: "/projetos",
     element: <Projetos />,
+  },
+  {
+    path: "/mentor-proposito",
+    element: <MentorProposito />,
   },
   {
     path: "/oficina-de-lideres",
