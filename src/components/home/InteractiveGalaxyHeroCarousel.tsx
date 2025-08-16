@@ -213,6 +213,20 @@ const InteractiveGalaxyHeroCarousel = () => {
     accentColor: 'text-blue-400',
     glowColor: 'shadow-blue-500/20'
   }, {
+    id: 'proposito',
+    icon: Compass,
+    title: 'Mentor de Propósito',
+    subtitle: 'Descubra o "Por Quê" que transforma empresas comuns em marcas extraordinárias',
+    description: 'A ferramenta de inteligência conversacional que guia líderes e organizações na descoberta do propósito que impulsiona resultados extraordinários.',
+    ctaText: 'Descubra seu Propósito',
+    ctaUrl: 'https://proposito.crievalor.com.br',
+    secondaryCtaText: 'Agendar Demonstração',
+    secondaryCtaUrl: 'https://wa.me/5547992150289?text=Tenho%20interesse%20em%20conhecer%20o%20Mentor%20de%20Propósito',
+    backgroundType: 'purpose' as const,
+    gradientColors: 'from-yellow-900/20 via-orange-900/10 to-amber-900/20',
+    accentColor: 'text-yellow-400',
+    glowColor: 'shadow-yellow-500/20'
+  }, {
     id: 'lumia',
     icon: Zap,
     title: 'Lumia: consultoria virtual sob medida',
