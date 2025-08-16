@@ -57,7 +57,7 @@ const Header = () => {
   const servicesItems = [
     { title: "MAR", path: "/mar" },
     { title: "Lumia", path: "/lumia" },
-    { title: "Mentor de Propósito", path: "https://proposito.crievalor.com.br", external: true },
+    { title: "Mentor de Propósito", path: "/mentor-proposito" },
     { title: "Identidade Visual", path: "/identidade-visual" },
     { title: "Mentorias", path: "/mentorias" },
     { title: "Oficina de Líderes", path: "/oficina-de-lideres" },
@@ -131,25 +131,14 @@ const Header = () => {
               <DropdownMenuContent align="start" className="w-48 bg-background border border-border shadow-lg">
                 {servicesItems.map((service) => (
                   <DropdownMenuItem key={service.path} asChild>
-                    {service.external ? (
-                      <a
-                        href={service.path}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="block px-3 py-2 text-sm transition-colors hover:bg-secondary hover:text-primary text-foreground"
-                      >
-                        {service.title}
-                      </a>
-                    ) : (
-                      <Link
-                        to={service.path}
-                        className={`block px-3 py-2 text-sm transition-colors hover:bg-secondary hover:text-primary ${
-                          isActive(service.path) ? "text-primary font-medium" : "text-foreground"
-                        }`}
-                      >
-                        {service.title}
-                      </Link>
-                    )}
+                    <Link
+                      to={service.path}
+                      className={`block px-3 py-2 text-sm transition-colors hover:bg-secondary hover:text-primary ${
+                        isActive(service.path) ? "text-primary font-medium" : "text-foreground"
+                      }`}
+                    >
+                      {service.title}
+                    </Link>
                   </DropdownMenuItem>
                 ))}
               </DropdownMenuContent>
@@ -237,31 +226,18 @@ const Header = () => {
               Serviços
             </div>
             {servicesItems.map((service) => (
-              service.external ? (
-                <a
-                  key={service.path}
-                  href={service.path}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-base py-2 pl-4 block text-foreground/70"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  {service.title}
-                </a>
-              ) : (
-                <Link
-                  key={service.path}
-                  to={service.path}
-                  className={`text-base py-2 pl-4 block ${
-                    isActive(service.path)
-                      ? "text-primary font-medium"
-                      : "text-foreground/70"
-                  }`}
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  {service.title}
-                </Link>
-              )
+              <Link
+                key={service.path}
+                to={service.path}
+                className={`text-base py-2 pl-4 block ${
+                  isActive(service.path)
+                    ? "text-primary font-medium"
+                    : "text-foreground/70"
+                }`}
+                onClick={() => setIsMenuOpen(false)}
+              >
+                {service.title}
+              </Link>
             ))}
           </div>
           <Button 
