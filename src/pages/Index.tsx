@@ -8,6 +8,7 @@ import InteractiveGalaxyHeroCarousel from "@/components/home/InteractiveGalaxyHe
 import MentoriasSection from "@/components/home/MentoriasSection";
 import MarHighlight from "@/components/home/MarHighlight";
 import LumiaHighlight from "@/components/home/LumiaHighlight";
+import MentorPropositoHighlight from "@/components/home/MentorPropositoHighlight";
 import TestimonialsSection from "@/components/home/TestimonialsSection";
 import PartnersSection from "@/components/home/PartnersSection";
 import ServicesSections from "@/components/home/ServicesSections";
@@ -55,6 +56,9 @@ const Index = () => {
         
         {/* Lumia Product Highlight - Nova seção do ecossistema */}
         <LumiaHighlight />
+        
+        {/* Mentor de Propósito Product Highlight - Bússola do ecossistema */}
+        <MentorPropositoHighlight />
         
         {/* Mentorias Section - Seção dedicada */}
         <MentoriasSection />
