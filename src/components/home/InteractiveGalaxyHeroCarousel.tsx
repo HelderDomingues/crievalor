@@ -1,11 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, Target, Users, Lightbulb, Palette, Brain, Zap } from 'lucide-react';
+import { ArrowRight, Target, Users, Lightbulb, Palette, Brain, Zap, Compass } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious, CarouselApi } from '@/components/ui/carousel';
 
 interface InteractiveBackgroundProps {
-  type: 'neural' | 'growth' | 'energy' | 'design' | 'institutional' | 'lumia' | 'ecosystem';
+  type: 'neural' | 'growth' | 'energy' | 'design' | 'institutional' | 'lumia' | 'ecosystem' | 'purpose';
   mousePosition: {
     x: number;
     y: number;
@@ -40,7 +40,7 @@ const InteractiveBackground: React.FC<InteractiveBackgroundProps> = ({
     // Initialize particles based on type
     const initParticles = () => {
       particles = [];
-      const particleCount = type === 'institutional' ? 75 : type === 'neural' ? 60 : type === 'growth' ? 80 : type === 'energy' ? 100 : type === 'lumia' ? 90 : type === 'ecosystem' ? 85 : 70;
+      const particleCount = type === 'institutional' ? 75 : type === 'neural' ? 60 : type === 'growth' ? 80 : type === 'energy' ? 100 : type === 'lumia' ? 90 : type === 'ecosystem' ? 85 : type === 'purpose' ? 70 : 70;
       
       for (let i = 0; i < particleCount; i++) {
         particles.push({
@@ -74,6 +74,8 @@ const InteractiveBackground: React.FC<InteractiveBackgroundProps> = ({
           return `hsl(${280 + Math.sin(index * 0.11) * 40}, 75%, 65%)`;
         case 'ecosystem':
           return `hsl(${220 + Math.sin(index * 0.13) * 50}, 80%, 60%)`;
+        case 'purpose':
+          return `hsl(${45 + Math.sin(index * 0.14) * 30}, 75%, 55%)`;
         default:
           return 'hsl(200, 70%, 60%)';
       }
@@ -120,7 +122,7 @@ const InteractiveBackground: React.FC<InteractiveBackgroundProps> = ({
         if (particle.trail.length > 10) particle.trail.shift();
 
         // Draw trail
-        if (type === 'energy' || type === 'design' || type === 'lumia') {
+        if (type === 'energy' || type === 'design' || type === 'lumia' || type === 'purpose') {
           particle.trail.forEach((point: any, index: number) => {
             const alpha = index / particle.trail.length * 0.3;
             ctx.beginPath();
