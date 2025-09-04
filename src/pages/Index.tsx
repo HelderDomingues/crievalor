@@ -5,6 +5,8 @@ import Footer from "@/components/Footer";
 import ContactSection from "@/components/ContactSection";
 import ClientLogosCarousel from "@/components/ClientLogosCarousel";
 import InteractiveGalaxyHeroCarousel from "@/components/home/InteractiveGalaxyHeroCarousel";
+import HowWeDoItSection from "@/components/home/HowWeDoItSection";
+import WhatWhyTransition from "@/components/home/WhatWhyTransition";
 import MentoriasSection from "@/components/home/MentoriasSection";
 import MarHighlight from "@/components/home/MarHighlight";
 import LumiaHighlight from "@/components/home/LumiaHighlight";
@@ -14,6 +16,8 @@ import PartnersSection from "@/components/home/PartnersSection";
 import ServicesSections from "@/components/home/ServicesSections";
 import BlogPreview from "@/components/home/BlogPreview";
 import MainCTA from "@/components/home/MainCTA";
+import QuickCTA from "@/components/ui/quick-cta";
+import FloatingCTA from "@/components/ui/floating-cta";
 import { Helmet } from "react-helmet-async";
 import { OrganizationSchema } from "@/components/seo/SchemaMarkup";
 import { useScrollToTop } from "@/hooks/useScrollToTop";
@@ -48,8 +52,14 @@ const Index = () => {
       <main className="flex-grow">
         <h1 className="sr-only">Crie Valor Estratégia - Consultoria e Marketing para empresas</h1>
         
-        {/* Hero Carrossel - MAR + Mentorias */}
+        {/* Hero Carrossel - Propósito + MAR + Mentorias + Mentor de Propósito */}
         <InteractiveGalaxyHeroCarousel />
+        
+        {/* Como Fazemos - Nova seção metodológica */}
+        <HowWeDoItSection />
+        
+        {/* Transição Por que → O que */}
+        <WhatWhyTransition />
         
         {/* MAR Product Highlight - Seção dedicada */}
         <MarHighlight />
@@ -69,6 +79,17 @@ const Index = () => {
         {/* Blog Preview - Conectando com o blog */}
         <BlogPreview />
         
+        {/* CTA após Blog Preview */}
+        <QuickCTA
+          title="Quer conteúdo estratégico exclusivo?"
+          description="Acesse materiais avançados e insights que só compartilhamos com nossa comunidade VIP."
+          ctaText="Acessar conteúdo exclusivo"
+          ctaUrl="/diagnostico-gratuito"
+          variant="outline"
+          centerAlign
+          className="bg-secondary/30"
+        />
+        
         {/* Client Logos Section */}
         <div id="clientes" aria-labelledby="clientesHeading" className="py-16 md:py-24">
           <div className="container mx-auto px-4">
@@ -84,8 +105,29 @@ const Index = () => {
           </div>
         </div>
         
+        {/* CTA após Client Logos */}
+        <QuickCTA
+          title="Quero fazer parte desta lista de sucesso"
+          description="Junte-se às empresas que já transformaram seus resultados conosco."
+          ctaText="Começar minha transformação"
+          ctaUrl="/diagnostico-gratuito"
+          centerAlign
+          className="bg-primary/5"
+        />
+        
         {/* Testimonials Section */}
         <TestimonialsSection />
+        
+        {/* CTA após Testimonials */}
+        <QuickCTA
+          title="Quero resultados como estes para minha empresa"
+          description="Descubra como podemos acelerar o crescimento da sua empresa também."
+          ctaText="Agendar meu diagnóstico"
+          ctaUrl="/diagnostico-gratuito"
+          variant="secondary"
+          centerAlign
+          className="bg-secondary/20"
+        />
         
         {/* Partners Section */}
         <PartnersSection />
@@ -96,6 +138,9 @@ const Index = () => {
         {/* Contact Section */}
         <ContactSection />
       </main>
+      
+      {/* CTA Flutuante */}
+      <FloatingCTA />
       
       <Footer />
     </div>

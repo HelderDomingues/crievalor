@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, Target, Users, Lightbulb, Palette, Brain, Zap, Compass } from 'lucide-react';
+import { ArrowRight, Target, Users, Lightbulb, Palette, Brain, Zap, Compass, Heart } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious, CarouselApi } from '@/components/ui/carousel';
 
@@ -199,6 +199,20 @@ const InteractiveGalaxyHeroCarousel = () => {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const slides = [{
+    id: 'proposito-empresa',
+    icon: Heart,
+    title: 'Nosso Propósito',
+    subtitle: 'Gerar clareza e direção para as empresas',
+    description: 'Fazendo da atitude o motor do crescimento. Transformamos organizações através de estratégias claras que conectam propósito com resultados extraordinários.',
+    ctaText: 'Descubra como fazemos isso',
+    ctaUrl: '#como-fazemos',
+    secondaryCtaText: 'Converse conosco',
+    secondaryCtaUrl: 'https://wa.me/5547992150289?text=Tenho%20interesse%20em%20conhecer%20o%20propósito%20da%20Crie%20Valor',
+    backgroundType: 'purpose' as const,
+    gradientColors: 'from-amber-900/20 via-yellow-900/10 to-orange-900/20',
+    accentColor: 'text-amber-400',
+    glowColor: 'shadow-amber-500/20'
+  }, {
     id: 'ecosystem',
     icon: Brain,
     title: 'Ecossistema de Inteligência Organizacional',
@@ -391,9 +405,18 @@ const InteractiveGalaxyHeroCarousel = () => {
                       {/* CTAs with enhanced styling */}
                       <div className="flex flex-col sm:flex-row gap-6 pt-8">
                         <Button asChild size="lg" className={`text-xl px-8 py-6 bg-gradient-to-r ${slide.accentColor.replace('text-', 'from-')} to-white text-white hover:scale-105 transition-all duration-300 ${slide.glowColor} shadow-2xl font-bold border-2 border-white/10`}>
-                          <Link to={slide.ctaUrl}>
-                            {slide.ctaText} <ArrowRight className="ml-3 h-6 w-6" />
-                          </Link>
+                          {slide.ctaUrl.startsWith('#') ? (
+                            <a href={slide.ctaUrl} onClick={(e) => {
+                              e.preventDefault();
+                              document.getElementById(slide.ctaUrl.slice(1))?.scrollIntoView({ behavior: 'smooth' });
+                            }}>
+                              {slide.ctaText} <ArrowRight className="ml-3 h-6 w-6" />
+                            </a>
+                          ) : (
+                            <Link to={slide.ctaUrl}>
+                              {slide.ctaText} <ArrowRight className="ml-3 h-6 w-6" />
+                            </Link>
+                          )}
                         </Button>
                         <Button asChild variant="outline" size="lg" className="text-xl px-8 py-6 border-2 border-white/40 bg-black/40 backdrop-blur-sm text-white hover:bg-white/20 hover:border-white/60 hover:scale-105 transition-all duration-300 font-semibold">
                           {slide.secondaryCtaUrl.startsWith('http') ? (
