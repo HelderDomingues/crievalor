@@ -244,7 +244,7 @@ const InteractiveGalaxyHeroCarousel = () => {
     id: 'lumia',
     icon: Zap,
     title: 'Lumia: consultoria virtual sob medida',
-    subtitle: '4 especialistas, um plano claro e acionável',
+    subtitle: '4 especialistas treinados especificamente para a sua empresa',
     description: 'Consultores virtuais calibrados pelo MAR e pelo contexto da sua empresa. Respostas práticas, análises, recomendações e acompanhamento de resultados — na velocidade do seu negócio.',
     ctaText: 'Experimente o Lumia',
     ctaUrl: '/lumia',
