@@ -397,6 +397,11 @@ const InteractiveGalaxyHeroCarousel = () => {
                           </span>
                         </h1>
                         
+                        {/* Subtitle */}
+                        <h2 className={`text-2xl lg:text-3xl font-semibold ${slide.accentColor} leading-relaxed`}>
+                          {slide.subtitle}
+                        </h2>
+                        
                         <p className="text-xl text-gray-300 leading-relaxed max-w-2xl">
                           {slide.description}
                         </p>
