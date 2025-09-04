@@ -95,7 +95,7 @@ const MentorPropositoHighlight = () => {
                   <div className="pt-4 border-t border-border">
                     <div className="flex justify-between items-center">
                       <p className="text-sm text-muted-foreground">
-                        Metodologia <span className="text-amber-400 font-medium">Simon Sinek</span>
+                        Metodologia <span className="text-amber-400 font-medium">proprietária Crie Valor</span>
                       </p>
                       <Button variant="outline" size="sm" onClick={handleDemonstration}>
                         Demonstração
