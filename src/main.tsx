@@ -92,11 +92,23 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   </React.StrictMode>,
 )
 
-// Sinaliza para o prerenderer que a página foi carregada
-if (typeof window !== 'undefined') {
-  window.addEventListener('load', () => {
-    setTimeout(() => {
-      document.dispatchEvent(new Event('render-event'));
-    }, 1500);
-  });
+// Função para expor conteúdo aos crawlers
+function exposeSEOContent() {
+  if (typeof window !== 'undefined' && typeof document !== 'undefined') {
+    const seoContent = document.getElementById('seo-content');
+    if (seoContent) {
+      // Torna o conteúdo visível temporariamente para crawlers
+      seoContent.style.position = 'static';
+      seoContent.style.left = 'auto';
+      seoContent.style.top = 'auto';
+      seoContent.style.visibility = 'hidden';
+      seoContent.style.height = '0';
+      seoContent.style.overflow = 'hidden';
+    }
+  }
 }
+
+// Expõe conteúdo SEO após carregamento
+window.addEventListener('load', () => {
+  setTimeout(exposeSEOContent, 100);
+});
