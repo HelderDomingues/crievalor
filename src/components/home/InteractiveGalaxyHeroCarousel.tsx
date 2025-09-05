@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, Target, Users, Lightbulb, Palette, Brain, Zap, Compass, Heart } from 'lucide-react';
+import { ArrowRight, Target, Users, Lightbulb, Palette, Brain, Zap, Compass } from 'lucide-react';
+import { FlagIcon } from '@/components/ui/flag-icon';
 import { Link } from 'react-router-dom';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious, CarouselApi } from '@/components/ui/carousel';
 
@@ -200,7 +201,7 @@ const InteractiveGalaxyHeroCarousel = () => {
 
   const slides = [{
     id: 'proposito-empresa',
-    icon: Heart,
+    icon: FlagIcon,
     title: 'Nosso Propósito',
     subtitle: 'Gerar clareza e direção para as empresas',
     description: 'Fazendo da atitude o motor do crescimento. Transformamos organizações através de estratégias claras que conectam propósito com resultados extraordinários.',
