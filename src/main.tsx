@@ -91,3 +91,12 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
     </HelmetProvider>
   </React.StrictMode>,
 )
+
+// Sinaliza para o prerenderer que a página foi carregada
+if (typeof window !== 'undefined') {
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      document.dispatchEvent(new Event('render-event'));
+    }, 1500);
+  });
+}
