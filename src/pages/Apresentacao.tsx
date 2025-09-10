@@ -26,7 +26,7 @@ const ApresentacaoPage = () => {
     content: <div className="flex flex-col items-center justify-center h-full text-center space-y-8">
           <img src={crieValorLogo} alt="Crie Valor" className="h-32 mb-12" />
           <p className="text-4xl text-muted-foreground max-w-4xl leading-relaxed">
-            Transformando organizações através de estratégias claras que conectam propósito com resultados extraordinários
+            Transformando organizações por meio de estratégias claras que conectam propósito com resultados
           </p>
           <div className="mt-16">
             
