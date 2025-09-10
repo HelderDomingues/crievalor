@@ -7,10 +7,12 @@ import crieValorLogo from '@/assets/crie-valor-logo.png';
 import marLogo from '@/assets/mar-logo.png';
 import lumiaLogo from '@/assets/lumia-logo.png';
 import VideoBackground from '@/components/VideoBackground';
+import mentorPropositoTransparent from '@/assets/mentor-proposito-transparent.png';
+import oficinaLideresTransparent from '@/assets/oficina-lideres-logo-transparent.png';
 
-// Usando as imagens enviadas pelo usuário
-const mentorPropositoLogo = '/lovable-uploads/cb2e0b83-40ae-4efb-8975-8709fbdcd8ba.png';
-const oficinaLideresLogo = '/lovable-uploads/f3e2b414-8473-4df3-94dc-572451991b67.png';
+// Using transparent logos
+const mentorPropositoLogo = mentorPropositoTransparent;
+const oficinaLideresLogo = oficinaLideresTransparent;
 const ApresentacaoPage = () => {
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
@@ -83,15 +85,18 @@ const ApresentacaoPage = () => {
     id: 'ecossistema',
     content: <div className="flex flex-col items-center justify-center h-full text-center space-y-20 px-20">
           <h2 className="text-6xl font-bold">Ecossistema de Inteligência Organizacional</h2>
-          <div className="grid grid-cols-3 gap-20 max-w-6xl">
+          <div className="grid grid-cols-2 gap-16 max-w-5xl">
             <div className="flex items-center justify-center">
-              <img src={marLogo} alt="MAR" className="h-40" />
+              <img src={marLogo} alt="MAR" className="h-48" />
             </div>
             <div className="flex items-center justify-center">
-              <img src={lumiaLogo} alt="Lumia" className="h-40" />
+              <img src={lumiaLogo} alt="Lumia" className="h-48" />
             </div>
             <div className="flex items-center justify-center">
-              <img src={mentorPropositoLogo} alt="Mentor de Propósito" className="h-40" />
+              <img src={mentorPropositoLogo} alt="Mentor de Propósito" className="h-48" />
+            </div>
+            <div className="flex items-center justify-center">
+              <img src={oficinaLideresLogo} alt="Oficina de Líderes" className="h-48" />
             </div>
           </div>
         </div>
@@ -132,7 +137,7 @@ const ApresentacaoPage = () => {
             <div className="flex items-center justify-center">
               <div className="bg-gradient-to-br from-primary/20 to-purple-500/20 p-12 rounded-2xl border border-border backdrop-blur-sm">
                 <div className="text-center space-y-8">
-                  <img src={marLogo} alt="MAR" className="h-32 mx-auto" />
+                  <img src={marLogo} alt="MAR" className="h-44 mx-auto" />
                   <h3 className="text-3xl font-semibold">Metodologia Inovadora</h3>
                   <p className="text-xl text-muted-foreground">Resultados mensuráveis</p>
                 </div>
@@ -210,7 +215,7 @@ const ApresentacaoPage = () => {
             <div className="flex items-center justify-center">
               <div className="bg-gradient-to-br from-purple-500/20 to-primary/20 p-12 rounded-2xl border border-border backdrop-blur-sm">
                 <div className="text-center space-y-8">
-                  <img src={mentorPropositoLogo} alt="Mentor de Propósito" className="h-32 mx-auto" />
+                  <img src={mentorPropositoLogo} alt="Mentor de Propósito" className="h-44 mx-auto" />
                   <h3 className="text-3xl font-semibold">Propósito Autêntico</h3>
                   <p className="text-xl text-muted-foreground">Conectando essência com estratégia</p>
                 </div>
@@ -223,12 +228,11 @@ const ApresentacaoPage = () => {
   {
     id: 'educacao',
     content: <div className="flex flex-col items-center justify-center h-full text-center space-y-12 px-20">
-          <h2 className="text-6xl font-bold mb-12">Educação Corporativa</h2>
+          <h2 className="text-4xl font-bold mb-12">Educação Corporativa</h2>
           <div className="max-w-5xl space-y-16">
             <div className="bg-gradient-to-r from-primary/20 to-purple-500/20 p-12 rounded-2xl border border-border backdrop-blur-sm">
               <div className="space-y-8">
-                <img src={oficinaLideresLogo} alt="Oficina de Líderes" className="h-24 mx-auto" />
-                <h3 className="text-4xl font-semibold">Oficina de Líderes</h3>
+                <img src={oficinaLideresLogo} alt="Oficina de Líderes" className="h-36 mx-auto" />
                 <p className="text-2xl text-muted-foreground">
                   Programa intensivo de desenvolvimento de liderança para empresários, gestores, gerentes, supervisores e diretores
                 </p>
@@ -299,7 +303,7 @@ const ApresentacaoPage = () => {
           <img src={crieValorLogo} alt="Crie Valor" className="h-24 mb-12" />
           <h2 className="text-6xl font-bold mb-12">Vamos Transformar Sua Empresa?</h2>
           <p className="text-3xl text-muted-foreground max-w-5xl mb-16">
-            Agende uma conversa estratégica e descubra como podemos acelerar seus resultados
+            Descubra como podemos acelerar seus resultados
           </p>
           
           <div className="grid grid-cols-2 gap-20 max-w-5xl w-full">
@@ -312,7 +316,7 @@ const ApresentacaoPage = () => {
                 </div>
                 <div className="flex items-center justify-center space-x-4">
                   <Phone className="h-8 w-8 text-primary" />
-                  <span className="text-2xl">(47) 99215-0289</span>
+                  <span className="text-2xl">(67) 99654-2991</span>
                 </div>
                 <div className="flex items-center justify-center space-x-4">
                   <Globe className="h-8 w-8 text-primary" />
