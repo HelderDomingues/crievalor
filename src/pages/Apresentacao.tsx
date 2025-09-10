@@ -217,7 +217,7 @@ const ApresentacaoPage = () => {
             <div className="flex items-center justify-center">
               <div className="bg-gradient-to-br from-purple-500/20 to-primary/20 p-12 rounded-2xl border border-border backdrop-blur-sm">
                 <div className="text-center space-y-8">
-                  <img src={mentorPropositoLogo} alt="Mentor de Propósito" className="h-44 mx-auto" />
+                  <img src={mentorPropositoLogo} alt="Mentor de Propósito" className="h-52 mx-auto" />
                   <h3 className="text-3xl font-semibold">Propósito Autêntico</h3>
                   <p className="text-xl text-muted-foreground">Conectando essência com estratégia</p>
                 </div>
