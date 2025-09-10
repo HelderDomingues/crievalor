@@ -34,6 +34,7 @@ import DiagnosticRequestsAdminPage from "@/pages/DiagnosticRequestsAdmin";
 import AdminDashboard from "@/pages/AdminDashboard";
 import Lumia from "@/pages/Lumia";
 import MentorProposito from "@/pages/MentorProposito";
+import Apresentacao from "@/pages/Apresentacao";
 
 export const router = createBrowserRouter([
   {
@@ -164,5 +165,9 @@ export const router = createBrowserRouter([
   {
     path: "/admin-dashboard",
     element: <AdminDashboard />,
+  },
+  {
+    path: "/apresentacao",
+    element: <Apresentacao />,
   },
 ]);
