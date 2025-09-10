@@ -5,9 +5,11 @@ import { ChevronLeft, ChevronRight, Target, Users, Brain, Lightbulb, Palette, Za
 import { FlagIcon } from '@/components/ui/flag-icon';
 import crieValorLogo from '@/assets/crie-valor-logo.png';
 import marLogo from '@/assets/mar-logo.png';
+import marLogoHorizontal from '@/assets/mar-logo-horizontal.png';
 import lumiaLogo from '@/assets/lumia-logo.png';
 import VideoBackground from '@/components/VideoBackground';
 import mentorPropositoTransparent from '@/assets/mentor-proposito-transparent.png';
+import mentorPropositoHorizontal from '@/assets/mentor-proposito-horizontal.png';
 import oficinaLideresTransparent from '@/assets/oficina-lideres-logo-transparent.png';
 
 // Using transparent logos
@@ -45,7 +47,7 @@ const ApresentacaoPage = () => {
             <h2 className="text-6xl font-bold">Nosso Propósito</h2>
           </div>
           <div className="max-w-6xl space-y-12">
-            <h3 className="text-5xl font-semibold text-primary leading-tight">
+            <h3 className="text-5xl font-semibold text-white leading-tight">
               "Gerar clareza e direção para as empresas, fazendo da atitude o motor do crescimento"
             </h3>
             <div className="grid grid-cols-3 gap-12 mt-20">
@@ -87,13 +89,13 @@ const ApresentacaoPage = () => {
           <h2 className="text-6xl font-bold">Ecossistema de Inteligência Organizacional</h2>
           <div className="grid grid-cols-2 gap-16 max-w-5xl">
             <div className="flex items-center justify-center">
-              <img src={marLogo} alt="MAR" className="h-48" />
+              <img src={marLogoHorizontal} alt="MAR" className="h-32" />
             </div>
             <div className="flex items-center justify-center">
               <img src={lumiaLogo} alt="Lumia" className="h-48" />
             </div>
             <div className="flex items-center justify-center">
-              <img src={mentorPropositoLogo} alt="Mentor de Propósito" className="h-48" />
+              <img src={mentorPropositoHorizontal} alt="Mentor de Propósito" className="h-32" />
             </div>
             <div className="flex items-center justify-center">
               <img src={oficinaLideresLogo} alt="Oficina de Líderes" className="h-48" />
@@ -299,28 +301,26 @@ const ApresentacaoPage = () => {
   // Slide 10 - Fechamento CTA
   {
     id: 'fechamento',
-    content: <div className="flex flex-col items-center justify-center h-full text-center space-y-12">
-          <img src={crieValorLogo} alt="Crie Valor" className="h-24 mb-12" />
-          <h2 className="text-6xl font-bold mb-12">Vamos Transformar Sua Empresa?</h2>
-          <p className="text-3xl text-muted-foreground max-w-5xl mb-16">
-            Descubra como podemos acelerar seus resultados
-          </p>
+    content: <div className="flex flex-col items-center justify-center h-full text-center space-y-16 px-20 py-16">
+          <div className="space-y-8">
+            <img src={crieValorLogo} alt="Crie Valor" className="h-28 mx-auto" />
+            <h2 className="text-6xl font-bold">Vamos Transformar Sua Empresa?</h2>
+            <p className="text-3xl text-muted-foreground max-w-5xl">
+              Descubra como podemos acelerar seus resultados
+            </p>
+          </div>
           
-          <div className="grid grid-cols-2 gap-20 max-w-5xl w-full">
+          <div className="grid grid-cols-2 gap-24 max-w-5xl w-full">
             <div className="space-y-8">
               <h3 className="text-3xl font-semibold">Contatos</h3>
-              <div className="space-y-6">
+              <div className="space-y-8">
+                <div className="flex items-center justify-center space-x-4">
+                  <Phone className="h-10 w-10 text-primary" />
+                  <span className="text-3xl font-semibold">(67) 99654-2991</span>
+                </div>
                 <div className="flex items-center justify-center space-x-4">
                   <Mail className="h-8 w-8 text-primary" />
                   <span className="text-2xl">contato@crievalor.com.br</span>
-                </div>
-                <div className="flex items-center justify-center space-x-4">
-                  <Phone className="h-8 w-8 text-primary" />
-                  <span className="text-2xl">(67) 99654-2991</span>
-                </div>
-                <div className="flex items-center justify-center space-x-4">
-                  <Globe className="h-8 w-8 text-primary" />
-                  <span className="text-2xl">crievalor.com.br</span>
                 </div>
               </div>
             </div>
@@ -334,7 +334,7 @@ const ApresentacaoPage = () => {
             </div>
           </div>
           
-          <div className="mt-20 text-2xl text-muted-foreground">
+          <div className="text-4xl font-bold text-primary">
             Obrigado pela atenção!
           </div>
         </div>
@@ -393,7 +393,7 @@ return <div className="min-h-screen bg-gradient-to-br from-background via-backgr
       
       {/* Hide cookies and WhatsApp components */}
       <style>{`
-        .cookie-consent, .whatsapp-widget, .floating-cta, .quick-cta {
+        .cookie-consent, .whatsapp-widget, .floating-cta, .quick-cta, .chatbot-container {
           display: none !important;
         }
       `}</style>
