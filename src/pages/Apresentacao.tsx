@@ -7,23 +7,29 @@ import crieValorLogo from '@/assets/crie-valor-logo.png';
 import marLogo from '@/assets/mar-logo.png';
 import lumiaLogo from '@/assets/lumia-logo.png';
 import WaveBackground from '@/components/WaveBackground';
+
 const ApresentacaoPage = () => {
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
   const [count, setCount] = useState(0);
+
   useEffect(() => {
     if (!api) return;
+
     setCount(api.scrollSnapList().length);
     setCurrent(api.selectedScrollSnap() + 1);
+
     api.on("select", () => {
       setCurrent(api.selectedScrollSnap() + 1);
     });
   }, [api]);
+
   const slides = [
-  // Slide 1 - Capa
-  {
-    id: 'capa',
-    content: <div className="flex flex-col items-center justify-center h-full text-center space-y-8">
+    // Slide 1 - Capa
+    {
+      id: 'capa',
+      content: (
+        <div className="flex flex-col items-center justify-center h-full text-center space-y-8">
           <img src={crieValorLogo} alt="Crie Valor" className="h-32 mb-12" />
           <p className="text-4xl text-muted-foreground max-w-4xl leading-relaxed">
             Transformando organizações através de estratégias claras que conectam propósito com resultados extraordinários
@@ -32,11 +38,14 @@ const ApresentacaoPage = () => {
             <div className="text-2xl text-muted-foreground">Apresentação Corporativa • 2025</div>
           </div>
         </div>
-  },
-  // Slide 2 - Nosso Propósito
-  {
-    id: 'proposito',
-    content: <div className="flex flex-col items-center justify-center h-full text-center space-y-12">
+      )
+    },
+    
+    // Slide 2 - Nosso Propósito
+    {
+      id: 'proposito',
+      content: (
+        <div className="flex flex-col items-center justify-center h-full text-center space-y-12">
           <div className="flex items-center space-x-6 mb-12">
             <FlagIcon size={64} className="text-primary" />
             <h2 className="text-6xl font-bold">Nosso Propósito</h2>
@@ -64,11 +73,14 @@ const ApresentacaoPage = () => {
             </div>
           </div>
         </div>
-  },
-  // Slide 3 - O que Fazemos
-  {
-    id: 'o-que-fazemos',
-    content: <div className="flex flex-col items-center justify-center h-full text-center space-y-12">
+      )
+    },
+
+    // Slide 3 - O que Fazemos
+    {
+      id: 'o-que-fazemos',
+      content: (
+        <div className="flex flex-col items-center justify-center h-full text-center space-y-12">
           <h2 className="text-6xl font-bold mb-12">O Que Fazemos</h2>
           <div className="max-w-6xl">
             <p className="text-3xl text-muted-foreground mb-20 leading-relaxed">
@@ -92,11 +104,14 @@ const ApresentacaoPage = () => {
             </div>
           </div>
         </div>
-  },
-  // Slide 4 - Ecossistema de Inteligência
-  {
-    id: 'ecossistema',
-    content: <div className="flex flex-col items-center justify-center h-full text-center space-y-12">
+      )
+    },
+
+    // Slide 4 - Ecossistema de Inteligência
+    {
+      id: 'ecossistema',
+      content: (
+        <div className="flex flex-col items-center justify-center h-full text-center space-y-12">
           <h2 className="text-6xl font-bold mb-12">Ecossistema de Inteligência Organizacional</h2>
           <div className="max-w-6xl">
             <p className="text-2xl text-muted-foreground mb-16">
@@ -109,7 +124,7 @@ const ApresentacaoPage = () => {
                 <p className="text-xl text-muted-foreground">Metodologia para Alto Rendimento</p>
               </div>
               <div className="bg-card/50 backdrop-blur-sm border border-border rounded-xl p-8 space-y-6">
-                
+                <img src={lumiaLogo} alt="Lumia" className="h-24 mx-auto" />
                 <h3 className="text-2xl font-semibold">Lumia</h3>
                 <p className="text-xl text-muted-foreground">Consultor Virtual Inteligente</p>
               </div>
@@ -121,11 +136,14 @@ const ApresentacaoPage = () => {
             </div>
           </div>
         </div>
-  },
-  // Slide 5 - MAR
-  {
-    id: 'mar',
-    content: <div className="flex items-center justify-center h-full">
+      )
+    },
+
+    // Slide 5 - MAR
+    {
+      id: 'mar',
+      content: (
+        <div className="flex items-center justify-center h-full">
           <div className="grid grid-cols-2 gap-16 max-w-6xl w-full">
             <div className="space-y-10">
               <img src={marLogo} alt="MAR" className="h-32" />
@@ -163,11 +181,14 @@ const ApresentacaoPage = () => {
             </div>
           </div>
         </div>
-  },
-  // Slide 6 - Lumia
-  {
-    id: 'lumia',
-    content: <div className="flex items-center justify-center h-full">
+      )
+    },
+
+    // Slide 6 - Lumia
+    {
+      id: 'lumia',
+      content: (
+        <div className="flex items-center justify-center h-full">
           <div className="grid grid-cols-2 gap-16 max-w-6xl w-full">
             <div className="space-y-10">
               <img src={lumiaLogo} alt="Lumia" className="h-32" />
@@ -205,11 +226,14 @@ const ApresentacaoPage = () => {
             </div>
           </div>
         </div>
-  },
-  // Slide 7 - Mentor de Propósito
-  {
-    id: 'mentor-proposito',
-    content: <div className="flex items-center justify-center h-full">
+      )
+    },
+
+    // Slide 7 - Mentor de Propósito
+    {
+      id: 'mentor-proposito',
+      content: (
+        <div className="flex items-center justify-center h-full">
           <div className="grid grid-cols-2 gap-16 max-w-6xl w-full">
             <div className="space-y-10">
               <div className="flex items-center space-x-6">
@@ -249,11 +273,14 @@ const ApresentacaoPage = () => {
             </div>
           </div>
         </div>
-  },
-  // Slide 8 - Serviços
-  {
-    id: 'servicos',
-    content: <div className="flex flex-col items-center justify-center h-full text-center space-y-12">
+      )
+    },
+
+    // Slide 8 - Serviços
+    {
+      id: 'servicos',
+      content: (
+        <div className="flex flex-col items-center justify-center h-full text-center space-y-12">
           <h2 className="text-6xl font-bold mb-12">Nossos Serviços</h2>
           <div className="grid grid-cols-2 gap-12 max-w-6xl">
             <div className="bg-card/50 backdrop-blur-sm border border-border rounded-xl p-8 space-y-6">
@@ -278,11 +305,14 @@ const ApresentacaoPage = () => {
             </div>
           </div>
         </div>
-  },
-  // Slide 9 - Educação Corporativa
-  {
-    id: 'educacao',
-    content: <div className="flex flex-col items-center justify-center h-full text-center space-y-12">
+      )
+    },
+
+    // Slide 9 - Educação Corporativa
+    {
+      id: 'educacao',
+      content: (
+        <div className="flex flex-col items-center justify-center h-full text-center space-y-12">
           <h2 className="text-6xl font-bold mb-12">Educação Corporativa</h2>
           <div className="max-w-5xl space-y-16">
             <div className="bg-gradient-to-r from-primary/20 to-purple-500/20 p-12 rounded-2xl border border-border backdrop-blur-sm">
@@ -327,11 +357,14 @@ const ApresentacaoPage = () => {
             </div>
           </div>
         </div>
-  },
-  // Slide 10 - Fechamento CTA
-  {
-    id: 'fechamento',
-    content: <div className="flex flex-col items-center justify-center h-full text-center space-y-12">
+      )
+    },
+
+    // Slide 10 - Fechamento CTA
+    {
+      id: 'fechamento',
+      content: (
+        <div className="flex flex-col items-center justify-center h-full text-center space-y-12">
           <img src={crieValorLogo} alt="Crie Valor" className="h-24 mb-12" />
           <h2 className="text-6xl font-bold mb-12">Vamos Transformar Sua Empresa?</h2>
           <p className="text-3xl text-muted-foreground max-w-5xl mb-16">
@@ -370,8 +403,12 @@ const ApresentacaoPage = () => {
             Obrigado pela atenção!
           </div>
         </div>
-  }];
-  return <div className="min-h-screen bg-gradient-to-br from-background via-background/95 to-primary/5 relative overflow-hidden">
+      )
+    }
+  ];
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-background via-background/95 to-primary/5 relative overflow-hidden">
       {/* Background Animation */}
       <div className="absolute inset-0 z-0">
         <WaveBackground />
@@ -387,9 +424,11 @@ const ApresentacaoPage = () => {
         {/* Carousel */}
         <Carousel setApi={setApi} className="flex-1">
           <CarouselContent className="h-screen">
-            {slides.map(slide => <CarouselItem key={slide.id} className="h-screen flex items-center justify-center px-16">
+            {slides.map((slide) => (
+              <CarouselItem key={slide.id} className="h-screen flex items-center justify-center px-16">
                 {slide.content}
-              </CarouselItem>)}
+              </CarouselItem>
+            ))}
           </CarouselContent>
           
           {/* Navigation */}
@@ -399,11 +438,19 @@ const ApresentacaoPage = () => {
         
         {/* Slide Indicators */}
         <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex space-x-2 z-20">
-          {Array.from({
-          length: count
-        }, (_, i) => <button key={i} onClick={() => api?.scrollTo(i)} className={`w-2 h-2 rounded-full transition-all ${i + 1 === current ? 'bg-primary w-8' : 'bg-muted-foreground/50'}`} />)}
+          {Array.from({ length: count }, (_, i) => (
+            <button
+              key={i}
+              onClick={() => api?.scrollTo(i)}
+              className={`w-2 h-2 rounded-full transition-all ${
+                i + 1 === current ? 'bg-primary w-8' : 'bg-muted-foreground/50'
+              }`}
+            />
+          ))}
         </div>
       </div>
-    </div>;
+    </div>
+  );
 };
+
 export default ApresentacaoPage;
