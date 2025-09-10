@@ -116,7 +116,7 @@ const ApresentacaoPage = () => {
               <div className="space-y-6">
                 <div className="flex items-center space-x-4">
                   <div className="w-3 h-3 bg-primary rounded-full"></div>
-                  <span className="text-2xl">Diagnóstico 360 da empresa</span>
+                  <span className="text-2xl">Diagnóstico 360º da empresa</span>
                 </div>
                 <div className="flex items-center space-x-4">
                   <div className="w-3 h-3 bg-primary rounded-full"></div>
@@ -128,7 +128,7 @@ const ApresentacaoPage = () => {
                 </div>
                 <div className="flex items-center space-x-4">
                   <div className="w-3 h-3 bg-primary rounded-full"></div>
-                  <span className="text-2xl">e Planos de Ação personalizados e prontos para execução</span>
+                  <span className="text-2xl">Planos de Ação personalizados e prontos para execução</span>
                 </div>
                 <div className="flex items-center space-x-4">
                   <div className="w-3 h-3 bg-primary rounded-full"></div>
@@ -154,7 +154,7 @@ const ApresentacaoPage = () => {
     content: <div className="flex items-center justify-center h-full px-20">
           <div className="grid grid-cols-2 gap-16 max-w-6xl w-full">
             <div className="space-y-10">
-              <h2 className="text-5xl font-bold">Lumia - Consultor Virtual</h2>
+              <h2 className="text-5xl font-bold">Lumia - Consultores Virtuais</h2>
               <p className="text-2xl text-muted-foreground leading-relaxed">
                 Sistema de consultores virtuais especializados, oferecendo insights e suporte 24/7 para acelerar o crescimento
               </p>
