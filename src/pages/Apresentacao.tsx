@@ -34,7 +34,7 @@ const ApresentacaoPage = () => {
     content: <div className="flex flex-col items-center justify-center h-full text-center space-y-12 px-20">
           <img src={crieValorLogo} alt="Crie Valor" className="h-24 mb-12" />
           <p className="text-4xl text-muted-foreground max-w-4xl leading-relaxed">
-            Transformando organizações através de estratégias claras que conectam propósito com resultados
+            Transformando organizações por meio de estratégias claras que conectam propósito com resultados
           </p>
         </div>
   },
@@ -89,7 +89,7 @@ const ApresentacaoPage = () => {
           <h2 className="text-6xl font-bold">Ecossistema de Inteligência Organizacional</h2>
           <div className="grid grid-cols-2 gap-16 max-w-5xl">
             <div className="flex items-center justify-center">
-              <img src={marLogoHorizontal} alt="MAR" className="h-32" />
+              <img src={marLogoHorizontal} alt="MAR" className="h-40" />
             </div>
             <div className="flex items-center justify-center">
               <img src={lumiaLogo} alt="Lumia" className="h-34" />
