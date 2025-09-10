@@ -26,7 +26,7 @@ const ApresentacaoPage = () => {
     content: <div className="flex flex-col items-center justify-center h-full text-center space-y-8">
           <img src={crieValorLogo} alt="Crie Valor" className="h-32 mb-12" />
           <p className="text-4xl text-muted-foreground max-w-4xl leading-relaxed">
-            Transformando organizações através de estratégias claras que conectam propósito com resultados extraordinários
+            Transformando organizações através de estratégias claras que conectam propósito com resultados
           </p>
           <div className="mt-16">
             
@@ -54,7 +54,7 @@ const ApresentacaoPage = () => {
               <div className="space-y-6">
                 <Zap className="h-16 w-16 text-primary mx-auto" />
                 <h4 className="text-3xl font-semibold">Atitude Transformadora</h4>
-                <p className="text-xl text-muted-foreground">Agimos com foco em crescimento e execução</p>
+                <p className="text-xl text-muted-foreground">Cultivamos mindset de crescimento e execução</p>
               </div>
               <div className="space-y-6">
                 <Users className="h-16 w-16 text-primary mx-auto" />
