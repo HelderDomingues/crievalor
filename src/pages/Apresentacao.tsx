@@ -106,17 +106,17 @@ const ApresentacaoPage = () => {
               <div className="bg-card/50 backdrop-blur-sm border border-border rounded-xl p-8 space-y-6">
                 <img src={marLogo} alt="MAR" className="h-24 mx-auto" />
                 
-                <p className="text-xl text-muted-foreground">Metodologia para Alto Rendimento</p>
+                
               </div>
               <div className="bg-card/50 backdrop-blur-sm border border-border rounded-xl p-8 space-y-6">
                 <img src={lumiaLogo} alt="Lumia" className="h-24 mx-auto" />
                 
-                <p className="text-xl text-muted-foreground">Consultor Virtual Inteligente</p>
+                
               </div>
               <div className="bg-card/50 backdrop-blur-sm border border-border rounded-xl p-8 space-y-6">
                 <FlagIcon size={96} className="text-primary mx-auto" />
                 <h3 className="text-2xl font-semibold">Mentor de Propósito</h3>
-                <p className="text-xl text-muted-foreground">Inteligência Conversacional</p>
+                
               </div>
             </div>
           </div>
