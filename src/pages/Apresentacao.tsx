@@ -89,10 +89,10 @@ const ApresentacaoPage = () => {
           <h2 className="text-6xl font-bold">Ecossistema de Inteligência Organizacional</h2>
           <div className="grid grid-cols-2 gap-16 max-w-5xl">
             <div className="flex items-center justify-center">
-              <img src={marLogoHorizontal} alt="MAR" className="h-40" />
+              <img src={marLogoHorizontal} alt="MAR" className="h-32" />
             </div>
             <div className="flex items-center justify-center">
-              <img src={lumiaLogo} alt="Lumia" className="h-34" />
+              <img src={lumiaLogo} alt="Lumia" className="h-32" />
             </div>
             <div className="flex items-center justify-center">
               <img src={mentorPropositoHorizontal} alt="Mentor de Propósito" className="h-40" />
@@ -333,10 +333,7 @@ const ApresentacaoPage = () => {
               </div>
             </div>
           </div>
-          
-          <div className="text-4xl font-bold text-primary">
-            Obrigado pela atenção!
-          </div>
+
         </div>
   }];
 return <div className="min-h-screen bg-gradient-to-br from-background via-background/95 to-primary/5 relative overflow-hidden">
