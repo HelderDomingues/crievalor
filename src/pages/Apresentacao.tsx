@@ -128,7 +128,7 @@ const ApresentacaoPage = () => {
     content: <div className="flex items-center justify-center h-full">
           <div className="grid grid-cols-2 gap-16 max-w-6xl w-full">
             <div className="space-y-10">
-              <img src={marLogo} alt="MAR" className="h-32" />
+              
               <h2 className="text-5xl font-bold">MAR - Mapa para Alto Rendimento</h2>
               <p className="text-2xl text-muted-foreground leading-relaxed">
                 Metodologia proprietária que identifica oportunidades de crescimento através de diagnósticos precisos e planos de ação estruturados.
