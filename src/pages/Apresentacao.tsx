@@ -199,7 +199,7 @@ const ApresentacaoPage = () => {
                 <div className="text-center space-y-8">
                   <img src={lumiaLogo} alt="Lumia" className="h-32 mx-auto" />
                   <h3 className="text-3xl font-semibold">Consultora Virtual</h3>
-                  <p className="text-xl text-muted-foreground">Conhecimento de 1000+ consultores</p>
+                  
                 </div>
               </div>
             </div>
