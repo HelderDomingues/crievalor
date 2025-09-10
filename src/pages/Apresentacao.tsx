@@ -129,7 +129,7 @@ const ApresentacaoPage = () => {
               <p className="text-2xl text-muted-foreground leading-relaxed">
                 Metodologia proprietária que identifica oportunidades de crescimento através de diagnósticos precisos e planos de ação estruturados.
               </p>
-              <div className="space-y-6">
+              <div className="space-y-6 h-60">
                 <div className="flex items-center space-x-4">
                   <div className="w-3 h-3 bg-primary rounded-full"></div>
                   <span className="text-2xl">Diagnóstico 360° da organização</span>
