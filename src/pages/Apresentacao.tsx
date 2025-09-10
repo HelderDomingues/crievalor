@@ -92,13 +92,13 @@ const ApresentacaoPage = () => {
               <img src={marLogoHorizontal} alt="MAR" className="h-32" />
             </div>
             <div className="flex items-center justify-center">
-              <img src={lumiaLogo} alt="Lumia" className="h-48" />
+              <img src={lumiaLogo} alt="Lumia" className="h-40" />
             </div>
             <div className="flex items-center justify-center">
               <img src={mentorPropositoHorizontal} alt="Mentor de Propósito" className="h-32" />
             </div>
             <div className="flex items-center justify-center">
-              <img src={oficinaLideresLogo} alt="Oficina de Líderes" className="h-48" />
+              <img src={oficinaLideresLogo} alt="Oficina de Líderes" className="h-40" />
             </div>
           </div>
         </div>
