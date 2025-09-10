@@ -168,7 +168,7 @@ const ApresentacaoPage = () => {
             <div className="space-y-10">
               <img src={lumiaLogo} alt="Lumia" className="h-32" />
               <h2 className="text-5xl font-bold">Lumia - Consultor Virtual</h2>
-              <p className="text-2xl text-muted-foreground leading-relaxed">
+              <p className="text-2xl text-muted-foreground leading-relaxed object-cover">
                 Primeira consultora virtual do Brasil especializada em estratégia empresarial, oferecendo insights 24/7 para acelerar decisões.
               </p>
               <div className="space-y-6">
