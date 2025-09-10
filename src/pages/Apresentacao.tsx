@@ -6,7 +6,7 @@ import { FlagIcon } from '@/components/ui/flag-icon';
 import crieValorLogo from '@/assets/crie-valor-logo.png';
 import marLogo from '@/assets/mar-logo.png';
 import lumiaLogo from '@/assets/lumia-logo.png';
-import WaveBackground from '@/components/WaveBackground';
+import VideoBackground from '@/components/VideoBackground';
 
 // Usando as imagens enviadas pelo usuário
 const mentorPropositoLogo = '/lovable-uploads/cb2e0b83-40ae-4efb-8975-8709fbdcd8ba.png';
@@ -338,7 +338,7 @@ const ApresentacaoPage = () => {
 return <div className="min-h-screen bg-gradient-to-br from-background via-background/95 to-primary/5 relative overflow-hidden">
       {/* Background Animation */}
       <div className="absolute inset-0 z-0">
-        <WaveBackground />
+        <VideoBackground />
       </div>
       
       {/* Fullscreen functionality */}
