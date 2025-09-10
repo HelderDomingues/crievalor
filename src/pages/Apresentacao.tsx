@@ -170,7 +170,7 @@ const ApresentacaoPage = () => {
     content: <div className="flex items-center justify-center h-full">
           <div className="grid grid-cols-2 gap-16 max-w-6xl w-full">
             <div className="space-y-10">
-              <img src={lumiaLogo} alt="Lumia" className="h-32" />
+              
               <h2 className="text-5xl font-bold">Lumia - Consultor Virtual</h2>
               <p className="text-2xl text-muted-foreground leading-relaxed">
                 Primeira consultora virtual do Brasil especializada em estratégia empresarial, oferecendo insights 24/7 para acelerar decisões.
