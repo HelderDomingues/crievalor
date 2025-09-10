@@ -26,7 +26,7 @@ const ApresentacaoPage = () => {
     content: <div className="flex flex-col items-center justify-center h-full text-center space-y-8">
           <img src={crieValorLogo} alt="Crie Valor" className="h-32 mb-12" />
           <p className="text-4xl text-muted-foreground max-w-4xl leading-relaxed">
-            Transformando organizações através de estratégias claras que conectam propósito com resultados
+            Transformando organizações através de estratégias claras que conectam propósito com resultados extraordinários
           </p>
           <div className="mt-16">
             
@@ -105,12 +105,12 @@ const ApresentacaoPage = () => {
             <div className="grid grid-cols-3 gap-12">
               <div className="bg-card/50 backdrop-blur-sm border border-border rounded-xl p-8 space-y-6">
                 <img src={marLogo} alt="MAR" className="h-24 mx-auto" />
-                <h3 className="text-2xl font-semibold">MAR</h3>
+                
                 <p className="text-xl text-muted-foreground">Metodologia para Alto Rendimento</p>
               </div>
               <div className="bg-card/50 backdrop-blur-sm border border-border rounded-xl p-8 space-y-6">
                 <img src={lumiaLogo} alt="Lumia" className="h-24 mx-auto" />
-                <h3 className="text-2xl font-semibold">Lumia</h3>
+                
                 <p className="text-xl text-muted-foreground">Consultor Virtual Inteligente</p>
               </div>
               <div className="bg-card/50 backdrop-blur-sm border border-border rounded-xl p-8 space-y-6">
