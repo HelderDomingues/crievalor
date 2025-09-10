@@ -303,7 +303,7 @@ const ApresentacaoPage = () => {
     id: 'fechamento',
     content: <div className="flex flex-col items-center justify-center h-full text-center space-y-16 px-20 py-16">
           <div className="space-y-8">
-            <img src={crieValorLogo} alt="Crie Valor" className="h-18 mx-auto" />
+            <img src={crieValorLogo} alt="Crie Valor" className="h-20 mx-auto" />
             <h2 className="text-6xl font-bold">Vamos Transformar Sua Empresa?</h2>
             <p className="text-3xl text-muted-foreground max-w-5xl">
               Descubra como podemos acelerar seus resultados
