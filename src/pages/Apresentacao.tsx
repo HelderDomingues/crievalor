@@ -113,11 +113,7 @@ const ApresentacaoPage = () => {
                 
                 
               </div>
-              <div className="bg-card/50 backdrop-blur-sm border border-border rounded-xl p-8 space-y-6">
-                <FlagIcon size={96} className="text-primary mx-auto" />
-                <h3 className="text-2xl font-semibold">Mentor de Propósito</h3>
-                
-              </div>
+              
             </div>
           </div>
         </div>
