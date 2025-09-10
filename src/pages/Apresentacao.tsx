@@ -105,18 +105,18 @@ const ApresentacaoPage = () => {
             <div className="grid grid-cols-3 gap-12">
               <div className="bg-card/50 backdrop-blur-sm border border-border rounded-xl p-8 space-y-6">
                 <img src={marLogo} alt="MAR" className="h-24 mx-auto" />
-                
-                
+                <h3 className="text-2xl font-semibold">MAR</h3>
+                <p className="text-xl text-muted-foreground">Metodologia para Alto Rendimento</p>
               </div>
               <div className="bg-card/50 backdrop-blur-sm border border-border rounded-xl p-8 space-y-6">
                 <img src={lumiaLogo} alt="Lumia" className="h-24 mx-auto" />
-                
-                
+                <h3 className="text-2xl font-semibold">Lumia</h3>
+                <p className="text-xl text-muted-foreground">Consultor Virtual Inteligente</p>
               </div>
               <div className="bg-card/50 backdrop-blur-sm border border-border rounded-xl p-8 space-y-6">
                 <FlagIcon size={96} className="text-primary mx-auto" />
                 <h3 className="text-2xl font-semibold">Mentor de Propósito</h3>
-                
+                <p className="text-xl text-muted-foreground">Inteligência Conversacional</p>
               </div>
             </div>
           </div>
@@ -128,7 +128,7 @@ const ApresentacaoPage = () => {
     content: <div className="flex items-center justify-center h-full">
           <div className="grid grid-cols-2 gap-16 max-w-6xl w-full">
             <div className="space-y-10">
-              
+              <img src={marLogo} alt="MAR" className="h-32" />
               <h2 className="text-5xl font-bold">MAR - Mapa para Alto Rendimento</h2>
               <p className="text-2xl text-muted-foreground leading-relaxed">
                 Metodologia proprietária que identifica oportunidades de crescimento através de diagnósticos precisos e planos de ação estruturados.
@@ -170,7 +170,7 @@ const ApresentacaoPage = () => {
     content: <div className="flex items-center justify-center h-full">
           <div className="grid grid-cols-2 gap-16 max-w-6xl w-full">
             <div className="space-y-10">
-              
+              <img src={lumiaLogo} alt="Lumia" className="h-32" />
               <h2 className="text-5xl font-bold">Lumia - Consultor Virtual</h2>
               <p className="text-2xl text-muted-foreground leading-relaxed">
                 Primeira consultora virtual do Brasil especializada em estratégia empresarial, oferecendo insights 24/7 para acelerar decisões.
@@ -198,8 +198,8 @@ const ApresentacaoPage = () => {
               <div className="bg-gradient-to-br from-purple-500/20 to-primary/20 p-12 rounded-2xl border border-border backdrop-blur-sm">
                 <div className="text-center space-y-8">
                   <img src={lumiaLogo} alt="Lumia" className="h-32 mx-auto" />
-                  <h3 className="text-3xl font-semibold">Consultora Virtual</h3>
-                  
+                  <h3 className="text-3xl font-semibold">Sistema de Consultores Virtuais</h3>
+                  <p className="text-xl text-muted-foreground">Conhecimento de 1000+ consultores</p>
                 </div>
               </div>
             </div>
