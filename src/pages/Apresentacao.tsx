@@ -32,7 +32,7 @@ const ApresentacaoPage = () => {
   {
     id: 'capa',
     content: <div className="flex flex-col items-center justify-center h-full text-center space-y-12 px-20">
-          <img src={crieValorLogo} alt="Crie Valor" className="h-32 mb-12" />
+          <img src={crieValorLogo} alt="Crie Valor" className="h-24 mb-12" />
           <p className="text-4xl text-muted-foreground max-w-4xl leading-relaxed">
             Transformando organizações através de estratégias claras que conectam propósito com resultados
           </p>
