@@ -56,7 +56,7 @@ const Header = () => {
 
   const servicesItems = [
     { title: "MAR", path: "/mar" },
-    { title: "Lumia", path: "/lumia" },
+    { title: "Lumia", path: "https://lumia.crievalor.com.br", external: true },
     { title: "Mentor de Propósito", path: "/mentor-proposito" },
     { title: "Identidade Visual", path: "/identidade-visual" },
     { title: "Mentorias", path: "/mentorias" },
@@ -124,7 +124,7 @@ const Header = () => {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <button className="flex items-center text-sm transition-all hover:text-primary text-foreground/80 link-underline">
-                  Serviços
+                  Soluções
                   <ChevronDown className="ml-1 h-3 w-3" />
                 </button>
               </DropdownMenuTrigger>
