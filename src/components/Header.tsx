@@ -141,16 +141,8 @@ const Header = () => {
                     </Link>
                   </DropdownMenuItem>
                 ))}
-              </DropdownMenuContent>
+            </DropdownMenuContent>
             </DropdownMenu>
-            <Button
-              size="sm"
-              variant="outline"
-              className="ml-2"
-              onClick={handleWhatsAppContact}
-            >
-              Fale Conosco
-            </Button>
             <Button
               size="sm"
               className="ml-2 bg-primary text-primary-foreground hover:bg-primary/90 transition-all shadow-glow"
@@ -240,15 +232,8 @@ const Header = () => {
               </Link>
             ))}
           </div>
-          <Button 
-            variant="outline"
-            className="mt-4"
-            onClick={handleWhatsAppContact}
-          >
-            Fale Conosco
-          </Button>
           <Button
-            className="bg-primary text-primary-foreground hover:bg-primary/90 transition-all shadow-glow"
+            className="mt-4 bg-primary text-primary-foreground hover:bg-primary/90 transition-all shadow-glow"
             asChild
           >
             <Link to="/contato" onClick={() => setIsMenuOpen(false)}>
