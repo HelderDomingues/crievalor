@@ -1,4 +1,3 @@
-
 import React from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -24,61 +23,70 @@ import { useScrollToTop } from "@/hooks/useScrollToTop";
 
 const Index = () => {
   useScrollToTop();
-  
+
   return (
     <div className="min-h-screen flex flex-col">
       <Helmet>
         <title>Crie Valor Estratégia | Consultoria e Marketing para empresas</title>
-        <meta name="description" content="Transforme sua empresa com o MAR: Mapa para Alto Rendimento. Consultoria estratégica, marketing e metodologia proprietária para impulsionar seus resultados." />
-        <meta property="og:title" content="Crie Valor Estratégia | Consultoria e Marketing para empresas" />
-        <meta property="og:description" content="Transforme sua empresa com o MAR: Mapa para Alto Rendimento. Consultoria estratégica, marketing e metodologia proprietária para impulsionar seus resultados." />
+        <meta
+          name="description"
+          content="Transforme sua empresa com o MAR: Mapa para Alto Rendimento. Intelligência Organizacional."
+        />
+        <meta property="og:title" content="Crie Valor Estratégia | Intelligência Organizacional" />
+        <meta
+          property="og:description"
+          content="Transforme sua empresa com o MAR: Mapa para Alto Rendimento. Intelligência Organizacional."
+        />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://crievalor.com.br" />
         <meta property="og:image" content="https://crievalor.com.br/og-image.png" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Crie Valor Estratégia | Consultoria e Marketing" />
-        <meta name="twitter:description" content="Transforme sua empresa com o MAR: Mapa para Alto Rendimento. Consultoria estratégica para resultados excepcionais." />
+        <meta name="twitter:title" content="Crie Valor Estratégia | Intelligência Organizacional" />
+        <meta
+          name="twitter:description"
+          content="Transforme sua empresa com o MAR: Mapa para Alto Rendimento. Consultoria estratégica para resultados excepcionais."
+        />
         <meta name="twitter:image" content="https://crievalor.com.br/og-image.png" />
         <link rel="canonical" href="https://crievalor.com.br" />
       </Helmet>
-      
-      <OrganizationSchema 
+
+      <OrganizationSchema
         url="https://crievalor.com.br"
         logo="https://crievalor.com.br/lovable-uploads/d2f508b6-c101-4928-b7f7-161a378bb6e8.png"
       />
-      
+
       <Header />
-      
+
       <main className="flex-grow">
-        <h1 className="sr-only">Crie Valor Estratégia - Consultoria e Marketing para empresas</h1>
-        
+        <h1 className="sr-only">Crie Valor Estratégia - Intelligência Organizacional</h1>
+
         {/* Hero Carrossel - Propósito + MAR + Mentorias + Mentor de Propósito */}
         <InteractiveGalaxyHeroCarousel />
-        
+
         {/* Como Fazemos - Nova seção metodológica */}
         <HowWeDoItSection />
-        
+
         {/* Transição Por que → O que */}
         <WhatWhyTransition />
-        
+
         {/* MAR Product Highlight - Seção dedicada */}
         <MarHighlight />
-        
+
         {/* Lumia Product Highlight - Nova seção do ecossistema */}
         <LumiaHighlight />
-        
+
         {/* Mentor de Propósito Product Highlight - Bússola do ecossistema */}
         <MentorPropositoHighlight />
-        
+
         {/* Mentorias Section - Seção dedicada */}
         <MentoriasSection />
-        
+
         {/* Services Sections - Seções completas */}
         <ServicesSections />
-        
+
         {/* Blog Preview - Conectando com o blog */}
         <BlogPreview />
-        
+
         {/* CTA após Blog Preview */}
         <QuickCTA
           title="Quer conteúdo estratégico exclusivo?"
@@ -89,7 +97,7 @@ const Index = () => {
           centerAlign
           className="bg-secondary/30"
         />
-        
+
         {/* Client Logos Section */}
         <div id="clientes" aria-labelledby="clientesHeading" className="py-16 md:py-24">
           <div className="container mx-auto px-4">
@@ -104,7 +112,7 @@ const Index = () => {
             <ClientLogosCarousel />
           </div>
         </div>
-        
+
         {/* CTA após Client Logos */}
         <QuickCTA
           title="Quero fazer parte desta lista de sucesso"
@@ -114,10 +122,10 @@ const Index = () => {
           centerAlign
           className="bg-primary/5"
         />
-        
+
         {/* Testimonials Section */}
         <TestimonialsSection />
-        
+
         {/* CTA após Testimonials */}
         <QuickCTA
           title="Quero resultados como estes para minha empresa"
@@ -128,20 +136,20 @@ const Index = () => {
           centerAlign
           className="bg-secondary/20"
         />
-        
+
         {/* Partners Section */}
         <PartnersSection />
-        
+
         {/* CTA Final - Diagnóstico Gratuito */}
         <MainCTA />
-        
+
         {/* Contact Section */}
         <ContactSection />
       </main>
-      
+
       {/* CTA Flutuante */}
       <FloatingCTA />
-      
+
       <Footer />
     </div>
   );
