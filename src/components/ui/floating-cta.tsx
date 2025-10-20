@@ -88,7 +88,7 @@ const FloatingCTA: React.FC<FloatingCTAProps> = ({ className }) => {
 
                 <div className="space-y-2">
                   <Button size="sm" className="w-full shadow-glow text-xs" onClick={handleCTAClick} asChild>
-                    <Link to="/auth">
+                    <Link to="/contato">
                       Cadastre-se <ArrowRight className="ml-2 h-3 w-3" />
                     </Link>
                   </Button>
