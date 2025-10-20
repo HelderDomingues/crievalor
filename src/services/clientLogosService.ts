@@ -34,7 +34,58 @@ export const fetchClientLogos = async (): Promise<ClientLogo[]> => {
 };
 
 /**
- * Adds a new client logo to the database
+ * Uploads a logo file to Supabase storage and adds the record to the database
+ * @param name Client name
+ * @param file Image file to upload
+ * @returns URL of the uploaded file
+ */
+export const uploadClientLogo = async (name: string, file: File): Promise<string> => {
+  try {
+    // Generate unique filename
+    const fileExt = file.name.split('.').pop();
+    const fileName = `${name.replace(/\s+/g, '-').toLowerCase()}-${Date.now()}.${fileExt}`;
+    const filePath = fileName;
+
+    // Upload file to storage
+    const { error: uploadError } = await supabaseExtended.storage
+      .from('clientlogos')
+      .upload(filePath, file, {
+        cacheControl: '3600',
+        upsert: false
+      });
+
+    if (uploadError) {
+      console.error("Error uploading file:", uploadError);
+      throw new Error(`Failed to upload file: ${uploadError.message}`);
+    }
+
+    // Get public URL
+    const { data: { publicUrl } } = supabaseExtended.storage
+      .from('clientlogos')
+      .getPublicUrl(filePath);
+
+    // Insert record with the storage URL
+    const { error: insertError } = await supabaseExtended
+      .from('client_logos')
+      .insert({
+        name,
+        logo: publicUrl
+      });
+
+    if (insertError) {
+      console.error("Error inserting logo record:", insertError);
+      throw new Error(`Failed to create logo record: ${insertError.message}`);
+    }
+
+    return publicUrl;
+  } catch (error) {
+    console.error("Error in uploadClientLogo:", error);
+    throw error;
+  }
+};
+
+/**
+ * Adds a new client logo to the database using an external URL
  * @param name Client name
  * @param logoUrl URL of the logo (external URL)
  */

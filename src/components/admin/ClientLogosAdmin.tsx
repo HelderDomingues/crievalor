@@ -7,7 +7,7 @@ import { Trash2, Upload, Plus, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { 
   fetchClientLogos, 
-  addClientLogo, 
+  uploadClientLogo, 
   deleteClientLogo, 
   ClientLogo 
 } from "@/services/clientLogosService";
@@ -109,18 +109,11 @@ const ClientLogosAdmin = () => {
           return;
         }
         
-        // Get URL from user instead of uploading the file
-        const logoUrl = prompt("Por favor, insira a URL da imagem (recomendamos hospedar em sites como Imgur, Wix, etc):");
-        if (!logoUrl) {
-          toast.error("URL não fornecida");
-          return;
-        }
-        
-        // Sanitize the name for use as filename
+        // Get the logo name
         const logoName = logos[index].name.trim() || `cliente-${index + 1}`;
         
-        // Upload using addClientLogo with URL instead of file
-        await addClientLogo(logoName, logoUrl);
+        // Upload file to Supabase storage
+        await uploadClientLogo(logoName, file);
         
         // Refresh the logos to get the updated list with the new logo
         await fetchLogos();
@@ -203,19 +196,19 @@ const ClientLogosAdmin = () => {
                   <Button 
                     variant="outline" 
                     onClick={() => handleUploadImage(index)}
-                    title="Inserir URL da imagem"
+                    title="Fazer upload da imagem"
                     disabled={uploading[index]}
                     className="w-full"
                   >
                     {uploading[index] ? (
                       <>
                         <Loader2 className="h-4 w-4 animate-spin mr-2" /> 
-                        Processando...
+                        Fazendo upload...
                       </>
                     ) : (
                       <>
                         <Upload className="h-4 w-4 mr-2" /> 
-                        Definir URL do logo
+                        Fazer upload do logo
                       </>
                     )}
                   </Button>
