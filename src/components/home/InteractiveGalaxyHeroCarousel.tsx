@@ -254,7 +254,7 @@ const InteractiveGalaxyHeroCarousel = () => {
       title: "Ecossistema de Inteligência Organizacional",
       subtitle: "Estratégia, clareza e ação — em um só lugar",
       description:
-        "O MAR analisa profundamente seu negócio. O Lumia transforma estratégia em execução com consultores virtuais em Vendas, Marketing, Operações e Finanças. Some a isso a definição de Propósito (Simon Sinek) — e ganhe direção com impacto.",
+        "O MAR analisa profundamente seu negócio. O Lumia transforma estratégia em execução com consultores virtuais em Vendas, Marketing, Operações, Finanças, RH e Gestão. Some a isso a definição de Propósito — e ganhe direção com clareza e impacto.",
       ctaText: "Conheça o Lumia",
       ctaUrl: "/lumia",
       secondaryCtaText: "Entenda o MAR",
