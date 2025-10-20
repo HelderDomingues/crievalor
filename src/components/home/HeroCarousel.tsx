@@ -21,8 +21,8 @@ const HeroCarousel = () => {
       description: 'Descubra como nosso sistema exclusivo pode acelerar seus resultados e levar sua empresa ao próximo nível de crescimento sustentável.',
       ctaText: 'Conhecer o MAR',
       ctaUrl: '/mar',
-      secondaryCtaText: 'Diagnóstico Gratuito',
-      secondaryCtaUrl: '/diagnostico-gratuito',
+      secondaryCtaText: 'Falar Conosco',
+      secondaryCtaUrl: '/contato',
       background: 'bg-gradient-to-br from-primary/5 via-primary/10 to-primary/5',
       iconColor: 'text-primary',
       features: [

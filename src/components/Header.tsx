@@ -156,8 +156,8 @@ const Header = () => {
               className="ml-2 bg-primary text-primary-foreground hover:bg-primary/90 transition-all shadow-glow"
               asChild
             >
-              <Link to="/diagnostico-gratuito">
-                Diagnóstico Gratuito
+              <Link to="/contato">
+                Fale Conosco
               </Link>
             </Button>
             
@@ -247,12 +247,12 @@ const Header = () => {
           >
             Fale Conosco
           </Button>
-          <Button 
+          <Button
             className="bg-primary text-primary-foreground hover:bg-primary/90 transition-all shadow-glow"
             asChild
           >
-            <Link to="/diagnostico-gratuito" onClick={() => setIsMenuOpen(false)}>
-              Diagnóstico Gratuito
+            <Link to="/contato" onClick={() => setIsMenuOpen(false)}>
+              Fale Conosco
             </Link>
           </Button>
         </nav>

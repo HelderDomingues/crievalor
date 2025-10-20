@@ -67,11 +67,11 @@ const FloatingCTA: React.FC<FloatingCTAProps> = ({ className }) => {
               <div className="flex justify-between items-start mb-4">
                 <div className="flex items-center gap-2">
                   <div className="bg-primary/10 rounded-full p-2">
-                    <Calendar className="h-5 w-5 text-primary" />
+                    <MessageSquare className="h-5 w-5 text-primary" />
                   </div>
                   <div>
-                    <h3 className="font-bold text-sm">Diagnóstico Gratuito</h3>
-                    <p className="text-xs text-muted-foreground">Apenas hoje</p>
+                    <h3 className="font-bold text-sm">Fale Conosco</h3>
+                    <p className="text-xs text-muted-foreground">Estamos online</p>
                   </div>
                 </div>
                 <div className="flex gap-1">
@@ -97,18 +97,18 @@ const FloatingCTA: React.FC<FloatingCTAProps> = ({ className }) => {
               {/* Content */}
               <div className="space-y-4">
                 <p className="text-sm text-muted-foreground">
-                  Descubra exatamente onde sua empresa pode melhorar e crie um plano de ação personalizado.
+                  Quer saber como podemos ajudar sua empresa a alcançar resultados excepcionais?
                 </p>
 
                 <div className="bg-primary/5 rounded-lg p-3 space-y-2">
                   <div className="flex items-center gap-2 text-xs">
                     <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                    <span className="font-medium">3 vagas restantes hoje</span>
+                    <span className="font-medium">Consultores disponíveis agora</span>
                   </div>
                   <div className="text-xs text-muted-foreground">
-                    • Análise gratuita de 60 min<br/>
-                    • Relatório personalizado<br/>
-                    • Plano de ação específico
+                    • Consultoria estratégica<br/>
+                    • Soluções personalizadas<br/>
+                    • Resultados comprovados
                   </div>
                 </div>
 
@@ -119,8 +119,8 @@ const FloatingCTA: React.FC<FloatingCTAProps> = ({ className }) => {
                     onClick={handleCTAClick}
                     asChild
                   >
-                    <Link to="/diagnostico-gratuito">
-                      Agendar meu diagnóstico <ArrowRight className="ml-2 h-3 w-3" />
+                    <Link to="/contato">
+                      Falar com consultor <ArrowRight className="ml-2 h-3 w-3" />
                     </Link>
                   </Button>
                   
@@ -132,7 +132,7 @@ const FloatingCTA: React.FC<FloatingCTAProps> = ({ className }) => {
                     asChild
                   >
                     <a 
-                      href="https://wa.me/5547992150289?text=Tenho%20interesse%20no%20diagnóstico%20gratuito"
+                      href="https://wa.me/5547992150289?text=Olá,%20gostaria%20de%20mais%20informações"
                       target="_blank"
                       rel="noopener noreferrer"
                     >
@@ -151,8 +151,8 @@ const FloatingCTA: React.FC<FloatingCTAProps> = ({ className }) => {
                 className="w-full"
                 onClick={handleMinimize}
               >
-                <Calendar className="mr-2 h-4 w-4" />
-                Diagnóstico Gratuito
+                <MessageSquare className="mr-2 h-4 w-4" />
+                Fale Conosco
               </Button>
             </div>
           )}

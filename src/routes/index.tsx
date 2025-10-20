@@ -24,13 +24,11 @@ import TermsOfService from "@/pages/TermsOfService";
 import Subscription from "@/pages/Subscription";
 import Checkout from "@/pages/Checkout";
 import Accessibility from "@/pages/Accessibility";
-import DiagnosticoGratuito from "@/pages/DiagnosticoGratuito";
 import WhatsAppDashboard from "@/pages/WhatsAppDashboard";
 import Palestra from "@/pages/Palestra";
 import PalestraSucesso from "@/pages/PalestraSucesso";
 import LecturesAdmin from "@/pages/LecturesAdmin";
 import EventLeadsAdmin from "@/pages/EventLeadsAdmin";
-import DiagnosticRequestsAdminPage from "@/pages/DiagnosticRequestsAdmin";
 import AdminDashboard from "@/pages/AdminDashboard";
 import Lumia from "@/pages/Lumia";
 import MentorProposito from "@/pages/MentorProposito";
@@ -135,10 +133,6 @@ export const router = createBrowserRouter([
     element: <Accessibility />,
   },
   {
-    path: "/diagnostico-gratuito",
-    element: <DiagnosticoGratuito />,
-  },
-  {
     path: "/admin-whatsapp",
     element: <WhatsAppDashboard />,
   },
@@ -157,10 +151,6 @@ export const router = createBrowserRouter([
   {
     path: "/admin-event-leads",
     element: <EventLeadsAdmin />,
-  },
-  {
-    path: "/admin-diagnostic-requests",
-    element: <DiagnosticRequestsAdminPage />,
   },
   {
     path: "/admin-dashboard",

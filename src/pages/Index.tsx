@@ -82,8 +82,8 @@ const Index = () => {
         <QuickCTA
           title="Quero fazer parte desta lista de sucesso"
           description="Junte-se às empresas que já transformaram seus resultados conosco."
-          ctaText="Começar minha transformação"
-          ctaUrl="/diagnostico-gratuito"
+          ctaText="Falar com especialista"
+          ctaUrl="/contato"
           centerAlign
           className="bg-primary/5"
         />
@@ -117,7 +117,7 @@ const Index = () => {
           title="Quer conteúdo estratégico exclusivo?"
           description="Acesse materiais avançados e insights que só compartilhamos com nossa comunidade VIP."
           ctaText="Acessar conteúdo exclusivo"
-          ctaUrl="/diagnostico-gratuito"
+          ctaUrl="/material-exclusivo"
           variant="outline"
           centerAlign
           className="bg-secondary/30"
@@ -130,8 +130,8 @@ const Index = () => {
         <QuickCTA
           title="Quero resultados como estes para minha empresa"
           description="Descubra como podemos acelerar o crescimento da sua empresa também."
-          ctaText="Agendar meu diagnóstico"
-          ctaUrl="/diagnostico-gratuito"
+          ctaText="Falar com consultor"
+          ctaUrl="/contato"
           variant="secondary"
           centerAlign
           className="bg-secondary/20"
