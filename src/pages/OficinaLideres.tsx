@@ -466,7 +466,7 @@ const OficinaLideres = () => {
               <div className="space-y-6">
                 <div className="bg-card rounded-lg p-6 shadow-sm">
                   <h3 className="text-xl font-semibold mb-3">A Oficina de Líderes é presencial ou online?</h3>
-                  <p className="text-muted-foreground">A Oficina de Líderes é 100% presencial, realizada exclusivamente na região do Baixo Vale do Itajaí/SC. Acreditamos que o networking e a troca de experiências presenciais são fundamentais para o desenvolvimento de líderes.</p>
+                  <p className="text-muted-foreground">A Oficina de Líderes é 100% presencial. Acreditamos que o networking e a troca de experiências presenciais são fundamentais para o desenvolvimento de líderes.</p>
                 </div>
                 
                 <div className="bg-card rounded-lg p-6 shadow-sm">
