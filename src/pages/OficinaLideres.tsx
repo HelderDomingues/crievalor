@@ -371,8 +371,8 @@ const OficinaLideres = () => {
                   </div>
                   
                   <div>
-                    <h3 className="text-xl font-medium mb-4">Região Atendida</h3>
-                    <div className="bg-secondary/50 rounded-lg p-4 mb-6">
+                    <h3 className="text-xl font-medium mb-4">Regiões Atendidas</h3>
+                    <div className="bg-secondary/50 rounded-lg p-4 mb-4">
                       <div className="flex items-center mb-3">
                         <MapPin className="h-5 w-5 text-primary mr-2" />
                         <h4 className="font-medium">Baixo Vale do Itajaí - SC</h4>
@@ -384,6 +384,17 @@ const OficinaLideres = () => {
                         <li>• Penha</li>
                         <li>• Cidades próximas</li>
                       </ul>
+                    </div>
+                    
+                    <div className="bg-secondary/50 rounded-lg p-4 mb-6">
+                      <div className="flex items-center mb-3">
+                        <MapPin className="h-5 w-5 text-primary mr-2" />
+                        <h4 className="font-medium">Campo Grande - MS</h4>
+                        <span className="ml-2 text-xs bg-primary/10 text-primary px-2 py-1 rounded-full">Em breve</span>
+                      </div>
+                      <p className="pl-7 text-sm text-muted-foreground">
+                        Turmas presenciais em Campo Grande/MS em breve
+                      </p>
                     </div>
                     
                     <h3 className="text-xl font-medium mb-4">Investimento</h3>
