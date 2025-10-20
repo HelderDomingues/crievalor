@@ -7,28 +7,15 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, Award, BarChart3, Calendar, CheckCircle2, MapPin, MessageCircle, Phone, Target, Users } from "lucide-react";
 import OficinaLideresLeadForm from "@/components/OficinaLideresLeadForm";
 import VideoSection from "@/components/VideoSection";
-
 const OficinaLideres = () => {
   const heroImages = ["https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=2070", "https://images.unsplash.com/photo-1558021211-6d1403321394?q=80&w=2083", "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?q=80&w=2070"];
-  
-  const heroDescription = 
-    "Formação de líderes que dominam as ferramentas essenciais para gerir pessoas e processos.\n\n" +
-    "Treinamentos práticos desenvolvidos por especialistas com mais de 25 anos de experiência no mercado.\n\n" +
-    "Métodos testados e aprovados em centenas de empresas, garantindo resultados rápidos e mensuráveis.";
-  
+  const heroDescription = "Formação de líderes que dominam as ferramentas essenciais para gerir pessoas e processos.\n\n" + "Treinamentos práticos desenvolvidos por especialistas com mais de 25 anos de experiência no mercado.\n\n" + "Métodos testados e aprovados em centenas de empresas, garantindo resultados rápidos e mensuráveis.";
   return <div className="min-h-screen flex flex-col">
       <Header />
       
       <main className="flex-grow">
         {/* Hero Section */}
-        <HeroSection 
-          title="OFICINA DE LÍDERES" 
-          subtitle="Desperte SEU potencial de liderança com:" 
-          description={heroDescription}
-          ctaText="QUERO TRANSFORMAR MINHA LIDERANÇA" 
-          ctaUrl="https://wa.me/+5547992150289?text=Quero%20garantir%20minha%20vaga%20na%20próxima%20turma%20da%20Oficina%20de%20Líderes" 
-          backgroundImages={heroImages} 
-        />
+        <HeroSection title="OFICINA DE LÍDERES" subtitle="Desperte SEU potencial de liderança com:" description={heroDescription} ctaText="QUERO TRANSFORMAR MINHA LIDERANÇA" ctaUrl="https://wa.me/+5547992150289?text=Quero%20garantir%20minha%20vaga%20na%20próxima%20turma%20da%20Oficina%20de%20Líderes" backgroundImages={heroImages} />
 
         {/* About Section */}
         <section className="py-16 md:py-20 bg-secondary/30">
@@ -89,11 +76,7 @@ const OficinaLideres = () => {
               </div>
               
               <div className="order-1 lg:order-2">
-                <VideoSection 
-                  title=""
-                  description=""
-                  videoUrl="https://www.youtube.com/embed/QJvQZuYIWt0"
-                />
+                <VideoSection title="" description="" videoUrl="https://www.youtube.com/embed/QJvQZuYIWt0" />
               </div>
             </div>
           </div>
@@ -177,21 +160,10 @@ const OficinaLideres = () => {
               <div className="bg-card border border-border rounded-xl p-6 hover:shadow-md transition-all">
                 <h3 className="text-xl font-bold mb-3">MÓDULO GERAL (Base Essencial para Todo Gestor)</h3>
                 <ul className="space-y-2">
-                  {[
-                    "Introdução a gestão: identificar habilidades e quebrar paradigmas",
-                    "Análise de Perfil",
-                    "Análise de Cenário",
-                    "Planos de ação",
-                    "Indicadores e Monitoramento",
-                    "Feedback",
-                    "Reuniões Produtivas",
-                    "Gestão do Tempo"
-                  ].map((item, index) => (
-                    <li key={index} className="flex items-start">
+                  {["Introdução a gestão: identificar habilidades e quebrar paradigmas", "Análise de Perfil", "Análise de Cenário", "Planos de ação", "Indicadores e Monitoramento", "Feedback", "Reuniões Produtivas", "Gestão do Tempo"].map((item, index) => <li key={index} className="flex items-start">
                       <CheckCircle2 className="h-5 w-5 text-primary mr-2 mt-0.5" />
                       <span>{item}</span>
-                    </li>
-                  ))}
+                    </li>)}
                 </ul>
               </div>
               
@@ -199,21 +171,10 @@ const OficinaLideres = () => {
               <div className="bg-card border border-border rounded-xl p-6 hover:shadow-md transition-all">
                 <h3 className="text-xl font-bold mb-3">MÓDULO RH/GESTÃO DE PESSOAS</h3>
                 <ul className="space-y-2">
-                  {[
-                    "Recrutamento e Seleção",
-                    "Admissão e Integração",
-                    "Desenvolvimento & Análise de Habilidades e Competências",
-                    "Feedback e PDI",
-                    "Cultura Organizacional & Indicadores de Gente",
-                    "Gestão de Cargos e Salários & Plano de Carreira",
-                    "Política de Benefícios & Programas de Saúde e Qualidade de Vida",
-                    "Educação Corporativa & Aprendizagem Contínua"
-                  ].map((item, index) => (
-                    <li key={index} className="flex items-start">
+                  {["Recrutamento e Seleção", "Admissão e Integração", "Desenvolvimento & Análise de Habilidades e Competências", "Feedback e PDI", "Cultura Organizacional & Indicadores de Gente", "Gestão de Cargos e Salários & Plano de Carreira", "Política de Benefícios & Programas de Saúde e Qualidade de Vida", "Educação Corporativa & Aprendizagem Contínua"].map((item, index) => <li key={index} className="flex items-start">
                       <CheckCircle2 className="h-5 w-5 text-primary mr-2 mt-0.5" />
                       <span>{item}</span>
-                    </li>
-                  ))}
+                    </li>)}
                 </ul>
               </div>
               
@@ -221,21 +182,10 @@ const OficinaLideres = () => {
               <div className="bg-card border border-border rounded-xl p-6 hover:shadow-md transition-all">
                 <h3 className="text-xl font-bold mb-3">MÓDULO COMERCIAL</h3>
                 <ul className="space-y-2">
-                  {[
-                    "Estabelecimento de Metas",
-                    "Canais de vendas",
-                    "Funis de Vendas",
-                    "Integração com Marketing",
-                    "Indicadores Comerciais",
-                    "Análise e Monitoramento",
-                    "Desenvolvimento de Líderes Comerciais",
-                    "Equipes de alto rendimento e engajamento de equipe"
-                  ].map((item, index) => (
-                    <li key={index} className="flex items-start">
+                  {["Estabelecimento de Metas", "Canais de vendas", "Funis de Vendas", "Integração com Marketing", "Indicadores Comerciais", "Análise e Monitoramento", "Desenvolvimento de Líderes Comerciais", "Equipes de alto rendimento e engajamento de equipe"].map((item, index) => <li key={index} className="flex items-start">
                       <CheckCircle2 className="h-5 w-5 text-primary mr-2 mt-0.5" />
                       <span>{item}</span>
-                    </li>
-                  ))}
+                    </li>)}
                 </ul>
               </div>
               
@@ -243,21 +193,10 @@ const OficinaLideres = () => {
               <div className="bg-card border border-border rounded-xl p-6 hover:shadow-md transition-all">
                 <h3 className="text-xl font-bold mb-3">MÓDULO FINANCEIRO</h3>
                 <ul className="space-y-2">
-                  {[
-                    "Teoria financeira básica",
-                    "Indicadores Financeiros e sua Aplicação",
-                    "Planejamento Financeiro e Orçamentário",
-                    "Impostos",
-                    "Fluxos de Caixa",
-                    "Dashboards BI",
-                    "DRE",
-                    "Cobrança"
-                  ].map((item, index) => (
-                    <li key={index} className="flex items-start">
+                  {["Teoria financeira básica", "Indicadores Financeiros e sua Aplicação", "Planejamento Financeiro e Orçamentário", "Impostos", "Fluxos de Caixa", "Dashboards BI", "DRE", "Cobrança"].map((item, index) => <li key={index} className="flex items-start">
                       <CheckCircle2 className="h-5 w-5 text-primary mr-2 mt-0.5" />
                       <span>{item}</span>
-                    </li>
-                  ))}
+                    </li>)}
                 </ul>
               </div>
             </div>
@@ -278,18 +217,10 @@ const OficinaLideres = () => {
                 O que você perde SEM uma gestão profissional:
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {[
-                  "Equipes desalinhadas = Prejuízos mensuráveis",
-                  "Decisões no escuro = Risco financeiro",
-                  "Talento subutilizado = Potencial desperdiçado",
-                  "Time desmotivado = Rotatividade alta",
-                  "Falta de KPIs/indicadores de resultados = Navio sem bússola"
-                ].map((item, index) => (
-                  <div key={index} className="flex items-center space-x-3 p-3 bg-destructive/5 rounded-lg">
+                {["Equipes desalinhadas = Prejuízos mensuráveis", "Decisões no escuro = Risco financeiro", "Talento subutilizado = Potencial desperdiçado", "Time desmotivado = Rotatividade alta", "Falta de KPIs/indicadores de resultados = Navio sem bússola"].map((item, index) => <div key={index} className="flex items-center space-x-3 p-3 bg-destructive/5 rounded-lg">
                     <div className="h-2 w-2 rounded-full bg-destructive"></div>
                     <p className="text-sm font-medium text-destructive">{item}</p>
-                  </div>
-                ))}
+                  </div>)}
               </div>
             </div>
 
@@ -393,7 +324,7 @@ const OficinaLideres = () => {
                       <li className="flex items-start">
                         <CheckCircle2 className="h-5 w-5 text-primary mr-3 mt-0.5" />
                         <div>
-                          <p className="font-medium">Encontros presenciais semanais de 2h</p>
+                          <p className="font-medium">Encontros híbridos semanais de 2h</p>
                           <p className="text-sm text-muted-foreground">Região do Baixo Vale/SC</p>
                         </div>
                       </li>
@@ -401,7 +332,7 @@ const OficinaLideres = () => {
                         <CheckCircle2 className="h-5 w-5 text-primary mr-3 mt-0.5" />
                         <div>
                           <p className="font-medium">04 módulos completos</p>
-                          <p className="text-sm text-muted-foreground">Com carga horária de 10h cada</p>
+                          <p className="text-sm text-muted-foreground">Com carga horária de 20h cada - Total de 80h</p>
                         </div>
                       </li>
                       <li className="flex items-start">
@@ -418,8 +349,8 @@ const OficinaLideres = () => {
                       <li className="flex items-start">
                         <CheckCircle2 className="h-5 w-5 text-primary mr-3 mt-0.5" />
                         <div>
-                          <p className="font-medium">Empresários</p>
-                          <p className="text-sm text-muted-foreground">Micros, pequenas e médias empresas</p>
+                          <p className="font-medium">Empresários e Gestores</p>
+                          <p className="text-sm text-muted-foreground">Micros, pequenas e médias empresas. Empresas de grande porte - Consulte-nos para programas customizados</p>
                         </div>
                       </li>
                       <li className="flex items-start">
@@ -562,5 +493,4 @@ const OficinaLideres = () => {
       <Footer />
     </div>;
 };
-
 export default OficinaLideres;
