@@ -91,30 +91,7 @@ const HowWeDoItSection = () => {
         
 
         {/* CTA Section */}
-        <div className="text-center animate-fade-in" style={{
-        animationDelay: "1s"
-      }}>
-          <div className="bg-gradient-to-r from-primary/10 via-primary/5 to-primary/10 rounded-2xl p-8 md:p-12 max-w-4xl mx-auto">
-            <h3 className="text-2xl md:text-3xl font-bold mb-4">Pronto para experimentar nossa metodologia?</h3>
-            <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
-              Comece com um diagnóstico gratuito e descubra como podemos acelerar o crescimento da sua empresa com
-              clareza e direção estratégica.
-            </p>
-
-            <div className="flex flex-col sm:flex-row justify-center gap-4">
-              <Button size="lg" className="shadow-glow" asChild>
-                <Link to="/diagnostico-gratuito" aria-label="Agendar diagnóstico gratuito">
-                  Quero meu diagnóstico gratuito <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />
-                </Link>
-              </Button>
-              <Button variant="outline" size="lg" asChild>
-                <Link to="/contato" aria-label="Conhecer o processo completo">
-                  Conhecer processo completo <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />
-                </Link>
-              </Button>
-            </div>
-          </div>
-        </div>
+        
       </div>
     </section>;
 };
