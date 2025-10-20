@@ -7,9 +7,7 @@ import { cn } from "@/lib/utils";
 interface FloatingCTAProps {
   className?: string;
 }
-const FloatingCTA: React.FC<FloatingCTAProps> = ({
-  className
-}) => {
+const FloatingCTA: React.FC<FloatingCTAProps> = ({ className }) => {
   const [isVisible, setIsVisible] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
   const [hasInteracted, setHasInteracted] = useState(false);
@@ -46,10 +44,18 @@ const FloatingCTA: React.FC<FloatingCTAProps> = ({
     setHasInteracted(true);
   };
   if (!isVisible) return null;
-  return <div className={cn("fixed bottom-6 right-6 z-50 transition-all duration-300 ease-in-out", isMinimized ? "scale-75" : "scale-100", className)}>
+  return (
+    <div
+      className={cn(
+        "fixed bottom-6 right-6 z-50 transition-all duration-300 ease-in-out",
+        isMinimized ? "scale-75" : "scale-100",
+        className,
+      )}
+    >
       <Card className="w-80 shadow-2xl border-primary/20 bg-background/95 backdrop-blur-sm">
         <CardContent className="p-0">
-          {!isMinimized ? <div className="p-6">
+          {!isMinimized ? (
+            <div className="p-6">
               {/* Header */}
               <div className="flex justify-between items-start mb-4">
                 <div className="flex items-center gap-2">
@@ -58,7 +64,9 @@ const FloatingCTA: React.FC<FloatingCTAProps> = ({
                   </div>
                   <div>
                     <h3 className="font-bold text-sm">FALE CONOSCO</h3>
-                    <p className="text-xs text-muted-foreground">Faça seu cadastro ou entre em contato diretamente com nossa equipe.</p>
+                    <p className="text-xs text-muted-foreground">
+                      Faça seu cadastro ou entre em contato diretamente com nossa equipe.
+                    </p>
                   </div>
                 </div>
                 <div className="flex gap-1">
@@ -73,33 +81,42 @@ const FloatingCTA: React.FC<FloatingCTAProps> = ({
 
               {/* Content */}
               <div className="space-y-4">
-                <p className="text-sm text-muted-foreground">Descubra exatamente onde sua empresa pode melhorar e transpor as barreiras que impedem o seu crescimento.</p>
-
-                
+                <p className="text-sm text-muted-foreground">
+                  Descubra exatamente onde sua empresa pode melhorar e transpor as barreiras que impedem o seu
+                  crescimento.
+                </p>
 
                 <div className="space-y-2">
                   <Button size="sm" className="w-full shadow-glow text-xs" onClick={handleCTAClick} asChild>
                     <Link to="/diagnostico-gratuito">
-                      Agendar meu diagnóstico <ArrowRight className="ml-2 h-3 w-3" />
+                      Cadastre-se <ArrowRight className="ml-2 h-3 w-3" />
                     </Link>
                   </Button>
 
                   <Button variant="outline" size="sm" className="w-full text-xs" onClick={handleCTAClick} asChild>
-                    <a href="https://wa.me/+5547992150289?text=Tenho%20interesse%20no%20diagnóstico%20gratuito" target="_blank" rel="noopener noreferrer">
+                    <a
+                      href="https://wa.me/+5547992150289?text=Tenho%20interesse%20no%20diagnóstico%20gratuito"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
                       <MessageSquare className="mr-2 h-3 w-3" />
                       WhatsApp direto
                     </a>
                   </Button>
                 </div>
               </div>
-            </div> : <div className="p-4">
+            </div>
+          ) : (
+            <div className="p-4">
               <Button variant="outline" size="sm" className="w-full" onClick={handleMinimize}>
                 <Calendar className="mr-2 h-4 w-4" />
                 Diagnóstico Gratuito
               </Button>
-            </div>}
+            </div>
+          )}
         </CardContent>
       </Card>
-    </div>;
+    </div>
+  );
 };
 export default FloatingCTA;
