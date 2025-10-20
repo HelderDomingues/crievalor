@@ -58,7 +58,7 @@ const FloatingCTA: React.FC<FloatingCTAProps> = ({
                   </div>
                   <div>
                     <h3 className="font-bold text-sm">FALE CONOSCO</h3>
-                    <p className="text-xs text-muted-foreground">Apenas hoje</p>
+                    <p className="text-xs text-muted-foreground">Faça seu cadastro ou entre em contato diretamente com nossa equipe.</p>
                   </div>
                 </div>
                 <div className="flex gap-1">
