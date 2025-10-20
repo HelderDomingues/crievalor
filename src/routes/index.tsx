@@ -117,6 +117,10 @@ export const router = createBrowserRouter([
     element: <ClientLogosAdminPage />,
   },
   {
+    path: "/admin-client-logos",
+    element: <ClientLogosAdminPage />,
+  },
+  {
     path: "/admin-testimonials",
     element: <TestimonialsAdmin />,
   },
