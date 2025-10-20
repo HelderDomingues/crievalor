@@ -63,6 +63,31 @@ const Index = () => {
         {/* Hero Carrossel - Propósito + MAR + Mentorias + Mentor de Propósito */}
         <InteractiveGalaxyHeroCarousel />
 
+        {/* Client Logos Section */}
+        <div id="clientes" aria-labelledby="clientesHeading" className="py-16 md:py-24">
+          <div className="container mx-auto px-4">
+            <div className="max-w-3xl mx-auto text-center mb-12">
+              <h2 id="clientesHeading" className="text-3xl md:text-4xl font-bold mb-4">
+                Empresas que confiam em nós
+              </h2>
+              <p className="text-lg text-muted-foreground">
+                Parceiros de sucesso que transformaram seus resultados com nossas soluções.
+              </p>
+            </div>
+            <ClientLogosCarousel />
+          </div>
+        </div>
+
+        {/* CTA após Client Logos */}
+        <QuickCTA
+          title="Quero fazer parte desta lista de sucesso"
+          description="Junte-se às empresas que já transformaram seus resultados conosco."
+          ctaText="Começar minha transformação"
+          ctaUrl="/diagnostico-gratuito"
+          centerAlign
+          className="bg-primary/5"
+        />
+
         {/* Como Fazemos - Nova seção metodológica */}
         <HowWeDoItSection />
 
@@ -96,31 +121,6 @@ const Index = () => {
           variant="outline"
           centerAlign
           className="bg-secondary/30"
-        />
-
-        {/* Client Logos Section */}
-        <div id="clientes" aria-labelledby="clientesHeading" className="py-16 md:py-24">
-          <div className="container mx-auto px-4">
-            <div className="max-w-3xl mx-auto text-center mb-12">
-              <h2 id="clientesHeading" className="text-3xl md:text-4xl font-bold mb-4">
-                Empresas que confiam em nós
-              </h2>
-              <p className="text-lg text-muted-foreground">
-                Parceiros de sucesso que transformaram seus resultados com nossas soluções.
-              </p>
-            </div>
-            <ClientLogosCarousel />
-          </div>
-        </div>
-
-        {/* CTA após Client Logos */}
-        <QuickCTA
-          title="Quero fazer parte desta lista de sucesso"
-          description="Junte-se às empresas que já transformaram seus resultados conosco."
-          ctaText="Começar minha transformação"
-          ctaUrl="/diagnostico-gratuito"
-          centerAlign
-          className="bg-primary/5"
         />
 
         {/* Testimonials Section */}
