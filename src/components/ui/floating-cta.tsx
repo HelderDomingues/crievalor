@@ -73,22 +73,9 @@ const FloatingCTA: React.FC<FloatingCTAProps> = ({
 
               {/* Content */}
               <div className="space-y-4">
-                <p className="text-sm text-muted-foreground">
-                  Descubra exatamente onde sua empresa pode melhorar e crie um plano de ação personalizado.
-                </p>
+                <p className="text-sm text-muted-foreground">Descubra exatamente onde sua empresa pode melhorar e transpor as barreiras que impedem o seu crescimento.</p>
 
-                <div className="bg-primary/5 rounded-lg p-3 space-y-2">
-                  <div className="flex items-center gap-2 text-xs">
-                    <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                    <span className="font-medium">3 vagas restantes hoje</span>
-                  </div>
-                  <div className="text-xs text-muted-foreground">
-                    • Análise gratuita de 60 min
-                    <br />
-                    • Relatório personalizado
-                    <br />• Plano de ação específico
-                  </div>
-                </div>
+                
 
                 <div className="space-y-2">
                   <Button size="sm" className="w-full shadow-glow text-xs" onClick={handleCTAClick} asChild>
