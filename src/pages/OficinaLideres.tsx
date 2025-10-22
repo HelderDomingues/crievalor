@@ -103,7 +103,7 @@ const OficinaLideres = () => {
               </div>
 
               <div className="order-1 lg:order-2">
-                <VideoSection title="" description="" videoUrl="https://youtu.be/Lr_L7MAIUnM" />
+                <VideoSection title="" description="" videoUrl="https://www.youtube.com/embed/Lr_L7MAIUnM" />
               </div>
             </div>
           </div>
