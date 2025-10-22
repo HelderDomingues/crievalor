@@ -41,6 +41,7 @@ const OficinaLideres = () => {
           ctaText="QUERO TRANSFORMAR MINHA LIDERANÇA"
           ctaUrl="https://wa.me/+5547992150289?text=Quero%20garantir%20minha%20vaga%20na%20próxima%20turma%20da%20Oficina%20de%20Líderes"
           backgroundImages={heroImages}
+          isOficinaLideresHero={true}
         />
 
         {/* About Section */}

@@ -2,6 +2,7 @@ import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ArrowRight, Compass } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import oficinaLideresLogo from "@/assets/oficina-lideres-logo.png";
 interface HeroContentProps {
   title: string;
   subtitle: string;
@@ -11,6 +12,7 @@ interface HeroContentProps {
   secondaryCtaText?: string;
   secondaryCtaUrl?: string;
   isMarHero?: boolean;
+  isOficinaLideresHero?: boolean;
 }
 const HeroContent: React.FC<HeroContentProps> = ({
   title,
@@ -20,7 +22,8 @@ const HeroContent: React.FC<HeroContentProps> = ({
   ctaUrl,
   secondaryCtaText,
   secondaryCtaUrl,
-  isMarHero = false
+  isMarHero = false,
+  isOficinaLideresHero = false
 }) => {
   const navigate = useNavigate();
   const handleScroll = (url: string) => {
@@ -80,15 +83,19 @@ const HeroContent: React.FC<HeroContentProps> = ({
             <img alt="MAR - Mapa para Alto Rendimento" width="300" height="192" loading="eager" src="https://iili.io/3vlTe6l.png" className="h-48 mx-auto object-contain" />
           </div>}
         
+        {isOficinaLideresHero && <div className="mb-5 animate-fade-in">
+            <img alt="Oficina de Líderes" width="400" height="200" loading="eager" src={oficinaLideresLogo} className="h-32 md:h-40 mx-auto object-contain" />
+          </div>}
+        
         <div className="bg-primary/10 text-primary rounded-full px-4 py-2 inline-block mb-3 animate-fade-in">
           {subtitle}
         </div>
         
-        <h1 style={{
+        {!isOficinaLideresHero && <h1 style={{
         animationDelay: "0.2s"
       }} className="sm:text-5xl font-bold mb-4 animate-fade-in text-3xl md:text-5xl" id="heroTitle">
           {title}
-        </h1>
+        </h1>}
         
         <p style={{
         animationDelay: "0.4s"

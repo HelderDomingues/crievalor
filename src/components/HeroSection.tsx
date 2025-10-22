@@ -16,6 +16,7 @@ interface HeroSectionProps {
   secondaryCtaText?: string;
   secondaryCtaUrl?: string;
   isMarHero?: boolean;
+  isOficinaLideresHero?: boolean;
   backgroundVideo?: string;
   backgroundImages?: string[];
   useParticleWaves?: boolean;
