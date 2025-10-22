@@ -83,13 +83,13 @@ const HeroContent: React.FC<HeroContentProps> = ({
             <img alt="MAR - Mapa para Alto Rendimento" width="300" height="192" loading="eager" src="https://iili.io/3vlTe6l.png" className="h-48 mx-auto object-contain" />
           </div>}
         
-        {isOficinaLideresHero && <div className="mb-5 animate-fade-in">
-            <img alt="Oficina de Líderes" width="400" height="200" loading="eager" src={oficinaLideresLogo} className="h-32 md:h-40 mx-auto object-contain" />
-          </div>}
-        
         <div className="bg-primary/10 text-primary rounded-full px-4 py-2 inline-block mb-3 animate-fade-in">
           {subtitle}
         </div>
+        
+        {isOficinaLideresHero && <div className="mb-5 animate-fade-in">
+            <img alt="Oficina de Líderes" width="400" height="200" loading="eager" src={oficinaLideresLogo} className="h-32 md:h-40 mx-auto object-contain" />
+          </div>}
         
         {!isOficinaLideresHero && <h1 style={{
         animationDelay: "0.2s"
