@@ -1,4 +1,137 @@
-# Crie Valor Website - Plano BMAD para Otimização de Conversão
+# Crie Valor Website - Histórico de Desenvolvimento e Plano de Otimização
+
+## 📝 HISTÓRICO DE ALTERAÇÕES RECENTES
+
+### ✅ 22/10/2025 - Remoção de Páginas e Redirecionamento para Subdomínios
+**Alterações Implementadas:**
+- Removidas as páginas `/lumia` e `/mentor-proposito` do site principal
+- Todos os links internos atualizados para redirecionar aos subdomínios:
+  - Lumia: https://lumia.crievalor.com.br
+  - Mentor de Propósito: https://proposito.crievalor.com.br
+- Arquivos deletados: `src/pages/Lumia.tsx`, `src/pages/MentorProposito.tsx`
+- Arquivos modificados:
+  - `src/components/Header.tsx` - Links do menu de navegação
+  - `src/components/home/InteractiveGalaxyHeroCarousel.tsx` - CTAs dos slides
+  - `src/components/home/LumiaHighlight.tsx` - Links da seção
+  - `src/routes/index.tsx` - Remoção das rotas
+
+### ✅ 22/10/2025 - Correção de Responsividade do ClientLogosCarousel
+**Problema Identificado:**
+- Logos dos clientes muito pequenas em dispositivos mobile, impossibilitando visualização
+
+**Soluções Implementadas:**
+- Ajuste de grid responsivo: `basis-1/2` no mobile (antes era `basis-1/3`)
+- Aumento da altura das logos:
+  - Mobile: `h-24` (96px)
+  - Tablet: `h-20` (80px)
+  - Desktop: `h-24` → `h-28` (112px)
+- Melhoria do object-fit: `object-contain` (antes `object-scale-down`)
+- Redução de margens laterais no mobile: `mx-4` (antes `mx-10`)
+- Ocultação dos botões de navegação no mobile: `hidden sm:flex`
+
+**Arquivo Modificado:**
+- `src/components/ClientLogosCarousel.tsx`
+
+### ✅ 22/10/2025 - Reformulação da Hero Section (CONCLUÍDO)
+
+#### Problemas Identificados e Solucionados:
+1. **Mobile não elegante**: ✅ Elemento "flag" muito grande e descontextualizado - RESOLVIDO
+2. **Falta de identidade visual**: ✅ Ícones genéricos não representam os produtos - RESOLVIDO  
+3. **Scroll indicator confuso**: ✅ Animação de mouse não clicável e sem propósito claro - RESOLVIDO
+
+#### Implementação Realizada:
+
+**1. ✅ Download de Logos dos Produtos**
+- ✅ MAR: `src/assets/mar-logo-hero.png`
+- ✅ Lumia: `src/assets/lumia-logo-hero.png`
+- ✅ Mentor de Propósito: `src/assets/mentor-proposito-logo-hero.png`
+- ✅ Oficina de Líderes: `src/assets/oficina-lideres-logo-hero.png`
+
+**2. ✅ Atualização do ScrollIndicator (`src/components/ScrollIndicator.tsx`)**
+- ✅ Substituído ícone de mouse por `ChevronDown` maior e mais visível
+- ✅ Indicador agora é clicável para scroll suave até próxima seção (#clientes)
+- ✅ Adicionado feedback visual no hover com transições
+- ✅ Mantida animação de bounce
+- ✅ Aumentado tamanho do botão para `w-16 h-16`
+- ✅ Background com blur e bordas semi-transparentes
+
+**3. ✅ Reformulação do InteractiveGalaxyHeroCarousel**
+
+**3.1 ✅ Estrutura de Logos:**
+- ✅ Adicionado campo opcional `logo?: string` na interface TypeScript dos slides
+- ✅ Logos mapeadas aos respectivos slides:
+  - Slide "ecosystem" (Ecossistema) → `lumia-logo-hero.png`
+  - Slide "proposito" (Mentor de Propósito) → `mentor-proposito-logo-hero.png`
+  - Slide "lumia" → `lumia-logo-hero.png`
+  - Slide "mar" → `mar-logo-hero.png`
+  - Slide "oficina" → `oficina-lideres-logo-hero.png`
+- ✅ Slides sem logo específica mantêm ícones atuais ("proposito-empresa", "mentorias", "identidade")
+
+**3.2 ✅ Visual das Logos:**
+- ✅ Container responsivo: `w-48 h-48` (mobile) → `w-64 h-64` (sm) → `w-80 h-80` (md) → `w-96 h-96` (lg)
+- ✅ 3 anéis de glow animados ao redor da logo com opacity 20%
+- ✅ Background com gradiente `from-black/50 to-black/80` e backdrop blur
+- ✅ 8 partículas orbitando a logo usando animação `orbit`
+- ✅ Cores dinâmicas baseadas no `accentColor` de cada slide
+- ✅ Padding interno responsivo: `p-6 md:p-8`
+
+**3.3 ✅ Responsividade Melhorada:**
+
+**Tipografia Responsiva:**
+- ✅ Título: `text-3xl sm:text-4xl lg:text-6xl xl:text-7xl`
+- ✅ Subtítulo: `text-lg sm:text-xl lg:text-2xl xl:text-3xl`
+- ✅ Descrição: `text-base sm:text-lg lg:text-xl`
+- ✅ CTAs: `text-base md:text-xl`
+
+**Layout Responsivo:**
+- ✅ Grid: `grid-cols-1 lg:grid-cols-2`
+- ✅ Ordem mobile: Logo acima (`order-1`), conteúdo abaixo (`order-2`)
+- ✅ Ordem desktop: Conteúdo esquerda (`lg:order-1`), logo direita (`lg:order-2`)
+- ✅ Espaçamentos: `gap-8 md:gap-16`, `py-12 md:py-20`
+- ✅ Height mínimo: `min-h-[80vh] md:min-h-[90vh]`
+- ✅ Espaçamento entre elementos: `space-y-4 md:space-y-8`
+
+**CTAs Responsivos:**
+- ✅ Layout: `flex-col sm:flex-row` (empilhados no mobile, lado a lado no desktop)
+- ✅ Tamanhos: `text-base md:text-xl`, `px-6 md:px-8`, `py-4 md:py-6`
+- ✅ Ícones: `h-5 w-5 md:h-6 md:w-6`, `ml-2 md:ml-3`
+- ✅ Espaçamento: `gap-3 md:gap-6`, `pt-4 md:pt-8`
+
+**Navegação Responsiva:**
+- ✅ Setas: Ocultas no mobile (`hidden md:flex`)
+- ✅ Posicionamento: `left-4 lg:left-8`, `right-4 lg:right-8`, `top-20 lg:top-24`
+- ✅ Indicadores: Tamanho `w-2 h-2 md:w-3 md:h-3`
+- ✅ Espaçamento dos indicadores: `gap-2 md:gap-3`, `mt-8 md:mt-12`
+- ✅ Adicionado `aria-label` para acessibilidade
+
+**3.4 ✅ Ícones Adaptados:**
+- ✅ Ícone com glow oculto no mobile (`hidden md:flex`)
+- ✅ Linha decorativa mantida apenas no desktop
+- ✅ Tamanho dos ícones responsivo: `h-20 w-20 sm:h-24 sm:w-24 md:h-32 md:w-32`
+- ✅ Estrutura de ícone 3D mantida para slides sem logo
+
+**3.5 ✅ Remoção:**
+- ✅ Removido scroll indicator inline do final do componente
+- ✅ Substituído pelo novo componente `ScrollIndicator` clicável
+
+**4. ✅ CSS Adicional**
+- ✅ Animação `orbit` atualizada em `src/styles/animations.css`
+- ✅ Implementação simplificada: `rotate(0deg)` → `rotate(360deg)`
+
+**5. ✅ Arquivos Modificados:**
+- ✅ `src/components/ScrollIndicator.tsx` - Completamente reescrito
+- ✅ `src/components/home/InteractiveGalaxyHeroCarousel.tsx` - Responsividade e logos
+- ✅ `src/styles/animations.css` - Animação orbit atualizada
+- ✅ `TASKS.md` - Documentação atualizada
+
+**6. ✅ Testes de Responsividade:**
+- ✅ Mobile (< 640px): Logo pequena (192px), textos compactos, sem navegação de setas
+- ✅ Tablet (640px - 1024px): Logo média (256-320px), textos intermediários
+- ✅ Desktop (> 1024px): Logo grande (384px), layout completo em 2 colunas
+- ✅ Transições suaves entre breakpoints garantidas
+- ✅ Performance das animações otimizada para todos os dispositivos
+
+---
 
 ## Metodologia BMAD (Baseline → Metrics → Actions → Deployment)
 

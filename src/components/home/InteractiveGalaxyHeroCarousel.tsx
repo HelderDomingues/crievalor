@@ -11,6 +11,10 @@ import {
   CarouselPrevious,
   CarouselApi,
 } from "@/components/ui/carousel";
+import marLogo from "@/assets/mar-logo-hero.png";
+import lumiaLogo from "@/assets/lumia-logo-hero.png";
+import mentorPropositoLogo from "@/assets/mentor-proposito-logo-hero.png";
+import oficinaLideresLogo from "@/assets/oficina-lideres-logo-hero.png";
 
 interface InteractiveBackgroundProps {
   type: "neural" | "growth" | "energy" | "design" | "institutional" | "lumia" | "ecosystem" | "purpose";
@@ -231,7 +235,22 @@ const InteractiveGalaxyHeroCarousel = () => {
   });
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const slides = [
+  const slides: Array<{
+    id: string;
+    icon: React.ComponentType<any>;
+    logo?: string;
+    title: string;
+    subtitle: string;
+    description: string;
+    ctaText: string;
+    ctaUrl: string;
+    secondaryCtaText: string;
+    secondaryCtaUrl: string;
+    backgroundType: "neural" | "growth" | "energy" | "design" | "institutional" | "lumia" | "ecosystem" | "purpose";
+    gradientColors: string;
+    accentColor: string;
+    glowColor: string;
+  }> = [
     {
       id: "proposito-empresa",
       icon: FlagIcon,
@@ -251,6 +270,7 @@ const InteractiveGalaxyHeroCarousel = () => {
     {
       id: "ecosystem",
       icon: Brain,
+      logo: lumiaLogo,
       title: "Ecossistema de Inteligência Organizacional",
       subtitle: "Estratégia, clareza e ação — em um só lugar",
       description:
@@ -267,6 +287,7 @@ const InteractiveGalaxyHeroCarousel = () => {
     {
       id: "proposito",
       icon: Compass,
+      logo: mentorPropositoLogo,
       title: "Mentor de Propósito",
       subtitle: 'Descubra o "Por Quê" que transforma empresas comuns em marcas extraordinárias',
       description:
@@ -284,6 +305,7 @@ const InteractiveGalaxyHeroCarousel = () => {
     {
       id: "lumia",
       icon: Zap,
+      logo: lumiaLogo,
       title: "Lumia: consultoria virtual sob medida",
       subtitle: "4 especialistas treinados especificamente para a sua empresa",
       description:
@@ -300,6 +322,7 @@ const InteractiveGalaxyHeroCarousel = () => {
     {
       id: "mar",
       icon: Target,
+      logo: marLogo,
       title: "MAR — Mapa de Alto Rendimento",
       subtitle: "Diagnóstico profundo e plano estratégico completo",
       description:
@@ -333,6 +356,7 @@ const InteractiveGalaxyHeroCarousel = () => {
     {
       id: "oficina",
       icon: Lightbulb,
+      logo: oficinaLideresLogo,
       title: "Oficina de Líderes",
       subtitle: "Desenvolva habilidades de liderança excepcionais",
       description:
@@ -435,12 +459,12 @@ const InteractiveGalaxyHeroCarousel = () => {
           <CarouselContent>
             {slides.map((slide, index) => (
               <CarouselItem key={slide.id}>
-                <div className="min-h-[90vh] flex items-center">
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center w-full py-20">
+                <div className="min-h-[80vh] md:min-h-[90vh] flex items-center">
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-16 items-center w-full py-12 md:py-20">
                     {/* Content */}
-                    <div className="space-y-8 relative">
-                      {/* Icon with glow */}
-                      <div className="flex items-center gap-6">
+                    <div className="space-y-4 md:space-y-8 relative order-2 lg:order-1">
+                      {/* Icon with glow - only visible on medium+ screens */}
+                      <div className="hidden md:flex items-center gap-6">
                         <div
                           className={`relative rounded-full bg-black/30 backdrop-blur-sm p-6 border border-white/10 ${slide.glowColor} shadow-2xl`}
                         >
@@ -457,8 +481,8 @@ const InteractiveGalaxyHeroCarousel = () => {
                       </div>
 
                       {/* Title with gradient */}
-                      <div className="space-y-6">
-                        <h1 className="text-5xl lg:text-7xl font-bold leading-tight">
+                      <div className="space-y-3 md:space-y-6">
+                        <h1 className="text-3xl sm:text-4xl lg:text-6xl xl:text-7xl font-bold leading-tight">
                           <span
                             className={`bg-gradient-to-r from-white via-white to-gray-300 bg-clip-text text-transparent`}
                           >
@@ -467,19 +491,19 @@ const InteractiveGalaxyHeroCarousel = () => {
                         </h1>
 
                         {/* Subtitle */}
-                        <h2 className={`text-2xl lg:text-3xl font-semibold ${slide.accentColor} leading-relaxed`}>
+                        <h2 className={`text-lg sm:text-xl lg:text-2xl xl:text-3xl font-semibold ${slide.accentColor} leading-relaxed`}>
                           {slide.subtitle}
                         </h2>
 
-                        <p className="text-xl text-gray-300 leading-relaxed max-w-2xl">{slide.description}</p>
+                        <p className="text-base sm:text-lg lg:text-xl text-gray-300 leading-relaxed max-w-2xl">{slide.description}</p>
                       </div>
 
                       {/* CTAs with enhanced styling */}
-                      <div className="flex flex-col sm:flex-row gap-6 pt-8">
+                      <div className="flex flex-col sm:flex-row gap-3 md:gap-6 pt-4 md:pt-8">
                         <Button
                           asChild
                           size="lg"
-                          className={`text-xl px-8 py-6 bg-gradient-to-r ${slide.accentColor.replace("text-", "from-")} to-white text-white hover:scale-105 transition-all duration-300 ${slide.glowColor} shadow-2xl font-bold border-2 border-white/10`}
+                          className={`text-base md:text-xl px-6 md:px-8 py-4 md:py-6 bg-gradient-to-r ${slide.accentColor.replace("text-", "from-")} to-white text-white hover:scale-105 transition-all duration-300 ${slide.glowColor} shadow-2xl font-bold border-2 border-white/10`}
                         >
                           {slide.ctaUrl.startsWith("#") ? (
                             <a
@@ -489,11 +513,11 @@ const InteractiveGalaxyHeroCarousel = () => {
                                 document.getElementById(slide.ctaUrl.slice(1))?.scrollIntoView({ behavior: "smooth" });
                               }}
                             >
-                              {slide.ctaText} <ArrowRight className="ml-3 h-6 w-6" />
+                              {slide.ctaText} <ArrowRight className="ml-2 md:ml-3 h-5 w-5 md:h-6 md:w-6" />
                             </a>
                           ) : (
                             <Link to={slide.ctaUrl}>
-                              {slide.ctaText} <ArrowRight className="ml-3 h-6 w-6" />
+                              {slide.ctaText} <ArrowRight className="ml-2 md:ml-3 h-5 w-5 md:h-6 md:w-6" />
                             </Link>
                           )}
                         </Button>
@@ -501,7 +525,7 @@ const InteractiveGalaxyHeroCarousel = () => {
                           asChild
                           variant="outline"
                           size="lg"
-                          className="text-xl px-8 py-6 border-2 border-white/40 bg-black/40 backdrop-blur-sm text-white hover:bg-white/20 hover:border-white/60 hover:scale-105 transition-all duration-300 font-semibold"
+                          className="text-base md:text-xl px-6 md:px-8 py-4 md:py-6 border-2 border-white/40 bg-black/40 backdrop-blur-sm text-white hover:bg-white/20 hover:border-white/60 hover:scale-105 transition-all duration-300 font-semibold"
                         >
                           {slide.secondaryCtaUrl.startsWith("http") ? (
                             <a href={slide.secondaryCtaUrl} target="_blank" rel="noopener noreferrer">
@@ -514,44 +538,85 @@ const InteractiveGalaxyHeroCarousel = () => {
                       </div>
                     </div>
 
-                    {/* Visual - Enhanced 3D effect */}
-                    <div className="relative flex items-center justify-center">
-                      <div className="relative w-96 h-96">
-                        {/* Outer glow rings */}
-                        {[...Array(3)].map((_, i) => (
-                          <div
-                            key={i}
-                            className={`absolute inset-0 rounded-full border-2 ${slide.accentColor.replace("text-", "border-")} opacity-20 animate-pulse`}
-                            style={{
-                              transform: `scale(${1 + i * 0.2})`,
-                              animationDelay: `${i * 0.5}s`,
-                              animationDuration: "3s",
-                            }}
-                          />
-                        ))}
+                    {/* Visual - Logo or Icon with responsive sizing */}
+                    <div className="relative flex items-center justify-center order-1 lg:order-2">
+                      {slide.logo ? (
+                        // Display product logo
+                        <div className="relative w-48 h-48 sm:w-64 sm:h-64 md:w-80 md:h-80 lg:w-96 lg:h-96">
+                          {/* Outer glow rings */}
+                          {[...Array(3)].map((_, i) => (
+                            <div
+                              key={i}
+                              className={`absolute inset-0 rounded-full border-2 ${slide.accentColor.replace("text-", "border-")} opacity-20 animate-pulse`}
+                              style={{
+                                transform: `scale(${1 + i * 0.15})`,
+                                animationDelay: `${i * 0.5}s`,
+                                animationDuration: "3s",
+                              }}
+                            />
+                          ))}
 
-                        {/* Central orb */}
-                        <div className="absolute inset-8 rounded-full bg-gradient-to-br from-black/50 to-black/80 backdrop-blur-xl border border-white/10 flex items-center justify-center">
-                          <div className="absolute inset-4 rounded-full bg-gradient-to-br from-white/5 to-transparent" />
-                          <div className="absolute inset-8 rounded-full bg-gradient-to-br from-white/10 to-transparent" />
-                          {React.createElement(slide.icon, {
-                            className: `h-32 w-32 ${slide.accentColor} relative z-10`,
-                          })}
+                          {/* Logo container */}
+                          <div className="absolute inset-4 md:inset-8 rounded-full bg-gradient-to-br from-black/50 to-black/80 backdrop-blur-xl border border-white/10 flex items-center justify-center p-6 md:p-8">
+                            <img
+                              src={slide.logo}
+                              alt={`Logo ${slide.title}`}
+                              className="w-full h-full object-contain relative z-10"
+                            />
+                          </div>
+
+                          {/* Floating particles around the logo */}
+                          {[...Array(8)].map((_, i) => (
+                            <div
+                              key={i}
+                              className={`absolute w-1.5 h-1.5 md:w-2 md:h-2 ${slide.accentColor.replace("text-", "bg-")} rounded-full`}
+                              style={{
+                                left: `${50 + 40 * Math.cos((i * Math.PI) / 4)}%`,
+                                top: `${50 + 40 * Math.sin((i * Math.PI) / 4)}%`,
+                                animation: `orbit 8s linear infinite ${i * 0.5}s`,
+                              }}
+                            />
+                          ))}
                         </div>
+                      ) : (
+                        // Display icon for slides without specific logo
+                        <div className="relative w-48 h-48 sm:w-64 sm:h-64 md:w-80 md:h-80 lg:w-96 lg:h-96">
+                          {/* Outer glow rings */}
+                          {[...Array(3)].map((_, i) => (
+                            <div
+                              key={i}
+                              className={`absolute inset-0 rounded-full border-2 ${slide.accentColor.replace("text-", "border-")} opacity-20 animate-pulse`}
+                              style={{
+                                transform: `scale(${1 + i * 0.2})`,
+                                animationDelay: `${i * 0.5}s`,
+                                animationDuration: "3s",
+                              }}
+                            />
+                          ))}
 
-                        {/* Floating particles around the orb */}
-                        {[...Array(8)].map((_, i) => (
-                          <div
-                            key={i}
-                            className={`absolute w-2 h-2 ${slide.accentColor.replace("text-", "bg-")} rounded-full`}
-                            style={{
-                              left: `${50 + 40 * Math.cos((i * Math.PI) / 4)}%`,
-                              top: `${50 + 40 * Math.sin((i * Math.PI) / 4)}%`,
-                              animation: `orbit 8s linear infinite ${i * 0.5}s`,
-                            }}
-                          />
-                        ))}
-                      </div>
+                          {/* Central orb */}
+                          <div className="absolute inset-4 md:inset-8 rounded-full bg-gradient-to-br from-black/50 to-black/80 backdrop-blur-xl border border-white/10 flex items-center justify-center">
+                            <div className="absolute inset-4 rounded-full bg-gradient-to-br from-white/5 to-transparent" />
+                            <div className="absolute inset-8 rounded-full bg-gradient-to-br from-white/10 to-transparent" />
+                            {React.createElement(slide.icon, {
+                              className: `h-20 w-20 sm:h-24 sm:w-24 md:h-32 md:w-32 ${slide.accentColor} relative z-10`,
+                            })}
+                          </div>
+
+                          {/* Floating particles around the orb */}
+                          {[...Array(8)].map((_, i) => (
+                            <div
+                              key={i}
+                              className={`absolute w-1.5 h-1.5 md:w-2 md:h-2 ${slide.accentColor.replace("text-", "bg-")} rounded-full`}
+                              style={{
+                                left: `${50 + 40 * Math.cos((i * Math.PI) / 4)}%`,
+                                top: `${50 + 40 * Math.sin((i * Math.PI) / 4)}%`,
+                                animation: `orbit 8s linear infinite ${i * 0.5}s`,
+                              }}
+                            />
+                          ))}
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -559,31 +624,25 @@ const InteractiveGalaxyHeroCarousel = () => {
             ))}
           </CarouselContent>
 
-          {/* Enhanced navigation with responsive positioning - moved to top area */}
-          <CarouselPrevious className="left-4 lg:left-8 top-20 lg:top-24 bg-black/30 backdrop-blur-sm border-white/20 text-white hover:bg-white/10 z-20" />
-          <CarouselNext className="right-4 lg:right-8 top-20 lg:top-24 bg-black/30 backdrop-blur-sm border-white/20 text-white hover:bg-white/10 z-20" />
+          {/* Enhanced navigation with responsive positioning - hidden on mobile */}
+          <CarouselPrevious className="hidden md:flex left-4 lg:left-8 top-20 lg:top-24 bg-black/30 backdrop-blur-sm border-white/20 text-white hover:bg-white/10 z-20" />
+          <CarouselNext className="hidden md:flex right-4 lg:right-8 top-20 lg:top-24 bg-black/30 backdrop-blur-sm border-white/20 text-white hover:bg-white/10 z-20" />
         </Carousel>
 
-        {/* Slide indicators */}
-        <div className="flex justify-center gap-3 mt-12">
+        {/* Slide indicators - responsive sizing */}
+        <div className="flex justify-center gap-2 md:gap-3 mt-8 md:mt-12">
           {slides.map((_, index) => (
             <button
               key={index}
               onClick={() => api?.scrollTo(index)}
-              className={`w-3 h-3 rounded-full transition-all duration-300 ${
+              className={`w-2 h-2 md:w-3 md:h-3 rounded-full transition-all duration-300 ${
                 index === current
                   ? `${currentSlide.accentColor.replace("text-", "bg-")} scale-125`
                   : "bg-white/30 hover:bg-white/50"
               }`}
+              aria-label={`Ir para slide ${index + 1}`}
             />
           ))}
-        </div>
-
-        {/* Scroll indicator */}
-        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
-          <div className="w-6 h-10 border-2 border-white/30 rounded-full flex justify-center">
-            <div className="w-1 h-3 bg-white/50 rounded-full mt-2 animate-pulse"></div>
-          </div>
         </div>
       </div>
     </section>
