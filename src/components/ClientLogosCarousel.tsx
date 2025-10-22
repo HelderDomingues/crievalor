@@ -135,7 +135,7 @@ const ClientLogosCarousel = () => {
           Empresas que confiam em nossa estratégia
         </h3>
         
-        <div className="relative mx-10">
+        <div className="relative mx-4 sm:mx-10">
           <Carousel 
             setApi={setApi} 
             opts={{
@@ -149,14 +149,14 @@ const ClientLogosCarousel = () => {
               {logos.map((client, index) => (
                 <CarouselItem 
                   key={index} 
-                  className="basis-1/3 md:basis-1/4 lg:basis-1/5 pl-4 px-[30px]"
+                  className="basis-1/2 sm:basis-1/3 md:basis-1/4 lg:basis-1/5 xl:basis-1/6 pl-4"
                 >
-                  <div className="h-20 flex items-center justify-center p-2 transition-all duration-300 hover:scale-105 border border-transparent hover:border-gray-200 rounded-md">
+                  <div className="h-24 sm:h-20 md:h-24 lg:h-28 flex items-center justify-center p-3 sm:p-2 transition-all duration-300 hover:scale-105 border border-transparent hover:border-gray-200 rounded-md">
                     <img 
                       src={client.logo}
                       alt={`${client.name} logo`} 
                       onError={e => handleImageError(e, index)} 
-                      className="max-h-full max-w-full object-scale-down" 
+                      className="max-h-full max-w-full object-contain" 
                       loading="lazy"
                     />
                   </div>
@@ -164,8 +164,8 @@ const ClientLogosCarousel = () => {
               ))}
             </CarouselContent>
             
-            <CarouselPrevious className="absolute -left-5 top-1/2 -translate-y-1/2 bg-white hover:bg-gray-100 shadow-md text-gray-800" />
-            <CarouselNext className="absolute -right-5 top-1/2 -translate-y-1/2 bg-white hover:bg-gray-100 shadow-md text-base text-gray-800" />
+            <CarouselPrevious className="hidden sm:flex absolute -left-5 top-1/2 -translate-y-1/2 bg-white hover:bg-gray-100 shadow-md text-gray-800" />
+            <CarouselNext className="hidden sm:flex absolute -right-5 top-1/2 -translate-y-1/2 bg-white hover:bg-gray-100 shadow-md text-base text-gray-800" />
           </Carousel>
         </div>
         
