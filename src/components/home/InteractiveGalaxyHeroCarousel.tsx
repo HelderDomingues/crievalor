@@ -256,7 +256,7 @@ const InteractiveGalaxyHeroCarousel = () => {
       description:
         "O MAR analisa profundamente seu negócio. O Lumia transforma estratégia em execução com consultores virtuais em Vendas, Marketing, Operações, Finanças, RH e Gestão. Some a isso a definição de Propósito — e ganhe direção com clareza e impacto.",
       ctaText: "Conheça o Lumia",
-      ctaUrl: "/lumia",
+      ctaUrl: "https://lumia.crievalor.com.br",
       secondaryCtaText: "Entenda o MAR",
       secondaryCtaUrl: "/mar",
       backgroundType: "ecosystem" as const,
@@ -272,7 +272,7 @@ const InteractiveGalaxyHeroCarousel = () => {
       description:
         "A ferramenta de inteligência conversacional que guia líderes e organizações na descoberta do propósito que impulsiona resultados extraordinários.",
       ctaText: "Descobrir o Mentor",
-      ctaUrl: "/mentor-proposito",
+      ctaUrl: "https://proposito.crievalor.com.br",
       secondaryCtaText: "Agendar Demonstração",
       secondaryCtaUrl:
         "https://wa.me/5547992150289?text=Tenho%20interesse%20em%20conhecer%20o%20Mentor%20de%20Propósito",
@@ -289,7 +289,7 @@ const InteractiveGalaxyHeroCarousel = () => {
       description:
         "Consultores virtuais calibrados pelo MAR e pelo contexto da sua empresa. Respostas práticas, análises, recomendações e acompanhamento de resultados — na velocidade do seu negócio.",
       ctaText: "Experimente o Lumia",
-      ctaUrl: "/lumia",
+      ctaUrl: "https://lumia.crievalor.com.br",
       secondaryCtaText: "Falar com um especialista",
       secondaryCtaUrl: "https://wa.me/5547992150289?text=Tenho%20interesse%20em%20conhecer%20o%20Lumia",
       backgroundType: "lumia" as const,

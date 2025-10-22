@@ -103,12 +103,12 @@ const LumiaHighlight = () => {
             
             <div className="flex flex-col sm:flex-row gap-4">
               <Button size="lg" className="shadow-glow bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-700 hover:to-purple-600" asChild>
-                <Link to="/lumia">
+                <a href="https://lumia.crievalor.com.br" target="_blank" rel="noopener noreferrer">
                   Começar com o Lumia <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />
-                </Link>
+                </a>
               </Button>
               <Button variant="outline" size="lg" asChild>
-                <Link to="/ecossistema">
+                <Link to="/sobre">
                   Entender o Ecossistema <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />
                 </Link>
               </Button>
@@ -186,7 +186,7 @@ const LumiaHighlight = () => {
                         Integrado ao <span className="text-purple-400 font-medium">MAR</span>
                       </p>
                       <Button variant="outline" size="sm" asChild>
-                        <Link to="/lumia">Conhecer</Link>
+                        <a href="https://lumia.crievalor.com.br" target="_blank" rel="noopener noreferrer">Conhecer</a>
                       </Button>
                     </div>
                   </div>

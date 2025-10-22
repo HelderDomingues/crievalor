@@ -30,8 +30,6 @@ import PalestraSucesso from "@/pages/PalestraSucesso";
 import LecturesAdmin from "@/pages/LecturesAdmin";
 import EventLeadsAdmin from "@/pages/EventLeadsAdmin";
 import AdminDashboard from "@/pages/AdminDashboard";
-import Lumia from "@/pages/Lumia";
-import MentorProposito from "@/pages/MentorProposito";
 import Apresentacao from "@/pages/Apresentacao";
 
 export const router = createBrowserRouter([
@@ -45,10 +43,6 @@ export const router = createBrowserRouter([
     element: <Mar />,
   },
   {
-    path: "/lumia",
-    element: <Lumia />,
-  },
-  {
     path: "/sobre",
     element: <Sobre />,
   },
@@ -59,10 +53,6 @@ export const router = createBrowserRouter([
   {
     path: "/projetos",
     element: <Projetos />,
-  },
-  {
-    path: "/mentor-proposito",
-    element: <MentorProposito />,
   },
   {
     path: "/oficina-de-lideres",
