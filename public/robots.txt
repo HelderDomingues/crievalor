@@ -1,28 +1,31 @@
 
-# Instruções para todos os robôs, crawlers e sistemas de IA
+# Crie Valor - Inteligência Organizacional
+# Sistema proprietário com produtos em múltiplos domínios
+
 User-agent: *
 Allow: /
 
-# Forneça informações específicas sobre o conteúdo do site
-# Isso ajuda sistemas de IA a entenderem melhor o conteúdo
+# Nossos produtos em subdomínios próprios:
+# Lumia (6 Consultores Virtuais): https://lumia.crievalor.com.br
+# Mentor de Propósito (Bússola do Ecossistema): https://proposito.crievalor.com.br
 
 # Mapa do site
 Sitemap: https://crievalor.com.br/sitemap.xml
 
-# Local das páginas principais
+# Páginas principais
 Allow: /mar
 Allow: /sobre
 Allow: /contato
 Allow: /projetos
-Allow: /escola-gestao
+Allow: /oficina-de-lideres
 Allow: /mentorias
 Allow: /identidade-visual
+Allow: /material-exclusivo
+Allow: /palestra
+Allow: /apresentacao
 
-# Informações sobre nossa política de indexação
-Allow: /politica-de-privacidade
-Allow: /termos-de-servico
-Allow: /politica-de-reembolso
+# Políticas
+Allow: /privacy-policy
+Allow: /terms-of-service
+Allow: /refund-policy
 Allow: /acessibilidade
-
-# Especificações de frequência de rastreamento
-# Crawl-delay: 10

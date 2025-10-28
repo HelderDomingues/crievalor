@@ -52,8 +52,8 @@ interface FAQSchemaProps {
 export const OrganizationSchema: React.FC<OrganizationSchemaProps> = ({ 
   url, 
   logo, 
-  name = "Crie Valor Estratégia",
-  description = "Consultoria estratégica combinando expertise humana e nossa metodologia proprietária para transformação empresarial."
+  name = "Crie Valor - Inteligência Organizacional",
+  description = "Sistema de Inteligência Organizacional que transforma empresas através de produtos proprietários: MAR, Lumia (6 consultores virtuais), Mentor de Propósito e Oficina de Líderes."
 }) => {
   const schemaData = {
     "@context": "https://schema.org",

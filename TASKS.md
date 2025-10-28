@@ -2,6 +2,62 @@
 
 ## 📝 HISTÓRICO DE ALTERAÇÕES RECENTES
 
+### ✅ 28/10/2025 - SEO Comprehensive Audit and Corrections
+
+**Decisões Estratégicas Tomadas:**
+1. **Nome Oficial da Empresa**: "Crie Valor - Inteligência Organizacional"
+2. **Descrição da Tecnologia**: "Sistema de Inteligência Organizacional"
+3. **Produtos e Preços Atualizados**:
+   - **MAR**: Plano único por R$899,00
+   - **Lumia**: 6 consultores virtuais especializados
+     - Plano Mensal: R$197,00
+     - Plano Trimestral: R$497,00
+   - **Mentor de Propósito**: Bússola do ecossistema
+   - **Oficina de Líderes**: Desenvolvimento de liderança
+
+**Problemas Identificados no Audit SEO:**
+- ❌ 19 inconsistências críticas de SEO encontradas
+- ❌ Nome da empresa inconsistente entre arquivos
+- ❌ Descrição de tecnologia contraditória (IA vs metodologia proprietária)
+- ❌ Schema.org incompleto (faltando produtos, serviços, endereço)
+- ❌ Sitemap.xml desatualizado e faltando rotas
+- ❌ Keywords desatualizadas (sem Lumia, Mentor de Propósito, Oficina Líderes)
+- ❌ Open Graph com extensão inconsistente (.jpg vs .png)
+- ❌ Descrição incorreta da Lumia (4 consultores ao invés de 6)
+- ❌ Falta de schemas específicos por produto/serviço
+
+**Plano de Correção Implementado:**
+1. ✅ Unificação do nome: "Crie Valor - Inteligência Organizacional"
+2. ✅ Padronização: "Sistema de Inteligência Organizacional"
+3. ✅ Atualização de index.html:
+   - Meta tags com keywords completos
+   - Schema.org JSON-LD robusto com todos os produtos
+   - Preços e planos corretos
+   - Endereço completo e contatos
+4. ✅ Atualização de sitemap.xml:
+   - Datas atualizadas para 2025-10-28
+   - Rotas corretas (incluindo /oficina-de-lideres, /material-exclusivo)
+   - Remoção de rotas obsoletas
+5. ✅ Atualização de sitemap.html:
+   - Data atualizada
+   - Links para subdomínios externos
+   - Estrutura organizada por tipo de conteúdo
+6. ✅ Atualização de robots.txt com info sobre subdomínios
+7. ✅ Criação de schemas avançados (Product, LocalBusiness, BreadcrumbList)
+8. ✅ Documentação de padrões SEO (seo-consistency-check.md)
+
+**Arquivos Modificados:**
+- `index.html` - Meta tags, Schema.org, SEO content
+- `public/sitemap.xml` - Rotas e datas atualizadas
+- `public/sitemap.html` - Estrutura e links atualizados
+- `public/robots.txt` - Info sobre subdomínios
+- `src/components/seo/SchemaMarkup.tsx` - Defaults atualizados
+- `src/pages/Index.tsx` - Consistência de títulos
+- `src/pages/Mar.tsx` - Schemas e descrições
+- `seo-consistency-check.md` - Novo arquivo de documentação
+
+## 📝 HISTÓRICO DE ALTERAÇÕES RECENTES
+
 ### ✅ 22/10/2025 - Remoção de Páginas e Redirecionamento para Subdomínios
 **Alterações Implementadas:**
 - Removidas as páginas `/lumia` e `/mentor-proposito` do site principal
