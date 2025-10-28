@@ -27,7 +27,7 @@ const Index = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <Helmet>
-        <title>Crie Valor Estratégia | Consultoria e Marketing para empresas</title>
+        <title>Crie Valor Estratégia | Inteligência Organizacional</title>
         <meta
           name="description"
           content="Transforme sua empresa com o MAR: Mapa para Alto Rendimento. Intelligência Organizacional."
@@ -41,10 +41,10 @@ const Index = () => {
         <meta property="og:url" content="https://crievalor.com.br" />
         <meta property="og:image" content="https://crievalor.com.br/og-image.png" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Crie Valor Estratégia | Intelligência Organizacional" />
+        <meta name="twitter:title" content="Crie Valor Estratégia | Inteligência Organizacional" />
         <meta
           name="twitter:description"
-          content="Transforme sua empresa com o MAR: Mapa para Alto Rendimento. Consultoria estratégica para resultados excepcionais."
+          content="Transforme sua empresa com o MAR: Mapa para Alto Rendimento. Direção e clareza estratégica para resultados excepcionais."
         />
         <meta name="twitter:image" content="https://crievalor.com.br/og-image.png" />
         <link rel="canonical" href="https://crievalor.com.br" />
@@ -58,7 +58,7 @@ const Index = () => {
       <Header />
 
       <main className="flex-grow">
-        <h1 className="sr-only">Crie Valor Estratégia - Intelligência Organizacional</h1>
+        <h1 className="sr-only">Crie Valor Estratégia - Inteligência Organizacional</h1>
 
         {/* Hero Carrossel - Propósito + MAR + Mentorias + Mentor de Propósito */}
         <InteractiveGalaxyHeroCarousel />
