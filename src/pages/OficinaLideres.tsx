@@ -19,7 +19,8 @@ import {
 import OficinaLideresLeadForm from "@/components/OficinaLideresLeadForm";
 import VideoSection from "@/components/VideoSection";
 import { Helmet } from "react-helmet-async";
-import { ServiceSchema, BreadcrumbSchema } from "@/components/seo/SchemaMarkup";
+import { ServiceSchema, BreadcrumbSchema, ProductSchema } from "@/components/seo/SchemaMarkup";
+import { VideoSchema } from "@/components/seo/VideoSchema";
 const OficinaLideres = () => {
   const heroImages = [
     "https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=2070",
@@ -44,6 +45,19 @@ const OficinaLideres = () => {
         <meta property="og:image" content="https://crievalor.com.br/og-image.jpg" />
       </Helmet>
       
+      <ProductSchema 
+        name="Oficina de Líderes - Formação Executiva Presencial"
+        description="Programa completo de desenvolvimento de competências de liderança voltado exclusivamente para profissionais e empresários da região do Baixo Vale do Itajaí em Santa Catarina. Treinamentos práticos com mais de 25 anos de experiência."
+        image="https://iili.io/Kzv9C9j.png"
+        brand="Crie Valor - Inteligência Organizacional"
+        offers={{
+          price: "0",
+          priceCurrency: "BRL",
+          availability: "https://schema.org/InStock",
+          url: "https://crievalor.com.br/oficina-de-lideres"
+        }}
+      />
+      
       <ServiceSchema 
         name="Oficina de Líderes - Formação Executiva Presencial"
         description="Programa completo de desenvolvimento de competências de liderança voltado exclusivamente para profissionais e empresários da região do Baixo Vale do Itajaí em Santa Catarina."
@@ -53,6 +67,15 @@ const OficinaLideres = () => {
         }}
         url="https://crievalor.com.br/oficina-de-lideres"
         areaServed="Baixo Vale do Itajaí, Santa Catarina"
+      />
+      
+      <VideoSchema 
+        name="Oficina de Líderes - Formação de Líderes Estratégicos"
+        description="Conheça o programa Oficina de Líderes e descubra como desenvolver competências essenciais para gerir pessoas e processos."
+        thumbnailUrl="https://crievalor.com.br/lovable-uploads/oficina-lideres-logo.png"
+        uploadDate="2024-01-01"
+        duration="PT1M46S"
+        embedUrl="https://www.youtube.com/embed/Lr_L7MAIUnM"
       />
       
       <BreadcrumbSchema 

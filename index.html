@@ -79,16 +79,24 @@
       ],
       "areaServed": [
         {
-          "@type": "City",
-          "name": "Campo Grande",
-          "addressRegion": "MS",
-          "addressCountry": "BR"
+          "@type": "Place",
+          "name": "Campo Grande, Mato Grosso do Sul, Brasil",
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Campo Grande",
+            "addressRegion": "MS",
+            "addressCountry": "BR"
+          }
         },
         {
-          "@type": "City",
-          "name": "Navegantes",
-          "addressRegion": "SC",
-          "addressCountry": "BR"
+          "@type": "Place",
+          "name": "Navegantes, Santa Catarina, Brasil",
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Navegantes",
+            "addressRegion": "SC",
+            "addressCountry": "BR"
+          }
         },
         {
           "@type": "Country",
@@ -98,16 +106,18 @@
       "address": [
         {
           "@type": "PostalAddress",
-          "streetAddress": "Escritório Campo Grande",
+          "streetAddress": "Rua Roque Tertuliano de Andrade, 836, Vila Morumbi",
           "addressLocality": "Campo Grande",
           "addressRegion": "MS",
+          "postalCode": "79052-080",
           "addressCountry": "BR"
         },
         {
           "@type": "PostalAddress",
-          "streetAddress": "Escritório Navegantes",
+          "streetAddress": "Rua Bolívia, 59, Gravatá",
           "addressLocality": "Navegantes",
           "addressRegion": "SC",
+          "postalCode": "88372-682",
           "addressCountry": "BR"
         }
       ],
@@ -128,79 +138,99 @@
         }
       ],
       "email": "contato@crievalor.com.br",
-      "makesOffer": [
-        {
-          "@type": "Product",
-          "name": "MAR - Mapa para Alto Rendimento",
-          "description": "Planejamento estratégico com inteligência artificial que cria um roadmap personalizado para acelerar o crescimento empresarial. Sistema de Inteligência Organizacional que analisa dados e gera insights estratégicos precisos. Ideal para empresas em Campo Grande/MS, Navegantes/SC e todo Brasil.",
-          "category": "Consultoria Estratégica com IA",
-          "brand": {
-            "@type": "Brand",
-            "name": "Crie Valor - Inteligência Organizacional"
-          },
-          "offers": {
+      "hasOfferCatalog": {
+        "@type": "OfferCatalog",
+        "name": "Produtos e Serviços Crie Valor",
+        "itemListElement": [
+          {
             "@type": "Offer",
+            "itemOffered": {
+              "@type": "Product",
+              "name": "MAR - Mapa para Alto Rendimento",
+              "image": "https://iili.io/3vlTe6l.png",
+              "description": "Planejamento estratégico com inteligência artificial que cria um roadmap personalizado para acelerar o crescimento empresarial. Sistema de Inteligência Organizacional que analisa dados e gera insights estratégicos precisos. Ideal para empresas em Campo Grande/MS, Navegantes/SC e todo Brasil.",
+              "category": "Consultoria Estratégica com IA",
+              "brand": {
+                "@type": "Brand",
+                "name": "Crie Valor - Inteligência Organizacional"
+              }
+            },
             "price": "899.00",
             "priceCurrency": "BRL",
             "availability": "https://schema.org/InStock",
             "url": "https://crievalor.com.br/mar",
             "priceValidUntil": "2025-12-31"
-          }
-        },
-        {
-          "@type": "SoftwareApplication",
-          "name": "Lumia - 6 Consultores Virtuais com Inteligência Artificial",
-          "description": "Plataforma de consultoria virtual com 6 consultores especializados baseados em IA: Vendas, Marketing, Operações, Finanças, RH e Estratégia. Disponíveis 24/7 para apoiar decisões empresariais com inteligência artificial. Sistema de IA conversacional para negócios.",
-          "applicationCategory": "BusinessApplication",
-          "operatingSystem": "Web, Cloud",
-          "brand": {
-            "@type": "Brand",
-            "name": "Crie Valor - Inteligência Organizacional"
           },
-          "offers": [
-            {
-              "@type": "Offer",
-              "name": "Plano Mensal Lumia",
-              "price": "197.00",
-              "priceCurrency": "BRL",
-              "availability": "https://schema.org/InStock",
-              "url": "https://lumia.crievalor.com.br"
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Product",
+              "name": "Lumia - 6 Consultores Virtuais com Inteligência Artificial",
+              "image": "https://iili.io/KnFOVTb.png",
+              "description": "Plataforma de consultoria virtual com 6 consultores especializados baseados em IA: Vendas, Marketing, Operações, Finanças, RH e Estratégia. Disponíveis 24/7 para apoiar decisões empresariais com inteligência artificial. Sistema de IA conversacional para negócios.",
+              "applicationCategory": "BusinessApplication",
+              "operatingSystem": "Web, Cloud",
+              "brand": {
+                "@type": "Brand",
+                "name": "Crie Valor - Inteligência Organizacional"
+              }
             },
-            {
-              "@type": "Offer",
-              "name": "Plano Trimestral Lumia",
-              "price": "497.00",
-              "priceCurrency": "BRL",
-              "availability": "https://schema.org/InStock",
-              "url": "https://lumia.crievalor.com.br"
-            }
-          ]
-        },
-        {
-          "@type": "Service",
-          "name": "Mentor de Propósito - Bússola do Ecossistema com IA",
-          "description": "Mentoria estratégica com inteligência artificial focada em alinhar o propósito organizacional. Sistema de IA conversacional que identifica padrões, analisa histórias e articula o propósito empresarial. Ferramenta de inteligência organizacional para criar clareza de direção e fortalecer cultura empresarial.",
-          "serviceType": "Consultoria em Inteligência Artificial, Mentoria Estratégica Digital",
-          "provider": {
-            "@type": "Organization",
-            "name": "Crie Valor - Inteligência Organizacional"
+            "price": "197.00",
+            "priceCurrency": "BRL",
+            "availability": "https://schema.org/InStock",
+            "url": "https://lumia.crievalor.com.br"
           },
-          "areaServed": "BR",
-          "url": "https://proposito.crievalor.com.br"
-        },
-        {
-          "@type": "Service",
-          "name": "Oficina de Líderes - Desenvolvimento de Liderança com IA",
-          "description": "Programa de desenvolvimento de liderança que capacita gestores com ferramentas de inteligência artificial, análise de dados e tomada de decisão estratégica baseada em IA. Treinamento em liderança digital e gestão com inteligência organizacional.",
-          "serviceType": "Treinamento em Liderança, Desenvolvimento Organizacional com IA",
-          "provider": {
-            "@type": "Organization",
-            "name": "Crie Valor - Inteligência Organizacional"
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Product",
+              "name": "Lumia - Plano Trimestral",
+              "image": "https://iili.io/KnFOVTb.png",
+              "description": "Plataforma de consultoria virtual com 6 consultores especializados baseados em IA. Plano trimestral com economia.",
+              "brand": {
+                "@type": "Brand",
+                "name": "Crie Valor - Inteligência Organizacional"
+              }
+            },
+            "price": "497.00",
+            "priceCurrency": "BRL",
+            "availability": "https://schema.org/InStock",
+            "url": "https://lumia.crievalor.com.br"
           },
-          "areaServed": "BR",
-          "url": "https://crievalor.com.br/oficina-de-lideres"
-        }
-      ],
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Mentor de Propósito - Bússola do Ecossistema com IA",
+              "image": "https://iili.io/Kzktdnn.png",
+              "description": "Mentoria estratégica com inteligência artificial focada em alinhar o propósito organizacional. Sistema de IA conversacional que identifica padrões, analisa histórias e articula o propósito empresarial.",
+              "serviceType": "Consultoria em Inteligência Artificial, Mentoria Estratégica Digital",
+              "provider": {
+                "@type": "Organization",
+                "name": "Crie Valor - Inteligência Organizacional"
+              },
+              "areaServed": "BR"
+            },
+            "url": "https://proposito.crievalor.com.br"
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Oficina de Líderes - Desenvolvimento de Liderança com IA",
+              "image": "https://iili.io/Kzv9C9j.png",
+              "description": "Programa de desenvolvimento de liderança que capacita gestores com ferramentas de inteligência artificial, análise de dados e tomada de decisão estratégica baseada em IA.",
+              "serviceType": "Treinamento em Liderança, Desenvolvimento Organizacional com IA",
+              "provider": {
+                "@type": "Organization",
+                "name": "Crie Valor - Inteligência Organizacional"
+              },
+              "areaServed": "BR"
+            },
+            "url": "https://crievalor.com.br/oficina-de-lideres"
+          }
+        ]
+      },
       "mainEntityOfPage": {
         "@type": "WebPage",
         "@id": "https://crievalor.com.br/"

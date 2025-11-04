@@ -181,6 +181,7 @@ export const FAQSchema: React.FC<FAQSchemaProps> = ({ questions }) => {
   );
 };
 
-// Export ProductSchema and BreadcrumbSchema from their files
+// Export ProductSchema, BreadcrumbSchema, and VideoSchema from their files
 export { ProductSchema } from "./ProductSchema";
 export { BreadcrumbSchema } from "./BreadcrumbSchema";
+export { VideoSchema } from "./VideoSchema";

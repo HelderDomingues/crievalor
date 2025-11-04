@@ -11,6 +11,7 @@ import ErrorBoundary from "@/components/ErrorBoundary";
 import { Helmet } from "react-helmet-async";
 import { ProductSchema, FAQSchema } from "@/components/seo/SchemaMarkup";
 import { BreadcrumbSchema } from "@/components/seo/BreadcrumbSchema";
+import { VideoSchema } from "@/components/seo/VideoSchema";
 import { useScrollToTop } from "@/hooks/useScrollToTop";
 
 const Mar = () => {
@@ -36,6 +37,7 @@ const Mar = () => {
       <ProductSchema 
         name="MAR - Mapa para Alto Rendimento com IA"
         description="Sistema de planejamento estratégico com inteligência artificial que cria roadmaps personalizados para acelerar crescimento empresarial. Utiliza IA para análises preditivas, insights estratégicos e decisões baseadas em dados. Ideal para empresas em Campo Grande/MS, Navegantes/SC e todo Brasil."
+        image="https://iili.io/3vlTe6l.png"
         brand="Crie Valor - Inteligência Organizacional"
         offers={{
           price: "899.00",
@@ -47,6 +49,15 @@ const Mar = () => {
           ratingValue: 4.9,
           reviewCount: 127
         }}
+      />
+      
+      <VideoSchema 
+        name="MAR - Clareza para decidir. Direção para crescer."
+        description="Descubra como o MAR pode transformar a estratégia da sua empresa com planejamento estratégico baseado em inteligência artificial."
+        thumbnailUrl="https://crievalor.com.br/lovable-uploads/mar-logo.png"
+        uploadDate="2024-01-01"
+        duration="PT3M8S"
+        embedUrl="https://www.youtube.com/embed/Y22PDZ7-zhY"
       />
       
       <BreadcrumbSchema 

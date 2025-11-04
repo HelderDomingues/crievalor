@@ -33,21 +33,21 @@ const Contato = () => {
         <meta property="og:description" content="Entre em contato com a Crie Valor Estratégia. Estamos prontos para ajudar sua empresa a alcançar resultados excepcionais." />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://crievalor.com.br/contato" />
-        <meta property="og:image" content="https://crievalor.com.br/og-image.png" />
+        <meta property="og:image" content="https://crievalor.com.br/og-image.jpg" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="Contato | Crie Valor" />
         <meta name="twitter:description" content="Entre em contato conosco para transformar estrategicamente o seu negócio." />
-        <meta name="twitter:image" content="https://crievalor.com.br/og-image.png" />
+        <meta name="twitter:image" content="https://crievalor.com.br/og-image.jpg" />
         <link rel="canonical" href="https://crievalor.com.br/contato" />
       </Helmet>
       
       <LocalBusinessSchema 
         name="Crie Valor - Inteligência Organizacional"
         address={{
-          streetAddress: "Navegantes e Campo Grande",
+          streetAddress: "Rua Bolívia, 59, Gravatá",
           addressLocality: "Navegantes",
           addressRegion: "SC",
-          postalCode: "88375-000",
+          postalCode: "88372-682",
           addressCountry: "BR"
         }}
         telephone="+5547992150289"
