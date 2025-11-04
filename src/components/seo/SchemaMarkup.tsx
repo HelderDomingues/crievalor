@@ -180,3 +180,6 @@ export const FAQSchema: React.FC<FAQSchemaProps> = ({ questions }) => {
     </Helmet>
   );
 };
+
+// Export ProductSchema from ProductSchema.tsx file
+export { ProductSchema } from "./ProductSchema";

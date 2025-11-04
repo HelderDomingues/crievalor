@@ -75,28 +75,22 @@
 
 ## 📍 Informações de Contato e Localização
 
-### Endereço Principal
-```
-Rua Mal. Deodoro da Fonseca, 900 - Sala 801
-Balneário Camboriú - SC
-CEP: 88330-022
-Brasil
-```
+### Escritórios
+- **Campo Grande/MS**: Consultoria em IA e Inteligência Organizacional
+- **Navegantes/SC**: Transformação Digital e Consultoria Estratégica
 
 ### Contatos
 - **Email**: contato@crievalor.com.br
-- **Telefone SC**: (47) 9 9215-0289
-- **Telefone MS**: (67) 9 9654-2991
+- **Telefone Navegantes/SC**: (47) 9 9215-0289
+- **Telefone Campo Grande/MS**: (67) 9 9654-2991
 
-### Redes Sociais
+### Redes Sociais e Subdomínios
 - Facebook: https://www.facebook.com/crievalorestrategia
 - Instagram: https://www.instagram.com/crievalorestrategia/
 - LinkedIn: https://www.linkedin.com/company/crievalor/
-- Blog: https://blog.crievalor.com.br
-
-### Subdomínios de Produtos
-- Lumia: https://lumia.crievalor.com.br
-- Mentor de Propósito: https://proposito.crievalor.com.br
+- **Blog**: https://blog.crievalor.com.br
+- **Lumia**: https://lumia.crievalor.com.br
+- **Mentor de Propósito**: https://proposito.crievalor.com.br
 
 ---
 
@@ -104,20 +98,23 @@ Brasil
 
 ### Principais (usar em todos os meta tags)
 1. inteligência organizacional
-2. sistema proprietário
-3. consultoria empresarial
-4. transformação empresarial
-5. planejamento estratégico
+2. inteligência artificial para empresas
+3. IA para negócios
+4. consultoria em IA
+5. transformação digital com IA
+6. planejamento estratégico com IA
 
-### Produtos (mencionar sempre que relevante)
-1. MAR mapa alto rendimento
-2. Lumia consultores virtuais
-3. Mentor de Propósito
-4. Oficina de Líderes
+### Produtos com IA
+1. MAR planejamento estratégico IA
+2. Lumia 6 consultores virtuais IA
+3. Mentor de Propósito IA conversacional
+4. Oficina de Líderes liderança digital
 
 ### Localização
-1. Santa Catarina
-2. Balneário Camboriú
+1. Campo Grande MS
+2. Navegantes SC
+3. consultoria empresarial Campo Grande
+4. consultoria IA Navegantes
 3. Mato Grosso do Sul
 4. Brasil
 

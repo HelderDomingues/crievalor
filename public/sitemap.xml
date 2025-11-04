@@ -7,18 +7,35 @@
             http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
   <url>
     <loc>https://crievalor.com.br/</loc>
-    <lastmod>2025-10-28</lastmod>
+    <lastmod>2025-11-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
-    <image:image>
-      <image:loc>https://crievalor.com.br/lovable-uploads/d2f508b6-c101-4928-b7f7-161a378bb6e8.png</image:loc>
-      <image:title>Logo da Crie Valor</image:title>
-      <image:caption>Logotipo oficial da Crie Valor Estratégia</image:caption>
-    </image:image>
+  </url>
+  
+  <!-- Subdomínios Externos -->
+  <url>
+    <loc>https://blog.crievalor.com.br/</loc>
+    <lastmod>2025-11-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  
+  <url>
+    <loc>https://lumia.crievalor.com.br/</loc>
+    <lastmod>2025-11-04</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  
+  <url>
+    <loc>https://proposito.crievalor.com.br/</loc>
+    <lastmod>2025-11-04</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
   </url>
   <url>
     <loc>https://crievalor.com.br/mar</loc>
-    <lastmod>2025-10-28</lastmod>
+    <lastmod>2025-11-04</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
     <image:image>

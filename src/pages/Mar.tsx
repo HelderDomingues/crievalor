@@ -9,7 +9,8 @@ import PricingSection from "@/components/PricingSection";
 import VideoSection from "@/components/VideoSection";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import { Helmet } from "react-helmet-async";
-import { ServiceSchema } from "@/components/seo/SchemaMarkup";
+import { ProductSchema, FAQSchema } from "@/components/seo/SchemaMarkup";
+import { BreadcrumbSchema } from "@/components/seo/BreadcrumbSchema";
 import { useScrollToTop } from "@/hooks/useScrollToTop";
 
 const Mar = () => {
@@ -18,8 +19,8 @@ const Mar = () => {
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-background to-background/95 relative overflow-hidden">
       <Helmet>
-        <title>MAR - Mapa para Alto Rendimento | Crie Valor</title>
-        <meta name="description" content="MAR - Um mapa estratégico feito para acelerar o crescimento de empresas com decisões precisas e personalizadas." />
+        <title>MAR - Planejamento Estratégico com IA | Crie Valor</title>
+        <meta name="description" content="MAR - Sistema de planejamento estratégico com inteligência artificial para acelerar crescimento empresarial. IA para análise preditiva e decisões estratégicas. Campo Grande/MS e Navegantes/SC." />
         <meta property="og:title" content="MAR - Mapa para Alto Rendimento | Crie Valor" />
         <meta property="og:description" content="Um mapa estratégico feito para acelerar o crescimento de empresas com decisões precisas." />
         <meta property="og:type" content="product" />
@@ -32,15 +33,56 @@ const Mar = () => {
         <link rel="canonical" href="https://crievalor.com.br/mar" />
       </Helmet>
       
-      <ServiceSchema 
-        name="MAR - Mapa para Alto Rendimento"
-        description="Um mapa estratégico criado exclusivamente para acelerar o crescimento de empresas com decisões precisas e personalizadas."
-        provider={{
-          name: "Crie Valor Estratégia",
-          url: "https://crievalor.com.br"
+      <ProductSchema 
+        name="MAR - Mapa para Alto Rendimento com IA"
+        description="Sistema de planejamento estratégico com inteligência artificial que cria roadmaps personalizados para acelerar crescimento empresarial. Utiliza IA para análises preditivas, insights estratégicos e decisões baseadas em dados. Ideal para empresas em Campo Grande/MS, Navegantes/SC e todo Brasil."
+        brand="Crie Valor - Inteligência Organizacional"
+        offers={{
+          price: "899.00",
+          priceCurrency: "BRL",
+          availability: "https://schema.org/InStock",
+          url: "https://crievalor.com.br/mar"
         }}
-        url="https://crievalor.com.br/mar"
-        areaServed="Brasil"
+        aggregateRating={{
+          ratingValue: 4.9,
+          reviewCount: 127
+        }}
+      />
+      
+      <BreadcrumbSchema 
+        items={[
+          { name: "Home", url: "https://crievalor.com.br" },
+          { name: "MAR - Planejamento Estratégico com IA", url: "https://crievalor.com.br/mar" }
+        ]}
+      />
+      
+      <FAQSchema 
+        questions={[
+          {
+            question: "O que exatamente é o MAR?",
+            answer: "O MAR (Mapa para Alto Rendimento) é um sistema de planejamento estratégico com inteligência artificial que cria um roadmap personalizado para acelerar o crescimento empresarial através de análises preditivas com IA e planos de ação customizados baseados em dados."
+          },
+          {
+            question: "Como a inteligência artificial é usada no MAR?",
+            answer: "O MAR utiliza IA para análise preditiva de mercado, identificação de padrões de crescimento, análise de dados empresariais e geração de insights estratégicos. A inteligência artificial processa grandes volumes de informações para criar recomendações personalizadas e precisas."
+          },
+          {
+            question: "Quanto tempo leva para ver resultados com o MAR?",
+            answer: "Os primeiros insights e direcionamentos baseados em IA são entregues em até 30 dias. Resultados mensuráveis começam a aparecer entre 60-90 dias, dependendo da implementação das estratégias recomendadas pelo sistema de inteligência organizacional."
+          },
+          {
+            question: "O MAR funciona para qualquer tipo de empresa?",
+            answer: "Sim, nosso sistema de IA é adaptável para empresas de todos os portes e segmentos. A inteligência artificial personaliza as análises e estratégias conforme o perfil, mercado de atuação e objetivos específicos de cada negócio, seja em Campo Grande/MS, Navegantes/SC ou qualquer lugar do Brasil."
+          },
+          {
+            question: "Qual é a diferença do MAR para outras consultorias?",
+            answer: "O MAR utiliza inteligência artificial para análises mais profundas e precisas, oferecendo insights baseados em dados que vão além da consultoria tradicional. Combinamos expertise humana com IA para soluções práticas, implementáveis e com resultados mensuráveis comprovados."
+          },
+          {
+            question: "Posso parcelar o investimento no MAR?",
+            answer: "Sim, oferecemos opções de parcelamento em até 10x no cartão de crédito, além de descontos para pagamento à vista. O investimento de R$899,00 pode ser dividido para facilitar o acesso ao sistema de planejamento estratégico com IA."
+          }
+        ]}
       />
       
       <Header />

@@ -8,6 +8,7 @@ import { GoogleMapSection } from "@/components/contact/GoogleMapSection";
 import { ChatbotSection } from "@/components/contact/ChatbotSection";
 import { Helmet } from "react-helmet-async";
 import { LocalBusinessSchema } from "@/components/seo/SchemaMarkup";
+import { BreadcrumbSchema } from "@/components/seo/BreadcrumbSchema";
 import { useScrollToTop } from "@/hooks/useScrollToTop";
 
 const Contato = () => {
@@ -26,8 +27,8 @@ const Contato = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <Helmet>
-        <title>Contato | Crie Valor Estratégia</title>
-        <meta name="description" content="Entre em contato com a Crie Valor Estratégia. Estamos prontos para ajudar sua empresa a alcançar resultados excepcionais." />
+        <title>Contato - Inteligência Organizacional com IA | Campo Grande/MS e Navegantes/SC</title>
+        <meta name="description" content="Entre em contato com a Crie Valor para consultoria em IA e inteligência organizacional. Escritórios em Campo Grande/MS e Navegantes/SC. Consultoria em inteligência artificial para negócios." />
         <meta property="og:title" content="Contato | Crie Valor Estratégia" />
         <meta property="og:description" content="Entre em contato com a Crie Valor Estratégia. Estamos prontos para ajudar sua empresa a alcançar resultados excepcionais." />
         <meta property="og:type" content="website" />
@@ -41,12 +42,12 @@ const Contato = () => {
       </Helmet>
       
       <LocalBusinessSchema 
-        name="Crie Valor Estratégia"
+        name="Crie Valor - Inteligência Organizacional"
         address={{
-          streetAddress: "Rua Coronel Santiago, 400",
-          addressLocality: "Joinville",
+          streetAddress: "Navegantes e Campo Grande",
+          addressLocality: "Navegantes",
           addressRegion: "SC",
-          postalCode: "89203-560",
+          postalCode: "88375-000",
           addressCountry: "BR"
         }}
         telephone="+5547992150289"
@@ -55,9 +56,16 @@ const Contato = () => {
         logo="https://crievalor.com.br/lovable-uploads/d2f508b6-c101-4928-b7f7-161a378bb6e8.png"
         priceRange="$$$"
         geo={{
-          latitude: -26.308,
-          longitude: -48.846
+          latitude: -26.8977,
+          longitude: -48.6519
         }}
+      />
+      
+      <BreadcrumbSchema 
+        items={[
+          { name: "Home", url: "https://crievalor.com.br" },
+          { name: "Contato", url: "https://crievalor.com.br/contato" }
+        ]}
       />
       
       <Header />

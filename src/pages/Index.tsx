@@ -27,10 +27,10 @@ const Index = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <Helmet>
-        <title>Crie Valor Estratégia | Inteligência Organizacional</title>
+        <title>Crie Valor - Inteligência Organizacional com IA | Campo Grande/MS e Navegantes/SC</title>
         <meta
           name="description"
-          content="Transforme sua empresa com o MAR: Mapa para Alto Rendimento. Intelligência Organizacional."
+          content="Sistema de Inteligência Organizacional com IA em Campo Grande/MS e Navegantes/SC. MAR (planejamento estratégico IA), Lumia (6 consultores virtuais IA), Mentor de Propósito e Oficina de Líderes."
         />
         <meta property="og:title" content="Crie Valor Estratégia | Intelligência Organizacional" />
         <meta
