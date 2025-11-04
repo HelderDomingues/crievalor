@@ -1,9 +1,10 @@
-
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { Helmet } from "react-helmet-async";
+import { BreadcrumbSchema } from "@/components/seo/SchemaMarkup";
 import { subscriptionService } from "@/services/subscriptionService";
 import { supabaseExtended } from "@/integrations/supabase/extendedClient";
 import { useToast } from "@/hooks/use-toast";
@@ -156,6 +157,21 @@ const MaterialExclusivoPage: React.FC = () => {
   if (isLoading) {
     return (
       <div className="min-h-screen flex flex-col">
+        <Helmet>
+          <title>Material Exclusivo para Assinantes MAR | Crie Valor</title>
+          <meta name="description" content="Acesse materiais exclusivos com sua assinatura MAR. Conteúdos estratégicos, templates e ferramentas para impulsionar seu negócio." />
+          <meta name="keywords" content="material exclusivo assinantes, conteúdo estratégico, templates empresariais, ferramentas gestão, recursos exclusivos mar" />
+          <link rel="canonical" href="https://crievalor.com.br/material-exclusivo" />
+          <meta name="robots" content="noindex, nofollow" />
+        </Helmet>
+        
+        <BreadcrumbSchema 
+          items={[
+            { name: "Home", url: "https://crievalor.com.br" },
+            { name: "Material Exclusivo", url: "https://crievalor.com.br/material-exclusivo" }
+          ]}
+        />
+        
         <Header />
         <main className="flex-grow py-16">
           <div className="container mx-auto px-4">

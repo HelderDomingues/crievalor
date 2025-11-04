@@ -14,6 +14,8 @@ import { Calendar } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { Helmet } from "react-helmet-async";
+import { BreadcrumbSchema } from "@/components/seo/SchemaMarkup";
 
 const formSchema = z.object({
   name: z.string().min(2, "Nome deve ter pelo menos 2 caracteres"),
@@ -113,6 +115,25 @@ const Palestra = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5">
+      <Helmet>
+        <title>Palestras Empresariais | Capacitação com IA - Crie Valor</title>
+        <meta name="description" content="Palestras e capacitações empresariais sobre inteligência organizacional e IA para negócios. Conteúdo estratégico e networking qualificado." />
+        <meta name="keywords" content="palestras empresariais, capacitação empresarial, palestras sobre IA, eventos corporativos, palestras gestão, seminários empresas campo grande, palestras navegantes sc" />
+        <link rel="canonical" href="https://crievalor.com.br/palestra" />
+        <meta property="og:title" content="Palestras Empresariais - Crie Valor" />
+        <meta property="og:description" content="Conteúdo estratégico, insights práticos e networking qualificado em palestras sobre IA e gestão empresarial." />
+        <meta property="og:url" content="https://crievalor.com.br/palestra" />
+        <meta property="og:type" content="website" />
+        <meta property="og:image" content="https://crievalor.com.br/og-image.jpg" />
+      </Helmet>
+      
+      <BreadcrumbSchema 
+        items={[
+          { name: "Home", url: "https://crievalor.com.br" },
+          { name: "Palestras", url: "https://crievalor.com.br/palestra" }
+        ]}
+      />
+      
       <Header />
       
       {/* Hero Section */}

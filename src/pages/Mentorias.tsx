@@ -4,6 +4,8 @@ import Footer from "@/components/Footer";
 import HeroSection from "@/components/HeroSection";
 import ContactSection from "@/components/ContactSection";
 import { Users, Award, BarChart, Target } from "lucide-react";
+import { Helmet } from "react-helmet-async";
+import { ServiceSchema, FAQSchema, BreadcrumbSchema } from "@/components/seo/SchemaMarkup";
 
 const Mentorias = () => {
   // Example hero images - replace with your actual images
@@ -15,6 +17,53 @@ const Mentorias = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
+      <Helmet>
+        <title>Mentorias Empresariais com IA | Desenvolvimento de Líderes - Crie Valor</title>
+        <meta name="description" content="Programa de mentorias com IA para desenvolvimento de líderes. Acompanhamento personalizado e resultados mensuráveis em Campo Grande/MS e Navegantes/SC." />
+        <meta name="keywords" content="mentorias empresariais, desenvolvimento de líderes, mentoria com IA, liderança estratégica, coach executivo campo grande, mentoria navegantes sc, programa desenvolvimento gestores" />
+        <link rel="canonical" href="https://crievalor.com.br/mentorias" />
+        <meta property="og:title" content="Mentorias Empresariais - Desenvolvimento de Líderes com IA" />
+        <meta property="og:description" content="Transforme líderes com mentorias personalizadas e IA. Resultados mensuráveis e acompanhamento contínuo." />
+        <meta property="og:url" content="https://crievalor.com.br/mentorias" />
+        <meta property="og:type" content="website" />
+        <meta property="og:image" content="https://crievalor.com.br/og-image.jpg" />
+      </Helmet>
+      
+      <ServiceSchema 
+        name="Mentorias Empresariais para Desenvolvimento de Líderes"
+        description="Programa de mentorias personalizado para potencializar o desenvolvimento de líderes e equipes, com foco em resultados mensuráveis através de inteligência organizacional."
+        provider={{
+          name: "Crie Valor - Inteligência Organizacional",
+          url: "https://crievalor.com.br"
+        }}
+        url="https://crievalor.com.br/mentorias"
+        areaServed="Brasil"
+      />
+      
+      <FAQSchema 
+        questions={[
+          {
+            question: "Como funcionam as sessões de mentoria?",
+            answer: "As sessões são individuais e personalizadas, com duração de 1 hora cada. Realizamos encontros semanais ou quinzenais, dependendo das necessidades específicas e disponibilidade do mentoreado."
+          },
+          {
+            question: "Qual é a duração do programa de mentoria?",
+            answer: "O programa tem duração mínima de 3 meses, podendo se estender conforme os objetivos estabelecidos. A maioria dos clientes obtém resultados significativos entre 6 a 12 meses de acompanhamento."
+          },
+          {
+            question: "Quem são os mentores da Crie Valor?",
+            answer: "Nossa equipe é formada por profissionais com mais de 15 anos de experiência em liderança empresarial, gestão de equipes e desenvolvimento organizacional em empresas de diversos portes e segmentos."
+          }
+        ]}
+      />
+      
+      <BreadcrumbSchema 
+        items={[
+          { name: "Home", url: "https://crievalor.com.br" },
+          { name: "Mentorias", url: "https://crievalor.com.br/mentorias" }
+        ]}
+      />
+      
       <Header />
       
       <main className="flex-grow">

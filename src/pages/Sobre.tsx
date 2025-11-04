@@ -1,9 +1,10 @@
-
 import React from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Anchor, Users, Lightbulb, TrendingUp, Building, Star } from "lucide-react";
 import { motion } from "framer-motion";
+import { Helmet } from "react-helmet-async";
+import { OrganizationSchema, BreadcrumbSchema } from "@/components/seo/SchemaMarkup";
 
 const Sobre = () => {
   const fadeIn = {
@@ -27,6 +28,30 @@ const Sobre = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
+      <Helmet>
+        <title>Sobre a Crie Valor - Inteligência Organizacional | Sistema de IA para Empresas</title>
+        <meta name="description" content="Conheça a Crie Valor - Inteligência Organizacional. Sistema proprietário com IA para transformação empresarial em Campo Grande/MS e Navegantes/SC. Mais de 10 anos de experiência." />
+        <meta name="keywords" content="sobre crie valor, inteligência organizacional, consultoria em IA, transformação digital campo grande ms, consultoria navegantes sc, sistema proprietário empresas, história empresa consultoria" />
+        <link rel="canonical" href="https://crievalor.com.br/sobre" />
+        <meta property="og:title" content="Sobre a Crie Valor - Inteligência Organizacional" />
+        <meta property="og:description" content="Sistema de Inteligência Organizacional com IA que transforma empresas. Escritórios em Campo Grande/MS e Navegantes/SC." />
+        <meta property="og:url" content="https://crievalor.com.br/sobre" />
+        <meta property="og:type" content="website" />
+        <meta property="og:image" content="https://crievalor.com.br/og-image.jpg" />
+      </Helmet>
+      
+      <OrganizationSchema 
+        url="https://crievalor.com.br"
+        logo="https://crievalor.com.br/lovable-uploads/fc868084-d22b-4877-907b-fe02e64fc501.png"
+      />
+      
+      <BreadcrumbSchema 
+        items={[
+          { name: "Home", url: "https://crievalor.com.br" },
+          { name: "Sobre", url: "https://crievalor.com.br/sobre" }
+        ]}
+      />
+      
       <Header />
       
       <main className="flex-grow pt-16">

@@ -18,6 +18,8 @@ import {
 } from "lucide-react";
 import OficinaLideresLeadForm from "@/components/OficinaLideresLeadForm";
 import VideoSection from "@/components/VideoSection";
+import { Helmet } from "react-helmet-async";
+import { ServiceSchema, BreadcrumbSchema } from "@/components/seo/SchemaMarkup";
 const OficinaLideres = () => {
   const heroImages = [
     "https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=2070",
@@ -30,6 +32,36 @@ const OficinaLideres = () => {
     "Métodos testados e aprovados em centenas de empresas, garantindo resultados rápidos e mensuráveis.";
   return (
     <div className="min-h-screen flex flex-col">
+      <Helmet>
+        <title>Oficina de Líderes - Formação Executiva Presencial | Baixo Vale do Itajaí/SC</title>
+        <meta name="description" content="Programa completo de desenvolvimento de liderança para o Baixo Vale do Itajaí/SC. Treinamentos práticos com mais de 25 anos de experiência. Navegantes, Santa Catarina." />
+        <meta name="keywords" content="oficina de líderes, formação executiva navegantes, curso liderança baixo vale itajaí, desenvolvimento gestores sc, treinamento líderes santa catarina, capacitação empresarial navegantes" />
+        <link rel="canonical" href="https://crievalor.com.br/oficina-de-lideres" />
+        <meta property="og:title" content="Oficina de Líderes - Formação Executiva Presencial" />
+        <meta property="og:description" content="Desenvolva seu potencial de liderança. Programa exclusivo para o Baixo Vale do Itajaí com métodos testados e aprovados." />
+        <meta property="og:url" content="https://crievalor.com.br/oficina-de-lideres" />
+        <meta property="og:type" content="website" />
+        <meta property="og:image" content="https://crievalor.com.br/og-image.jpg" />
+      </Helmet>
+      
+      <ServiceSchema 
+        name="Oficina de Líderes - Formação Executiva Presencial"
+        description="Programa completo de desenvolvimento de competências de liderança voltado exclusivamente para profissionais e empresários da região do Baixo Vale do Itajaí em Santa Catarina."
+        provider={{
+          name: "Crie Valor - Inteligência Organizacional",
+          url: "https://crievalor.com.br"
+        }}
+        url="https://crievalor.com.br/oficina-de-lideres"
+        areaServed="Baixo Vale do Itajaí, Santa Catarina"
+      />
+      
+      <BreadcrumbSchema 
+        items={[
+          { name: "Home", url: "https://crievalor.com.br" },
+          { name: "Oficina de Líderes", url: "https://crievalor.com.br/oficina-de-lideres" }
+        ]}
+      />
+      
       <Header />
 
       <main className="flex-grow">

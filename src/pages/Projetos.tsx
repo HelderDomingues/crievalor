@@ -8,7 +8,7 @@ import ProjectOverview from "@/components/projects/ProjectOverview";
 import ProjectExamples from "@/components/projects/ProjectExamples";
 import { useScrollToTop } from "@/hooks/useScrollToTop";
 import { Helmet } from "react-helmet-async";
-import { ServiceSchema } from "@/components/seo/SchemaMarkup";
+import { ServiceSchema, FAQSchema, BreadcrumbSchema } from "@/components/seo/SchemaMarkup";
 
 const Projetos = () => {
   useScrollToTop();
@@ -16,29 +16,50 @@ const Projetos = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <Helmet>
-        <title>Projetos sob Medida | Crie Valor Estratégia</title>
-        <meta name="description" content="Desenvolvemos projetos especiais completamente customizados para atender às necessidades específicas do seu negócio." />
-        <meta property="og:title" content="Projetos sob Medida | Crie Valor Estratégia" />
-        <meta property="og:description" content="Desenvolvemos projetos especiais completamente customizados para atender às necessidades específicas do seu negócio." />
+        <title>Projetos sob Medida com IA | Soluções Customizadas - Crie Valor</title>
+        <meta name="description" content="Desenvolvemos projetos especiais com IA completamente customizados para seu negócio. Campo Grande/MS e Navegantes/SC. Soluções digitais e processos inovadores." />
+        <meta name="keywords" content="projetos sob medida, soluções customizadas IA, desenvolvimento personalizado empresas, consultoria projetos especiais, sistemas customizados campo grande, projetos navegantes sc" />
+        <meta property="og:title" content="Projetos sob Medida com IA | Crie Valor" />
+        <meta property="og:description" content="Soluções empresariais customizadas com IA para seu negócio. Projetos especiais e inovadores." />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://crievalor.com.br/projetos" />
-        <meta property="og:image" content="https://crievalor.com.br/og-image.png" />
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Projetos sob Medida | Crie Valor" />
-        <meta name="twitter:description" content="Soluções completamente personalizadas para as necessidades específicas do seu negócio." />
-        <meta name="twitter:image" content="https://crievalor.com.br/og-image.png" />
+        <meta property="og:image" content="https://crievalor.com.br/og-image.jpg" />
         <link rel="canonical" href="https://crievalor.com.br/projetos" />
       </Helmet>
       
       <ServiceSchema 
-        name="Projetos sob Medida"
-        description="Desenvolvemos projetos especiais completamente customizados para atender às necessidades específicas do seu negócio."
+        name="Projetos sob Medida com Inteligência Organizacional"
+        description="Desenvolvemos projetos especiais completamente customizados com inteligência organizacional e IA para atender às necessidades específicas do seu negócio."
         provider={{
-          name: "Crie Valor Estratégia",
+          name: "Crie Valor - Inteligência Organizacional",
           url: "https://crievalor.com.br"
         }}
         url="https://crievalor.com.br/projetos"
         areaServed="Brasil"
+      />
+      
+      <FAQSchema 
+        questions={[
+          {
+            question: "Como funciona o desenvolvimento de projetos sob medida?",
+            answer: "Iniciamos com um diagnóstico detalhado das suas necessidades específicas, seguido pela elaboração de uma proposta customizada. O projeto é desenvolvido em etapas com acompanhamento contínuo e entregas parciais."
+          },
+          {
+            question: "Qual é o prazo para desenvolvimento de um projeto?",
+            answer: "O prazo varia conforme a complexidade e escopo do projeto. Projetos simples podem ser entregues em 30-45 dias, enquanto projetos mais complexos podem levar de 3 a 6 meses para conclusão."
+          },
+          {
+            question: "Que tipo de projetos vocês desenvolvem?",
+            answer: "Desenvolvemos uma ampla gama de projetos: sistemas de gestão customizados, processos operacionais específicos, estratégias de mercado únicas, soluções digitais personalizadas e qualquer demanda que requeira abordagem sob medida."
+          }
+        ]}
+      />
+      
+      <BreadcrumbSchema 
+        items={[
+          { name: "Home", url: "https://crievalor.com.br" },
+          { name: "Projetos", url: "https://crievalor.com.br/projetos" }
+        ]}
       />
       
       <Header />
