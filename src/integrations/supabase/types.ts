@@ -14,39 +14,21 @@ export type Database = {
   }
   public: {
     Tables: {
-      asaas_customers: {
+      atualizar: {
         Row: {
-          asaas_id: string | null
-          cpf_cnpj: number
-          created_at: string | null
-          email: string | null
-          id: string
-          nome_completo: string | null
-          telefone: number | null
-          updated_at: string | null
-          user_id: string | null
+          created_at: string
+          id: number
+          numero: number | null
         }
         Insert: {
-          asaas_id?: string | null
-          cpf_cnpj: number
-          created_at?: string | null
-          email?: string | null
-          id?: string
-          nome_completo?: string | null
-          telefone?: number | null
-          updated_at?: string | null
-          user_id?: string | null
+          created_at?: string
+          id?: number
+          numero?: number | null
         }
         Update: {
-          asaas_id?: string | null
-          cpf_cnpj?: number
-          created_at?: string | null
-          email?: string | null
-          id?: string
-          nome_completo?: string | null
-          telefone?: number | null
-          updated_at?: string | null
-          user_id?: string | null
+          created_at?: string
+          id?: number
+          numero?: number | null
         }
         Relationships: []
       }
@@ -1187,14 +1169,8 @@ export type Database = {
         Args: { admin_user_id: string }
         Returns: boolean
       }
-      check_and_migrate_data: {
-        Args: Record<PropertyKey, never>
-        Returns: Json
-      }
-      check_if_user_is_admin: {
-        Args: { user_id: string }
-        Returns: boolean
-      }
+      check_and_migrate_data: { Args: never; Returns: Json }
+      check_if_user_is_admin: { Args: { user_id: string }; Returns: boolean }
       complete_quiz_submission: {
         Args: { p_user_id: string }
         Returns: boolean
@@ -1203,16 +1179,12 @@ export type Database = {
         Args: { table_definition: string; table_name: string }
         Returns: undefined
       }
-      execute_sql: {
-        Args: Record<PropertyKey, never> | { sql_query: string }
-        Returns: undefined
-      }
-      get_system_setting: {
-        Args: { setting_key: string }
-        Returns: string
-      }
+      execute_sql:
+        | { Args: { sql_query: string }; Returns: undefined }
+        | { Args: never; Returns: undefined }
+      get_system_setting: { Args: { setting_key: string }; Returns: string }
       get_user_emails: {
-        Args: Record<PropertyKey, never>
+        Args: never
         Returns: {
           email: string
         }[]
@@ -1232,34 +1204,17 @@ export type Database = {
         Args: { material_id: string }
         Returns: undefined
       }
-      is_admin: {
-        Args: Record<PropertyKey, never>
-        Returns: boolean
-      }
-      is_quiz_admin: {
-        Args: { user_email: string }
-        Returns: boolean
-      }
+      is_admin: { Args: never; Returns: boolean }
+      is_quiz_admin: { Args: { user_email: string }; Returns: boolean }
       link_user_to_asaas_customer: {
         Args: { asaas_email: string; user_email: string }
         Returns: boolean
       }
-      process_quiz_completion: {
-        Args: Record<PropertyKey, never> | { p_user_id: string }
-        Returns: undefined
-      }
-      setup_asaas_customers_rls_policies: {
-        Args: Record<PropertyKey, never>
-        Returns: boolean
-      }
-      setup_subscriptions_rls_policies: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
-      }
-      sync_existing_users: {
-        Args: Record<PropertyKey, never>
-        Returns: number
-      }
+      process_quiz_completion:
+        | { Args: { p_user_id: string }; Returns: undefined }
+        | { Args: never; Returns: undefined }
+      setup_subscriptions_rls_policies: { Args: never; Returns: undefined }
+      sync_existing_users: { Args: never; Returns: number }
     }
     Enums: {
       [_ in never]: never
