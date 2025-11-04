@@ -1,7 +1,5 @@
 
-import { PaymentType } from "@/components/pricing/PaymentOptions";
-import { subscriptionService } from "@/services/subscriptionService";
-import { paymentsService } from "@/services/paymentsService";
+import { MAR_PAYMENT_LINKS, getPaymentLink, isCorporatePlan, PaymentType } from "@/services/marPaymentLinks";
 
 export interface PaymentProcessingOptions {
   planId: string;
@@ -23,36 +21,10 @@ export interface PaymentResult {
   asaasCustomerId?: string;
 }
 
-// Static payment links to use directly - ensure these are correct Asaas links
-const STATIC_PAYMENT_LINKS = {
-  basic_plan: {
-    credit: "https://sandbox.asaas.com/c/vydr3n77kew5fd4s", 
-    pix: "https://sandbox.asaas.com/c/fy15747uacorzbla"
-  },
-  pro_plan: {
-    credit: "https://www.asaas.com/c/rb9ayqo3l1y7hlym", 
-    pix: "https://www.asaas.com/c/tywf1vy9r3wcvgq1"
-  },
-  enterprise_plan: {
-    credit: "https://sandbox.asaas.com/c/z4vate6zwonrwoft", 
-    pix: "https://sandbox.asaas.com/c/3pdwf46bs80mpk0s"
-  }
-};
-
-// Map of payment links to plan IDs (for webhook matching)
-export const PAYMENT_LINK_TO_PLAN_MAP = {
-  "vydr3n77kew5fd4s": "basic_plan",
-  "fy15747uacorzbla": "basic_plan",
-  "4fcw2ezk4je61qon": "pro_plan",
-  "pqnkhgvic7c25ufq": "pro_plan",
-  "z4vate6zwonrwoft": "enterprise_plan",
-  "3pdwf46bs80mpk0s": "enterprise_plan"
-};
-
 export const paymentProcessor = {
   async processPayment(options: PaymentProcessingOptions): Promise<PaymentResult> {
     try {
-      const { planId, installments, paymentType, domain } = options;
+      const { planId, paymentType } = options;
       const processId = options.processId || `checkout_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
       
       console.log(`[${processId}] Processing payment for plan: ${planId} with payment type: ${paymentType}`);
@@ -63,30 +35,24 @@ export const paymentProcessor = {
         localStorage.removeItem('lastFormSubmission');
       }
       
-      // Check if it's a corporate plan (special case)
-      if (planId === "corporate_plan") {
+      // Check if it's a corporate plan (special case for WhatsApp)
+      if (isCorporatePlan(planId)) {
+        const whatsappUrl = "https://wa.me/5547992150289?text=Olá,%20gostaria%20de%20obter%20mais%20informações%20sobre%20o%20Plano%20Corporativo.";
         return {
           success: true,
-          url: "https://wa.me/5547992150289?text=Olá,%20gostaria%20de%20obter%20mais%20informações%20sobre%20o%20Plano%20Corporativo.",
+          url: whatsappUrl,
           isCustomPlan: true
         };
       }
       
-      // Get direct payment link from static mapping
-      const planLinks = STATIC_PAYMENT_LINKS[planId as keyof typeof STATIC_PAYMENT_LINKS];
-      if (!planLinks) {
-        throw new Error(`Plano não encontrado: ${planId}`);
-      }
-      
-      // Map payment type to the correct key in planLinks
-      const linkType = paymentType === "pix" ? "pix" : "credit";
-      const paymentLink = planLinks[linkType];
+      // Get payment link from marPaymentLinks service
+      const paymentLink = getPaymentLink(planId, paymentType);
       
       if (!paymentLink) {
-        throw new Error(`Tipo de pagamento não suportado: ${paymentType}`);
+        throw new Error(`Link de pagamento não encontrado para plano: ${planId}`);
       }
       
-      console.log(`[${processId}] Using static payment link: ${paymentLink}`);
+      console.log(`[${processId}] Using payment link: ${paymentLink}`);
       
       // Store information in localStorage for potential recovery
       if (typeof window !== 'undefined') {
@@ -116,48 +82,6 @@ export const paymentProcessor = {
     // Save payment URL
     if (result.url) {
       localStorage.setItem('lastPaymentUrl', result.url);
-      
-      // Extract payment link code from URL if available
-      const linkMatch = result.url.match(/\/c\/([a-zA-Z0-9]+)/);
-      if (linkMatch && linkMatch[1]) {
-        const linkCode = linkMatch[1];
-        localStorage.setItem('checkoutPaymentLink', linkCode);
-        
-        // Store plan ID based on payment link
-        const planId = PAYMENT_LINK_TO_PLAN_MAP[linkCode];
-        if (planId) {
-          localStorage.setItem('checkoutPlanId', planId);
-        }
-      }
-    }
-    
-    // Save payment ID if available
-    if (result.payment) {
-      // Ensure we're storing a string for payment ID
-      const paymentId = typeof result.payment === 'object' ? result.payment.id : result.payment;
-      localStorage.setItem('checkoutPaymentId', paymentId);
-      
-      if (state) {
-        state.paymentId = paymentId;
-      }
-    }
-    
-    // Save subscription ID if available
-    if (result.dbSubscription?.id) {
-      localStorage.setItem('checkoutSubscriptionId', result.dbSubscription.id);
-      
-      if (state) {
-        state.subscriptionId = result.dbSubscription.id;
-      }
-    }
-    
-    // Save Asaas customer ID if available
-    if (result.asaasCustomerId) {
-      localStorage.setItem('asaasCustomerId', result.asaasCustomerId);
-      
-      if (state) {
-        state.asaasCustomerId = result.asaasCustomerId;
-      }
     }
     
     // Store timestamp for data freshness tracking

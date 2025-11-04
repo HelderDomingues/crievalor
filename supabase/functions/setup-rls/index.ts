@@ -33,72 +33,6 @@ serve(async (req) => {
       message: "Iniciando configuração de políticas RLS"
     });
 
-    // Aplicar políticas RLS para a tabela de subscriptions com melhor tratamento de erros
-    let setupSubscriptionsRLS;
-    try {
-      const { data, error } = await supabase
-        .rpc("setup_subscriptions_rls_policies");
-        
-      if (error) {
-        console.error("Erro ao configurar políticas RLS para subscriptions:", error);
-        await supabase.rpc("track_installation_status", {
-          component: "setup_subscriptions_rls",
-          status: "error",
-          message: `Erro: ${error.message}`
-        });
-        setupSubscriptionsRLS = { success: false, error: error.message };
-      } else {
-        console.log("Políticas RLS para subscriptions configuradas com sucesso");
-        await supabase.rpc("track_installation_status", {
-          component: "setup_subscriptions_rls",
-          status: "success",
-          message: "Políticas RLS configuradas com sucesso"
-        });
-        setupSubscriptionsRLS = { success: true };
-      }
-    } catch (error) {
-      console.error("Exceção ao configurar políticas RLS para subscriptions:", error);
-      await supabase.rpc("track_installation_status", {
-        component: "setup_subscriptions_rls",
-        status: "error",
-        message: `Exceção: ${error.message}`
-      });
-      setupSubscriptionsRLS = { success: false, error: error.message };
-    }
-    
-    // Aplicar políticas RLS para a tabela de asaas_customers com melhor tratamento de erros
-    let setupAsaasCustomersRLS;
-    try {
-      const { data, error } = await supabase
-        .rpc("setup_asaas_customers_rls_policies");
-      
-      if (error) {
-        console.error("Erro ao configurar políticas RLS para asaas_customers:", error);
-        await supabase.rpc("track_installation_status", {
-          component: "setup_asaas_customers_rls",
-          status: "error",
-          message: `Erro: ${error.message}`
-        });
-        setupAsaasCustomersRLS = { success: false, error: error.message };
-      } else {
-        console.log("Políticas RLS para asaas_customers configuradas com sucesso");
-        await supabase.rpc("track_installation_status", {
-          component: "setup_asaas_customers_rls",
-          status: "success",
-          message: "Políticas RLS configuradas com sucesso"
-        });
-        setupAsaasCustomersRLS = { success: true };
-      }
-    } catch (error) {
-      console.error("Exceção ao configurar políticas RLS para asaas_customers:", error);
-      await supabase.rpc("track_installation_status", {
-        component: "setup_asaas_customers_rls",
-        status: "error",
-        message: `Exceção: ${error.message}`
-      });
-      setupAsaasCustomersRLS = { success: false, error: error.message };
-    }
-
     // Configurar buckets de armazenamento
     await configureBucketsAndPolicies(supabase);
     
@@ -114,11 +48,7 @@ serve(async (req) => {
     return new Response(
       JSON.stringify({ 
         success: true,
-        message: "Políticas RLS aplicadas com sucesso",
-        results: {
-          subscriptions: setupSubscriptionsRLS,
-          asaas_customers: setupAsaasCustomersRLS
-        }
+        message: "Políticas RLS aplicadas com sucesso"
       }),
       {
         status: 200,

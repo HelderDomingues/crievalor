@@ -1,5 +1,4 @@
 
-import { paymentsService } from "./paymentsService";
 import { RegistrationFormData } from "@/components/checkout/form/RegistrationFormSchema";
 
 interface RecoveryState {
@@ -63,17 +62,6 @@ export const checkoutRecoveryService = {
     if (!isRecent) return false;
     
     return true;
-  },
-  
-  async validatePaymentLink(paymentLink: string | undefined): Promise<boolean> {
-    if (!paymentLink) return false;
-    
-    try {
-      return await paymentsService.checkPaymentLinkValidity(paymentLink);
-    } catch (error) {
-      console.error("Error validating payment link:", error);
-      return false;
-    }
   },
   
   mapErrorToUserFriendlyMessage(error: any): string {

@@ -14,7 +14,6 @@ import { Button } from "@/components/ui/button";
 import CheckoutMain from "@/components/checkout/CheckoutMain";
 import { paymentProcessor } from "@/services/paymentProcessor";
 import { RegistrationFormData } from "@/components/checkout/form/RegistrationFormSchema";
-import { asaasCustomerService } from "@/services/asaasCustomerService";
 import { checkoutTestUtils } from "@/utils/checkoutTestUtils";
 
 type CheckoutStep = "plan" | "processing";
@@ -144,7 +143,7 @@ const Checkout = () => {
         phone: storedPhone,
         fullName: storedName,
         cpf: storedCPF,
-        password: '' // Senha vazia por segurança
+        password: ''
       };
       
       setFormData(recoveredFormData);
@@ -213,7 +212,7 @@ const Checkout = () => {
         phone: storedPhone || '',
         fullName: storedName || '',
         cpf: storedCPF || '',
-        password: '' // Senha vazia por segurança, será usada apenas para novos cadastros
+        password: ''
       };
       
       if (!submittedFormData.email || !submittedFormData.phone || !submittedFormData.cpf || !submittedFormData.fullName) {

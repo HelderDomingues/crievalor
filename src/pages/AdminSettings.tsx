@@ -2,8 +2,8 @@
 import React from 'react';
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { SystemSettings } from '@/components/admin/SystemSettings';
 import AdminAuth from "@/components/admin/AdminAuth";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 const AdminSettings = () => {
   return (
@@ -19,7 +19,19 @@ const AdminSettings = () => {
             redirectPath="/admin-setup"
           >
             <div className="max-w-3xl mx-auto">
-              <SystemSettings />
+              <Card>
+                <CardHeader>
+                  <CardTitle>Configurações</CardTitle>
+                  <CardDescription>
+                    Página de configurações do sistema
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground">
+                    Configurações em breve disponíveis.
+                  </p>
+                </CardContent>
+              </Card>
             </div>
           </AdminAuth>
         </div>
