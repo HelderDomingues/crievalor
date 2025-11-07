@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useNavigate, useSearchParams, useLocation } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import { useAuth } from "@/context/AuthContext";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -163,9 +164,12 @@ const SubscriptionPage = () => {
   };
 
   if (loading) {
-    return (
-      <div className="min-h-screen flex flex-col">
-        <Header />
+  return (
+    <div className="min-h-screen flex flex-col">
+      <Helmet>
+        <meta name="robots" content="noindex, nofollow" />
+      </Helmet>
+      <Header />
         <main>
           <SubscriptionLoading />
         </main>

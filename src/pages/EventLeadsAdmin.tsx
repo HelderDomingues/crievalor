@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Helmet } from "react-helmet-async";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -196,6 +197,9 @@ const EventLeadsAdmin = () => {
   return (
     <AdminAuth onAuthenticated={() => {}}>
       <div className="min-h-screen bg-background">
+        <Helmet>
+          <meta name="robots" content="noindex, nofollow" />
+        </Helmet>
         <Header />
         
         <main className="container mx-auto px-4 py-8">

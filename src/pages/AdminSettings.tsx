@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { Helmet } from "react-helmet-async";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import AdminAuth from "@/components/admin/AdminAuth";
@@ -8,6 +9,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 const AdminSettings = () => {
   return (
     <div className="min-h-screen flex flex-col">
+      <Helmet>
+        <meta name="robots" content="noindex, nofollow" />
+      </Helmet>
       <Header />
       
       <main className="flex-grow py-16">
