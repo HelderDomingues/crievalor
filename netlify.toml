@@ -12,20 +12,6 @@
   status = 301
   force = true
 
-# Redirect HTTP to HTTPS
-[[redirects]]
-  from = "http://crievalor.com.br/*"
-  to = "https://crievalor.com.br/:splat"
-  status = 301
-  force = true
-
-# Remove trailing slashes (SEO canonicalização)
-[[redirects]]
-  from = "https://crievalor.com.br/*/"
-  to = "https://crievalor.com.br/:splat"
-  status = 301
-  force = true
-
 # SPA fallback (deve ser o último)
 [[redirects]]
   from = "/*"

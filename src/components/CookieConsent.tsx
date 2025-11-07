@@ -30,13 +30,20 @@ export default function CookieConsent() {
     
     toast({
       title: "Preferências salvas",
-      description: "Suas preferências de cookies foram salvas. Recarregando...",
-      duration: 2000,
+      description: "Suas preferências de cookies foram salvas.",
+      duration: 3000,
     });
     
-    // Disparar evento customizado e recarregar para ativar GTM
+    // Disparar evento customizado para ativar GTM sem reload
     window.dispatchEvent(new Event('cookieConsentUpdated'));
-    setTimeout(() => window.location.reload(), 500);
+    
+    // Carregar GTM manualmente se ainda não foi carregado
+    if (!window.dataLayer) {
+      const script = document.createElement('script');
+      script.src = 'https://www.googletagmanager.com/gtm.js?id=GTM-5563GG39';
+      script.async = true;
+      document.head.appendChild(script);
+    }
   };
 
   const declineCookies = () => {
