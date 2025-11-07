@@ -1,11 +1,18 @@
 
 import React from "react";
+import { Helmet } from "react-helmet-async";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
 const TermsOfService = () => {
   return (
     <div className="min-h-screen flex flex-col">
+      <Helmet>
+        <title>Termos de Serviço - Crie Valor</title>
+        <meta name="description" content="Termos de serviço da Crie Valor. Leia as condições de uso dos nossos serviços de consultoria estratégica." />
+        <link rel="canonical" href="https://crievalor.com.br/terms-of-service" />
+        <meta name="robots" content="noindex, follow" />
+      </Helmet>
       <Header />
       
       <main className="flex-grow pt-24">

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { Button } from '@/components/ui/button';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious, CarouselApi } from '@/components/ui/carousel';
 import { ChevronLeft, ChevronRight, Target, Users, Brain, Lightbulb, Palette, Zap, ExternalLink, QrCode, Mail, Phone, Globe } from 'lucide-react';
@@ -336,7 +337,15 @@ const ApresentacaoPage = () => {
 
         </div>
   }];
-return <div className="min-h-screen bg-gradient-to-br from-background via-background/95 to-primary/5 relative overflow-hidden">
+return <>
+      <Helmet>
+        <title>Apresentação Institucional - Crie Valor Consultoria</title>
+        <meta name="description" content="Apresentação institucional da Crie Valor. Conheça nossos serviços, projetos e soluções em inteligência organizacional com IA." />
+        <link rel="canonical" href="https://crievalor.com.br/apresentacao" />
+        <meta name="robots" content="noindex, follow" />
+      </Helmet>
+      
+      <div className="min-h-screen bg-gradient-to-br from-background via-background/95 to-primary/5 relative overflow-hidden">
       {/* Background Animation */}
       <div className="absolute inset-0 z-0">
         <VideoBackground />
@@ -394,6 +403,7 @@ return <div className="min-h-screen bg-gradient-to-br from-background via-backgr
           display: none !important;
         }
       `}</style>
-    </div>;
+    </div>
+    </>;
 };
 export default ApresentacaoPage;

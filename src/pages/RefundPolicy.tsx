@@ -1,11 +1,18 @@
 
 import React from "react";
+import { Helmet } from "react-helmet-async";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
 const RefundPolicy = () => {
   return (
     <div className="min-h-screen flex flex-col">
+      <Helmet>
+        <title>Política de Entrega e Reembolso - Crie Valor</title>
+        <meta name="description" content="Política de entrega e reembolso da Crie Valor. Conheça nossas condições de devolução e garantias." />
+        <link rel="canonical" href="https://crievalor.com.br/refund-policy" />
+        <meta name="robots" content="noindex, follow" />
+      </Helmet>
       <Header />
       
       <main className="flex-grow pt-24">
