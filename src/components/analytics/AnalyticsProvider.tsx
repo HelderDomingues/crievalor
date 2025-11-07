@@ -59,9 +59,10 @@ export const AnalyticsProvider: React.FC<AnalyticsProviderProps> = ({
         <GoogleAnalytics trackingId={gaTrackingId} />
       )}
       
-      {shouldLoadAnalytics && gtmId && (
+      {/* GTM agora é carregado diretamente no index.html para detecção imediata */}
+      {/* {shouldLoadAnalytics && gtmId && (
         <GoogleTagManager gtmId={gtmId} />
-      )}
+      )} */}
       
       {children}
     </>

@@ -18,18 +18,38 @@ export default function CookieConsent() {
   }, []);
 
   const acceptCookies = () => {
-    localStorage.setItem("cookie-consent", "accepted");
+    const preferences = {
+      essential: true,
+      analytics: true,
+      marketing: true,
+      lastUpdated: new Date().toISOString()
+    };
+    localStorage.setItem("cookie-preferences", JSON.stringify(preferences));
+    localStorage.setItem("cookie-consent", "accepted"); // Manter compatibilidade
     setShowConsent(false);
+    
     toast({
       title: "Preferências salvas",
-      description: "Suas preferências de cookies foram salvas.",
-      duration: 3000,
+      description: "Suas preferências de cookies foram salvas. Recarregando...",
+      duration: 2000,
     });
+    
+    // Disparar evento customizado e recarregar para ativar GTM
+    window.dispatchEvent(new Event('cookieConsentUpdated'));
+    setTimeout(() => window.location.reload(), 500);
   };
 
   const declineCookies = () => {
+    const preferences = {
+      essential: true,
+      analytics: false,
+      marketing: false,
+      lastUpdated: new Date().toISOString()
+    };
+    localStorage.setItem("cookie-preferences", JSON.stringify(preferences));
     localStorage.setItem("cookie-consent", "declined");
     setShowConsent(false);
+    
     toast({
       title: "Preferências salvas",
       description: "Você optou por não aceitar cookies opcionais.",
