@@ -1,9 +1,36 @@
-
 # Crie Valor - Inteligência Organizacional
 # Sistema proprietário com produtos em múltiplos domínios
 
 User-agent: *
 Allow: /
+
+# Bloquear páginas admin e protegidas
+Disallow: /admin
+Disallow: /admin-*
+Disallow: /profile
+Disallow: /checkout
+Disallow: /subscription
+Disallow: /auth
+Disallow: /*-admin
+Disallow: /event-leads-admin
+Disallow: /lectures-admin
+Disallow: /portfolio-admin
+Disallow: /testimonials-admin
+Disallow: /whatsapp-dashboard
+Disallow: /client-logos-admin
+Disallow: /admin-setup
+
+# Bloquear assets e APIs desnecessários
+Disallow: /api/
+Disallow: /*.json$
+
+# Permitir crawl de recursos importantes
+Allow: /lovable-uploads/*.png
+Allow: /lovable-uploads/*.jpg
+Allow: /lovable-uploads/*.webp
+Allow: /lovable-uploads/*.svg
+Allow: /*.css
+Allow: /*.js
 
 # Nossos produtos e conteúdos em subdomínios próprios:
 # Blog - Conteúdo sobre IA e Inteligência Organizacional: https://blog.crievalor.com.br
@@ -17,20 +44,12 @@ Allow: /
 # Mapa do site
 Sitemap: https://crievalor.com.br/sitemap.xml
 
-# Páginas principais
-Allow: /mar
-Allow: /sobre
-Allow: /contato
-Allow: /projetos
-Allow: /oficina-de-lideres
-Allow: /mentorias
-Allow: /identidade-visual
-Allow: /material-exclusivo
-Allow: /palestra
-Allow: /apresentacao
+# Crawl-delay para bots agressivos (evitar sobrecarga)
+User-agent: AhrefsBot
+Crawl-delay: 10
 
-# Políticas
-Allow: /privacy-policy
-Allow: /terms-of-service
-Allow: /refund-policy
-Allow: /acessibilidade
+User-agent: SemrushBot
+Crawl-delay: 10
+
+User-agent: DotBot
+Crawl-delay: 10

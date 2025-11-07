@@ -170,6 +170,103 @@ const Palestra = () => {
         </div>
       </section>
       
+      {/* About Lectures Section - Enriquecimento de Conteúdo */}
+      <section className="py-16 bg-secondary/10">
+        <div className="container mx-auto px-4">
+          <div className="max-w-4xl mx-auto">
+            <h2 className="text-3xl md:text-4xl font-bold mb-8 text-center">
+              Por Que Participar de Nossas Palestras?
+            </h2>
+            
+            <div className="prose prose-lg max-w-none space-y-6 text-muted-foreground">
+              <p>
+                Nossas palestras empresariais são mais do que eventos: são experiências transformadoras 
+                que conectam teoria e prática, oferecendo insights aplicáveis imediatamente ao seu negócio. 
+                Com mais de 15 anos de experiência em consultoria estratégica e centenas de empresas atendidas, 
+                compartilhamos conhecimento validado pelo mercado.
+              </p>
+              
+              <div className="grid md:grid-cols-2 gap-6 my-8">
+                <div className="bg-card p-6 rounded-lg border">
+                  <h3 className="text-xl font-semibold mb-3 text-foreground">Conteúdo Estratégico</h3>
+                  <p>
+                    Abordagens práticas sobre inteligência organizacional, IA aplicada aos negócios, 
+                    gestão de equipes e transformação digital. Cada palestra é adaptada ao contexto 
+                    e desafios específicos do público.
+                  </p>
+                </div>
+                
+                <div className="bg-card p-6 rounded-lg border">
+                  <h3 className="text-xl font-semibold mb-3 text-foreground">Networking Qualificado</h3>
+                  <p>
+                    Conecte-se com empresários, gestores e profissionais que compartilham os mesmos 
+                    desafios e objetivos. Construa relacionamentos valiosos e expanda sua rede de contatos.
+                  </p>
+                </div>
+              </div>
+              
+              <h3 className="text-2xl font-bold mt-8 mb-4 text-foreground">Temas Abordados</h3>
+              <ul className="space-y-3">
+                <li className="flex items-start gap-3">
+                  <div className="bg-primary/10 p-1 rounded-full mt-1">
+                    <svg className="h-4 w-4 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                  </div>
+                  <span><strong className="text-foreground">Inteligência Artificial nos Negócios:</strong> Como aplicar IA de forma prática e estratégica</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <div className="bg-primary/10 p-1 rounded-full mt-1">
+                    <svg className="h-4 w-4 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                  </div>
+                  <span><strong className="text-foreground">Liderança de Alta Performance:</strong> Metodologias comprovadas para desenvolvimento de líderes</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <div className="bg-primary/10 p-1 rounded-full mt-1">
+                    <svg className="h-4 w-4 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                  </div>
+                  <span><strong className="text-foreground">Transformação Digital:</strong> Estratégias para modernizar processos e cultura organizacional</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <div className="bg-primary/10 p-1 rounded-full mt-1">
+                    <svg className="h-4 w-4 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                  </div>
+                  <span><strong className="text-foreground">Gestão de Mudanças:</strong> Como conduzir transformações organizacionais com sucesso</span>
+                </li>
+              </ul>
+              
+              <div className="bg-primary/5 p-6 rounded-lg border border-primary/20 mt-8">
+                <h3 className="text-xl font-semibold mb-3 text-foreground">Formatos Disponíveis</h3>
+                <p className="mb-4">
+                  Oferecemos palestras in-company, eventos abertos, workshops práticos e capacitações customizadas. 
+                  Cada formato é desenhado para maximizar o aprendizado e engajamento dos participantes.
+                </p>
+                <ul className="space-y-2">
+                  <li className="flex items-center gap-2">
+                    <div className="w-2 h-2 bg-primary rounded-full"></div>
+                    <span>Palestras de 60 a 120 minutos</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <div className="w-2 h-2 bg-primary rounded-full"></div>
+                    <span>Workshops práticos de meio dia ou dia completo</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <div className="w-2 h-2 bg-primary rounded-full"></div>
+                    <span>Programas de capacitação personalizados</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      
       <main className="container mx-auto px-4 py-16">
         <div className="max-w-2xl mx-auto">
 
