@@ -41,11 +41,11 @@ export const AnalyticsProvider: React.FC<AnalyticsProviderProps> = ({
   // Verificar consentimento de cookies antes de carregar analytics
   const hasAnalyticsConsent = () => {
     try {
-      const consent = localStorage.getItem('cookieConsent');
-      if (!consent) return false;
+      const preferences = localStorage.getItem('cookie-preferences');
+      if (!preferences) return false;
       
-      const consentData = JSON.parse(consent);
-      return consentData.analytics === true;
+      const preferencesData = JSON.parse(preferences);
+      return preferencesData.analytics === true;
     } catch {
       return false;
     }
