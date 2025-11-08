@@ -10,6 +10,7 @@ import MentoriasSection from "@/components/home/MentoriasSection";
 import MarHighlight from "@/components/home/MarHighlight";
 import LumiaHighlight from "@/components/home/LumiaHighlight";
 import MentorPropositoHighlight from "@/components/home/MentorPropositoHighlight";
+import MentorPropostoBetaBanner from "@/components/MentorPropostoBetaBanner";
 import TestimonialsSection from "@/components/home/TestimonialsSection";
 import PartnersSection from "@/components/home/PartnersSection";
 import ServicesSections from "@/components/home/ServicesSections";
@@ -147,6 +148,9 @@ const Index = () => {
 
         {/* Hero Carrossel - Propósito + MAR + Mentorias + Mentor de Propósito */}
         <InteractiveGalaxyHeroCarousel />
+
+        {/* Mentor de Propósito BETA Banner */}
+        <MentorPropostoBetaBanner />
 
         {/* Client Logos Section */}
         <div id="clientes" aria-labelledby="clientesHeading" className="py-16 md:py-24">

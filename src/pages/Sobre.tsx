@@ -1,6 +1,7 @@
 import React from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import MentorPropostoBetaBanner from "@/components/MentorPropostoBetaBanner";
 import { Anchor, Users, Lightbulb, TrendingUp, Building, Star } from "lucide-react";
 import { motion } from "framer-motion";
 import { Helmet } from "react-helmet-async";
@@ -55,6 +56,9 @@ const Sobre = () => {
       <Header />
       
       <main className="flex-grow pt-16">
+        {/* Mentor de Propósito BETA Banner */}
+        <MentorPropostoBetaBanner />
+        
         {/* Hero Section */}
         <section className="py-16 md:py-24 relative overflow-hidden">
           <div className="absolute inset-0 overflow-hidden pointer-events-none">

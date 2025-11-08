@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ContactSection from "@/components/ContactSection";
+import MentorPropostoBetaBanner from "@/components/MentorPropostoBetaBanner";
 import { ContactHeroSection } from "@/components/contact/ContactHeroSection";
 import { GoogleMapSection } from "@/components/contact/GoogleMapSection";
 import { ChatbotSection } from "@/components/contact/ChatbotSection";
@@ -72,6 +73,9 @@ const Contato = () => {
       
       <main className="flex-grow pt-16">
         <h1 className="sr-only">Contato - Crie Valor Estratégia</h1>
+        
+        {/* Mentor de Propósito BETA Banner */}
+        <MentorPropostoBetaBanner />
         
         {/* Hero Section */}
         <ContactHeroSection 
