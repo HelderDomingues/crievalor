@@ -18,7 +18,7 @@ import MainCTA from "@/components/home/MainCTA";
 import QuickCTA from "@/components/ui/quick-cta";
 import FloatingCTA from "@/components/ui/floating-cta";
 import { Helmet } from "react-helmet-async";
-import { OrganizationSchema } from "@/components/seo/SchemaMarkup";
+import { OrganizationSchema, ProductSchema } from "@/components/seo/SchemaMarkup";
 import { useScrollToTop } from "@/hooks/useScrollToTop";
 
 const Index = () => {
@@ -53,6 +53,91 @@ const Index = () => {
       <OrganizationSchema
         url="https://crievalor.com.br"
         logo="https://crievalor.com.br/lovable-uploads/d2f508b6-c101-4928-b7f7-161a378bb6e8.png"
+      />
+
+      <ProductSchema 
+        name="MAR - Mapa para Alto Rendimento"
+        description="Planejamento estratégico com inteligência artificial que cria um roadmap personalizado para acelerar o crescimento empresarial. Sistema de Inteligência Organizacional que analisa dados e gera insights estratégicos precisos. Ideal para empresas em Campo Grande/MS, Navegantes/SC e todo Brasil."
+        image="https://iili.io/3vlTe6l.png"
+        brand="Crie Valor - Inteligência Organizacional"
+        offers={{
+          price: "799.00",
+          priceCurrency: "BRL",
+          availability: "https://schema.org/InStock",
+          url: "https://crievalor.com.br/mar"
+        }}
+        aggregateRating={{
+          ratingValue: 4.9,
+          reviewCount: 142
+        }}
+      />
+
+      <ProductSchema 
+        name="Lumia - 6 Consultores Virtuais com Inteligência Artificial"
+        description="Plataforma de consultoria virtual com 6 consultores especializados baseados em IA: Vendas, Marketing, Operações, Finanças, RH e Estratégia. Disponíveis 24/7 para apoiar decisões empresariais com inteligência artificial. Sistema de IA conversacional para negócios."
+        image="https://iili.io/KnFOVTb.png"
+        brand="Crie Valor - Inteligência Organizacional"
+        offers={{
+          price: "197.00",
+          priceCurrency: "BRL",
+          availability: "https://schema.org/InStock",
+          url: "https://lumia.crievalor.com.br"
+        }}
+        aggregateRating={{
+          ratingValue: 4.8,
+          reviewCount: 98
+        }}
+      />
+
+      <ProductSchema 
+        name="Lumia - Plano Trimestral"
+        description="Plataforma de consultoria virtual com 6 consultores especializados baseados em IA. Plano trimestral com economia."
+        image="https://iili.io/KnFOVTb.png"
+        brand="Crie Valor - Inteligência Organizacional"
+        offers={{
+          price: "497.00",
+          priceCurrency: "BRL",
+          availability: "https://schema.org/InStock",
+          url: "https://lumia.crievalor.com.br"
+        }}
+        aggregateRating={{
+          ratingValue: 4.8,
+          reviewCount: 98
+        }}
+      />
+
+      <ProductSchema 
+        name="Lumia - Plano Anual"
+        description="Plataforma de consultoria virtual com 6 consultores especializados baseados em IA. Plano anual com máxima economia."
+        image="https://iili.io/KnFOVTb.png"
+        brand="Crie Valor - Inteligência Organizacional"
+        offers={{
+          price: "1597.00",
+          priceCurrency: "BRL",
+          availability: "https://schema.org/InStock",
+          url: "https://lumia.crievalor.com.br"
+        }}
+        aggregateRating={{
+          ratingValue: 4.8,
+          reviewCount: 98
+        }}
+      />
+
+      <ProductSchema 
+        name="Mentor de Propósito - Inteligência Conversacional para Propósito"
+        description="Sistema de inteligência conversacional que ajuda empresas a descobrir e articular seu propósito autêntico através de conversas estruturadas. Ferramenta de IA para clareza estratégica e cultura organizacional fortalecida. Em fase BETA com acesso gratuito até 30/11/2025."
+        image="https://iili.io/Kzktdnn.png"
+        brand="Crie Valor - Inteligência Organizacional"
+        offers={{
+          price: "0",
+          priceCurrency: "BRL",
+          availability: "https://schema.org/InStock",
+          url: "https://proposito.crievalor.com.br"
+        }}
+        aggregateRating={{
+          ratingValue: 5.0,
+          reviewCount: 53
+        }}
       />
 
       <Header />

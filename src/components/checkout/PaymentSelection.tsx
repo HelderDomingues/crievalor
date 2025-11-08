@@ -24,8 +24,8 @@ const PaymentSelection: React.FC<PaymentSelectionProps> = ({
   selectedPaymentType = "credit",
   onPaymentTypeChange = () => {},
   onContinue = () => {},
-  planMonthlyPrice = 179.90,
-  planTotalPrice = 2158.80,
+  planMonthlyPrice = 89.90,
+  planTotalPrice = 899.00,
   planId = "basic_plan"
 }) => {
   const { toast } = useToast();
