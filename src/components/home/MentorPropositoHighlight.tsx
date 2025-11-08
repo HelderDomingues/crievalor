@@ -4,11 +4,6 @@ import { Compass, Target, Brain, Users, TrendingUp, ArrowRight, Heart } from "lu
 import { Button } from "@/components/ui/button";
 
 const MentorPropositoHighlight = () => {
-  const handleDemonstration = () => {
-    const message = encodeURIComponent("Olá, gostaria de agendar uma demonstração do Mentor de Propósito.");
-    window.open(`https://wa.me/5547996542991?text=${message}`, '_blank');
-  };
-
   return (
     <section className="py-16 md:py-24 relative bg-gradient-to-b from-background to-secondary/20" id="mentor-proposito-produto" aria-labelledby="mentorPropositoProdutoHeading">
       <div className="absolute inset-0 overflow-hidden">
@@ -94,11 +89,18 @@ const MentorPropositoHighlight = () => {
                   
                   <div className="pt-4 border-t border-border">
                     <div className="flex justify-between items-center">
-                      <p className="text-sm text-muted-foreground">
-                        Metodologia <span className="text-amber-400 font-medium">proprietária Crie Valor</span>
-                      </p>
-                      <Button variant="outline" size="sm" onClick={handleDemonstration}>
-                        Demonstração
+                      <div className="flex flex-col">
+                        <p className="text-sm text-muted-foreground">
+                          Metodologia <span className="text-amber-400 font-medium">proprietária Crie Valor</span>
+                        </p>
+                        <p className="text-xs text-green-400 font-medium mt-1">
+                          🎁 BETA Gratuito até 30/11/2025
+                        </p>
+                      </div>
+                      <Button variant="outline" size="sm" asChild>
+                        <a href="https://proposito.crievalor.com.br" target="_blank" rel="noopener noreferrer">
+                          Cadastrar
+                        </a>
                       </Button>
                     </div>
                   </div>
@@ -186,8 +188,10 @@ const MentorPropositoHighlight = () => {
             </div>
             
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button size="lg" className="shadow-glow bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-700 hover:to-amber-600" onClick={handleDemonstration}>
-                Agendar Demonstração <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />
+              <Button size="lg" className="shadow-glow bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-700 hover:to-amber-600" asChild>
+                <a href="https://proposito.crievalor.com.br" target="_blank" rel="noopener noreferrer">
+                  Começar Jornada Grátis <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />
+                </a>
               </Button>
               <Button variant="outline" size="lg" asChild>
                 <a href="https://proposito.crievalor.com.br" target="_blank" rel="noopener noreferrer">
@@ -197,7 +201,7 @@ const MentorPropositoHighlight = () => {
             </div>
             
             <p className="text-xs text-muted-foreground mt-4 text-center sm:text-left">
-              Baseado no Círculo Dourado de Simon Sinek. Privacidade e confidencialidade garantidas.
+              <span className="text-green-400 font-medium">🎁 Acesso 100% gratuito até 30/11/2025.</span> Baseado no Círculo Dourado de Simon Sinek. Privacidade garantida.
             </p>
           </div>
         </div>
