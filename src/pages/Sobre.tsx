@@ -168,24 +168,72 @@ const Sobre = () => {
               </div>
               
               <div className="prose prose-invert max-w-none">
-                <p className="text-lg">
-                  Na intersecção entre criatividade humana e nossa metodologia proprietária, descobrimos um novo horizonte para a consultoria estratégica. Nascemos do encontro entre a visão criativa da publicidade e a profundidade analítica da psicologia organizacional, e hoje evoluímos ao integrar tecnologias que amplificam o potencial humano.
+                <p className="text-lg font-medium">
+                  Ações revelam crenças.
                 </p>
                 
                 <p className="text-lg">
-                  Compreendemos que empresas são, acima de tudo, pessoas. Pessoas que enfrentam diariamente o desafio de tomar decisões complexas em um cenário de incertezas. Sentimos na pele essas mesmas dores em nossa jornada empreendedora. Conhecemos a sobrecarga, a pressão constante, e a busca por clareza quando tudo parece nebuloso.
+                  O que você faz, ou deixa de fazer, mostra no que realmente acredita. Não o que diz, mas o que suas escolhas diárias provam.
                 </p>
                 
                 <p className="text-lg">
-                  Nossa jornada agora abraça a inovação com tecnologias de ponta, transformando-nos em pioneiros de um modelo híbrido que preserva o que há de mais valioso - a compreensão humana das emoções e contextos - enquanto potencializa resultados através da capacidade analítica da nossa metodologia proprietária.
+                  Tem algo que bloqueia esse caminho entre crença e ação: ruído.
                 </p>
                 
                 <p className="text-lg">
-                  Estamos aqui para proporcionar clareza onde há confusão, confiança onde há dúvida, e direção onde antes havia hesitação. Não somos apenas consultores, somos parceiros na jornada, amplificadores de potencial que enxergam além do óbvio.
+                  Não é só barulho. O ruído é Informação demais, desconectada, que gera mais dúvida que esclarece. É apagar incêndios todo dia, enquanto o que é realmente importante fica pra depois.
                 </p>
                 
                 <p className="text-lg">
-                  A Crie Valor existe para iluminar caminhos através da inteligência integrada, transformando dados em insights, desafios em oportunidades, e aspirações em realidades tangíveis.
+                  E no meio de tudo isso, vem o pior: a paralisia.
+                </p>
+                
+                <p className="text-lg">
+                  Você não age porque não tem clareza. Não decide porque não enxerga direção. Não avança porque não sabe qual passo dar primeiro.
+                </p>
+                
+                <p className="text-lg">
+                  E quando não agimos, a gente, mesmo sem perceber, começa a acreditar que estamos perdidos, que não temos rumo, que mudança é impossível.
+                </p>
+                
+                <p className="text-lg">
+                  A crença vira profecia. A paralisia vira identidade.
+                </p>
+                
+                <p className="text-lg font-medium">
+                  A Crie Valor existe pra quebrar esse ciclo.
+                </p>
+                
+                <p className="text-lg">
+                  Acreditamos que a transformação não acontece em insights brilhantes, em passe de mágica. Acontece quando a clareza substitui a confusão. Quando direção substitui deriva. Quando atitude substitui a paralisia.
+                </p>
+                
+                <p className="text-lg">
+                  Por isso, a gente não vende sonhos. Não promete atalho. A gente corta o ruído e gera clareza, sobre quem você é, sobre onde está, e pra onde pode ir.
+                </p>
+                
+                <p className="text-lg">
+                  Quando você tem clareza sobre suas crenças, seu propósito, seu comportamento, o cenário que enfrenta, a decisão deixa de parecer impossível, o caminho deixa de ser incerto e a ação deixa de ser assustadora.
+                </p>
+                
+                <p className="text-lg">
+                  Estrutura não prende, liberta. Processo não engessa, acelera. Planejamento não limita, multiplica.
+                </p>
+                
+                <p className="text-lg">
+                  E quando a ação volta a fluir em sintonia com a crença, tudo muda. Não só a empresa. A vida, a família, a equipe, a história, a satisfação.
+                </p>
+                
+                <p className="text-lg">
+                  Nosso propósito é gerar clareza e direção para empresas, fazendo da atitude o motor do crescimento.
+                </p>
+                
+                <p className="text-lg">
+                  Porque ações revelam crenças.
+                </p>
+                
+                <p className="text-lg font-medium">
+                  E a gente age com propósito!
                 </p>
               </div>
             </motion.div>
