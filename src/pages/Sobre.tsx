@@ -233,7 +233,9 @@ const Sobre = () => {
                 </p>
 
                 <p className="text-lg">
-                  Nosso propósito é gerar clareza e direção para empresas, fazendo da atitude o motor do crescimento.
+                  <strong>
+                    Nosso propósito é gerar clareza e direção para empresas, fazendo da atitude o motor do crescimento.
+                  </strong>
                 </p>
 
                 <p className="text-lg">Porque ações revelam crenças.</p>
