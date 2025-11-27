@@ -1,4 +1,3 @@
-
 import React from "react";
 import { createBrowserRouter } from "react-router-dom";
 import Index from "@/pages/Index";
@@ -18,6 +17,7 @@ import Projetos from "@/pages/Projetos";
 import OficinaLideres from "@/pages/OficinaLideres";
 import Mentorias from "@/pages/Mentorias";
 import ComingSoon from "@/pages/ComingSoon";
+import Pricing from "@/pages/Pricing";
 import IdentidadeVisualOriginal from "@/pages/IdentidadeVisualOriginal";
 import PrivacyPolicy from "@/pages/PrivacyPolicy";
 import RefundPolicy from "@/pages/RefundPolicy";
@@ -163,5 +163,9 @@ export const router = createBrowserRouter([
   {
     path: "/apresentacao-sc",
     element: <ApresentacaoSC />,
+  },
+  {
+    path: "/planos",
+    element: <Pricing />,
   },
 ]);
