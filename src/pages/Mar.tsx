@@ -1,7 +1,6 @@
 import React from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import MentorPropostoBetaBanner from "@/components/MentorPropostoBetaBanner";
 import HeroSection from "@/components/HeroSection";
 import ContactSection from "@/components/ContactSection";
 import MarExplanation from "@/components/MarExplanation";
@@ -100,9 +99,6 @@ const Mar = () => {
       <Header />
 
       <main className="flex-grow relative z-10">
-        {/* Mentor de Propósito BETA Banner */}
-        <MentorPropostoBetaBanner />
-
         <ErrorBoundary>
           <HeroSection
             title="MAR - Mapa para Alto Rendimento"
