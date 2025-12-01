@@ -3,7 +3,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import HeroSection from "@/components/HeroSection";
 import ContactSection from "@/components/ContactSection";
-import MentorPropostoBetaBanner from "@/components/MentorPropostoBetaBanner";
+
 import { Users, Award, BarChart, Target } from "lucide-react";
 import { Helmet } from "react-helmet-async";
 import { ServiceSchema, FAQSchema, BreadcrumbSchema } from "@/components/seo/SchemaMarkup";
@@ -68,9 +68,6 @@ const Mentorias = () => {
       <Header />
       
       <main className="flex-grow">
-        {/* Mentor de Propósito BETA Banner */}
-        <MentorPropostoBetaBanner />
-        
         <HeroSection
           title="Mentorias para desenvolvimento de líderes"
           subtitle="Programa de Mentorias"
