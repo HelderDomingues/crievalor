@@ -252,6 +252,23 @@ const InteractiveGalaxyHeroCarousel = () => {
     glowColor: string;
   }> = [
     {
+      id: "mar",
+      icon: Target,
+      logo: marLogo,
+      title: "MAR — Mapa de Alto Rendimento",
+      subtitle: "Diagnóstico profundo e plano estratégico completo",
+      description:
+        "Metodologia proprietária, testada em +10 anos e +500 empresas. Decisões embasadas, prioridades claras e metas mensuráveis para crescer com consistência.",
+      ctaText: "Ver como funciona",
+      ctaUrl: "/mar",
+      secondaryCtaText: "Agendar avaliação",
+      secondaryCtaUrl: "/contato",
+      backgroundType: "neural" as const,
+      gradientColors: "from-blue-900/20 via-indigo-900/10 to-purple-900/20",
+      accentColor: "text-blue-400",
+      glowColor: "shadow-blue-500/20",
+    },
+    {
       id: "proposito-empresa",
       icon: FlagIcon,
       title: "Nosso Propósito",
@@ -318,23 +335,6 @@ const InteractiveGalaxyHeroCarousel = () => {
       gradientColors: "from-purple-900/20 via-violet-900/10 to-pink-900/20",
       accentColor: "text-purple-400",
       glowColor: "shadow-purple-500/20",
-    },
-    {
-      id: "mar",
-      icon: Target,
-      logo: marLogo,
-      title: "MAR — Mapa de Alto Rendimento",
-      subtitle: "Diagnóstico profundo e plano estratégico completo",
-      description:
-        "Metodologia proprietária, testada em +10 anos e +500 empresas. Decisões embasadas, prioridades claras e metas mensuráveis para crescer com consistência.",
-      ctaText: "Ver como funciona",
-      ctaUrl: "/mar",
-      secondaryCtaText: "Agendar avaliação",
-      secondaryCtaUrl: "/contato",
-      backgroundType: "neural" as const,
-      gradientColors: "from-blue-900/20 via-indigo-900/10 to-purple-900/20",
-      accentColor: "text-blue-400",
-      glowColor: "shadow-blue-500/20",
     },
     {
       id: "mentorias",
