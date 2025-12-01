@@ -256,7 +256,7 @@ const InteractiveGalaxyHeroCarousel = () => {
       icon: Target,
       logo: marLogo,
       title: "MAR — Mapa de Alto Rendimento",
-      subtitle: "Diagnóstico profundo e plano estratégico completo",
+      subtitle: "Clareza e direção para 1 ano em 7 dias",
       description:
         "Metodologia proprietária, testada em +10 anos e +500 empresas. Decisões embasadas, prioridades claras e metas mensuráveis para crescer com consistência.",
       ctaText: "Ver como funciona",
@@ -491,7 +491,9 @@ const InteractiveGalaxyHeroCarousel = () => {
                         </h1>
 
                         {/* Subtitle */}
-                        <h2 className={`text-lg sm:text-xl lg:text-2xl xl:text-3xl font-semibold ${slide.accentColor} leading-relaxed`}>
+                        <h2 className={`text-lg sm:text-xl lg:text-2xl xl:text-3xl font-semibold ${slide.accentColor} leading-relaxed ${
+                          slide.id === 'mar' ? 'animate-pulse font-bold text-2xl sm:text-3xl lg:text-4xl xl:text-5xl tracking-tight drop-shadow-[0_0_15px_rgba(96,165,250,0.5)]' : ''
+                        }`}>
                           {slide.subtitle}
                         </h2>
 
