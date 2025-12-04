@@ -19,12 +19,10 @@ import qrcodeWhatsapp from '@/assets/qrcode-whatsapp.png';
 // Using transparent logos
 const mentorPropositoLogo = mentorPropositoTransparent;
 const oficinaLideresLogo = oficinaLideresTransparent;
-
 const ApresentacaoPage = () => {
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
   const [count, setCount] = useState(0);
-  
   useEffect(() => {
     if (!api) return;
     setCount(api.scrollSnapList().length);
@@ -33,22 +31,18 @@ const ApresentacaoPage = () => {
       setCurrent(api.selectedScrollSnap() + 1);
     });
   }, [api]);
-
   const slides = [
-    // Slide 1 - Capa
-    {
-      id: 'capa',
-      content: (
-        <div className="flex flex-col items-center justify-center h-full text-center space-y-12 px-20">
+  // Slide 1 - Capa
+  {
+    id: 'capa',
+    content: <div className="flex flex-col items-center justify-center h-full text-center space-y-12 px-20">
           <img src={crieValorLogoNew} alt="Crie Valor" className="h-32 mb-12" />
         </div>
-      )
-    },
-    // Slide 2 - Nosso Propósito
-    {
-      id: 'proposito',
-      content: (
-        <div className="flex flex-col items-center justify-center h-full text-center space-y-12">
+  },
+  // Slide 2 - Nosso Propósito
+  {
+    id: 'proposito',
+    content: <div className="flex flex-col items-center justify-center h-full text-center space-y-12">
           <div className="flex items-center space-x-6 mb-12">
             <FlagIcon size={64} className="text-primary" />
             <h2 className="text-6xl font-bold">Nosso Propósito</h2>
@@ -59,13 +53,11 @@ const ApresentacaoPage = () => {
             </h3>
           </div>
         </div>
-      )
-    },
-    // Slide 3 - O que Fazemos
-    {
-      id: 'o-que-fazemos',
-      content: (
-        <div className="flex flex-col items-center justify-center h-full text-center space-y-6 px-16 py-12">
+  },
+  // Slide 3 - O que Fazemos
+  {
+    id: 'o-que-fazemos',
+    content: <div className="flex flex-col items-center justify-center h-full text-center space-y-6 px-16 py-12">
           <h2 className="text-5xl font-bold">O Que Fazemos</h2>
           
           {/* Fundamento/Base */}
@@ -108,13 +100,11 @@ const ApresentacaoPage = () => {
             </div>
           </div>
         </div>
-      )
-    },
-    // Slide 4 - Ecossistema de Inteligência
-    {
-      id: 'ecossistema',
-      content: (
-        <div className="flex flex-col items-center justify-center h-full text-center space-y-6 px-12 py-8">
+  },
+  // Slide 4 - Ecossistema de Inteligência
+  {
+    id: 'ecossistema',
+    content: <div className="flex flex-col items-center justify-center h-full text-center space-y-6 px-12 py-8">
           <h2 className="text-4xl font-bold">Ecossistema de Inteligência Organizacional</h2>
           
           <div className="grid grid-cols-3 gap-6 max-w-6xl w-full">
@@ -182,13 +172,11 @@ const ApresentacaoPage = () => {
             </div>
           </div>
         </div>
-      )
-    },
-    // Slide 5 - MAR
-    {
-      id: 'mar',
-      content: (
-        <div className="flex items-center justify-center h-full px-20">
+  },
+  // Slide 5 - MAR
+  {
+    id: 'mar',
+    content: <div className="flex items-center justify-center h-full px-20">
           <div className="grid grid-cols-2 gap-16 max-w-6xl w-full">
             <div className="space-y-10">
               <h2 className="text-5xl font-bold">MAR - Mapa para Alto Rendimento</h2>
@@ -198,11 +186,11 @@ const ApresentacaoPage = () => {
               <div className="space-y-6">
                 <div className="flex items-center space-x-4">
                   <div className="w-3 h-3 bg-primary rounded-full"></div>
-                  <span className="text-2xl">Diagnóstico 360º da empresa</span>
+                  <span className="text-2xl">Perfil Comportamental</span>
                 </div>
                 <div className="flex items-center space-x-4">
                   <div className="w-3 h-3 bg-primary rounded-full"></div>
-                  <span className="text-2xl">Identificação de gaps</span>
+                  <span className="text-2xl">Diagnóstico 360º da empresa</span>
                 </div>
                 <div className="flex items-center space-x-4">
                   <div className="w-3 h-3 bg-primary rounded-full"></div>
@@ -229,13 +217,11 @@ const ApresentacaoPage = () => {
             </div>
           </div>
         </div>
-      )
-    },
-    // Slide 6 - Lumia
-    {
-      id: 'lumia',
-      content: (
-        <div className="flex items-center justify-center h-full px-20">
+  },
+  // Slide 6 - Lumia
+  {
+    id: 'lumia',
+    content: <div className="flex items-center justify-center h-full px-20">
           <div className="grid grid-cols-2 gap-16 max-w-6xl w-full">
             <div className="space-y-10">
               <h2 className="text-5xl font-bold">Lumia - Consultores Virtuais</h2>
@@ -268,13 +254,11 @@ const ApresentacaoPage = () => {
             </div>
           </div>
         </div>
-      )
-    },
-    // Slide 7 - Mentor de Propósito
-    {
-      id: 'mentor-proposito',
-      content: (
-        <div className="flex items-center justify-center h-full px-20">
+  },
+  // Slide 7 - Mentor de Propósito
+  {
+    id: 'mentor-proposito',
+    content: <div className="flex items-center justify-center h-full px-20">
           <div className="grid grid-cols-2 gap-16 max-w-6xl w-full">
             <div className="space-y-10">
               <h2 className="text-5xl font-bold">Mentor de Propósito</h2>
@@ -311,13 +295,11 @@ const ApresentacaoPage = () => {
             </div>
           </div>
         </div>
-      )
-    },
-    // Slide 8 - Oficina de Líderes
-    {
-      id: 'oficina-lideres',
-      content: (
-        <div className="flex flex-col items-center justify-center h-full text-center space-y-6 px-16 py-8">
+  },
+  // Slide 8 - Oficina de Líderes
+  {
+    id: 'oficina-lideres',
+    content: <div className="flex flex-col items-center justify-center h-full text-center space-y-6 px-16 py-8">
           <h2 className="text-4xl font-bold">Educação Corporativa</h2>
           <div className="max-w-5xl">
             <div className="bg-gradient-to-r from-primary/20 to-purple-500/20 p-8 rounded-xl border border-border backdrop-blur-sm">
@@ -361,13 +343,11 @@ const ApresentacaoPage = () => {
             </div>
           </div>
         </div>
-      )
-    },
-    // Slide 9 - Mais Educação Corporativa (Treinamentos e Palestras)
-    {
-      id: 'educacao-mais',
-      content: (
-        <div className="flex flex-col items-center justify-center h-full text-center space-y-5 px-16 py-8">
+  },
+  // Slide 9 - Mais Educação Corporativa (Treinamentos e Palestras)
+  {
+    id: 'educacao-mais',
+    content: <div className="flex flex-col items-center justify-center h-full text-center space-y-5 px-16 py-8">
           <h2 className="text-4xl font-bold">Educação Corporativa</h2>
           <p className="text-xl text-muted-foreground max-w-4xl">
             Além da Oficina de Líderes, oferecemos soluções completas de desenvolvimento organizacional
@@ -417,13 +397,11 @@ const ApresentacaoPage = () => {
             </div>
           </div>
         </div>
-      )
-    },
-    // Slide 10 - Serviços
-    {
-      id: 'servicos',
-      content: (
-        <div className="flex flex-col items-center justify-center h-full text-center space-y-12 px-20">
+  },
+  // Slide 10 - Serviços
+  {
+    id: 'servicos',
+    content: <div className="flex flex-col items-center justify-center h-full text-center space-y-12 px-20">
           <h2 className="text-6xl font-bold mb-12">Nossos Serviços</h2>
           <div className="grid grid-cols-3 gap-16 max-w-6xl">
             <div className="bg-card/50 backdrop-blur-sm border border-border rounded-xl p-8 space-y-6">
@@ -443,13 +421,11 @@ const ApresentacaoPage = () => {
             </div>
           </div>
         </div>
-      )
-    },
-    // Slide 11 - Fechamento CTA
-    {
-      id: 'fechamento',
-      content: (
-        <div className="flex flex-col items-center justify-center h-full text-center space-y-12 px-20 py-16">
+  },
+  // Slide 11 - Fechamento CTA
+  {
+    id: 'fechamento',
+    content: <div className="flex flex-col items-center justify-center h-full text-center space-y-12 px-20 py-16">
           <div className="space-y-6">
             <img src={crieValorLogo} alt="Crie Valor" className="h-16 mx-auto" />
             <h2 className="text-5xl font-bold">Vamos Transformar Sua Empresa?</h2>
@@ -488,12 +464,8 @@ const ApresentacaoPage = () => {
             </div>
           </div>
         </div>
-      )
-    }
-  ];
-
-  return (
-    <>
+  }];
+  return <>
       <Helmet>
         <title>Apresentação Institucional - Crie Valor Consultoria</title>
         <meta name="description" content="Apresentação institucional da Crie Valor. Conheça nossos serviços, projetos e soluções em inteligência organizacional com IA." />
@@ -509,18 +481,13 @@ const ApresentacaoPage = () => {
         
         {/* Fullscreen functionality */}
         <div className="absolute top-4 left-4 z-20">
-          <Button
-            onClick={() => {
-              if (document.fullscreenElement) {
-                document.exitFullscreen();
-              } else {
-                document.documentElement.requestFullscreen();
-              }
-            }}
-            variant="outline"
-            size="sm"
-            className="bg-card/80 backdrop-blur-sm border-border"
-          >
+          <Button onClick={() => {
+          if (document.fullscreenElement) {
+            document.exitFullscreen();
+          } else {
+            document.documentElement.requestFullscreen();
+          }
+        }} variant="outline" size="sm" className="bg-card/80 backdrop-blur-sm border-border">
             Tela Cheia
           </Button>
         </div>
@@ -535,11 +502,9 @@ const ApresentacaoPage = () => {
           {/* Carousel */}
           <Carousel setApi={setApi} className="flex-1">
             <CarouselContent className="h-screen">
-              {slides.map((slide) => (
-                <CarouselItem key={slide.id} className="h-screen flex items-center justify-center">
+              {slides.map(slide => <CarouselItem key={slide.id} className="h-screen flex items-center justify-center">
                   {slide.content}
-                </CarouselItem>
-              ))}
+                </CarouselItem>)}
             </CarouselContent>
             
             {/* Navigation */}
@@ -549,15 +514,9 @@ const ApresentacaoPage = () => {
           
           {/* Slide Indicators */}
           <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex space-x-2 z-20">
-            {Array.from({ length: count }, (_, i) => (
-              <button
-                key={i}
-                onClick={() => api?.scrollTo(i)}
-                className={`w-2 h-2 rounded-full transition-all ${
-                  i + 1 === current ? 'bg-primary w-8' : 'bg-muted-foreground/50'
-                }`}
-              />
-            ))}
+            {Array.from({
+            length: count
+          }, (_, i) => <button key={i} onClick={() => api?.scrollTo(i)} className={`w-2 h-2 rounded-full transition-all ${i + 1 === current ? 'bg-primary w-8' : 'bg-muted-foreground/50'}`} />)}
           </div>
         </div>
         
@@ -568,8 +527,6 @@ const ApresentacaoPage = () => {
           }
         `}</style>
       </div>
-    </>
-  );
+    </>;
 };
-
 export default ApresentacaoPage;
