@@ -202,7 +202,7 @@ const ApresentacaoPage = () => {
                 </div>
                 <div className="flex items-center space-x-4">
                   <div className="w-3 h-3 bg-primary rounded-full"></div>
-                  <span className="text-2xl font-bold text-primary">Entregue em até 24h.</span>
+                  <span className="text-2xl font-bold text-primary">Entregue em até 7 dias.</span>
                 </div>
               </div>
             </div>
