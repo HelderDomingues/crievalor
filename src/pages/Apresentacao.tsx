@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Button } from '@/components/ui/button';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious, CarouselApi } from '@/components/ui/carousel';
-import { ChevronLeft, ChevronRight, Target, Users, Brain, Lightbulb, Palette, Zap, ExternalLink, QrCode, Mail, Phone, Globe } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Target, Users, Brain, Lightbulb, Palette, Zap, ExternalLink, Mail, Phone, Globe, Package, Briefcase, GraduationCap, Cpu, Award, MessageSquare, BookOpen, Mic } from 'lucide-react';
 import { FlagIcon } from '@/components/ui/flag-icon';
+import crieValorLogoNew from '@/assets/crie-valor-logo-new.png';
 import crieValorLogo from '@/assets/crie-valor-logo.png';
 import marLogo from '@/assets/mar-logo.png';
 import marLogoHorizontal from '@/assets/mar-logo-horizontal.png';
@@ -12,14 +13,18 @@ import VideoBackground from '@/components/VideoBackground';
 import mentorPropositoTransparent from '@/assets/mentor-proposito-transparent.png';
 import mentorPropositoHorizontal from '@/assets/mentor-proposito-horizontal.png';
 import oficinaLideresTransparent from '@/assets/oficina-lideres-logo-transparent.png';
+import qrcodeWebsite from '@/assets/qrcode-website.png';
+import qrcodeWhatsapp from '@/assets/qrcode-whatsapp.png';
 
 // Using transparent logos
 const mentorPropositoLogo = mentorPropositoTransparent;
 const oficinaLideresLogo = oficinaLideresTransparent;
+
 const ApresentacaoPage = () => {
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
   const [count, setCount] = useState(0);
+  
   useEffect(() => {
     if (!api) return;
     setCount(api.scrollSnapList().length);
@@ -28,19 +33,22 @@ const ApresentacaoPage = () => {
       setCurrent(api.selectedScrollSnap() + 1);
     });
   }, [api]);
+
   const slides = [
-  // Slide 1 - Capa
-  {
-    id: 'capa',
-    content: <div className="flex flex-col items-center justify-center h-full text-center space-y-12 px-20">
-          <img src={crieValorLogo} alt="Crie Valor" className="h-24 mb-12" />
-          
+    // Slide 1 - Capa
+    {
+      id: 'capa',
+      content: (
+        <div className="flex flex-col items-center justify-center h-full text-center space-y-12 px-20">
+          <img src={crieValorLogoNew} alt="Crie Valor" className="h-32 mb-12" />
         </div>
-  },
-  // Slide 2 - Nosso Propósito
-  {
-    id: 'proposito',
-    content: <div className="flex flex-col items-center justify-center h-full text-center space-y-12">
+      )
+    },
+    // Slide 2 - Nosso Propósito
+    {
+      id: 'proposito',
+      content: (
+        <div className="flex flex-col items-center justify-center h-full text-center space-y-12">
           <div className="flex items-center space-x-6 mb-12">
             <FlagIcon size={64} className="text-primary" />
             <h2 className="text-6xl font-bold">Nosso Propósito</h2>
@@ -49,47 +57,138 @@ const ApresentacaoPage = () => {
             <h3 className="text-5xl font-semibold text-white leading-tight">
               "Gerar clareza e direção para as empresas, fazendo da atitude o motor do crescimento"
             </h3>
+          </div>
+        </div>
+      )
+    },
+    // Slide 3 - O que Fazemos
+    {
+      id: 'o-que-fazemos',
+      content: (
+        <div className="flex flex-col items-center justify-center h-full text-center space-y-12 px-20">
+          <h2 className="text-6xl font-bold mb-8">O Que Fazemos</h2>
+          
+          {/* Fundamento/Base */}
+          <div className="bg-gradient-to-r from-primary/30 to-purple-500/30 p-8 rounded-2xl border border-primary/50 backdrop-blur-sm mb-8">
+            <h3 className="text-2xl font-bold mb-6 text-primary">Nossa Base</h3>
+            <div className="flex items-center justify-center gap-12">
+              <div className="flex items-center gap-3">
+                <Award className="h-10 w-10 text-primary" />
+                <span className="text-2xl font-semibold">Experiência +20 anos</span>
+              </div>
+              <div className="w-px h-12 bg-primary/50"></div>
+              <div className="flex items-center gap-3">
+                <Brain className="h-10 w-10 text-primary" />
+                <span className="text-2xl font-semibold">Metodologia Própria</span>
+              </div>
+              <div className="w-px h-12 bg-primary/50"></div>
+              <div className="flex items-center gap-3">
+                <Cpu className="h-10 w-10 text-primary" />
+                <span className="text-2xl font-semibold">IA/Tecnologia Avançada</span>
+              </div>
+            </div>
+          </div>
+          
+          {/* 3 Pilares */}
+          <div className="grid grid-cols-3 gap-12 max-w-6xl w-full">
+            <div className="bg-card/60 backdrop-blur-sm border border-border rounded-2xl p-10 space-y-6 hover:border-primary/50 transition-all">
+              <Package className="h-20 w-20 text-primary mx-auto" />
+              <h3 className="text-3xl font-bold">Produtos</h3>
+              <p className="text-xl text-muted-foreground">MAR, Lumia e Mentor de Propósito</p>
+            </div>
+            <div className="bg-card/60 backdrop-blur-sm border border-border rounded-2xl p-10 space-y-6 hover:border-primary/50 transition-all">
+              <Briefcase className="h-20 w-20 text-primary mx-auto" />
+              <h3 className="text-3xl font-bold">Serviços</h3>
+              <p className="text-xl text-muted-foreground">Mentorias, Implementação e Branding</p>
+            </div>
+            <div className="bg-card/60 backdrop-blur-sm border border-border rounded-2xl p-10 space-y-6 hover:border-primary/50 transition-all">
+              <GraduationCap className="h-20 w-20 text-primary mx-auto" />
+              <h3 className="text-3xl font-bold">Educação Corporativa</h3>
+              <p className="text-xl text-muted-foreground">Oficina de Líderes, Treinamentos e Palestras</p>
+            </div>
+          </div>
+        </div>
+      )
+    },
+    // Slide 4 - Ecossistema de Inteligência
+    {
+      id: 'ecossistema',
+      content: (
+        <div className="flex flex-col items-center justify-center h-full text-center space-y-12 px-16">
+          <h2 className="text-5xl font-bold">Ecossistema de Inteligência Organizacional</h2>
+          
+          <div className="grid grid-cols-3 gap-8 max-w-7xl w-full">
+            {/* Coluna Produtos */}
+            <div className="space-y-6">
+              <div className="bg-primary/20 px-6 py-3 rounded-full border border-primary/50 inline-block">
+                <span className="text-xl font-bold text-primary uppercase tracking-wider">Produtos</span>
+              </div>
+              <div className="bg-card/60 backdrop-blur-sm border border-border rounded-2xl p-6 space-y-6">
+                <div className="flex flex-col items-center space-y-4 p-4 bg-background/50 rounded-xl">
+                  <img src={marLogoHorizontal} alt="MAR" className="h-20" />
+                  <span className="text-lg font-semibold">MAR</span>
+                </div>
+                <div className="flex flex-col items-center space-y-4 p-4 bg-background/50 rounded-xl">
+                  <img src={lumiaLogo} alt="Lumia" className="h-20" />
+                  <span className="text-lg font-semibold">Lumia</span>
+                </div>
+                <div className="flex flex-col items-center space-y-4 p-4 bg-background/50 rounded-xl">
+                  <img src={mentorPropositoLogo} alt="Mentor de Propósito" className="h-24" />
+                  <span className="text-lg font-semibold">Mentor de Propósito</span>
+                </div>
+              </div>
+            </div>
             
+            {/* Coluna Serviços */}
+            <div className="space-y-6">
+              <div className="bg-purple-500/20 px-6 py-3 rounded-full border border-purple-500/50 inline-block">
+                <span className="text-xl font-bold text-purple-400 uppercase tracking-wider">Serviços</span>
+              </div>
+              <div className="bg-card/60 backdrop-blur-sm border border-border rounded-2xl p-6 space-y-6">
+                <div className="flex flex-col items-center space-y-4 p-6 bg-background/50 rounded-xl">
+                  <Users className="h-16 w-16 text-purple-400" />
+                  <span className="text-lg font-semibold">Mentorias</span>
+                </div>
+                <div className="flex flex-col items-center space-y-4 p-6 bg-background/50 rounded-xl">
+                  <Target className="h-16 w-16 text-purple-400" />
+                  <span className="text-lg font-semibold">Implementação Assistida</span>
+                </div>
+                <div className="flex flex-col items-center space-y-4 p-6 bg-background/50 rounded-xl">
+                  <Palette className="h-16 w-16 text-purple-400" />
+                  <span className="text-lg font-semibold">Branding</span>
+                </div>
+              </div>
+            </div>
+            
+            {/* Coluna Educação Corporativa */}
+            <div className="space-y-6">
+              <div className="bg-emerald-500/20 px-6 py-3 rounded-full border border-emerald-500/50 inline-block">
+                <span className="text-xl font-bold text-emerald-400 uppercase tracking-wider">Educação Corporativa</span>
+              </div>
+              <div className="bg-card/60 backdrop-blur-sm border border-border rounded-2xl p-6 space-y-6">
+                <div className="flex flex-col items-center space-y-4 p-4 bg-background/50 rounded-xl">
+                  <img src={oficinaLideresLogo} alt="Oficina de Líderes" className="h-20" />
+                  <span className="text-lg font-semibold">Oficina de Líderes</span>
+                </div>
+                <div className="flex flex-col items-center space-y-4 p-6 bg-background/50 rounded-xl">
+                  <BookOpen className="h-16 w-16 text-emerald-400" />
+                  <span className="text-lg font-semibold">Treinamentos</span>
+                </div>
+                <div className="flex flex-col items-center space-y-4 p-6 bg-background/50 rounded-xl">
+                  <Mic className="h-16 w-16 text-emerald-400" />
+                  <span className="text-lg font-semibold">Palestras</span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-  },
-  // Slide 3 - O que Fazemos
-  {
-    id: 'o-que-fazemos',
-    content: <div className="flex flex-col items-center justify-center h-full text-center space-y-12 px-20">
-          <h2 className="text-6xl font-bold mb-12">O Que Fazemos</h2>
-          <div className="max-w-6xl">
-            <p className="text-3xl text-muted-foreground leading-relaxed">
-              Desenvolvemos soluções integradas de inteligência organizacional que conectam estratégia, tecnologia e pessoas.
-            </p>
-          </div>
-        </div>
-  },
-  // Slide 4 - Ecossistema de Inteligência
-  {
-    id: 'ecossistema',
-    content: <div className="flex flex-col items-center justify-center h-full text-center space-y-20 px-20">
-          <h2 className="text-6xl font-bold">Ecossistema de Inteligência Organizacional</h2>
-          <div className="grid grid-cols-2 gap-16 max-w-5xl">
-            <div className="flex items-center justify-center">
-              <img src={marLogoHorizontal} alt="MAR" className="h-32" />
-            </div>
-            <div className="flex items-center justify-center">
-              <img src={lumiaLogo} alt="Lumia" className="h-32" />
-            </div>
-            <div className="flex items-center justify-center">
-              <img src={mentorPropositoHorizontal} alt="Mentor de Propósito" className="h-40" />
-            </div>
-            <div className="flex items-center justify-center">
-              <img src={oficinaLideresLogo} alt="Oficina de Líderes" className="h-36" />
-            </div>
-          </div>
-        </div>
-  },
-  // Slide 5 - MAR
-  {
-    id: 'mar',
-    content: <div className="flex items-center justify-center h-full px-20">
+      )
+    },
+    // Slide 5 - MAR
+    {
+      id: 'mar',
+      content: (
+        <div className="flex items-center justify-center h-full px-20">
           <div className="grid grid-cols-2 gap-16 max-w-6xl w-full">
             <div className="space-y-10">
               <h2 className="text-5xl font-bold">MAR - Mapa para Alto Rendimento</h2>
@@ -130,11 +229,13 @@ const ApresentacaoPage = () => {
             </div>
           </div>
         </div>
-  },
-  // Slide 6 - Lumia
-  {
-    id: 'lumia',
-    content: <div className="flex items-center justify-center h-full px-20">
+      )
+    },
+    // Slide 6 - Lumia
+    {
+      id: 'lumia',
+      content: (
+        <div className="flex items-center justify-center h-full px-20">
           <div className="grid grid-cols-2 gap-16 max-w-6xl w-full">
             <div className="space-y-10">
               <h2 className="text-5xl font-bold">Lumia - Consultores Virtuais</h2>
@@ -167,11 +268,13 @@ const ApresentacaoPage = () => {
             </div>
           </div>
         </div>
-  },
-  // Slide 7 - Mentor de Propósito
-  {
-    id: 'mentor-proposito',
-    content: <div className="flex items-center justify-center h-full px-20">
+      )
+    },
+    // Slide 7 - Mentor de Propósito
+    {
+      id: 'mentor-proposito',
+      content: (
+        <div className="flex items-center justify-center h-full px-20">
           <div className="grid grid-cols-2 gap-16 max-w-6xl w-full">
             <div className="space-y-10">
               <h2 className="text-5xl font-bold">Mentor de Propósito</h2>
@@ -208,12 +311,14 @@ const ApresentacaoPage = () => {
             </div>
           </div>
         </div>
-  },
-  // Slide 8 - Educação Corporativa (trocado com serviços)
-  {
-    id: 'educacao',
-    content: <div className="flex flex-col items-center justify-center h-full text-center space-y-12 px-20">
-          <h2 className="text-4xl font-bold mb-12">Educação Corporativa</h2>
+      )
+    },
+    // Slide 8 - Oficina de Líderes
+    {
+      id: 'oficina-lideres',
+      content: (
+        <div className="flex flex-col items-center justify-center h-full text-center space-y-12 px-20">
+          <h2 className="text-4xl font-bold mb-8">Educação Corporativa</h2>
           <div className="max-w-5xl space-y-16">
             <div className="bg-gradient-to-r from-primary/20 to-purple-500/20 p-12 rounded-2xl border border-border backdrop-blur-sm">
               <div className="space-y-8">
@@ -256,17 +361,75 @@ const ApresentacaoPage = () => {
             </div>
           </div>
         </div>
-  },
-  // Slide 9 - Serviços (trocado com educação)
-  {
-    id: 'servicos',
-    content: <div className="flex flex-col items-center justify-center h-full text-center space-y-12 px-20">
+      )
+    },
+    // Slide 9 - Mais Educação Corporativa (Treinamentos e Palestras)
+    {
+      id: 'educacao-mais',
+      content: (
+        <div className="flex flex-col items-center justify-center h-full text-center space-y-12 px-20">
+          <h2 className="text-5xl font-bold mb-8">Educação Corporativa</h2>
+          <p className="text-2xl text-muted-foreground max-w-4xl">
+            Além da Oficina de Líderes, oferecemos soluções completas de desenvolvimento organizacional
+          </p>
+          <div className="grid grid-cols-2 gap-12 max-w-5xl w-full">
+            <div className="bg-gradient-to-br from-emerald-500/20 to-primary/20 p-12 rounded-2xl border border-border backdrop-blur-sm space-y-8">
+              <BookOpen className="h-24 w-24 text-emerald-400 mx-auto" />
+              <h3 className="text-4xl font-bold">Treinamentos</h3>
+              <p className="text-xl text-muted-foreground">
+                Programas de capacitação customizados para equipes, focados em resultados práticos e aplicáveis
+              </p>
+              <div className="space-y-4 text-left">
+                <div className="flex items-center space-x-3">
+                  <div className="w-2 h-2 bg-emerald-400 rounded-full"></div>
+                  <span className="text-lg">Gestão e Liderança</span>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <div className="w-2 h-2 bg-emerald-400 rounded-full"></div>
+                  <span className="text-lg">Marketing e Vendas</span>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <div className="w-2 h-2 bg-emerald-400 rounded-full"></div>
+                  <span className="text-lg">Processos e Operações</span>
+                </div>
+              </div>
+            </div>
+            <div className="bg-gradient-to-br from-purple-500/20 to-primary/20 p-12 rounded-2xl border border-border backdrop-blur-sm space-y-8">
+              <Mic className="h-24 w-24 text-purple-400 mx-auto" />
+              <h3 className="text-4xl font-bold">Palestras</h3>
+              <p className="text-xl text-muted-foreground">
+                Palestras inspiradoras e transformadoras para eventos corporativos, convenções e conferências
+              </p>
+              <div className="space-y-4 text-left">
+                <div className="flex items-center space-x-3">
+                  <div className="w-2 h-2 bg-purple-400 rounded-full"></div>
+                  <span className="text-lg">Propósito e Cultura</span>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <div className="w-2 h-2 bg-purple-400 rounded-full"></div>
+                  <span className="text-lg">Inovação e Tecnologia</span>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <div className="w-2 h-2 bg-purple-400 rounded-full"></div>
+                  <span className="text-lg">Estratégia e Crescimento</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )
+    },
+    // Slide 10 - Serviços
+    {
+      id: 'servicos',
+      content: (
+        <div className="flex flex-col items-center justify-center h-full text-center space-y-12 px-20">
           <h2 className="text-6xl font-bold mb-12">Nossos Serviços</h2>
           <div className="grid grid-cols-3 gap-16 max-w-6xl">
             <div className="bg-card/50 backdrop-blur-sm border border-border rounded-xl p-8 space-y-6">
               <Target className="h-16 w-16 text-primary mx-auto" />
-              <h3 className="text-2xl font-semibold">Consultorias & Projetos Customizados</h3>
-              <p className="text-xl text-muted-foreground">Soluções estratégicas sob medida para desafios específicos</p>
+              <h3 className="text-2xl font-semibold">Implementação Assistida</h3>
+              <p className="text-xl text-muted-foreground">Acompanhamento da execução dos planos de ação do MAR por consultores dedicados</p>
             </div>
             <div className="bg-card/50 backdrop-blur-sm border border-border rounded-xl p-8 space-y-6">
               <Users className="h-16 w-16 text-primary mx-auto" />
@@ -280,46 +443,57 @@ const ApresentacaoPage = () => {
             </div>
           </div>
         </div>
-  },
-  // Slide 10 - Fechamento CTA
-  {
-    id: 'fechamento',
-    content: <div className="flex flex-col items-center justify-center h-full text-center space-y-16 px-20 py-16">
-          <div className="space-y-8">
-            <img src={crieValorLogo} alt="Crie Valor" className="h-20 mx-auto" />
-            <h2 className="text-6xl font-bold">Vamos Transformar Sua Empresa?</h2>
-            <p className="text-3xl text-muted-foreground max-w-5xl">
+      )
+    },
+    // Slide 11 - Fechamento CTA
+    {
+      id: 'fechamento',
+      content: (
+        <div className="flex flex-col items-center justify-center h-full text-center space-y-12 px-20 py-16">
+          <div className="space-y-6">
+            <img src={crieValorLogo} alt="Crie Valor" className="h-16 mx-auto" />
+            <h2 className="text-5xl font-bold">Vamos Transformar Sua Empresa?</h2>
+            <p className="text-2xl text-muted-foreground max-w-4xl">
               Descubra como podemos acelerar seus resultados
             </p>
           </div>
           
-          <div className="grid grid-cols-2 gap-24 max-w-5xl w-full">
-            <div className="space-y-8">
-              <h3 className="text-3xl font-semibold">Contatos</h3>
-              <div className="space-y-8">
-                <div className="flex items-center justify-center space-x-4">
-                  <Phone className="h-10 w-10 text-primary" />
-                  <span className="text-3xl font-semibold">(67) 99654-2991</span>
-                </div>
-                <div className="flex items-center justify-center space-x-4">
-                  <Mail className="h-8 w-8 text-primary" />
-                  <span className="text-2xl">contato@crievalor.com.br</span>
-                </div>
-              </div>
+          <div className="flex items-center justify-center gap-8 mb-4">
+            <div className="flex items-center space-x-3">
+              <Phone className="h-8 w-8 text-primary" />
+              <span className="text-2xl font-semibold">(67) 99654-2991</span>
             </div>
-            
-            <div className="space-y-8">
-              <h3 className="text-3xl font-semibold">Acesse Nosso Site</h3>
-              <div className="bg-white p-8 rounded-xl">
-                <QrCode className="h-40 w-40 text-slate-900 mx-auto" />
-                <p className="text-slate-900 mt-6 font-medium text-xl">crievalor.com.br</p>
-              </div>
+            <div className="w-px h-8 bg-border"></div>
+            <div className="flex items-center space-x-3">
+              <Mail className="h-7 w-7 text-primary" />
+              <span className="text-xl">contato@crievalor.com.br</span>
             </div>
           </div>
-
+          
+          <div className="grid grid-cols-2 gap-16 max-w-4xl w-full">
+            <div className="space-y-6">
+              <h3 className="text-2xl font-semibold">Acesse Nosso Site</h3>
+              <div className="bg-white p-6 rounded-xl inline-block">
+                <img src={qrcodeWebsite} alt="QR Code Website" className="h-40 w-40" />
+              </div>
+              <p className="text-lg font-medium text-muted-foreground">crievalor.com.br</p>
+            </div>
+            
+            <div className="space-y-6">
+              <h3 className="text-2xl font-semibold">Fale Conosco pelo WhatsApp</h3>
+              <div className="bg-white p-6 rounded-xl inline-block">
+                <img src={qrcodeWhatsapp} alt="QR Code WhatsApp" className="h-40 w-40" />
+              </div>
+              <p className="text-lg font-medium text-emerald-400">Clique ou escaneie para conversar</p>
+            </div>
+          </div>
         </div>
-  }];
-  return <>
+      )
+    }
+  ];
+
+  return (
+    <>
       <Helmet>
         <title>Apresentação Institucional - Crie Valor Consultoria</title>
         <meta name="description" content="Apresentação institucional da Crie Valor. Conheça nossos serviços, projetos e soluções em inteligência organizacional com IA." />
@@ -328,59 +502,74 @@ const ApresentacaoPage = () => {
       </Helmet>
       
       <div className="min-h-screen bg-gradient-to-br from-background via-background/95 to-primary/5 relative overflow-hidden">
-      {/* Background Animation */}
-      <div className="absolute inset-0 z-0">
-        <VideoBackground />
-      </div>
-      
-      {/* Fullscreen functionality */}
-      <div className="absolute top-4 left-4 z-20">
-        <Button onClick={() => {
-          if (document.fullscreenElement) {
-            document.exitFullscreen();
-          } else {
-            document.documentElement.requestFullscreen();
-          }
-        }} variant="outline" size="sm" className="bg-card/80 backdrop-blur-sm border-border">
-          Tela Cheia
-        </Button>
-      </div>
-      
-      {/* Main Content */}
-      <div className="relative z-10 h-screen flex flex-col">
-        {/* Slide Counter */}
-        <div className="absolute top-4 right-4 z-20 bg-card/80 backdrop-blur-sm px-4 py-2 rounded-full text-sm font-medium">
-          {current} / {count}
+        {/* Background Animation */}
+        <div className="absolute inset-0 z-0">
+          <VideoBackground />
         </div>
         
-        {/* Carousel */}
-        <Carousel setApi={setApi} className="flex-1">
-          <CarouselContent className="h-screen">
-            {slides.map(slide => <CarouselItem key={slide.id} className="h-screen flex items-center justify-center">
-                {slide.content}
-              </CarouselItem>)}
-          </CarouselContent>
+        {/* Fullscreen functionality */}
+        <div className="absolute top-4 left-4 z-20">
+          <Button
+            onClick={() => {
+              if (document.fullscreenElement) {
+                document.exitFullscreen();
+              } else {
+                document.documentElement.requestFullscreen();
+              }
+            }}
+            variant="outline"
+            size="sm"
+            className="bg-card/80 backdrop-blur-sm border-border"
+          >
+            Tela Cheia
+          </Button>
+        </div>
+        
+        {/* Main Content */}
+        <div className="relative z-10 h-screen flex flex-col">
+          {/* Slide Counter */}
+          <div className="absolute top-4 right-4 z-20 bg-card/80 backdrop-blur-sm px-4 py-2 rounded-full text-sm font-medium">
+            {current} / {count}
+          </div>
           
-          {/* Navigation */}
-          <CarouselPrevious className="absolute left-4 top-1/2 -translate-y-1/2 h-12 w-12 bg-card/80 backdrop-blur-sm border-border hover:bg-card" />
-          <CarouselNext className="absolute right-4 top-1/2 -translate-y-1/2 h-12 w-12 bg-card/80 backdrop-blur-sm border-border hover:bg-card" />
-        </Carousel>
-        
-        {/* Slide Indicators */}
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex space-x-2 z-20">
-          {Array.from({
-            length: count
-          }, (_, i) => <button key={i} onClick={() => api?.scrollTo(i)} className={`w-2 h-2 rounded-full transition-all ${i + 1 === current ? 'bg-primary w-8' : 'bg-muted-foreground/50'}`} />)}
+          {/* Carousel */}
+          <Carousel setApi={setApi} className="flex-1">
+            <CarouselContent className="h-screen">
+              {slides.map((slide) => (
+                <CarouselItem key={slide.id} className="h-screen flex items-center justify-center">
+                  {slide.content}
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            
+            {/* Navigation */}
+            <CarouselPrevious className="absolute left-4 top-1/2 -translate-y-1/2 h-12 w-12 bg-card/80 backdrop-blur-sm border-border hover:bg-card" />
+            <CarouselNext className="absolute right-4 top-1/2 -translate-y-1/2 h-12 w-12 bg-card/80 backdrop-blur-sm border-border hover:bg-card" />
+          </Carousel>
+          
+          {/* Slide Indicators */}
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex space-x-2 z-20">
+            {Array.from({ length: count }, (_, i) => (
+              <button
+                key={i}
+                onClick={() => api?.scrollTo(i)}
+                className={`w-2 h-2 rounded-full transition-all ${
+                  i + 1 === current ? 'bg-primary w-8' : 'bg-muted-foreground/50'
+                }`}
+              />
+            ))}
+          </div>
         </div>
+        
+        {/* Hide cookies and WhatsApp components */}
+        <style>{`
+          .cookie-consent, .whatsapp-widget, .floating-cta, .quick-cta, .chatbot-container {
+            display: none !important;
+          }
+        `}</style>
       </div>
-      
-      {/* Hide cookies and WhatsApp components */}
-      <style>{`
-        .cookie-consent, .whatsapp-widget, .floating-cta, .quick-cta, .chatbot-container {
-          display: none !important;
-        }
-      `}</style>
-    </div>
-    </>;
+    </>
+  );
 };
+
 export default ApresentacaoPage;
