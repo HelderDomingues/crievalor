@@ -65,46 +65,46 @@ const ApresentacaoSCPage = () => {
     {
       id: 'o-que-fazemos',
       content: (
-        <div className="flex flex-col items-center justify-center h-full text-center space-y-12 px-20">
-          <h2 className="text-6xl font-bold mb-8">O Que Fazemos</h2>
+        <div className="flex flex-col items-center justify-center h-full text-center space-y-6 px-16 py-12">
+          <h2 className="text-5xl font-bold">O Que Fazemos</h2>
           
           {/* Fundamento/Base */}
-          <div className="bg-gradient-to-r from-primary/30 to-purple-500/30 p-8 rounded-2xl border border-primary/50 backdrop-blur-sm mb-8">
-            <h3 className="text-2xl font-bold mb-6 text-primary">Nossa Base</h3>
-            <div className="flex items-center justify-center gap-12">
-              <div className="flex items-center gap-3">
-                <Award className="h-10 w-10 text-primary" />
-                <span className="text-2xl font-semibold">Experiência +20 anos</span>
+          <div className="bg-gradient-to-r from-primary/30 to-purple-500/30 p-5 rounded-xl border border-primary/50 backdrop-blur-sm">
+            <h3 className="text-xl font-bold mb-4 text-primary">Nossa Base</h3>
+            <div className="flex items-center justify-center gap-8">
+              <div className="flex items-center gap-2">
+                <Award className="h-8 w-8 text-primary" />
+                <span className="text-xl font-semibold">Experiência +20 anos</span>
               </div>
-              <div className="w-px h-12 bg-primary/50"></div>
-              <div className="flex items-center gap-3">
-                <Brain className="h-10 w-10 text-primary" />
-                <span className="text-2xl font-semibold">Metodologia Própria</span>
+              <div className="w-px h-10 bg-primary/50"></div>
+              <div className="flex items-center gap-2">
+                <Brain className="h-8 w-8 text-primary" />
+                <span className="text-xl font-semibold">Metodologia Própria</span>
               </div>
-              <div className="w-px h-12 bg-primary/50"></div>
-              <div className="flex items-center gap-3">
-                <Cpu className="h-10 w-10 text-primary" />
-                <span className="text-2xl font-semibold">IA/Tecnologia Avançada</span>
+              <div className="w-px h-10 bg-primary/50"></div>
+              <div className="flex items-center gap-2">
+                <Cpu className="h-8 w-8 text-primary" />
+                <span className="text-xl font-semibold">IA/Tecnologia Avançada</span>
               </div>
             </div>
           </div>
           
           {/* 3 Pilares */}
-          <div className="grid grid-cols-3 gap-12 max-w-6xl w-full">
-            <div className="bg-card/60 backdrop-blur-sm border border-border rounded-2xl p-10 space-y-6 hover:border-primary/50 transition-all">
-              <Package className="h-20 w-20 text-primary mx-auto" />
-              <h3 className="text-3xl font-bold">Produtos</h3>
-              <p className="text-xl text-muted-foreground">MAR, Lumia e Mentor de Propósito</p>
+          <div className="grid grid-cols-3 gap-8 max-w-6xl w-full">
+            <div className="bg-card/60 backdrop-blur-sm border border-border rounded-xl p-6 space-y-4 hover:border-primary/50 transition-all">
+              <Package className="h-16 w-16 text-primary mx-auto" />
+              <h3 className="text-2xl font-bold">Produtos</h3>
+              <p className="text-lg text-muted-foreground">MAR, Lumia e Mentor de Propósito</p>
             </div>
-            <div className="bg-card/60 backdrop-blur-sm border border-border rounded-2xl p-10 space-y-6 hover:border-primary/50 transition-all">
-              <Briefcase className="h-20 w-20 text-primary mx-auto" />
-              <h3 className="text-3xl font-bold">Serviços</h3>
-              <p className="text-xl text-muted-foreground">Mentorias, Implementação e Branding</p>
+            <div className="bg-card/60 backdrop-blur-sm border border-border rounded-xl p-6 space-y-4 hover:border-primary/50 transition-all">
+              <Briefcase className="h-16 w-16 text-primary mx-auto" />
+              <h3 className="text-2xl font-bold">Serviços</h3>
+              <p className="text-lg text-muted-foreground">Mentorias, Implementação e Branding</p>
             </div>
-            <div className="bg-card/60 backdrop-blur-sm border border-border rounded-2xl p-10 space-y-6 hover:border-primary/50 transition-all">
-              <GraduationCap className="h-20 w-20 text-primary mx-auto" />
-              <h3 className="text-3xl font-bold">Educação Corporativa</h3>
-              <p className="text-xl text-muted-foreground">Oficina de Líderes, Treinamentos e Palestras</p>
+            <div className="bg-card/60 backdrop-blur-sm border border-border rounded-xl p-6 space-y-4 hover:border-primary/50 transition-all">
+              <GraduationCap className="h-16 w-16 text-primary mx-auto" />
+              <h3 className="text-2xl font-bold">Educação Corporativa</h3>
+              <p className="text-lg text-muted-foreground">Oficina de Líderes, Treinamentos e Palestras</p>
             </div>
           </div>
         </div>
@@ -114,69 +114,69 @@ const ApresentacaoSCPage = () => {
     {
       id: 'ecossistema',
       content: (
-        <div className="flex flex-col items-center justify-center h-full text-center space-y-12 px-16">
-          <h2 className="text-5xl font-bold">Ecossistema de Inteligência Organizacional</h2>
+        <div className="flex flex-col items-center justify-center h-full text-center space-y-6 px-12 py-8">
+          <h2 className="text-4xl font-bold">Ecossistema de Inteligência Organizacional</h2>
           
-          <div className="grid grid-cols-3 gap-8 max-w-7xl w-full">
+          <div className="grid grid-cols-3 gap-6 max-w-6xl w-full">
             {/* Coluna Produtos */}
-            <div className="space-y-6">
-              <div className="bg-primary/20 px-6 py-3 rounded-full border border-primary/50 inline-block">
-                <span className="text-xl font-bold text-primary uppercase tracking-wider">Produtos</span>
+            <div className="space-y-3">
+              <div className="bg-primary/20 px-4 py-2 rounded-full border border-primary/50 inline-block">
+                <span className="text-lg font-bold text-primary uppercase tracking-wider">Produtos</span>
               </div>
-              <div className="bg-card/60 backdrop-blur-sm border border-border rounded-2xl p-6 space-y-6">
-                <div className="flex flex-col items-center space-y-4 p-4 bg-background/50 rounded-xl">
-                  <img src={marLogoHorizontal} alt="MAR" className="h-20" />
-                  <span className="text-lg font-semibold">MAR</span>
+              <div className="bg-card/60 backdrop-blur-sm border border-border rounded-xl p-4 space-y-3">
+                <div className="flex flex-col items-center space-y-2 p-3 bg-background/50 rounded-lg">
+                  <img src={marLogoHorizontal} alt="MAR" className="h-14" />
+                  <span className="text-base font-semibold">MAR</span>
                 </div>
-                <div className="flex flex-col items-center space-y-4 p-4 bg-background/50 rounded-xl">
-                  <img src={lumiaLogo} alt="Lumia" className="h-20" />
-                  <span className="text-lg font-semibold">Lumia</span>
+                <div className="flex flex-col items-center space-y-2 p-3 bg-background/50 rounded-lg">
+                  <img src={lumiaLogo} alt="Lumia" className="h-14" />
+                  <span className="text-base font-semibold">Lumia</span>
                 </div>
-                <div className="flex flex-col items-center space-y-4 p-4 bg-background/50 rounded-xl">
-                  <img src={mentorPropositoLogo} alt="Mentor de Propósito" className="h-24" />
-                  <span className="text-lg font-semibold">Mentor de Propósito</span>
+                <div className="flex flex-col items-center space-y-2 p-3 bg-background/50 rounded-lg">
+                  <img src={mentorPropositoLogo} alt="Mentor de Propósito" className="h-16" />
+                  <span className="text-base font-semibold">Mentor de Propósito</span>
                 </div>
               </div>
             </div>
             
             {/* Coluna Serviços */}
-            <div className="space-y-6">
-              <div className="bg-purple-500/20 px-6 py-3 rounded-full border border-purple-500/50 inline-block">
-                <span className="text-xl font-bold text-purple-400 uppercase tracking-wider">Serviços</span>
+            <div className="space-y-3">
+              <div className="bg-purple-500/20 px-4 py-2 rounded-full border border-purple-500/50 inline-block">
+                <span className="text-lg font-bold text-purple-400 uppercase tracking-wider">Serviços</span>
               </div>
-              <div className="bg-card/60 backdrop-blur-sm border border-border rounded-2xl p-6 space-y-6">
-                <div className="flex flex-col items-center space-y-4 p-6 bg-background/50 rounded-xl">
-                  <Users className="h-16 w-16 text-purple-400" />
-                  <span className="text-lg font-semibold">Mentorias</span>
+              <div className="bg-card/60 backdrop-blur-sm border border-border rounded-xl p-4 space-y-3">
+                <div className="flex flex-col items-center space-y-2 p-4 bg-background/50 rounded-lg">
+                  <Users className="h-12 w-12 text-purple-400" />
+                  <span className="text-base font-semibold">Mentorias</span>
                 </div>
-                <div className="flex flex-col items-center space-y-4 p-6 bg-background/50 rounded-xl">
-                  <Target className="h-16 w-16 text-purple-400" />
-                  <span className="text-lg font-semibold">Implementação Assistida</span>
+                <div className="flex flex-col items-center space-y-2 p-4 bg-background/50 rounded-lg">
+                  <Target className="h-12 w-12 text-purple-400" />
+                  <span className="text-base font-semibold">Implementação Assistida</span>
                 </div>
-                <div className="flex flex-col items-center space-y-4 p-6 bg-background/50 rounded-xl">
-                  <Palette className="h-16 w-16 text-purple-400" />
-                  <span className="text-lg font-semibold">Branding</span>
+                <div className="flex flex-col items-center space-y-2 p-4 bg-background/50 rounded-lg">
+                  <Palette className="h-12 w-12 text-purple-400" />
+                  <span className="text-base font-semibold">Branding</span>
                 </div>
               </div>
             </div>
             
             {/* Coluna Educação Corporativa */}
-            <div className="space-y-6">
-              <div className="bg-emerald-500/20 px-6 py-3 rounded-full border border-emerald-500/50 inline-block">
-                <span className="text-xl font-bold text-emerald-400 uppercase tracking-wider">Educação Corporativa</span>
+            <div className="space-y-3">
+              <div className="bg-emerald-500/20 px-4 py-2 rounded-full border border-emerald-500/50 inline-block">
+                <span className="text-lg font-bold text-emerald-400 uppercase tracking-wider">Educação Corporativa</span>
               </div>
-              <div className="bg-card/60 backdrop-blur-sm border border-border rounded-2xl p-6 space-y-6">
-                <div className="flex flex-col items-center space-y-4 p-4 bg-background/50 rounded-xl">
-                  <img src={oficinaLideresLogo} alt="Oficina de Líderes" className="h-20" />
-                  <span className="text-lg font-semibold">Oficina de Líderes</span>
+              <div className="bg-card/60 backdrop-blur-sm border border-border rounded-xl p-4 space-y-3">
+                <div className="flex flex-col items-center space-y-2 p-3 bg-background/50 rounded-lg">
+                  <img src={oficinaLideresLogo} alt="Oficina de Líderes" className="h-14" />
+                  <span className="text-base font-semibold">Oficina de Líderes</span>
                 </div>
-                <div className="flex flex-col items-center space-y-4 p-6 bg-background/50 rounded-xl">
-                  <BookOpen className="h-16 w-16 text-emerald-400" />
-                  <span className="text-lg font-semibold">Treinamentos</span>
+                <div className="flex flex-col items-center space-y-2 p-4 bg-background/50 rounded-lg">
+                  <BookOpen className="h-12 w-12 text-emerald-400" />
+                  <span className="text-base font-semibold">Treinamentos</span>
                 </div>
-                <div className="flex flex-col items-center space-y-4 p-6 bg-background/50 rounded-xl">
-                  <Mic className="h-16 w-16 text-emerald-400" />
-                  <span className="text-lg font-semibold">Palestras</span>
+                <div className="flex flex-col items-center space-y-2 p-4 bg-background/50 rounded-lg">
+                  <Mic className="h-12 w-12 text-emerald-400" />
+                  <span className="text-base font-semibold">Palestras</span>
                 </div>
               </div>
             </div>
@@ -317,44 +317,44 @@ const ApresentacaoSCPage = () => {
     {
       id: 'oficina-lideres',
       content: (
-        <div className="flex flex-col items-center justify-center h-full text-center space-y-12 px-20">
-          <h2 className="text-4xl font-bold mb-8">Educação Corporativa</h2>
-          <div className="max-w-5xl space-y-16">
-            <div className="bg-gradient-to-r from-primary/20 to-purple-500/20 p-12 rounded-2xl border border-border backdrop-blur-sm">
-              <div className="space-y-8">
-                <img src={oficinaLideresLogo} alt="Oficina de Líderes" className="h-36 mx-auto" />
-                <p className="text-2xl text-muted-foreground">
+        <div className="flex flex-col items-center justify-center h-full text-center space-y-6 px-16 py-8">
+          <h2 className="text-4xl font-bold">Educação Corporativa</h2>
+          <div className="max-w-5xl">
+            <div className="bg-gradient-to-r from-primary/20 to-purple-500/20 p-8 rounded-xl border border-border backdrop-blur-sm">
+              <div className="space-y-5">
+                <img src={oficinaLideresLogo} alt="Oficina de Líderes" className="h-28 mx-auto" />
+                <p className="text-xl text-muted-foreground">
                   Programa intensivo de desenvolvimento de liderança para empresários, gestores, gerentes, supervisores e diretores
                 </p>
-                <div className="bg-card/50 p-6 rounded-xl mb-6">
-                  <h4 className="text-2xl font-semibold mb-4">Metodologia 70/20/10</h4>
-                  <div className="grid grid-cols-3 gap-6">
+                <div className="bg-card/50 p-4 rounded-lg">
+                  <h4 className="text-xl font-semibold mb-3">Metodologia 70/20/10</h4>
+                  <div className="grid grid-cols-3 gap-4">
                     <div className="text-center">
-                      <div className="text-3xl font-bold text-primary">70%</div>
-                      <div className="text-lg text-muted-foreground">Prática</div>
+                      <div className="text-2xl font-bold text-primary">70%</div>
+                      <div className="text-base text-muted-foreground">Prática</div>
                     </div>
                     <div className="text-center">
-                      <div className="text-3xl font-bold text-primary">20%</div>
-                      <div className="text-lg text-muted-foreground">Troca Social</div>
+                      <div className="text-2xl font-bold text-primary">20%</div>
+                      <div className="text-base text-muted-foreground">Troca Social</div>
                     </div>
                     <div className="text-center">
-                      <div className="text-3xl font-bold text-primary">10%</div>
-                      <div className="text-lg text-muted-foreground">Teoria</div>
+                      <div className="text-2xl font-bold text-primary">10%</div>
+                      <div className="text-base text-muted-foreground">Teoria</div>
                     </div>
                   </div>
                 </div>
-                <div className="grid grid-cols-3 gap-8 mt-8">
-                  <div className="space-y-3">
-                    <div className="text-3xl font-bold text-primary">+ de 1000</div>
-                    <div className="text-lg text-muted-foreground">líderes formados</div>
+                <div className="grid grid-cols-3 gap-6">
+                  <div className="space-y-1">
+                    <div className="text-2xl font-bold text-primary">+ de 1000</div>
+                    <div className="text-base text-muted-foreground">líderes formados</div>
                   </div>
-                  <div className="space-y-3">
-                    <div className="text-3xl font-bold text-primary">100%</div>
-                    <div className="text-lg text-muted-foreground">satisfação</div>
+                  <div className="space-y-1">
+                    <div className="text-2xl font-bold text-primary">100%</div>
+                    <div className="text-base text-muted-foreground">satisfação</div>
                   </div>
-                  <div className="space-y-3">
-                    <div className="text-3xl font-bold text-primary">4</div>
-                    <div className="text-lg text-muted-foreground">módulos especializados</div>
+                  <div className="space-y-1">
+                    <div className="text-2xl font-bold text-primary">4</div>
+                    <div className="text-base text-muted-foreground">módulos especializados</div>
                   </div>
                 </div>
               </div>
@@ -367,51 +367,51 @@ const ApresentacaoSCPage = () => {
     {
       id: 'educacao-mais',
       content: (
-        <div className="flex flex-col items-center justify-center h-full text-center space-y-12 px-20">
-          <h2 className="text-5xl font-bold mb-8">Educação Corporativa</h2>
-          <p className="text-2xl text-muted-foreground max-w-4xl">
+        <div className="flex flex-col items-center justify-center h-full text-center space-y-5 px-16 py-8">
+          <h2 className="text-4xl font-bold">Educação Corporativa</h2>
+          <p className="text-xl text-muted-foreground max-w-4xl">
             Além da Oficina de Líderes, oferecemos soluções completas de desenvolvimento organizacional
           </p>
-          <div className="grid grid-cols-2 gap-12 max-w-5xl w-full">
-            <div className="bg-gradient-to-br from-emerald-500/20 to-primary/20 p-12 rounded-2xl border border-border backdrop-blur-sm space-y-8">
-              <BookOpen className="h-24 w-24 text-emerald-400 mx-auto" />
-              <h3 className="text-4xl font-bold">Treinamentos</h3>
-              <p className="text-xl text-muted-foreground">
-                Programas de capacitação customizados para equipes, focados em resultados práticos e aplicáveis
+          <div className="grid grid-cols-2 gap-8 max-w-5xl w-full">
+            <div className="bg-gradient-to-br from-emerald-500/20 to-primary/20 p-8 rounded-xl border border-border backdrop-blur-sm space-y-4">
+              <BookOpen className="h-16 w-16 text-emerald-400 mx-auto" />
+              <h3 className="text-3xl font-bold">Treinamentos</h3>
+              <p className="text-lg text-muted-foreground">
+                Programas de capacitação customizados para equipes, focados em resultados práticos
               </p>
-              <div className="space-y-4 text-left">
-                <div className="flex items-center space-x-3">
+              <div className="space-y-2 text-left">
+                <div className="flex items-center space-x-2">
                   <div className="w-2 h-2 bg-emerald-400 rounded-full"></div>
-                  <span className="text-lg">Gestão e Liderança</span>
+                  <span className="text-base">Gestão e Liderança</span>
                 </div>
-                <div className="flex items-center space-x-3">
+                <div className="flex items-center space-x-2">
                   <div className="w-2 h-2 bg-emerald-400 rounded-full"></div>
-                  <span className="text-lg">Marketing e Vendas</span>
+                  <span className="text-base">Marketing e Vendas</span>
                 </div>
-                <div className="flex items-center space-x-3">
+                <div className="flex items-center space-x-2">
                   <div className="w-2 h-2 bg-emerald-400 rounded-full"></div>
-                  <span className="text-lg">Processos e Operações</span>
+                  <span className="text-base">Processos e Operações</span>
                 </div>
               </div>
             </div>
-            <div className="bg-gradient-to-br from-purple-500/20 to-primary/20 p-12 rounded-2xl border border-border backdrop-blur-sm space-y-8">
-              <Mic className="h-24 w-24 text-purple-400 mx-auto" />
-              <h3 className="text-4xl font-bold">Palestras</h3>
-              <p className="text-xl text-muted-foreground">
-                Palestras inspiradoras e transformadoras para eventos corporativos, convenções e conferências
+            <div className="bg-gradient-to-br from-purple-500/20 to-primary/20 p-8 rounded-xl border border-border backdrop-blur-sm space-y-4">
+              <Mic className="h-16 w-16 text-purple-400 mx-auto" />
+              <h3 className="text-3xl font-bold">Palestras</h3>
+              <p className="text-lg text-muted-foreground">
+                Palestras inspiradoras para eventos corporativos, convenções e conferências
               </p>
-              <div className="space-y-4 text-left">
-                <div className="flex items-center space-x-3">
+              <div className="space-y-2 text-left">
+                <div className="flex items-center space-x-2">
                   <div className="w-2 h-2 bg-purple-400 rounded-full"></div>
-                  <span className="text-lg">Propósito e Cultura</span>
+                  <span className="text-base">Propósito e Cultura</span>
                 </div>
-                <div className="flex items-center space-x-3">
+                <div className="flex items-center space-x-2">
                   <div className="w-2 h-2 bg-purple-400 rounded-full"></div>
-                  <span className="text-lg">Inovação e Tecnologia</span>
+                  <span className="text-base">Inovação e Tecnologia</span>
                 </div>
-                <div className="flex items-center space-x-3">
+                <div className="flex items-center space-x-2">
                   <div className="w-2 h-2 bg-purple-400 rounded-full"></div>
-                  <span className="text-lg">Estratégia e Crescimento</span>
+                  <span className="text-base">Estratégia e Crescimento</span>
                 </div>
               </div>
             </div>
