@@ -34,9 +34,7 @@ const ApresentacaoPage = () => {
     id: 'capa',
     content: <div className="flex flex-col items-center justify-center h-full text-center space-y-12 px-20">
           <img src={crieValorLogo} alt="Crie Valor" className="h-24 mb-12" />
-          <p className="text-4xl text-muted-foreground max-w-4xl leading-relaxed">
-            Transformando organizações por meio de estratégias claras que conectam propósito com resultados
-          </p>
+          
         </div>
   },
   // Slide 2 - Nosso Propósito
@@ -337,7 +335,7 @@ const ApresentacaoPage = () => {
 
         </div>
   }];
-return <>
+  return <>
       <Helmet>
         <title>Apresentação Institucional - Crie Valor Consultoria</title>
         <meta name="description" content="Apresentação institucional da Crie Valor. Conheça nossos serviços, projetos e soluções em inteligência organizacional com IA." />
@@ -353,18 +351,13 @@ return <>
       
       {/* Fullscreen functionality */}
       <div className="absolute top-4 left-4 z-20">
-        <Button 
-          onClick={() => {
-            if (document.fullscreenElement) {
-              document.exitFullscreen();
-            } else {
-              document.documentElement.requestFullscreen();
-            }
-          }}
-          variant="outline"
-          size="sm"
-          className="bg-card/80 backdrop-blur-sm border-border"
-        >
+        <Button onClick={() => {
+          if (document.fullscreenElement) {
+            document.exitFullscreen();
+          } else {
+            document.documentElement.requestFullscreen();
+          }
+        }} variant="outline" size="sm" className="bg-card/80 backdrop-blur-sm border-border">
           Tela Cheia
         </Button>
       </div>
@@ -392,8 +385,8 @@ return <>
         {/* Slide Indicators */}
         <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex space-x-2 z-20">
           {Array.from({
-          length: count
-        }, (_, i) => <button key={i} onClick={() => api?.scrollTo(i)} className={`w-2 h-2 rounded-full transition-all ${i + 1 === current ? 'bg-primary w-8' : 'bg-muted-foreground/50'}`} />)}
+            length: count
+          }, (_, i) => <button key={i} onClick={() => api?.scrollTo(i)} className={`w-2 h-2 rounded-full transition-all ${i + 1 === current ? 'bg-primary w-8' : 'bg-muted-foreground/50'}`} />)}
         </div>
       </div>
       
