@@ -40,7 +40,7 @@ const Mar = () => {
         image="https://iili.io/3vlTe6l.png"
         brand="Crie Valor - Inteligência Organizacional"
         offers={{
-          price: "799.00",
+          price: "3497.00",
           priceCurrency: "BRL",
           availability: "https://schema.org/InStock",
           url: "https://crievalor.com.br/mar"
@@ -91,7 +91,7 @@ const Mar = () => {
           },
           {
             question: "Posso parcelar o investimento no MAR?",
-            answer: "Sim, oferecemos opções de parcelamento em até 10x de R$ 89,90 no cartão de crédito, além de desconto para pagamento à vista de R$ 799,00. O investimento pode ser dividido para facilitar o acesso ao sistema de planejamento estratégico com IA."
+            answer: "Sim, oferecemos opções de parcelamento em até 10x de R$ 349,70 no cartão de crédito. Para pagamento à vista, há desconto de 10%, totalizando R$ 3.147,30. O investimento pode ser dividido para facilitar o acesso ao sistema de planejamento estratégico com IA."
           }
         ]}
       />

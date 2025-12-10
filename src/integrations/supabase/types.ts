@@ -1180,8 +1180,8 @@ export type Database = {
         Returns: undefined
       }
       execute_sql:
-        | { Args: { sql_query: string }; Returns: undefined }
         | { Args: never; Returns: undefined }
+        | { Args: { sql_query: string }; Returns: undefined }
       get_system_setting: { Args: { setting_key: string }; Returns: string }
       get_user_emails: {
         Args: never
@@ -1211,8 +1211,8 @@ export type Database = {
         Returns: boolean
       }
       process_quiz_completion:
-        | { Args: { p_user_id: string }; Returns: undefined }
         | { Args: never; Returns: undefined }
+        | { Args: { p_user_id: string }; Returns: undefined }
       setup_subscriptions_rls_policies: { Args: never; Returns: undefined }
       sync_existing_users: { Args: never; Returns: number }
     }
