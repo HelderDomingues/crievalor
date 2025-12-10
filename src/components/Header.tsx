@@ -49,6 +49,7 @@ const Header = () => {
 
   const menuItems = [
     { title: "Home", path: "/" },
+    { title: "Preços", path: "/precos" },
     { title: "Blog", path: "https://blog.crievalor.com.br", external: true },
     { title: "Sobre", path: "/sobre" },
     { title: "Contato", path: "/contato" },

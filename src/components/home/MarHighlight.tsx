@@ -136,7 +136,7 @@ const MarHighlight = () => {
                   <div className="pt-4 border-t border-border">
                     <div className="flex justify-between items-center">
                       <p className="text-sm text-muted-foreground">
-                        10x de <span className="text-primary font-bold">R$ 89,90</span> ou <span className="text-primary font-bold">R$ 799,00</span> à vista
+                        10x de <span className="text-primary font-bold">R$ 349,70</span> ou <span className="text-primary font-bold">R$ 3.147,30</span> à vista (10% off)
                       </p>
                       <Button variant="outline" size="sm" asChild>
                         <Link to="/mar#pricing">Saiba mais</Link>
