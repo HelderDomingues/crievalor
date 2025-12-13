@@ -235,16 +235,18 @@ export const individualProducts: Product[] = [
     name: "LUMIA - Sistema de Consultores Virtuais",
     description: "6 agentes de IA especializados (Estratégia, Marketing, Vendas, Finanças, Operações, Pessoas) disponíveis 24/7.",
     price: "R$ 697/mês",
-    period: "ou R$ 1.797/trimestre",
+    period: "R$ 1.757/trimestre ou R$ 6.710/ano",
     features: [
       "Disponibilidade 24/7",
       "Decisões do dia a dia",
       "Validação de ideias",
       "Pesquisas e análises",
-      "Teste grátis de 7 dias"
+      "Teste grátis de 7 dias",
+      "Plano anual: Economia de 20%"
     ],
     cta: "Começar teste grátis",
     ctaUrl: "https://wa.me/5547992150289?text=Quero%20testar%20o%20LUMIA",
+    details: "Plano anual: R$ 6.710,40 (20% desconto sobre R$ 8.388,00)"
   },
   {
     id: "mentor-proposito",
