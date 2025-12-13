@@ -32,12 +32,25 @@ interface LocalBusinessSchemaProps {
 interface ServiceSchemaProps {
   name: string;
   description: string;
-  provider: {
+  provider?: {
     name: string;
     url: string;
   };
-  url: string;
+  url?: string;
   areaServed?: string;
+  image?: string;
+  brand?: string;
+  offers?: {
+    price: string;
+    priceCurrency: string;
+    availability: string;
+    url?: string;
+    priceValidUntil?: string;
+  };
+  aggregateRating?: {
+    ratingValue: number;
+    reviewCount: number;
+  };
 }
 
 interface FAQItemProps {
@@ -49,9 +62,9 @@ interface FAQSchemaProps {
   questions: FAQItemProps[];
 }
 
-export const OrganizationSchema: React.FC<OrganizationSchemaProps> = ({ 
-  url, 
-  logo, 
+export const OrganizationSchema: React.FC<OrganizationSchemaProps> = ({
+  url,
+  logo,
   name = "Crie Valor - Inteligência Organizacional",
   description = "Sistema de Inteligência Organizacional que transforma empresas através de produtos proprietários: MAR, Lumia (6 consultores virtuais), Mentor de Propósito e Oficina de Líderes."
 }) => {
@@ -130,23 +143,59 @@ export const ServiceSchema: React.FC<ServiceSchemaProps> = ({
   description,
   provider,
   url,
-  areaServed
+  areaServed,
+  image,
+  brand,
+  offers,
+  aggregateRating
 }) => {
-  const schemaData = {
+  const schemaData: any = {
     "@context": "https://schema.org",
     "@type": "Service",
+    "serviceType": name,
     "name": name,
-    "description": description,
-    "provider": {
+    "description": description
+  };
+
+  if (provider) {
+    schemaData["provider"] = {
       "@type": "Organization",
       "name": provider.name,
       "url": provider.url
-    },
-    "url": url
-  };
+    };
+  }
+
+  if (url) {
+    schemaData["url"] = url;
+  }
 
   if (areaServed) {
     schemaData["areaServed"] = areaServed;
+  }
+
+  if (image) {
+    schemaData["image"] = image;
+  }
+
+  if (brand) {
+    schemaData["brand"] = {
+      "@type": "Brand",
+      "name": brand
+    };
+  }
+
+  if (offers) {
+    schemaData["offers"] = {
+      "@type": "Offer",
+      ...offers
+    };
+  }
+
+  if (aggregateRating) {
+    schemaData["aggregateRating"] = {
+      "@type": "AggregateRating",
+      ...aggregateRating
+    };
   }
 
   return (

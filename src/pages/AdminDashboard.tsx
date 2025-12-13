@@ -17,12 +17,12 @@ const AdminDashboard = () => {
       <Header />
       <main className="flex-grow py-16">
         <div className="container mx-auto px-4">
-          <AdminAuth 
-            onAuthenticated={() => {}}
+          <AdminAuth
+            onAuthenticated={() => { }}
             redirectPath="/admin-setup"
           >
             <h1 className="text-4xl font-bold mb-8">Painel Administrativo</h1>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
               {/* Material Exclusivo Admin */}
               <Link to="/admin-materials">
@@ -43,7 +43,7 @@ const AdminDashboard = () => {
                   </CardContent>
                 </Card>
               </Link>
-              
+
               {/* Portfolio Admin */}
               <Link to="/portfolio-admin">
                 <Card className="h-full hover:shadow-md transition-shadow cursor-pointer">
@@ -63,7 +63,7 @@ const AdminDashboard = () => {
                   </CardContent>
                 </Card>
               </Link>
-              
+
               {/* Client Logos Admin */}
               <Link to="/admin-client-logos">
                 <Card className="h-full hover:shadow-md transition-shadow cursor-pointer">
@@ -83,8 +83,8 @@ const AdminDashboard = () => {
                   </CardContent>
                 </Card>
               </Link>
-              
-              
+
+
               {/* Palestras & Eventos */}
               <Link to="/admin-lectures">
                 <Card className="h-full hover:shadow-md transition-shadow cursor-pointer">
@@ -125,21 +125,21 @@ const AdminDashboard = () => {
                 </Card>
               </Link>
 
-              {/* Diagnósticos Gratuitos */}
+              {/* Solicitações de Contato */}
               <Link to="/admin-diagnostic-requests">
                 <Card className="h-full hover:shadow-md transition-shadow cursor-pointer">
                   <CardHeader>
                     <CardTitle className="flex items-center">
                       <Stethoscope className="mr-2 h-5 w-5 text-primary" />
-                      Diagnósticos Gratuitos
+                      Solicitações de Contato
                     </CardTitle>
                     <CardDescription>
-                      Gerenciar solicitações de diagnóstico
+                      Gerenciar solicitações de contato
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
                     <p className="text-sm text-muted-foreground">
-                      Visualize e gerencie as solicitações de diagnóstico gratuito.
+                      Visualize e gerencie as solicitações de contato.
                     </p>
                   </CardContent>
                 </Card>
