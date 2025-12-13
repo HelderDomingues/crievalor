@@ -49,7 +49,7 @@ const Header = () => {
 
   const menuItems = [
     { title: "Home", path: "/" },
-    { title: "Preços", path: "/precos" },
+    { title: "Planos", path: "/planos" },
     { title: "Blog", path: "https://blog.crievalor.com.br", external: true },
     { title: "Sobre", path: "/sobre" },
     { title: "Contato", path: "/contato" },
@@ -72,11 +72,10 @@ const Header = () => {
 
   return (
     <header
-      className={`fixed top-0 w-full z-50 transition-all duration-300 ${
-        scrolled
+      className={`fixed top-0 w-full z-50 transition-all duration-300 ${scrolled
           ? "bg-background/90 backdrop-blur-md border-b border-border shadow-md"
           : "bg-transparent"
-      }`}
+        }`}
     >
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-14 md:h-16">
@@ -85,9 +84,9 @@ const Header = () => {
               to="/"
               className="flex items-center"
             >
-              <img 
-                src="/lovable-uploads/fc868084-d22b-4877-907b-fe02e64fc501.png" 
-                alt="Crie Valor Logo" 
+              <img
+                src="/lovable-uploads/fc868084-d22b-4877-907b-fe02e64fc501.png"
+                alt="Crie Valor Logo"
                 className="h-6 w-auto mr-2 object-contain"
               />
             </Link>
@@ -110,17 +109,16 @@ const Header = () => {
                 <Link
                   key={item.path}
                   to={item.path}
-                  className={`text-sm transition-all hover:text-primary ${
-                    isActive(item.path)
+                  className={`text-sm transition-all hover:text-primary ${isActive(item.path)
                       ? "text-primary font-medium"
                       : "text-foreground/80"
-                  } link-underline`}
+                    } link-underline`}
                 >
                   {item.title}
                 </Link>
               )
             ))}
-            
+
             {/* Services Dropdown */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -134,15 +132,14 @@ const Header = () => {
                   <DropdownMenuItem key={service.path} asChild>
                     <Link
                       to={service.path}
-                      className={`block px-3 py-2 text-sm transition-colors hover:bg-secondary hover:text-primary ${
-                        isActive(service.path) ? "text-primary font-medium" : "text-foreground"
-                      }`}
+                      className={`block px-3 py-2 text-sm transition-colors hover:bg-secondary hover:text-primary ${isActive(service.path) ? "text-primary font-medium" : "text-foreground"
+                        }`}
                     >
                       {service.title}
                     </Link>
                   </DropdownMenuItem>
                 ))}
-            </DropdownMenuContent>
+              </DropdownMenuContent>
             </DropdownMenu>
             <Button
               size="sm"
@@ -153,7 +150,7 @@ const Header = () => {
                 Fale Conosco
               </Link>
             </Button>
-            
+
             <div className="ml-4">
               <AuthHeader />
             </div>
@@ -179,9 +176,8 @@ const Header = () => {
 
       {/* Mobile Menu */}
       <div
-        className={`fixed inset-0 bg-background z-40 transition-transform duration-300 md:hidden ${
-          isMenuOpen ? "translate-x-0" : "translate-x-full"
-        }`}
+        className={`fixed inset-0 bg-background z-40 transition-transform duration-300 md:hidden ${isMenuOpen ? "translate-x-0" : "translate-x-full"
+          }`}
         style={{ top: "56px" }}
       >
         <nav className="flex flex-col p-8 space-y-4">
@@ -201,18 +197,17 @@ const Header = () => {
               <Link
                 key={item.path}
                 to={item.path}
-                className={`text-lg py-2 border-b border-border ${
-                  isActive(item.path)
+                className={`text-lg py-2 border-b border-border ${isActive(item.path)
                     ? "text-primary font-medium"
                     : "text-foreground/80"
-                }`}
+                  }`}
                 onClick={() => setIsMenuOpen(false)}
               >
                 {item.title}
               </Link>
             )
           ))}
-          
+
           {/* Mobile Services Menu */}
           <div className="space-y-2">
             <div className="text-lg font-medium py-2 text-primary border-b border-border">
@@ -222,11 +217,10 @@ const Header = () => {
               <Link
                 key={service.path}
                 to={service.path}
-                className={`text-base py-2 pl-4 block ${
-                  isActive(service.path)
+                className={`text-base py-2 pl-4 block ${isActive(service.path)
                     ? "text-primary font-medium"
                     : "text-foreground/70"
-                }`}
+                  }`}
                 onClick={() => setIsMenuOpen(false)}
               >
                 {service.title}
