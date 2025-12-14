@@ -46,10 +46,17 @@ export const ProductSchema: React.FC<ProductSchemaProps> = ({
     }
   };
 
-  // For digital products, add delivery method
+  // For services (digital products), add service-specific properties
   if (isDigital) {
-    schemaData.offers.deliveryMethod = "https://schema.org/OnlineOnly";
-    schemaData.category = "Digital Service";
+    // deliveryMethod is not well-supported for Service Offers in Google Rich Results
+    // Instead, we use specific Service properties
+    schemaData.serviceType = "Digital Strategy Consulting";
+    // serviceOutput describes the tangible result (e.g. the digital file/roadmap)
+    schemaData.serviceOutput = {
+      "@type": "Thing",
+      "name": "Digital Strategic Roadmap"
+    };
+    schemaData.category = "Business Consulting";
   }
 
   if (image) {
