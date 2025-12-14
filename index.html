@@ -1,83 +1,91 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
-  <head>
-    <meta charset="UTF-8" />
-    
-    <!-- Google Tag Manager - PRIORIDADE MÁXIMA -->
-    <script>
-      // Verificar consentimento antes de carregar GTM
-      (function() {
-        try {
-          var preferences = localStorage.getItem('cookie-preferences');
-          if (preferences) {
-            var data = JSON.parse(preferences);
-            if (data.analytics === true) {
-              // Carregar GTM
-              (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-              new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-              j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-              'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-              })(window,document,'script','dataLayer','GTM-5563GG39');
-            }
+
+<head>
+  <meta charset="UTF-8" />
+
+  <!-- Google Tag Manager - PRIORIDADE MÁXIMA -->
+  <script>
+    // Verificar consentimento antes de carregar GTM
+    (function () {
+      try {
+        var preferences = localStorage.getItem('cookie-preferences');
+        if (preferences) {
+          var data = JSON.parse(preferences);
+          if (data.analytics === true) {
+            // Carregar GTM
+            (function (w, d, s, l, i) {
+              w[l] = w[l] || []; w[l].push({
+                'gtm.start':
+                  new Date().getTime(), event: 'gtm.js'
+              }); var f = d.getElementsByTagName(s)[0],
+                j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : ''; j.async = true; j.src =
+                  'https://www.googletagmanager.com/gtm.js?id=' + i + dl; f.parentNode.insertBefore(j, f);
+            })(window, document, 'script', 'dataLayer', 'GTM-5563GG39');
           }
-        } catch(e) {
-          console.log('GTM: Aguardando consentimento de cookies');
         }
-      })();
-    </script>
-    <!-- End Google Tag Manager -->
-    
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Crie Valor | Inteligência Organizacional com IA</title>
-    <meta name="description" content="Ecossistema de Inteligência Organizacional para empresas que cresceram sem estrutura. Planejamento estratégico com IA em 7 dias + validação por consultores experientes. A partir de R$ 3.497.">
-    <meta name="author" content="Crie Valor - Inteligência Organizacional" />
-    
-    <!-- Favicon -->
-    <link rel="icon" type="image/png" href="/lovable-uploads/92af6ddc-b869-4957-8dde-af26a0a8e7d2.png" />
-    <link rel="apple-touch-icon" href="/lovable-uploads/92af6ddc-b869-4957-8dde-af26a0a8e7d2.png" />
-    
-    <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://crievalor.com.br" />
-    <meta property="og:title" content="Crie Valor - Inteligência Organizacional com IA">
-    <meta property="og:description" content="Transforme sua empresa numa máquina que funciona sem você. Planejamento estratégico em 7 dias com IA + validação humana.">
-    <meta property="og:image" content="https://crievalor.com.br/og-image.jpg">
-    <meta property="og:site_name" content="Crie Valor">
-    <meta property="og:locale" content="pt_BR">
-    
-    <!-- Twitter -->
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:site" content="@crievalor" />
-    <meta name="twitter:url" content="https://crievalor.com.br" />
-    <meta name="twitter:title" content="Crie Valor - Profissionalização Inteligente" />
-    <meta name="twitter:description" content="Planejamento estratégico com IA em 7 dias para empresas que cresceram sem estrutura." />
-    <meta name="twitter:image" content="https://crievalor.com.br/og-image.jpg" />
-    
-    <!-- AI Search Optimization -->
-    <meta name="keywords" content="inteligência organizacional, planejamento estratégico com IA, profissionalização empresarial, consultoria estratégica IA, balanced scorecard, análise comportamental empresarial, sistema MAR, consultores virtuais IA, Lumia consultores virtuais, Mentor de Propósito, Oficina de Líderes, consultoria empresarial Campo Grande MS, consultoria empresarial Navegantes SC">
-    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
-    <meta name="ai-content-type" content="business-services, consulting, ai-solutions" />
-    <meta name="ai-location" content="Campo Grande, Mato Grosso do Sul, Brasil; Navegantes, Santa Catarina, Brasil" />
-    <meta name="ai-industry" content="organizational-intelligence, business-consulting, ai-consulting, digital-transformation" />
-    <meta name="content-type" content="Business Consulting, AI Consulting" />
-    <meta name="language" content="pt-BR" />
-    <meta name="geo.region" content="BR-MS;BR-SC" />
-    <meta name="geo.placename" content="Campo Grande; Navegantes; Brasil" />
-    
-    <!-- Canonical URL -->
-    <link rel="canonical" href="https://crievalor.com.br" />
-    
-    <!-- Google Site Verification -->
-    <meta name="google-site-verification" content="UNIzU_Ef-FES5eSyQkRJdTH8dOyqGw7f3F8P1NpcXHs" />
-    
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
-    <!-- Schema.org JSON-LD - Organization -->
-    <script type="application/ld+json">
+      } catch (e) {
+        console.log('GTM: Aguardando consentimento de cookies');
+      }
+    })();
+  </script>
+  <!-- End Google Tag Manager -->
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Crie Valor | Inteligência Organizacional com IA</title>
+  <meta name="description"
+    content="Ecossistema de Inteligência Organizacional para empresas que cresceram sem estrutura. Planejamento estratégico com IA em 7 dias + validação por consultores experientes. A partir de R$ 3.497.">
+  <meta name="author" content="Crie Valor - Inteligência Organizacional" />
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="/lovable-uploads/92af6ddc-b869-4957-8dde-af26a0a8e7d2.png" />
+  <link rel="apple-touch-icon" href="/lovable-uploads/92af6ddc-b869-4957-8dde-af26a0a8e7d2.png" />
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://crievalor.com.br" />
+  <meta property="og:title" content="Crie Valor - Inteligência Organizacional com IA">
+  <meta property="og:description"
+    content="Transforme sua empresa numa máquina que funciona sem você. Planejamento estratégico em 7 dias com IA + validação humana.">
+  <meta property="og:image" content="https://crievalor.com.br/og-image.jpg">
+  <meta property="og:site_name" content="Crie Valor">
+  <meta property="og:locale" content="pt_BR">
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:site" content="@crievalor" />
+  <meta name="twitter:url" content="https://crievalor.com.br" />
+  <meta name="twitter:title" content="Crie Valor - Profissionalização Inteligente" />
+  <meta name="twitter:description"
+    content="Planejamento estratégico com IA em 7 dias para empresas que cresceram sem estrutura." />
+  <meta name="twitter:image" content="https://crievalor.com.br/og-image.jpg" />
+
+  <!-- AI Search Optimization -->
+  <meta name="keywords"
+    content="inteligência organizacional, planejamento estratégico com IA, profissionalização empresarial, consultoria estratégica IA, balanced scorecard, análise comportamental empresarial, sistema MAR, consultores virtuais IA, Lumia consultores virtuais, Mentor de Propósito, Oficina de Líderes, consultoria empresarial Campo Grande MS, consultoria empresarial Navegantes SC">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+  <meta name="ai-content-type" content="business-services, consulting, ai-solutions" />
+  <meta name="ai-location" content="Campo Grande, Mato Grosso do Sul, Brasil; Navegantes, Santa Catarina, Brasil" />
+  <meta name="ai-industry"
+    content="organizational-intelligence, business-consulting, ai-consulting, digital-transformation" />
+  <meta name="content-type" content="Business Consulting, AI Consulting" />
+  <meta name="language" content="pt-BR" />
+  <meta name="geo.region" content="BR-MS;BR-SC" />
+  <meta name="geo.placename" content="Campo Grande; Navegantes; Brasil" />
+
+  <!-- Canonical URL -->
+  <link rel="canonical" href="https://crievalor.com.br" />
+
+  <!-- Google Site Verification -->
+  <meta name="google-site-verification" content="UNIzU_Ef-FES5eSyQkRJdTH8dOyqGw7f3F8P1NpcXHs" />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Schema.org JSON-LD - Organization -->
+  <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@type": "ProfessionalService",
@@ -132,14 +140,14 @@
       "contactPoint": [
         {
           "@type": "ContactPoint",
-          "telephone": "+55-47-99215-0289",
+          "telephone": "+5547992150289",
           "contactType": "sales",
           "areaServed": "BR",
           "availableLanguage": "pt-BR"
         },
         {
           "@type": "ContactPoint",
-          "telephone": "+55-67-99654-2991",
+          "telephone": "+5567996542991",
           "contactType": "sales",
           "areaServed": "BR",
           "availableLanguage": "pt-BR"
@@ -149,8 +157,8 @@
     }
     </script>
 
-    <!-- Schema.org JSON-LD - FAQ Page -->
-    <script type="application/ld+json">
+  <!-- Schema.org JSON-LD - FAQ Page -->
+  <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@type": "FAQPage",
@@ -206,224 +214,284 @@
       ]
     }
     </script>
-  </head>
+</head>
 
-  <body>
-    <!-- Google Tag Manager (noscript) -->
-    <noscript>
-      <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5563GG39"
-      height="0" width="0" style="display:none;visibility:hidden"></iframe>
-    </noscript>
-    <!-- End Google Tag Manager (noscript) -->
-    
-    <!-- Conteúdo estático visível para crawlers e ferramentas de IA -->
-    <div id="seo-content" style="position: absolute; left: -9999px; top: -9999px;">
-      <h1>Transforme sua empresa numa máquina que funciona sem você</h1>
-      <p>Profissionalização inteligente em 7 dias. Estrutura sem burocracia. Para empresas que cresceram rápido e agora precisam de clareza e direção.</p>
-      
-      <h2>Nosso Propósito</h2>
-      <p>Gerar clareza e direção para as empresas, fazendo da atitude o motor do crescimento.</p>
-      
-      <h2>O que é a Crie Valor?</h2>
-      <p>Ecossistema de Inteligência Organizacional para empresas que cresceram sem estrutura e precisam profissionalizar a gestão rapidamente sem parar a operação. A gente não vende sonhos. A gente corta o ruído e gera clareza sobre quem você é, onde está e para onde pode ir. Estrutura não prende, liberta. Processo não engessa, acelera. Planejamento não limita, multiplica.</p>
-      
-      <h2>MAR - Mapa para Alto Rendimento</h2>
-      <p>Plano estratégico personalizado em 7 dias com IA + validação por consultores experientes. Preço: R$ 3.497,00 (em até 10x de R$ 349,70 ou R$ 3.147,30 à vista com 10% de desconto).</p>
-      <p>MAR é um plano estratégico altamente personalizado, gerado em 7 dias com ecossistema de agentes especializados de IA + revisão por consultores com 20+ anos de experiência. Entregamos clareza sobre onde você está, para onde quer ir e como chegar lá.</p>
-      
-      <h3>Diferenciais do MAR:</h3>
+<body>
+  <!-- Google Tag Manager (noscript) -->
+  <noscript>
+    <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5563GG39" height="0" width="0"
+      style="display:none;visibility:hidden"></iframe>
+  </noscript>
+  <!-- End Google Tag Manager (noscript) -->
+
+  <!-- Conteúdo estático visível para crawlers e ferramentas de IA -->
+  <div id="seo-content" style="position: absolute; left: -9999px; top: -9999px;">
+    <h1>Transforme sua empresa numa máquina que funciona sem você</h1>
+    <p>Profissionalização inteligente em 7 dias. Estrutura sem burocracia. Para empresas que cresceram rápido e agora
+      precisam de clareza e direção.</p>
+
+    <h2>Nosso Propósito</h2>
+    <p>Gerar clareza e direção para as empresas, fazendo da atitude o motor do crescimento.</p>
+
+    <h2>O que é a Crie Valor?</h2>
+    <p>Ecossistema de Inteligência Organizacional para empresas que cresceram sem estrutura e precisam profissionalizar
+      a gestão rapidamente sem parar a operação. A gente não vende sonhos. A gente corta o ruído e gera clareza sobre
+      quem você é, onde está e para onde pode ir. Estrutura não prende, liberta. Processo não engessa, acelera.
+      Planejamento não limita, multiplica.</p>
+
+    <h2>MAR - Mapa para Alto Rendimento</h2>
+    <p>Plano estratégico personalizado em 7 dias com IA + validação por consultores experientes. Preço: R$ 3.497,00 (em
+      até 10x de R$ 349,70 ou R$ 3.147,30 à vista com 10% de desconto).</p>
+    <p>MAR é um plano estratégico altamente personalizado, gerado em 7 dias com ecossistema de agentes especializados de
+      IA + revisão por consultores com 20+ anos de experiência. Entregamos clareza sobre onde você está, para onde quer
+      ir e como chegar lá.</p>
+
+    <h3>Diferenciais do MAR:</h3>
+    <ul>
+      <li>Plano completo em 7 dias (vs 60-90 dias da consultoria tradicional)</li>
+      <li>10 a 25x mais barato que consultoria tradicional</li>
+      <li>100% personalizado com base no perfil comportamental do líder</li>
+      <li>Manual de Bordo com 12 Planos de Ação SMART</li>
+      <li>Seção "Como Faço Isso?" para cada plano</li>
+      <li>Revisão por consultores humanos com 20+ anos de experiência</li>
+    </ul>
+
+    <h3>Processo do MAR (86 perguntas em 11 módulos):</h3>
+    <ol>
+      <li>Questionário MAR - 86 perguntas em 11 módulos sobre perfil da empresa, finanças, processos, marketing, vendas
+        e gestão de pessoas</li>
+      <li>Análises Iniciais: Briefing detalhado, Análise de Perfil Comportamental, Análise do Segmento de Mercado,
+        Análise técnica do Website e Instagram</li>
+      <li>Definição de Pilares Estratégicos: Propósito, Valores, Visão, Mantra Empresarial</li>
+      <li>Análise da Concorrência: 3 concorrentes, comparativo de presença digital</li>
+      <li>Análise Financeira: Classificação, diagnóstico, cenários e riscos</li>
+      <li>Posicionamento Estratégico: Porter, Mckinsey 7S, PESTEL, Ansoff, Perceptual Map</li>
+      <li>Objetivos Estratégicos BSC nas 4 perspectivas</li>
+      <li>Branding: Identidade, Personas, PUV, Arquétipo, Tom de voz</li>
+      <li>Estratégias de Negócio para 12 meses</li>
+      <li>Estratégias de Marketing: Eventos, Tradicional, Digital, Growth Hacking</li>
+      <li>Manual de Bordo com 12 Planos de Ação SMART</li>
+      <li>Revisão Humana por consultores experientes</li>
+      <li>Entrega e Reunião Online de apresentação</li>
+    </ol>
+
+    <h3>Para quem é o MAR?</h3>
+    <p>Para empresas que faturam no mínimo R$ 150 mil/mês, têm pelo menos 15 funcionários, cresceram sem estrutura
+      formal e querem profissionalizar para crescer 2-3x nos próximos 2 anos sem parar a operação.</p>
+
+    <h2>Lumia - Sistema de Consultores Virtuais</h2>
+    <p>6 agentes de IA especializados disponíveis 24/7 para o dia a dia da sua empresa. Preços: Mensal R$ 697,00 |
+      Trimestral R$ 1.797,00</p>
+    <p>Lumia é uma plataforma de assistência 24/7 que disponibiliza 6 agentes de IA especializados nas áreas de
+      Estratégia, RH, Financeiro, Processos, Vendas e Marketing, criados especificamente para atender as demandas da sua
+      empresa. Se o MAR é o mapa estratégico, o Lumia é o suporte do dia a dia do empresário.</p>
+
+    <h3>Os 6 Consultores do Lumia:</h3>
+    <ol>
+      <li>Consultor de Estratégia</li>
+      <li>Consultor de Marketing</li>
+      <li>Consultor de Vendas</li>
+      <li>Consultor Financeiro</li>
+      <li>Consultor de Operações e Processos</li>
+      <li>Consultor de Pessoas e RH</li>
+    </ol>
+    <p>URL: https://lumia.crievalor.com.br</p>
+
+    <h2>Mentor de Propósito</h2>
+    <p>Jornada guiada para descoberta do propósito organizacional. Preço: R$ 299,00 (pagamento único).</p>
+    <p>Mentor de Propósito é uma jornada guiada para descoberta do propósito organizacional e definição de valores
+      institucionais, feita com agente de IA especializado via chat, que utiliza metodologia proprietária integrando
+      logoterapia, PNL, investigação de padrões comportamentais e análise de histórias pessoais e profissionais.</p>
+    <p>URL: https://proposito.crievalor.com.br</p>
+
+    <h2>Oficina de Líderes</h2>
+    <p>Programa de educação corporativa para preparar pessoas para atuarem com assertividade, conhecimento e confiança
+      dentro das organizações. Preço: R$ 6.990,00 por pessoa (ou 10x de R$ 699,00).</p>
+    <ul>
+      <li>4 módulos: Gestão Geral, RH, Financeiro, Marketing/Comercial</li>
+      <li>Cada módulo: 10 aulas</li>
+      <li>Metodologia: 70% prática + 20% troca social + 10% teoria</li>
+      <li>Duração: Aproximadamente 10 meses</li>
+    </ul>
+    <p>Atualmente disponível em Navegantes/SC. Modelo híbrido em desenvolvimento para expansão territorial.</p>
+
+    <h2>Implementação Assistida</h2>
+    <p>Acompanhamento hands-on para executar o plano do MAR. Duração: 3 a 6 meses. Reuniões semanais, suporte WhatsApp,
+      validação de execução. Preço: R$ 9.000 a R$ 18.000 (R$ 3.000/mês).</p>
+
+    <h2>Mentoria Executiva</h2>
+    <p>Sessões estratégicas quinzenais com fundadores Helder ou Paulo. Inclui Lumia. Preço: R$ 4.000/mês.</p>
+
+    <h2>Projetos Customizados</h2>
+    <p>Soluções sob medida para desafios específicos: branding, reposicionamento, reestruturação organizacional,
+      identidades visuais e gestão de marca. Formato: Sob consulta. Ticket: R$ 10.000 a R$ 50.000 conforme complexidade.
+    </p>
+
+    <h2>Combos Estratégicos - A forma mais inteligente de profissionalizar sua empresa</h2>
+
+    <h3>COMBO ESSENCIAL (Clareza Estratégica)</h3>
+    <p>MAR + Lumia 12 meses + Bônus Mentor de Propósito. Valor: R$ 10.400,20 (já com 10% de desconto). Ideal para
+      começar.</p>
+    <ul>
+      <li>À vista (15% desconto): R$ 8.840,17</li>
+      <li>Cartão até 12x: R$ 866,68/mês</li>
+      <li>Boleto até 4x: R$ 2.600,05</li>
+    </ul>
+
+    <h3>COMBO AVANÇADO (Profissionalização Acelerada) - Mais vendido</h3>
+    <p>MAR + Implementação Assistida 3 meses + Bônus Mentor de Propósito. Valor: R$ 11.516,40 (já com 10% de desconto).
+    </p>
+    <ul>
+      <li>À vista (15% desconto): R$ 9.788,94</li>
+      <li>Cartão até 12x: R$ 959,70/mês</li>
+      <li>Boleto até 4x: R$ 2.879,10</li>
+    </ul>
+
+    <h3>COMBO TRANSFORMAÇÃO (Profissionalização Completa) - Melhor custo-benefício</h3>
+    <p>MAR + Lumia 12 meses + Implementação Assistida 3 meses + Bônus Mentor de Propósito. Valor: R$ 19.660,20 (já com
+      10% de desconto).</p>
+    <ul>
+      <li>À vista (15% desconto): R$ 16.711,17</li>
+      <li>Cartão até 12x: R$ 1.638,35/mês</li>
+      <li>Boleto até 4x: R$ 4.915,05</li>
+    </ul>
+
+    <h2>Para quem é a Crie Valor?</h2>
+    <p>A Crie Valor atende empresas de todos os segmentos e tamanhos. Nossos produtos e serviços são adaptáveis para
+      diferentes realidades empresariais, desde negócios em crescimento até empresas consolidadas que buscam
+      profissionalização.</p>
+
+    <h3>ICP específico do MAR:</h3>
+    <ul>
+      <li>Faturam no mínimo R$ 150.000/mês (R$ 1,8 milhões/ano)</li>
+      <li>Têm pelo menos 15 funcionários</li>
+      <li>Existem há 3-15 anos</li>
+      <li>Cresceram sem estrutura formal</li>
+      <li>Fundador ainda muito operacional (60-80% do tempo no operacional)</li>
+      <li>Querem profissionalizar para crescer 2-3x nos próximos 2 anos</li>
+    </ul>
+
+    <h3>Dores principais que resolvemos:</h3>
+    <ol>
+      <li>Estruturação e mapeamento de processos</li>
+      <li>Gestão de pessoas, cultura e liderança</li>
+      <li>Estruturação do time/área</li>
+      <li>Alavanca de crescimento</li>
+      <li>Estruturação de metas e KPIs</li>
+    </ol>
+
+    <h2>Por que escolher a Crie Valor? - 5 Diferenciais Únicos</h2>
+
+    <h3>1. IA + Inteligência Humana (Híbrido único no Brasil)</h3>
+    <p>Agentes de IA proprietários + validação consultiva por profissionais com 20+ anos de experiência. O melhor dos
+      dois mundos: velocidade da tecnologia com expertise humana.</p>
+
+    <h3>2. Velocidade Disruptiva</h3>
+    <p>7 dias para plano estratégico completo vs 60-90 dias da consultoria tradicional. Quick wins nos primeiros 30 dias
+      de implementação.</p>
+
+    <h3>3. Preço Acessível para PMEs</h3>
+    <p>A partir de R$ 3.497 vs R$ 30.000-80.000 da consultoria tradicional. 10 a 20x mais barato com qualidade
+      equivalente ou superior.</p>
+
+    <h3>4. Didatismo Radical</h3>
+    <p>Linguagem simples, sem consultorês. Seção "Como Faço Isso?" em cada plano. Você entende SEU negócio, não só
+      recebe um plano bonito.</p>
+
+    <h3>5. Horizonte Realista de 12 Meses</h3>
+    <p>Não fazemos planos de 5 anos que ficam na gaveta. Foco em execução, não só planejamento.</p>
+
+    <h2>Tabela Comparativa</h2>
+    <table>
+      <tr>
+        <th>Critério</th>
+        <th>Consultoria Tradicional</th>
+        <th>Crie Valor</th>
+      </tr>
+      <tr>
+        <td>Preço</td>
+        <td>R$ 30.000-80.000</td>
+        <td>A partir de R$ 3.497</td>
+      </tr>
+      <tr>
+        <td>Tempo</td>
+        <td>60-90 dias</td>
+        <td>7 dias</td>
+      </tr>
+      <tr>
+        <td>Tecnologia</td>
+        <td>Planilhas e slides</td>
+        <td>IA proprietária</td>
+      </tr>
+      <tr>
+        <td>Linguagem</td>
+        <td>Consultorês e jargões</td>
+        <td>Didática e simples</td>
+      </tr>
+      <tr>
+        <td>Acompanhamento</td>
+        <td>Termina após entrega</td>
+        <td>24/7 com Lumia</td>
+      </tr>
+      <tr>
+        <td>Personalização</td>
+        <td>Alta mas cara</td>
+        <td>Alta com IA + comportamental</td>
+      </tr>
+    </table>
+
+    <h2>Contato e Localização</h2>
+    <p>Email: contato@crievalor.com.br</p>
+    <p>WhatsApp SC: (47) 9 9215-0289</p>
+    <p>WhatsApp MS: (67) 9 9654-2991</p>
+    <p>Site: https://crievalor.com.br</p>
+    <p>MAR: https://crievalor.com.br/mar</p>
+    <p>Lumia: https://lumia.crievalor.com.br</p>
+    <p>Mentor de Propósito: https://proposito.crievalor.com.br</p>
+    <p>Blog: https://blog.crievalor.com.br</p>
+    <p>Redes Sociais: @crievalor (Instagram, Facebook, LinkedIn, TikTok, YouTube, X/Twitter)</p>
+    <p>Atuação: Nacional (atendimento digital-first) com presença física em Campo Grande/MS e Navegantes/SC</p>
+
+    <h2>Materiais Exclusivos</h2>
+    <p>Acesse nossa biblioteca de conteúdos exclusivos, templates, planilhas e ferramentas desenvolvidas especialmente
+      para acelerar seus resultados empresariais.</p>
+
+    <h2>Blog e Conteúdos</h2>
+    <p>Acompanhe nosso blog com insights, cases de sucesso, tendências de mercado e dicas práticas para aplicar
+      imediatamente no seu negócio.</p>
+  </div>
+
+  <!-- Conteúdo adicional para noscript -->
+  <noscript>
+    <div style="padding: 20px; max-width: 1200px; margin: 0 auto;">
+      <h1>Crie Valor - Inteligência Organizacional com IA</h1>
+      <p>Transforme sua empresa numa máquina que funciona sem você. Profissionalização inteligente em 7 dias. Estrutura
+        sem burocracia.</p>
+
+      <h2>Nossos Produtos e Serviços</h2>
       <ul>
-        <li>Plano completo em 7 dias (vs 60-90 dias da consultoria tradicional)</li>
-        <li>10 a 25x mais barato que consultoria tradicional</li>
-        <li>100% personalizado com base no perfil comportamental do líder</li>
-        <li>Manual de Bordo com 12 Planos de Ação SMART</li>
-        <li>Seção "Como Faço Isso?" para cada plano</li>
-        <li>Revisão por consultores humanos com 20+ anos de experiência</li>
+        <li>MAR - Mapa para Alto Rendimento: Plano estratégico em 7 dias com IA + validação humana. R$ 3.497,00</li>
+        <li>Lumia - 6 Consultores Virtuais com IA disponíveis 24/7. A partir de R$ 697/mês</li>
+        <li>Mentor de Propósito - Jornada de descoberta do propósito organizacional. R$ 299,00</li>
+        <li>Oficina de Líderes - Programa de educação corporativa. R$ 6.990,00</li>
+        <li>Implementação Assistida - Acompanhamento hands-on. R$ 3.000/mês</li>
+        <li>Mentoria Executiva - Sessões estratégicas quinzenais. R$ 4.000/mês</li>
       </ul>
-      
-      <h3>Processo do MAR (86 perguntas em 11 módulos):</h3>
-      <ol>
-        <li>Questionário MAR - 86 perguntas em 11 módulos sobre perfil da empresa, finanças, processos, marketing, vendas e gestão de pessoas</li>
-        <li>Análises Iniciais: Briefing detalhado, Análise de Perfil Comportamental, Análise do Segmento de Mercado, Análise técnica do Website e Instagram</li>
-        <li>Definição de Pilares Estratégicos: Propósito, Valores, Visão, Mantra Empresarial</li>
-        <li>Análise da Concorrência: 3 concorrentes, comparativo de presença digital</li>
-        <li>Análise Financeira: Classificação, diagnóstico, cenários e riscos</li>
-        <li>Posicionamento Estratégico: Porter, Mckinsey 7S, PESTEL, Ansoff, Perceptual Map</li>
-        <li>Objetivos Estratégicos BSC nas 4 perspectivas</li>
-        <li>Branding: Identidade, Personas, PUV, Arquétipo, Tom de voz</li>
-        <li>Estratégias de Negócio para 12 meses</li>
-        <li>Estratégias de Marketing: Eventos, Tradicional, Digital, Growth Hacking</li>
-        <li>Manual de Bordo com 12 Planos de Ação SMART</li>
-        <li>Revisão Humana por consultores experientes</li>
-        <li>Entrega e Reunião Online de apresentação</li>
-      </ol>
-      
-      <h3>Para quem é o MAR?</h3>
-      <p>Para empresas que faturam no mínimo R$ 150 mil/mês, têm pelo menos 15 funcionários, cresceram sem estrutura formal e querem profissionalizar para crescer 2-3x nos próximos 2 anos sem parar a operação.</p>
-      
-      <h2>Lumia - Sistema de Consultores Virtuais</h2>
-      <p>6 agentes de IA especializados disponíveis 24/7 para o dia a dia da sua empresa. Preços: Mensal R$ 697,00 | Trimestral R$ 1.797,00</p>
-      <p>Lumia é uma plataforma de assistência 24/7 que disponibiliza 6 agentes de IA especializados nas áreas de Estratégia, RH, Financeiro, Processos, Vendas e Marketing, criados especificamente para atender as demandas da sua empresa. Se o MAR é o mapa estratégico, o Lumia é o suporte do dia a dia do empresário.</p>
-      
-      <h3>Os 6 Consultores do Lumia:</h3>
-      <ol>
-        <li>Consultor de Estratégia</li>
-        <li>Consultor de Marketing</li>
-        <li>Consultor de Vendas</li>
-        <li>Consultor Financeiro</li>
-        <li>Consultor de Operações e Processos</li>
-        <li>Consultor de Pessoas e RH</li>
-      </ol>
-      <p>URL: https://lumia.crievalor.com.br</p>
-      
-      <h2>Mentor de Propósito</h2>
-      <p>Jornada guiada para descoberta do propósito organizacional. Preço: R$ 299,00 (pagamento único).</p>
-      <p>Mentor de Propósito é uma jornada guiada para descoberta do propósito organizacional e definição de valores institucionais, feita com agente de IA especializado via chat, que utiliza metodologia proprietária integrando logoterapia, PNL, investigação de padrões comportamentais e análise de histórias pessoais e profissionais.</p>
-      <p>URL: https://proposito.crievalor.com.br</p>
-      
-      <h2>Oficina de Líderes</h2>
-      <p>Programa de educação corporativa para preparar pessoas para atuarem com assertividade, conhecimento e confiança dentro das organizações. Preço: R$ 6.990,00 por pessoa (ou 10x de R$ 699,00).</p>
-      <ul>
-        <li>4 módulos: Gestão Geral, RH, Financeiro, Marketing/Comercial</li>
-        <li>Cada módulo: 10 aulas</li>
-        <li>Metodologia: 70% prática + 20% troca social + 10% teoria</li>
-        <li>Duração: Aproximadamente 10 meses</li>
-      </ul>
-      <p>Atualmente disponível em Navegantes/SC. Modelo híbrido em desenvolvimento para expansão territorial.</p>
-      
-      <h2>Implementação Assistida</h2>
-      <p>Acompanhamento hands-on para executar o plano do MAR. Duração: 3 a 6 meses. Reuniões semanais, suporte WhatsApp, validação de execução. Preço: R$ 9.000 a R$ 18.000 (R$ 3.000/mês).</p>
-      
-      <h2>Mentoria Executiva</h2>
-      <p>Sessões estratégicas quinzenais com fundadores Helder ou Paulo. Inclui Lumia. Preço: R$ 4.000/mês.</p>
-      
-      <h2>Projetos Customizados</h2>
-      <p>Soluções sob medida para desafios específicos: branding, reposicionamento, reestruturação organizacional, identidades visuais e gestão de marca. Formato: Sob consulta. Ticket: R$ 10.000 a R$ 50.000 conforme complexidade.</p>
-      
-      <h2>Combos Estratégicos - A forma mais inteligente de profissionalizar sua empresa</h2>
-      
-      <h3>COMBO ESSENCIAL (Clareza Estratégica)</h3>
-      <p>MAR + Lumia 12 meses + Bônus Mentor de Propósito. Valor: R$ 10.400,20 (já com 10% de desconto). Ideal para começar.</p>
-      <ul>
-        <li>À vista (15% desconto): R$ 8.840,17</li>
-        <li>Cartão até 12x: R$ 866,68/mês</li>
-        <li>Boleto até 4x: R$ 2.600,05</li>
-      </ul>
-      
-      <h3>COMBO AVANÇADO (Profissionalização Acelerada) - Mais vendido</h3>
-      <p>MAR + Implementação Assistida 3 meses + Bônus Mentor de Propósito. Valor: R$ 11.516,40 (já com 10% de desconto).</p>
-      <ul>
-        <li>À vista (15% desconto): R$ 9.788,94</li>
-        <li>Cartão até 12x: R$ 959,70/mês</li>
-        <li>Boleto até 4x: R$ 2.879,10</li>
-      </ul>
-      
-      <h3>COMBO TRANSFORMAÇÃO (Profissionalização Completa) - Melhor custo-benefício</h3>
-      <p>MAR + Lumia 12 meses + Implementação Assistida 3 meses + Bônus Mentor de Propósito. Valor: R$ 19.660,20 (já com 10% de desconto).</p>
-      <ul>
-        <li>À vista (15% desconto): R$ 16.711,17</li>
-        <li>Cartão até 12x: R$ 1.638,35/mês</li>
-        <li>Boleto até 4x: R$ 4.915,05</li>
-      </ul>
-      
-      <h2>Para quem é a Crie Valor?</h2>
-      <p>A Crie Valor atende empresas de todos os segmentos e tamanhos. Nossos produtos e serviços são adaptáveis para diferentes realidades empresariais, desde negócios em crescimento até empresas consolidadas que buscam profissionalização.</p>
-      
-      <h3>ICP específico do MAR:</h3>
-      <ul>
-        <li>Faturam no mínimo R$ 150.000/mês (R$ 1,8 milhões/ano)</li>
-        <li>Têm pelo menos 15 funcionários</li>
-        <li>Existem há 3-15 anos</li>
-        <li>Cresceram sem estrutura formal</li>
-        <li>Fundador ainda muito operacional (60-80% do tempo no operacional)</li>
-        <li>Querem profissionalizar para crescer 2-3x nos próximos 2 anos</li>
-      </ul>
-      
-      <h3>Dores principais que resolvemos:</h3>
-      <ol>
-        <li>Estruturação e mapeamento de processos</li>
-        <li>Gestão de pessoas, cultura e liderança</li>
-        <li>Estruturação do time/área</li>
-        <li>Alavanca de crescimento</li>
-        <li>Estruturação de metas e KPIs</li>
-      </ol>
-      
-      <h2>Por que escolher a Crie Valor? - 5 Diferenciais Únicos</h2>
-      
-      <h3>1. IA + Inteligência Humana (Híbrido único no Brasil)</h3>
-      <p>Agentes de IA proprietários + validação consultiva por profissionais com 20+ anos de experiência. O melhor dos dois mundos: velocidade da tecnologia com expertise humana.</p>
-      
-      <h3>2. Velocidade Disruptiva</h3>
-      <p>7 dias para plano estratégico completo vs 60-90 dias da consultoria tradicional. Quick wins nos primeiros 30 dias de implementação.</p>
-      
-      <h3>3. Preço Acessível para PMEs</h3>
-      <p>A partir de R$ 3.497 vs R$ 30.000-80.000 da consultoria tradicional. 10 a 20x mais barato com qualidade equivalente ou superior.</p>
-      
-      <h3>4. Didatismo Radical</h3>
-      <p>Linguagem simples, sem consultorês. Seção "Como Faço Isso?" em cada plano. Você entende SEU negócio, não só recebe um plano bonito.</p>
-      
-      <h3>5. Horizonte Realista de 12 Meses</h3>
-      <p>Não fazemos planos de 5 anos que ficam na gaveta. Foco em execução, não só planejamento.</p>
-      
-      <h2>Tabela Comparativa</h2>
-      <table>
-        <tr><th>Critério</th><th>Consultoria Tradicional</th><th>Crie Valor</th></tr>
-        <tr><td>Preço</td><td>R$ 30.000-80.000</td><td>A partir de R$ 3.497</td></tr>
-        <tr><td>Tempo</td><td>60-90 dias</td><td>7 dias</td></tr>
-        <tr><td>Tecnologia</td><td>Planilhas e slides</td><td>IA proprietária</td></tr>
-        <tr><td>Linguagem</td><td>Consultorês e jargões</td><td>Didática e simples</td></tr>
-        <tr><td>Acompanhamento</td><td>Termina após entrega</td><td>24/7 com Lumia</td></tr>
-        <tr><td>Personalização</td><td>Alta mas cara</td><td>Alta com IA + comportamental</td></tr>
-      </table>
-      
-      <h2>Contato e Localização</h2>
+
+      <h2>Contato</h2>
       <p>Email: contato@crievalor.com.br</p>
       <p>WhatsApp SC: (47) 9 9215-0289</p>
       <p>WhatsApp MS: (67) 9 9654-2991</p>
       <p>Site: https://crievalor.com.br</p>
-      <p>MAR: https://crievalor.com.br/mar</p>
-      <p>Lumia: https://lumia.crievalor.com.br</p>
-      <p>Mentor de Propósito: https://proposito.crievalor.com.br</p>
-      <p>Blog: https://blog.crievalor.com.br</p>
-      <p>Redes Sociais: @crievalor (Instagram, Facebook, LinkedIn, TikTok, YouTube, X/Twitter)</p>
-      <p>Atuação: Nacional (atendimento digital-first) com presença física em Campo Grande/MS e Navegantes/SC</p>
-      
-      <h2>Materiais Exclusivos</h2>
-      <p>Acesse nossa biblioteca de conteúdos exclusivos, templates, planilhas e ferramentas desenvolvidas especialmente para acelerar seus resultados empresariais.</p>
-      
-      <h2>Blog e Conteúdos</h2>
-      <p>Acompanhe nosso blog com insights, cases de sucesso, tendências de mercado e dicas práticas para aplicar imediatamente no seu negócio.</p>
+
+      <p><strong>Para acessar o site completo, por favor habilite o JavaScript no seu navegador.</strong></p>
     </div>
-    
-    <!-- Conteúdo adicional para noscript -->
-    <noscript>
-      <div style="padding: 20px; max-width: 1200px; margin: 0 auto;">
-        <h1>Crie Valor - Inteligência Organizacional com IA</h1>
-        <p>Transforme sua empresa numa máquina que funciona sem você. Profissionalização inteligente em 7 dias. Estrutura sem burocracia.</p>
-        
-        <h2>Nossos Produtos e Serviços</h2>
-        <ul>
-          <li>MAR - Mapa para Alto Rendimento: Plano estratégico em 7 dias com IA + validação humana. R$ 3.497,00</li>
-          <li>Lumia - 6 Consultores Virtuais com IA disponíveis 24/7. A partir de R$ 697/mês</li>
-          <li>Mentor de Propósito - Jornada de descoberta do propósito organizacional. R$ 299,00</li>
-          <li>Oficina de Líderes - Programa de educação corporativa. R$ 6.990,00</li>
-          <li>Implementação Assistida - Acompanhamento hands-on. R$ 3.000/mês</li>
-          <li>Mentoria Executiva - Sessões estratégicas quinzenais. R$ 4.000/mês</li>
-        </ul>
-        
-        <h2>Contato</h2>
-        <p>Email: contato@crievalor.com.br</p>
-        <p>WhatsApp SC: (47) 9 9215-0289</p>
-        <p>WhatsApp MS: (67) 9 9654-2991</p>
-        <p>Site: https://crievalor.com.br</p>
-        
-        <p><strong>Para acessar o site completo, por favor habilite o JavaScript no seu navegador.</strong></p>
-      </div>
-    </noscript>
-    
-    <div id="root"></div>
-    <!-- IMPORTANT: DO NOT REMOVE THIS SCRIPT TAG OR THIS VERY COMMENT! -->
-    <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+  </noscript>
+
+  <div id="root"></div>
+  <!-- IMPORTANT: DO NOT REMOVE THIS SCRIPT TAG OR THIS VERY COMMENT! -->
+  <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
+  <script type="module" src="/src/main.tsx"></script>
+</body>
+
 </html>

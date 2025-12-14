@@ -52,7 +52,7 @@ const Mar = () => {
         name="MAR - Clareza para decidir. Direção para crescer."
         description="Descubra como o MAR pode transformar a estratégia da sua empresa com planejamento estratégico baseado em inteligência artificial."
         thumbnailUrl="https://crievalor.com.br/lovable-uploads/mar-logo.png"
-        uploadDate="2024-01-01"
+        uploadDate="2024-01-01T08:00:00-03:00"
         duration="PT3M8S"
         embedUrl="https://www.youtube.com/embed/Y22PDZ7-zhY"
       />
@@ -64,34 +64,6 @@ const Mar = () => {
         ]}
       />
 
-      <FAQSchema
-        questions={[
-          {
-            question: "O que exatamente é o MAR?",
-            answer: "O MAR (Mapa para Alto Rendimento) é um sistema de planejamento estratégico com inteligência artificial que cria um roadmap personalizado para acelerar o crescimento empresarial através de análises preditivas com IA e planos de ação customizados baseados em dados."
-          },
-          {
-            question: "Como a inteligência artificial é usada no MAR?",
-            answer: "O MAR utiliza IA para análise preditiva de mercado, identificação de padrões de crescimento, análise de dados empresariais e geração de insights estratégicos. A inteligência artificial processa grandes volumes de informações para criar recomendações personalizadas e precisas."
-          },
-          {
-            question: "Quanto tempo leva para ver resultados com o MAR?",
-            answer: "Os primeiros insights e direcionamentos baseados em IA são entregues em até 30 dias. Resultados mensuráveis começam a aparecer entre 60-90 dias, dependendo da implementação das estratégias recomendadas pelo sistema de inteligência organizacional."
-          },
-          {
-            question: "O MAR funciona para qualquer tipo de empresa?",
-            answer: "Sim, nosso sistema de IA é adaptável para empresas de todos os portes e segmentos. A inteligência artificial personaliza as análises e estratégias conforme o perfil, mercado de atuação e objetivos específicos de cada negócio, seja em Campo Grande/MS, Navegantes/SC ou qualquer lugar do Brasil."
-          },
-          {
-            question: "Qual é a diferença do MAR para outras consultorias?",
-            answer: "O MAR utiliza inteligência artificial para análises mais profundas e precisas, oferecendo insights baseados em dados que vão além da consultoria tradicional. Combinamos expertise humana com IA para soluções práticas, implementáveis e com resultados mensuráveis comprovados."
-          },
-          {
-            question: "Posso parcelar o investimento no MAR?",
-            answer: "Sim, oferecemos opções de parcelamento em até 10x de R$ 349,70 no cartão de crédito. Para pagamento à vista, há desconto de 10%, totalizando R$ 3.147,30. O investimento pode ser dividido para facilitar o acesso ao sistema de planejamento estratégico com IA."
-          }
-        ]}
-      />
 
       <Header />
 
