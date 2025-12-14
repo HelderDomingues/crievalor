@@ -30,7 +30,7 @@ export const ProductSchema: React.FC<ProductSchemaProps> = ({
 }) => {
   const schemaData: any = {
     "@context": "https://schema.org",
-    "@type": isDigital ? "DigitalProduct" : "Product",
+    "@type": isDigital ? "Service" : "Product",
     "name": name,
     "description": description,
     "brand": {
