@@ -16,6 +16,7 @@ interface ProductSchemaProps {
     ratingValue: number;
     reviewCount: number;
   };
+  isDigital?: boolean;
 }
 
 export const ProductSchema: React.FC<ProductSchemaProps> = ({
@@ -24,11 +25,12 @@ export const ProductSchema: React.FC<ProductSchemaProps> = ({
   image,
   brand,
   offers,
-  aggregateRating
+  aggregateRating,
+  isDigital = false
 }) => {
   const schemaData: any = {
     "@context": "https://schema.org",
-    "@type": "Product",
+    "@type": isDigital ? "DigitalProduct" : "Product",
     "name": name,
     "description": description,
     "brand": {
@@ -43,6 +45,12 @@ export const ProductSchema: React.FC<ProductSchemaProps> = ({
       "url": offers.url
     }
   };
+
+  // For digital products, add delivery method
+  if (isDigital) {
+    schemaData.offers.deliveryMethod = "https://schema.org/OnlineOnly";
+    schemaData.category = "Digital Service";
+  }
 
   if (image) {
     schemaData.image = image;

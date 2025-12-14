@@ -49,6 +49,7 @@ const Mar = () => {
           ratingValue: 4.9,
           reviewCount: 142
         }}
+        isDigital={true}
       />
 
       <VideoSchema
