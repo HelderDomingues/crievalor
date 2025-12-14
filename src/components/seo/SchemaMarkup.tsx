@@ -195,36 +195,6 @@ export const LocalBusinessSchema: React.FC<LocalBusinessSchemaProps> = ({
       ...(review.datePublished && { "datePublished": review.datePublished })
     }));
   }
-  logo,
-    priceRange,
-    geo
-}) => {
-  const schemaData = {
-    "@context": "https://schema.org",
-    "@type": "LocalBusiness",
-    "name": name,
-    "address": {
-      "@type": "PostalAddress",
-      "streetAddress": address.streetAddress,
-      "addressLocality": address.addressLocality,
-      "addressRegion": address.addressRegion,
-      "postalCode": address.postalCode,
-      "addressCountry": address.addressCountry
-    },
-    "telephone": telephone,
-    "email": email,
-    "url": url,
-    "logo": logo,
-    "priceRange": priceRange
-  };
-
-  if (geo) {
-    schemaData["geo"] = {
-      "@type": "GeoCoordinates",
-      "latitude": geo.latitude,
-      "longitude": geo.longitude
-    };
-  }
 
   return (
     <Helmet>
