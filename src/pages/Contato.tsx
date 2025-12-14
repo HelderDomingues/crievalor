@@ -41,8 +41,8 @@ const Contato = () => {
         <meta name="twitter:image" content="https://crievalor.com.br/og-image.jpg" />
         <link rel="canonical" href="https://crievalor.com.br/contato" />
       </Helmet>
-      
-      <LocalBusinessSchema 
+
+      <LocalBusinessSchema
         name="Crie Valor - Inteligência Organizacional"
         address={{
           streetAddress: "Rua Bolívia, 59, Gravatá",
@@ -60,22 +60,38 @@ const Contato = () => {
           latitude: -26.8977,
           longitude: -48.6519
         }}
+        aggregateRating={{
+          ratingValue: 5.0,
+          reviewCount: 10
+        }}
+        reviews={[
+          {
+            author: "Jefferson Mareco",
+            reviewRating: 5,
+            reviewBody: "Atendimento excelente, criatividade aliada com ética."
+          },
+          {
+            author: "Thiago Monteiro Yatros",
+            reviewRating: 5,
+            reviewBody: "Excelente atendimento!"
+          }
+        ]}
       />
-      
-      <BreadcrumbSchema 
+
+      <BreadcrumbSchema
         items={[
           { name: "Home", url: "https://crievalor.com.br" },
           { name: "Contato", url: "https://crievalor.com.br/contato" }
         ]}
       />
-      
+
       <Header />
-      
+
       <main className="flex-grow pt-16">
         <h1 className="sr-only">Contato - Crie Valor Estratégia</h1>
-        
+
         {/* Hero Section */}
-        <ContactHeroSection 
+        <ContactHeroSection
           contactName={contactName}
           setContactName={setContactName}
           contactEmail={contactEmail}
@@ -88,17 +104,17 @@ const Contato = () => {
           setContactPhone={setContactPhone}
           handleContactSubmit={handleContactSubmit}
         />
-        
+
         {/* Map Section */}
         <GoogleMapSection />
-        
+
         {/* Chatbot Section */}
         <ChatbotSection />
-        
+
         {/* Contact Form Section */}
         <ContactSection />
       </main>
-      
+
       <Footer />
     </div>
   );

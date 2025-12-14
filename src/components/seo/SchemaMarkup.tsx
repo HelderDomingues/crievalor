@@ -2,11 +2,24 @@
 import React from "react";
 import { Helmet } from "react-helmet-async";
 
+
+interface Review {
+  author: string;
+  datePublished?: string;
+  reviewBody: string;
+  reviewRating: number;
+}
+
 interface OrganizationSchemaProps {
   url: string;
   logo: string;
   name?: string;
   description?: string;
+  aggregateRating?: {
+    ratingValue: number;
+    reviewCount: number;
+  };
+  reviews?: Review[];
 }
 
 interface LocalBusinessSchemaProps {
@@ -27,6 +40,11 @@ interface LocalBusinessSchemaProps {
     latitude: number;
     longitude: number;
   };
+  aggregateRating?: {
+    ratingValue: number;
+    reviewCount: number;
+  };
+  reviews?: Review[];
 }
 
 interface ServiceSchemaProps {
@@ -56,6 +74,7 @@ interface ServiceSchemaProps {
 interface FAQItemProps {
   question: string;
   answer: string;
+  // ... other props
 }
 
 interface FAQSchemaProps {
@@ -66,9 +85,11 @@ export const OrganizationSchema: React.FC<OrganizationSchemaProps> = ({
   url,
   logo,
   name = "Crie Valor - Inteligência Organizacional",
-  description = "Sistema de Inteligência Organizacional que transforma empresas através de produtos proprietários: MAR, Lumia (6 consultores virtuais), Mentor de Propósito e Oficina de Líderes."
+  description = "Sistema de Inteligência Organizacional que transforma empresas através de produtos proprietários: MAR, Lumia (6 consultores virtuais), Mentor de Propósito e Oficina de Líderes.",
+  aggregateRating,
+  reviews
 }) => {
-  const schemaData = {
+  const schemaData: any = {
     "@context": "https://schema.org",
     "@type": "Organization",
     "name": name,
@@ -82,6 +103,30 @@ export const OrganizationSchema: React.FC<OrganizationSchemaProps> = ({
       "https://blog.crievalor.com.br"
     ]
   };
+
+  if (aggregateRating) {
+    schemaData.aggregateRating = {
+      "@type": "AggregateRating",
+      "ratingValue": aggregateRating.ratingValue,
+      "reviewCount": aggregateRating.reviewCount
+    };
+  }
+
+  if (reviews && reviews.length > 0) {
+    schemaData.review = reviews.map(review => ({
+      "@type": "Review",
+      "author": {
+        "@type": "Person",
+        "name": review.author
+      },
+      "reviewRating": {
+        "@type": "Rating",
+        "ratingValue": review.reviewRating
+      },
+      "reviewBody": review.reviewBody,
+      ...(review.datePublished && { "datePublished": review.datePublished })
+    }));
+  }
 
   return (
     <Helmet>
@@ -100,7 +145,59 @@ export const LocalBusinessSchema: React.FC<LocalBusinessSchemaProps> = ({
   url,
   logo,
   priceRange,
-  geo
+  geo,
+  aggregateRating,
+  reviews
+}) => {
+  const schemaData: any = {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "name": name,
+    "image": logo,
+    "url": url,
+    "telephone": telephone,
+    "email": email,
+    "priceRange": priceRange,
+    "address": {
+      "@type": "PostalAddress",
+      ...address
+    }
+  };
+
+  if (geo) {
+    schemaData.geo = {
+      "@type": "GeoCoordinates",
+      "latitude": geo.latitude,
+      "longitude": geo.longitude
+    };
+  }
+
+  if (aggregateRating) {
+    schemaData.aggregateRating = {
+      "@type": "AggregateRating",
+      "ratingValue": aggregateRating.ratingValue,
+      "reviewCount": aggregateRating.reviewCount
+    };
+  }
+
+  if (reviews && reviews.length > 0) {
+    schemaData.review = reviews.map(review => ({
+      "@type": "Review",
+      "author": {
+        "@type": "Person",
+        "name": review.author
+      },
+      "reviewRating": {
+        "@type": "Rating",
+        "ratingValue": review.reviewRating
+      },
+      "reviewBody": review.reviewBody,
+      ...(review.datePublished && { "datePublished": review.datePublished })
+    }));
+  }
+  logo,
+    priceRange,
+    geo
 }) => {
   const schemaData = {
     "@context": "https://schema.org",

@@ -54,6 +54,22 @@ const Index = () => {
       <OrganizationSchema
         url="https://crievalor.com.br"
         logo="https://crievalor.com.br/lovable-uploads/d2f508b6-c101-4928-b7f7-161a378bb6e8.png"
+        aggregateRating={{
+          ratingValue: 5.0,
+          reviewCount: 10
+        }}
+        reviews={[
+          {
+            author: "Jefferson Mareco",
+            reviewRating: 5,
+            reviewBody: "Atendimento excelente, criatividade aliada com ética."
+          },
+          {
+            author: "Thiago Monteiro Yatros",
+            reviewRating: 5,
+            reviewBody: "Excelente atendimento!"
+          }
+        ]}
       />
 
       <ServiceSchema
