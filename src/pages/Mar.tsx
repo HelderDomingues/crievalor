@@ -45,10 +45,6 @@ const Mar = () => {
           availability: "https://schema.org/InStock",
           url: "https://crievalor.com.br/mar"
         }}
-        aggregateRating={{
-          ratingValue: 4.9,
-          reviewCount: 142
-        }}
         isDigital={true}
       />
 

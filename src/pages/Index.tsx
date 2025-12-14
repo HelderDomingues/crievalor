@@ -67,10 +67,6 @@ const Index = () => {
           availability: "https://schema.org/InStock",
           url: "https://crievalor.com.br/mar"
         }}
-        aggregateRating={{
-          ratingValue: 4.9,
-          reviewCount: 142
-        }}
       />
 
       <ServiceSchema
@@ -83,10 +79,6 @@ const Index = () => {
           priceCurrency: "BRL",
           availability: "https://schema.org/InStock",
           url: "https://lumia.crievalor.com.br"
-        }}
-        aggregateRating={{
-          ratingValue: 4.8,
-          reviewCount: 98
         }}
       />
 
@@ -101,10 +93,6 @@ const Index = () => {
           availability: "https://schema.org/InStock",
           url: "https://lumia.crievalor.com.br"
         }}
-        aggregateRating={{
-          ratingValue: 4.8,
-          reviewCount: 98
-        }}
       />
 
       <ServiceSchema
@@ -118,10 +106,6 @@ const Index = () => {
           availability: "https://schema.org/InStock",
           url: "https://lumia.crievalor.com.br"
         }}
-        aggregateRating={{
-          ratingValue: 4.8,
-          reviewCount: 98
-        }}
       />
 
       <ServiceSchema
@@ -134,10 +118,6 @@ const Index = () => {
           priceCurrency: "BRL",
           availability: "https://schema.org/InStock",
           url: "https://proposito.crievalor.com.br"
-        }}
-        aggregateRating={{
-          ratingValue: 5.0,
-          reviewCount: 53
         }}
       />
 
