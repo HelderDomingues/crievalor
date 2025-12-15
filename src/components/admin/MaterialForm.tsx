@@ -23,7 +23,8 @@ const formSchema = z.object({
   title: z.string().min(3, { message: "O título deve ter pelo menos 3 caracteres" }),
   description: z.string().min(10, { message: "A descrição deve ter pelo menos 10 caracteres" }),
   category: z.string().min(1, { message: "Selecione uma categoria" }),
-  plan_level: z.string().min(1, { message: "Selecione um nível de plano" }),
+  // plan_level kept as optional string to satisfy potential backend requirements but hidden from UI
+  plan_level: z.string().optional().default("subscriber"),
   file: z.any()
     .refine((file) => file?.size > 0, { message: "O arquivo é obrigatório" })
     .refine((file) => file?.size <= 10 * 1024 * 1024, { message: "O arquivo deve ter no máximo 10MB" }),
@@ -42,7 +43,7 @@ const MaterialForm: React.FC<MaterialFormProps> = ({ onMaterialAdded }) => {
       title: "",
       description: "",
       category: "",
-      plan_level: "",
+      plan_level: "subscriber",
     },
   });
 
@@ -138,7 +139,7 @@ const MaterialForm: React.FC<MaterialFormProps> = ({ onMaterialAdded }) => {
       form.reset();
       setFilePreview(null);
       setThumbnailPreview(null);
-      
+
       // Notify parent
       onMaterialAdded();
 
@@ -183,9 +184,9 @@ const MaterialForm: React.FC<MaterialFormProps> = ({ onMaterialAdded }) => {
                 <FormItem>
                   <FormLabel>Descrição</FormLabel>
                   <FormControl>
-                    <Textarea 
-                      placeholder="Digite uma descrição para o material" 
-                      {...field} 
+                    <Textarea
+                      placeholder="Digite uma descrição para o material"
+                      {...field}
                       rows={4}
                     />
                   </FormControl>
@@ -194,15 +195,15 @@ const MaterialForm: React.FC<MaterialFormProps> = ({ onMaterialAdded }) => {
               )}
             />
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 gap-6">
               <FormField
                 control={form.control}
                 name="category"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Categoria</FormLabel>
-                    <Select 
-                      onValueChange={field.onChange} 
+                    <Select
+                      onValueChange={field.onChange}
                       defaultValue={field.value}
                     >
                       <FormControl>
@@ -223,34 +224,7 @@ const MaterialForm: React.FC<MaterialFormProps> = ({ onMaterialAdded }) => {
                 )}
               />
 
-              <FormField
-                control={form.control}
-                name="plan_level"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Nível de Plano</FormLabel>
-                    <Select 
-                      onValueChange={field.onChange} 
-                      defaultValue={field.value}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Selecione o nível de plano" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="basic_plan">Básico</SelectItem>
-                        <SelectItem value="pro_plan">Profissional</SelectItem>
-                        <SelectItem value="enterprise_plan">Empresarial</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <FormDescription>
-                      Define qual assinatura mínima é necessária para acessar este material
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+
             </div>
 
             <FormField
@@ -277,8 +251,8 @@ const MaterialForm: React.FC<MaterialFormProps> = ({ onMaterialAdded }) => {
                       {filePreview && (
                         <div className="mt-4 p-2 border rounded">
                           <p className="text-sm font-medium">Prévia do arquivo:</p>
-                          <embed 
-                            src={filePreview} 
+                          <embed
+                            src={filePreview}
                             className="w-full h-32 mt-2"
                             type="application/pdf"
                           />
@@ -317,10 +291,10 @@ const MaterialForm: React.FC<MaterialFormProps> = ({ onMaterialAdded }) => {
                       {thumbnailPreview && (
                         <div className="mt-4">
                           <p className="text-sm font-medium mb-2">Prévia da imagem:</p>
-                          <img 
-                            src={thumbnailPreview} 
-                            alt="Thumbnail preview" 
-                            className="max-h-32 rounded border" 
+                          <img
+                            src={thumbnailPreview}
+                            alt="Thumbnail preview"
+                            className="max-h-32 rounded border"
                           />
                         </div>
                       )}
@@ -333,9 +307,9 @@ const MaterialForm: React.FC<MaterialFormProps> = ({ onMaterialAdded }) => {
               )}
             />
 
-            <Button 
-              type="submit" 
-              className="w-full" 
+            <Button
+              type="submit"
+              className="w-full"
               disabled={isSubmitting}
             >
               {isSubmitting ? (

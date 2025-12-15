@@ -19,7 +19,7 @@ import MainCTA from "@/components/home/MainCTA";
 import QuickCTA from "@/components/ui/quick-cta";
 import FloatingCTA from "@/components/ui/floating-cta";
 import { Helmet } from "react-helmet-async";
-import { OrganizationSchema, ServiceSchema } from "@/components/seo/SchemaMarkup";
+import { OrganizationSchema, ServiceSchema, FAQSchema } from "@/components/seo/SchemaMarkup";
 import { useScrollToTop } from "@/hooks/useScrollToTop";
 
 const Index = () => {
@@ -135,6 +135,35 @@ const Index = () => {
           availability: "https://schema.org/InStock",
           url: "https://proposito.crievalor.com.br"
         }}
+      />
+
+      <FAQSchema
+        questions={[
+          {
+            question: "Quanto tempo leva o processo do MAR?",
+            answer: "O MAR é entregue em 7 dias após o preenchimento do questionário. Depois da entrega, você tem uma reunião online com nosso consultor para apresentação e tira-dúvidas."
+          },
+          {
+            question: "O que diferencia a Crie Valor de uma consultoria tradicional?",
+            answer: "Combinamos IA proprietária com validação humana, entregamos em 7 dias (vs 60-90 dias), custamos 10-20x menos (a partir de R$ 3.497 vs R$ 30-80k) e oferecemos acompanhamento contínuo com Lumia 24/7."
+          },
+          {
+            question: "Preciso parar a operação para implementar o plano?",
+            answer: "Não. Nossa metodologia é feita para empresas que não podem parar. O MAR traz um plano realista de 12 meses que você implementa sem interromper o dia a dia."
+          },
+          {
+            question: "Como funciona a validação humana?",
+            answer: "Consultores com 20+ anos de experiência revisam todos os documentos gerados pela IA, validam análises e garantem consistência com a realidade da sua empresa e mercado."
+          },
+          {
+            question: "Minha empresa é do tamanho certo para o MAR?",
+            answer: "O MAR é ideal para empresas que faturam no mínimo R$ 150 mil/mês e têm pelo menos 15 funcionários. Se você cresceu sem estrutura e precisa profissionalizar, o MAR é para você."
+          },
+          {
+            question: "O que é a Implementação Assistida?",
+            answer: "É o acompanhamento hands-on de 3 a 6 meses para executar o plano do MAR, com reuniões semanais, suporte via WhatsApp e validação da execução. Garante que você não só tenha o plano, mas execute de verdade."
+          }
+        ]}
       />
 
       <Header />

@@ -22,8 +22,7 @@ import IdentidadeVisualOriginal from "@/pages/IdentidadeVisualOriginal";
 import PrivacyPolicy from "@/pages/PrivacyPolicy";
 import RefundPolicy from "@/pages/RefundPolicy";
 import TermsOfService from "@/pages/TermsOfService";
-import Subscription from "@/pages/Subscription";
-import Checkout from "@/pages/Checkout";
+
 import Accessibility from "@/pages/Accessibility";
 import WhatsAppDashboard from "@/pages/WhatsAppDashboard";
 import Palestra from "@/pages/Palestra";
@@ -88,14 +87,7 @@ export const router = createBrowserRouter([
     path: "/termos-de-servico",
     element: <TermsOfService />,
   },
-  {
-    path: "/subscription",
-    element: <Subscription />,
-  },
-  {
-    path: "/checkout",
-    element: <Checkout />,
-  },
+
   {
     path: "/admin-setup",
     element: <AdminSetup />,

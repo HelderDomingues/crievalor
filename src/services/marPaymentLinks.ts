@@ -19,10 +19,7 @@ interface PlanPaymentLinks {
 
 // Links estáticos de pagamento conforme fornecido nas instruções
 export const MAR_PAYMENT_LINKS: PlanPaymentLinks = {
-  basic_plan: {
-    installments: "https://www.asaas.com/c/9bgw7ub8gzruadi5", // Plano Essencial - Parcelado
-    cash: "https://www.asaas.com/c/b3goj9dh51cw78ko", // Plano Essencial - À Vista
-  },
+
   pro_plan: {
     installments: "https://www.asaas.com/c/rb9ayqo3l1y7hlym", // Plano Profissional - Parcelado
     cash: "https://www.asaas.com/c/tywf1vy9r3wcvgq1", // Plano Profissional - À Vista
@@ -49,10 +46,10 @@ export function getPaymentLink(planId: string, paymentType: PaymentType = 'insta
     console.error(`Link de pagamento não encontrado para o plano: ${planId}`);
     return '';
   }
-  
+
   // Map the expanded payment types to the basic types used in payment links
   const mappedType = paymentType === 'credit' || paymentType === 'credit_cash' ? 'installments' : 'cash';
-  
+
   return MAR_PAYMENT_LINKS[planId][mappedType];
 }
 
@@ -72,7 +69,7 @@ export function isCorporatePlan(planId: string): boolean {
  */
 export function redirectToPayment(planId: string, paymentType: PaymentType = 'installments'): void {
   const paymentLink = getPaymentLink(planId, paymentType);
-  
+
   if (paymentLink) {
     // Se for plano corporativo, abrimos o WhatsApp em uma nova janela
     if (isCorporatePlan(planId)) {

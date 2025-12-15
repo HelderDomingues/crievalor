@@ -37,7 +37,7 @@ const MaterialExclusivoPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [hasSubscription, setHasSubscription] = useState(false);
   const [activeFilter, setActiveFilter] = useState("todos");
-  const [currentPlan, setCurrentPlan] = useState<string | null>(null);
+
 
   useEffect(() => {
     if (!user) {
@@ -49,11 +49,8 @@ const MaterialExclusivoPage: React.FC = () => {
       try {
         const hasActive = await subscriptionService.hasActiveSubscription();
         setHasSubscription(hasActive);
-        
+
         if (hasActive) {
-          const subscription = await subscriptionService.getCurrentSubscription();
-          const plan = subscription ? subscriptionService.getPlanFromId(subscription.plan_id) : null;
-          setCurrentPlan(plan?.id || null);
           fetchMaterials();
         }
       } catch (error) {
@@ -69,22 +66,22 @@ const MaterialExclusivoPage: React.FC = () => {
   const fetchMaterials = async () => {
     try {
       setIsLoading(true);
-      
+
       let query = supabaseExtended
         .from('materials')
         .select('*')
         .order('created_at', { ascending: false });
-        
+
       if (activeFilter !== "todos") {
         query = query.eq('category', activeFilter);
       }
-      
+
       const { data, error } = await query;
-      
+
       if (error) {
         throw error;
       }
-      
+
       setMaterials(data || []);
     } catch (error) {
       console.error("Error fetching materials:", error);
@@ -111,18 +108,18 @@ const MaterialExclusivoPage: React.FC = () => {
         .insert([
           { material_id: materialId, user_id: user?.id }
         ]);
-        
+
       // Update the material's access count
       await supabaseExtended
         .rpc('increment_material_access_count', { material_id: materialId });
-        
+
       // Get the material details
       const { data } = await supabaseExtended
         .from('materials')
         .select('file_url')
         .eq('id', materialId)
         .single();
-        
+
       if (data && data.file_url) {
         window.open(data.file_url, '_blank');
       }
@@ -137,21 +134,8 @@ const MaterialExclusivoPage: React.FC = () => {
   };
 
   const getFilteredMaterials = () => {
-    // Filter materials by user's plan level access
-    if (!currentPlan) return [];
-    
-    const planLevels: Record<string, number> = {
-      'basic_plan': 1,
-      'pro_plan': 2,
-      'enterprise_plan': 3
-    };
-    
-    const userPlanLevel = planLevels[currentPlan] || 0;
-    
-    return materials.filter(material => {
-      const materialPlanLevel = planLevels[material.plan_level] || 0;
-      return materialPlanLevel <= userPlanLevel;
-    });
+    // Return all materials since we now have a single tier access
+    return materials;
   };
 
   if (isLoading) {
@@ -160,18 +144,16 @@ const MaterialExclusivoPage: React.FC = () => {
         <Helmet>
           <title>Material Exclusivo para Assinantes MAR | Crie Valor</title>
           <meta name="description" content="Acesse materiais exclusivos com sua assinatura MAR. Conteúdos estratégicos, templates e ferramentas para impulsionar seu negócio." />
-          <meta name="keywords" content="material exclusivo assinantes, conteúdo estratégico, templates empresariais, ferramentas gestão, recursos exclusivos mar" />
-          <link rel="canonical" href="https://crievalor.com.br/material-exclusivo" />
           <meta name="robots" content="noindex, nofollow" />
         </Helmet>
-        
-        <BreadcrumbSchema 
+
+        <BreadcrumbSchema
           items={[
             { name: "Home", url: "https://crievalor.com.br" },
             { name: "Material Exclusivo", url: "https://crievalor.com.br/material-exclusivo" }
           ]}
         />
-        
+
         <Header />
         <main className="flex-grow py-16">
           <div className="container mx-auto px-4">
@@ -236,8 +218,8 @@ const MaterialExclusivoPage: React.FC = () => {
                 Acesse conteúdos exclusivos para assinantes
               </p>
             </div>
-            <MaterialFilters 
-              activeFilter={activeFilter} 
+            <MaterialFilters
+              activeFilter={activeFilter}
               onFilterChange={handleFilterChange}
             />
           </div>

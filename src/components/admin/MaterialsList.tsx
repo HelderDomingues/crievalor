@@ -60,18 +60,7 @@ const MaterialsList: React.FC<MaterialsListProps> = ({ materials, onDelete, isLo
     }
   };
 
-  const getPlanBadge = (planLevel: string) => {
-    switch (planLevel) {
-      case "basic_plan":
-        return <Badge variant="outline" className="bg-blue-100 text-blue-800 border-blue-300">Básico</Badge>;
-      case "pro_plan":
-        return <Badge variant="outline" className="bg-purple-100 text-purple-800 border-purple-300">Profissional</Badge>;
-      case "enterprise_plan":
-        return <Badge variant="outline" className="bg-amber-100 text-amber-800 border-amber-300">Empresarial</Badge>;
-      default:
-        return <Badge variant="outline">Desconhecido</Badge>;
-    }
-  };
+
 
   const handleConfirmDelete = () => {
     if (deletingId) {
@@ -84,7 +73,7 @@ const MaterialsList: React.FC<MaterialsListProps> = ({ materials, onDelete, isLo
     setDeletingId(null);
   };
 
-  const filteredMaterials = materials.filter(material => 
+  const filteredMaterials = materials.filter(material =>
     material.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
     material.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
     getCategoryLabel(material.category).toLowerCase().includes(searchQuery.toLowerCase())
@@ -113,8 +102,8 @@ const MaterialsList: React.FC<MaterialsListProps> = ({ materials, onDelete, isLo
           <FileText className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
           <h3 className="text-lg font-medium mb-1">Nenhum material encontrado</h3>
           <p className="text-muted-foreground">
-            {searchQuery 
-              ? "Nenhum material corresponde à sua pesquisa" 
+            {searchQuery
+              ? "Nenhum material corresponde à sua pesquisa"
               : "Você ainda não adicionou nenhum material"}
           </p>
         </div>
@@ -125,7 +114,7 @@ const MaterialsList: React.FC<MaterialsListProps> = ({ materials, onDelete, isLo
               <TableRow>
                 <TableHead>Título</TableHead>
                 <TableHead>Categoria</TableHead>
-                <TableHead>Plano</TableHead>
+
                 <TableHead>Acessos</TableHead>
                 <TableHead>Data</TableHead>
                 <TableHead className="text-right">Ações</TableHead>
@@ -137,10 +126,10 @@ const MaterialsList: React.FC<MaterialsListProps> = ({ materials, onDelete, isLo
                   <TableCell className="font-medium">
                     <div className="flex items-center">
                       {material.thumbnail_url ? (
-                        <img 
-                          src={material.thumbnail_url} 
-                          alt="" 
-                          className="h-8 w-8 mr-3 rounded object-cover" 
+                        <img
+                          src={material.thumbnail_url}
+                          alt=""
+                          className="h-8 w-8 mr-3 rounded object-cover"
                         />
                       ) : (
                         <div className="h-8 w-8 mr-3 bg-muted rounded flex items-center justify-center">
@@ -156,7 +145,7 @@ const MaterialsList: React.FC<MaterialsListProps> = ({ materials, onDelete, isLo
                       <span className="ml-1">{getCategoryLabel(material.category)}</span>
                     </div>
                   </TableCell>
-                  <TableCell>{getPlanBadge(material.plan_level)}</TableCell>
+
                   <TableCell>
                     <div className="flex items-center">
                       <Eye className="h-4 w-4 mr-1 text-muted-foreground" />
