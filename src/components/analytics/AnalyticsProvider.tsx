@@ -1,49 +1,27 @@
-import React from 'react';
-import { GoogleAnalytics } from './GoogleAnalytics';
+import React, { useState, useEffect } from 'react';
 import { GoogleTagManager } from './GoogleTagManager';
 
 interface AnalyticsProviderProps {
   children: React.ReactNode;
-  gaTrackingId?: string; // Google Analytics ID (formato: G-XXXXXXXXXX)
-  gtmId?: string; // Google Tag Manager ID (formato: GTM-XXXXXX)
 }
 
 /**
- * AnalyticsProvider - Componente para integração de Google Analytics e Google Tag Manager
+ * AnalyticsProvider - Componente para integração de Google Tag Manager (GTM)
  * 
  * Uso:
- * 1. Adicione este provider no App.tsx ou main.tsx
- * 2. Configure as variáveis de ambiente:
- *    - VITE_GA_TRACKING_ID para Google Analytics
- *    - VITE_GTM_ID para Google Tag Manager
- * 
- * Exemplo:
- * ```tsx
- * <AnalyticsProvider 
- *   gaTrackingId={import.meta.env.VITE_GA_TRACKING_ID}
- *   gtmId={import.meta.env.VITE_GTM_ID}
- * >
- *   <App />
- * </AnalyticsProvider>
- * ```
- * 
- * Recursos:
- * - Rastreamento automático de page views em mudanças de rota
- * - Suporte para eventos customizados via trackEvent/trackGTMEvent
- * - Rastreamento de conversões e e-commerce
- * - Compatível com LGPD via CookieConsent
+ * O GTM é carregado via index.html ou CookieConsent.
+ * Este componente gerencia apenas o rastreamento de rotas (virtual page views)
+ * quando o consentimento é concedido.
  */
 export const AnalyticsProvider: React.FC<AnalyticsProviderProps> = ({
   children,
-  gaTrackingId,
-  gtmId,
 }) => {
   // Verificar consentimento de cookies antes de carregar analytics
-  const hasAnalyticsConsent = () => {
+  const checkConsent = () => {
     try {
       const preferences = localStorage.getItem('cookie-preferences');
       if (!preferences) return false;
-      
+
       const preferencesData = JSON.parse(preferences);
       return preferencesData.analytics === true;
     } catch {
@@ -51,19 +29,29 @@ export const AnalyticsProvider: React.FC<AnalyticsProviderProps> = ({
     }
   };
 
-  const shouldLoadAnalytics = hasAnalyticsConsent();
+  const [shouldLoadAnalytics, setShouldLoadAnalytics] = useState(checkConsent());
+
+  useEffect(() => {
+    const handleConsentUpdate = () => {
+      setShouldLoadAnalytics(checkConsent());
+    };
+
+    window.addEventListener('cookieConsentUpdated', handleConsentUpdate);
+
+    // Check again in case it changed while binding
+    handleConsentUpdate();
+
+    return () => {
+      window.removeEventListener('cookieConsentUpdated', handleConsentUpdate);
+    };
+  }, []);
 
   return (
     <>
-      {shouldLoadAnalytics && gaTrackingId && (
-        <GoogleAnalytics trackingId={gaTrackingId} />
+      {shouldLoadAnalytics && (
+        <GoogleTagManager />
       )}
-      
-      {/* GTM agora é carregado diretamente no index.html para detecção imediata */}
-      {/* {shouldLoadAnalytics && gtmId && (
-        <GoogleTagManager gtmId={gtmId} />
-      )} */}
-      
+
       {children}
     </>
   );

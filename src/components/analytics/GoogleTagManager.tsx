@@ -2,55 +2,22 @@ import React, { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 
-interface GoogleTagManagerProps {
-  gtmId: string;
-}
-
-export const GoogleTagManager: React.FC<GoogleTagManagerProps> = ({ gtmId }) => {
+// This component is now responsible only for tracking route changes
+// The GTM script itself is loaded via index.html or CookieConsent
+export const GoogleTagManager: React.FC = () => {
   const location = useLocation();
 
   useEffect(() => {
-    // Push page view to dataLayer on route change
     if (window.dataLayer) {
       window.dataLayer.push({
-        event: 'pageview',
-        page: {
-          path: location.pathname,
-          search: location.search,
-          url: window.location.href,
-          title: document.title,
-        },
+        event: 'virtual_page_view',
+        page_path: location.pathname + location.search,
+        page_title: document.title,
       });
     }
   }, [location]);
 
-  return (
-    <>
-      <Helmet>
-        {/* Google Tag Manager - Head */}
-        <script>
-          {`
-            (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-            new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-            j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-            'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-            })(window,document,'script','dataLayer','${gtmId}');
-          `}
-        </script>
-      </Helmet>
-
-      {/* Google Tag Manager - Body (noscript fallback) */}
-      <noscript>
-        <iframe
-          src={`https://www.googletagmanager.com/ns.html?id=${gtmId}`}
-          height="0"
-          width="0"
-          style={{ display: 'none', visibility: 'hidden' }}
-          title="Google Tag Manager"
-        />
-      </noscript>
-    </>
-  );
+  return null;
 };
 
 // Utility functions for GTM data layer

@@ -14,10 +14,7 @@ function App() {
 
   return (
     <React.StrictMode>
-      <AnalyticsProvider 
-        gtmId={import.meta.env.VITE_GTM_ID}
-        gaTrackingId={import.meta.env.VITE_GA_TRACKING_ID}
-      >
+      <AnalyticsProvider>
         <AuthProvider>
           <RouterProvider router={router} />
           <CookieConsent />
