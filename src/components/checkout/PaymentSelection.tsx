@@ -22,10 +22,10 @@ interface PaymentSelectionProps {
 const PaymentSelection: React.FC<PaymentSelectionProps> = ({
   onBack,
   selectedPaymentType = "credit",
-  onPaymentTypeChange = () => {},
-  onContinue = () => {},
-  planMonthlyPrice = 89.90,
-  planTotalPrice = 899.00,
+  onPaymentTypeChange = () => { },
+  onContinue = () => { },
+  planMonthlyPrice = 179.90,
+  planTotalPrice = 2158.80,
   planId = "basic_plan"
 }) => {
   const { toast } = useToast();
@@ -35,7 +35,7 @@ const PaymentSelection: React.FC<PaymentSelectionProps> = ({
   const handlePaymentMethodClick = async (type: PaymentType) => {
     // Update selected payment type
     onPaymentTypeChange(type);
-    
+
     // Process the payment using the payment processor service
     try {
       // Show processing toast
@@ -50,11 +50,11 @@ const PaymentSelection: React.FC<PaymentSelectionProps> = ({
         paymentType: type,
         installments: type === "credit" ? 12 : 1
       });
-      
+
       if (result.success && result.url) {
         // Store payment state in localStorage before redirecting
         paymentProcessor.storePaymentState(result, null);
-        
+
         // Show success toast
         toast({
           title: "Redirecionando",
@@ -101,14 +101,14 @@ const PaymentSelection: React.FC<PaymentSelectionProps> = ({
           </Button>
         </div>
       )}
-      
-      <RadioGroup 
+
+      <RadioGroup
         value={selectedPaymentType}
         onValueChange={(value) => onPaymentTypeChange(value as PaymentType)}
         className="space-y-4"
       >
         {/* Cartão de crédito em até 12x */}
-        <div 
+        <div
           className={`
             flex items-center justify-between border rounded-lg p-4 
             ${selectedPaymentType === "credit" ? "bg-primary/10 border-primary" : "border-input"}
@@ -133,7 +133,7 @@ const PaymentSelection: React.FC<PaymentSelectionProps> = ({
         </div>
 
         {/* Pagamento à vista com 10% de desconto (qualquer método) */}
-        <div 
+        <div
           className={`
             flex items-center justify-between border rounded-lg p-4 
             ${selectedPaymentType === "pix" ? "bg-primary/10 border-primary" : "border-input"}
