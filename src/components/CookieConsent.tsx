@@ -17,6 +17,26 @@ export default function CookieConsent() {
     }
   }, []);
 
+  const updateConsent = (analytics: boolean, marketing: boolean) => {
+    // Definir objeto de consentimento
+    const consent = {
+      'ad_storage': marketing ? 'granted' : 'denied',
+      'ad_user_data': marketing ? 'granted' : 'denied',
+      'ad_personalization': marketing ? 'granted' : 'denied',
+      'analytics_storage': analytics ? 'granted' : 'denied'
+    };
+
+    // Atualizar consentimento no GTM
+    if (window.gtag) {
+      window.gtag('consent', 'update', consent);
+    } else if (window.dataLayer) {
+      window.dataLayer.push(['consent', 'update', consent]);
+    }
+
+    // Disparar evento apenas para componentes React que usem isso
+    window.dispatchEvent(new Event('cookieConsentUpdated'));
+  };
+
   const acceptCookies = () => {
     const preferences = {
       essential: true,
@@ -25,25 +45,16 @@ export default function CookieConsent() {
       lastUpdated: new Date().toISOString()
     };
     localStorage.setItem("cookie-preferences", JSON.stringify(preferences));
-    localStorage.setItem("cookie-consent", "accepted"); // Manter compatibilidade
+    localStorage.setItem("cookie-consent", "accepted");
     setShowConsent(false);
-    
+
     toast({
       title: "Preferências salvas",
       description: "Suas preferências de cookies foram salvas.",
       duration: 3000,
     });
-    
-    // Disparar evento customizado para ativar GTM sem reload
-    window.dispatchEvent(new Event('cookieConsentUpdated'));
-    
-    // Carregar GTM manualmente se ainda não foi carregado
-    if (!window.dataLayer) {
-      const script = document.createElement('script');
-      script.src = 'https://www.googletagmanager.com/gtm.js?id=GTM-5563GG39';
-      script.async = true;
-      document.head.appendChild(script);
-    }
+
+    updateConsent(true, true);
   };
 
   const declineCookies = () => {
@@ -56,12 +67,14 @@ export default function CookieConsent() {
     localStorage.setItem("cookie-preferences", JSON.stringify(preferences));
     localStorage.setItem("cookie-consent", "declined");
     setShowConsent(false);
-    
+
     toast({
       title: "Preferências salvas",
       description: "Você optou por não aceitar cookies opcionais.",
       duration: 3000,
     });
+
+    updateConsent(false, false);
   };
 
   if (!showConsent) return null;
@@ -74,14 +87,14 @@ export default function CookieConsent() {
         </div>
         <div className="flex-1 md:max-w-3xl">
           <p className="text-sm text-gray-700">
-            Este site usa cookies para melhorar sua experiência. Ao continuar navegando, você concorda 
-            com nossa política de cookies. Utilizamos cookies essenciais para o funcionamento do site 
+            Este site usa cookies para melhorar sua experiência. Ao continuar navegando, você concorda
+            com nossa política de cookies. Utilizamos cookies essenciais para o funcionamento do site
             e cookies opcionais para análises e personalização de conteúdo.
           </p>
         </div>
       </div>
       <div className="flex flex-shrink-0 mt-4 space-x-2 md:mt-0 md:ml-4">
-        <Button 
+        <Button
           onClick={declineCookies}
           variant="outline"
           size="sm"
@@ -89,7 +102,7 @@ export default function CookieConsent() {
         >
           <X className="w-4 h-4 mr-1" /> Recusar
         </Button>
-        <Button 
+        <Button
           onClick={acceptCookies}
           size="sm"
           className="flex items-center"

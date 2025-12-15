@@ -6,28 +6,42 @@
 
   <!-- Google Tag Manager - PRIORIDADE MÁXIMA -->
   <script>
-    // Verificar consentimento antes de carregar GTM
-    (function () {
+    // Define dataLayer and the gtag function.
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+
+    // Set default consent to 'denied' as a placeholder
+    // Determine actual values based on your own requirements
+    // Check if user has already saved preferences
+    var savedPreferences = localStorage.getItem('cookie-preferences');
+    var analyticsConsent = 'denied';
+    var marketingConsent = 'denied';
+
+    if (savedPreferences) {
       try {
-        var preferences = localStorage.getItem('cookie-preferences');
-        if (preferences) {
-          var data = JSON.parse(preferences);
-          if (data.analytics === true) {
-            // Carregar GTM
-            (function (w, d, s, l, i) {
-              w[l] = w[l] || []; w[l].push({
-                'gtm.start':
-                  new Date().getTime(), event: 'gtm.js'
-              }); var f = d.getElementsByTagName(s)[0],
-                j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : ''; j.async = true; j.src =
-                  'https://www.googletagmanager.com/gtm.js?id=' + i + dl; f.parentNode.insertBefore(j, f);
-            })(window, document, 'script', 'dataLayer', 'GTM-5563GG39');
-          }
-        }
-      } catch (e) {
-        console.log('GTM: Aguardando consentimento de cookies');
-      }
-    })();
+        var prefs = JSON.parse(savedPreferences);
+        if (prefs.analytics) analyticsConsent = 'granted';
+        if (prefs.marketing) marketingConsent = 'granted';
+      } catch (e) { }
+    }
+
+    gtag('consent', 'default', {
+      'ad_storage': marketingConsent,
+      'ad_user_data': marketingConsent,
+      'ad_personalization': marketingConsent,
+      'analytics_storage': analyticsConsent,
+      'wait_for_update': 500
+    });
+
+    // Load GTM
+    (function (w, d, s, l, i) {
+      w[l] = w[l] || []; w[l].push({
+        'gtm.start':
+          new Date().getTime(), event: 'gtm.js'
+      }); var f = d.getElementsByTagName(s)[0],
+        j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : ''; j.async = true; j.src =
+          'https://www.googletagmanager.com/gtm.js?id=' + i + dl; f.parentNode.insertBefore(j, f);
+    })(window, document, 'script', 'dataLayer', 'GTM-5563GG39');
   </script>
   <!-- End Google Tag Manager -->
 
