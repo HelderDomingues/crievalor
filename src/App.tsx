@@ -5,7 +5,6 @@ import { router } from "./routes";
 import "@/services/setupService";
 import CookieConsent from "./components/CookieConsent";
 import WhatsAppBusiness from "./components/WhatsAppBusiness";
-import { AnalyticsProvider } from "./components/analytics/AnalyticsProvider";
 
 function App() {
   useEffect(() => {
@@ -14,13 +13,11 @@ function App() {
 
   return (
     <React.StrictMode>
-      <AnalyticsProvider>
-        <AuthProvider>
-          <RouterProvider router={router} />
-          <CookieConsent />
-          <WhatsAppBusiness />
-        </AuthProvider>
-      </AnalyticsProvider>
+      <AuthProvider>
+        <RouterProvider router={router} />
+        <CookieConsent />
+        <WhatsAppBusiness />
+      </AuthProvider>
     </React.StrictMode>
   );
 }
