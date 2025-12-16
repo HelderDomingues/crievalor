@@ -12,7 +12,7 @@ export interface Post {
     cover_image_url: string | null;
     published_at: string | null;
     author_name?: string; // Optional for mapped data
-    categories?: { name: string; slug: string }[];
+    categories?: { id: string; name: string; slug: string }[];
 }
 
 interface PostCardProps {

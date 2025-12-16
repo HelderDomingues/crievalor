@@ -13,7 +13,7 @@ export const upsertSystemSetting = async (
     // Verificar se a configuração já existe
     const { data: existingData, error: fetchError } = await supabaseExtended
       .from("system_settings")
-      .select("*")
+      .select("id, key, value, description, updated_at")
       .eq("key", key)
       .maybeSingle();
 
@@ -90,7 +90,7 @@ export const getAllSystemSettings = async () => {
   try {
     const { data, error } = await supabaseExtended
       .from("system_settings")
-      .select("*")
+      .select("id, key, value, description, updated_at")
       .order("key");
 
     if (error) {

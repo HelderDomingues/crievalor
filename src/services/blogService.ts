@@ -33,7 +33,7 @@ export const blogService = {
         featured,
         created_at,
         post_categories(
-          categories(name, slug)
+          categories(id, name, slug)
         ),
         author:profiles(full_name)
       `, { count: "exact" }) as any)
@@ -73,7 +73,7 @@ export const blogService = {
         published_at,
         author:profiles(full_name),
         post_categories(
-          categories(name, slug)
+          categories(id, name, slug)
         )
       `) as any)
             .eq("published", true)
@@ -104,7 +104,7 @@ export const blogService = {
             .select(`
         *,
         post_categories(
-          categories(name, slug)
+          categories(id, name, slug)
         ),
         author:profiles(full_name, avatar_url, role)
       `) as any)
@@ -208,5 +208,100 @@ export const blogService = {
         }));
 
         return { posts, categoryName: category.name };
+    },
+
+    async getRelatedPosts(currentPostId: string, categoryIds: string[], limit = 3) {
+        // If no categories, just get recent posts excluding current
+        if (!categoryIds.length) {
+            const { data } = await supabase
+                .from("posts" as any)
+                .select(`
+                    id, title, slug, excerpt, cover_image_url, published_at,
+                    author:profiles(full_name),
+                    post_categories(categories(id, name, slug))
+                `)
+                .eq("published", true)
+                .neq("id", currentPostId)
+                .order("published_at", { ascending: false })
+                .limit(limit) as any;
+
+            return (data || []).map((post: any) => ({
+                id: post.id,
+                title: post.title,
+                slug: post.slug,
+                excerpt: post.excerpt,
+                cover_image_url: post.cover_image_url,
+                published_at: post.published_at,
+                author_name: post.author?.full_name,
+                categories: post.post_categories?.map((pc: any) => pc.categories),
+            })) as Post[];
+        }
+
+        // Get posts from similar categories
+        // Note: This is a simplified approach. Ideally we use an RPC or more complex query for "any category match"
+        // For now, we'll just fetch from the first category to ensure relevance
+        const { data, error } = await supabase
+            .from("post_categories" as any)
+            .select(`
+                post:posts(
+                    id, title, slug, excerpt, cover_image_url, published_at,
+                    author:profiles(full_name)
+                )
+            `)
+            .in("category_id", categoryIds)
+            .neq("post.id", currentPostId) // This neq on joined might not work perfectly without !inner, filtering in JS is safer for small sets
+            .limit(limit + 5) as any; // Fetch a bit more to filter in JS
+
+        if (error) {
+            console.error("Error fetching related posts:", error);
+            return [];
+        }
+
+        // Deduplicate and format
+        const relatedPostsMap = new Map();
+        data?.forEach((item: any) => {
+            if (item.post && item.post.id !== currentPostId && item.post.published_at) { // Ensure published/valid
+                relatedPostsMap.set(item.post.id, item.post);
+            }
+        });
+
+        const distinctPosts = Array.from(relatedPostsMap.values()).slice(0, limit);
+
+        return distinctPosts.map((post: any) => ({
+            id: post.id,
+            title: post.title,
+            slug: post.slug,
+            excerpt: post.excerpt,
+            cover_image_url: post.cover_image_url,
+            published_at: post.published_at,
+            author_name: post.author?.full_name,
+            // We'd need to fetch categories for these related posts again to show them, 
+            // but for "Related" cards we might skip chips or fetch them if needed. 
+            // Let's skip simplified for now or fetch if critical.
+        })) as Post[];
+    },
+
+    async getAdjacentPosts(currentPublishedAt: string) {
+        // Next Post (Newer)
+        const { data: next } = await supabase
+            .from("posts" as any)
+            .select("title, slug")
+            .eq("published", true)
+            .gt("published_at", currentPublishedAt)
+            .order("published_at", { ascending: true }) // Oldest of the newer ones = immediate next
+            .limit(1)
+            .maybeSingle() as any;
+
+        // Previous Post (Older)
+        const { data: prev } = await supabase
+            .from("posts" as any)
+            .select("title, slug")
+            .eq("published", true)
+            .lt("published_at", currentPublishedAt)
+            .order("published_at", { ascending: false }) // Newest of the older ones = immediate prev
+            .limit(1)
+            .maybeSingle() as any;
+
+        return { next, prev };
     }
 };

@@ -36,6 +36,10 @@ import ApresentacaoSC from "@/pages/ApresentacaoSC";
 import BlogHome from "@/pages/blog/BlogHome";
 import BlogPost from "@/pages/blog/BlogPost";
 
+import BlogAdminList from "@/pages/admin/blog/BlogAdminList";
+import BlogPostEditor from "@/pages/admin/blog/BlogPostEditor";
+import CategoryManager from "@/pages/admin/blog/CategoryManager";
+
 import { RootLayout } from "@/components/layout/RootLayout";
 
 export const router = createBrowserRouter([
@@ -119,6 +123,22 @@ export const router = createBrowserRouter([
       {
         path: "admin-testimonials",
         element: <TestimonialsAdmin />,
+      },
+      {
+        path: "admin-blog",
+        element: <BlogAdminList />,
+      },
+      {
+        path: "admin-blog/posts/new",
+        element: <BlogPostEditor />,
+      },
+      {
+        path: "admin-blog/posts/:id",
+        element: <BlogPostEditor />,
+      },
+      {
+        path: "admin-blog/categories",
+        element: <CategoryManager />,
       },
       {
         path: "auth",

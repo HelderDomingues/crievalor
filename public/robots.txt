@@ -33,7 +33,6 @@ Allow: /*.css
 Allow: /*.js
 
 # Nossos produtos e conteúdos em subdomínios próprios:
-# Blog - Conteúdo sobre IA e Inteligência Organizacional: https://blog.crievalor.com.br
 # Lumia - 6 Consultores Virtuais com IA: https://lumia.crievalor.com.br
 # Mentor de Propósito - Bússola do Ecossistema com IA: https://proposito.crievalor.com.br
 

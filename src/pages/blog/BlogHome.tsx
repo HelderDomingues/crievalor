@@ -1,35 +1,56 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import FloatingCTA from "@/components/ui/floating-cta";
 import { useScrollToTop } from "@/hooks/useScrollToTop";
-import { blogService } from "@/services/blogService";
+import { blogService, BlogCategory } from "@/services/blogService";
 import { Post, PostCard } from "@/components/blog/PostCard";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Helmet } from "react-helmet-async";
+import { Badge } from "@/components/ui/badge";
 
 export default function BlogHome() {
+    const [searchParams, setSearchParams] = useSearchParams();
+    const categorySlug = searchParams.get("category");
+
     const [featuredPosts, setFeaturedPosts] = useState<Post[]>([]);
     const [recentPosts, setRecentPosts] = useState<Post[]>([]);
+    const [categories, setCategories] = useState<BlogCategory[]>([]);
     const [loading, setLoading] = useState(true);
+    const [activeCategoryName, setActiveCategoryName] = useState<string | null>(null);
 
     useScrollToTop();
 
     useEffect(() => {
-        const loadData = async () => {
+        const loadInitialData = async () => {
             try {
-                const [featured, recent] = await Promise.all([
-                    blogService.getFeaturedPosts(),
-                    blogService.getPosts(10), // Limit 10
+                // Always fetch categories and featured posts (only for home)
+                const [cats, featured] = await Promise.all([
+                    blogService.getCategories(),
+                    !categorySlug ? blogService.getFeaturedPosts() : Promise.resolve([])
                 ]);
 
-                setFeaturedPosts(featured);
+                setCategories(cats);
+                setFeaturedPosts(featured as Post[]);
 
-                // Filter out featured posts from recent list to avoid duplicates (client side)
-                const featuredIds = new Set(featured.map(p => p.id));
-                setRecentPosts(recent.posts.filter(p => !featuredIds.has(p.id)));
+                // Fetch Posts based on Filter
+                if (categorySlug) {
+                    const { posts, categoryName } = await blogService.getPostsByCategory(categorySlug);
+                    setRecentPosts(posts);
+                    setActiveCategoryName(categoryName);
+                    console.log("Categorized Posts:", posts.map(p => ({ title: p.title, slug: p.slug })));
+                } else {
+                    const { posts } = await blogService.getPosts(10);
+                    // Filter featured duplicates only if on home view
+                    const featuredIds = new Set((featured as Post[]).map(p => p.id));
+                    setRecentPosts(posts.filter(p => !featuredIds.has(p.id)));
+                    setActiveCategoryName(null);
+                    console.log("Featured:", (featured as Post[]).map(p => ({ title: p.title, slug: p.slug })));
+                    console.log("Recent:", posts.map(p => ({ title: p.title, slug: p.slug })));
+                }
+
             } catch (error) {
                 console.error("Failed to load blog data", error);
             } finally {
@@ -37,8 +58,17 @@ export default function BlogHome() {
             }
         };
 
-        loadData();
-    }, []);
+        loadInitialData();
+    }, [categorySlug]);
+
+    const handleCategoryClick = (slug: string | null) => {
+        setLoading(true); // Show local loading state
+        if (slug) {
+            setSearchParams({ category: slug });
+        } else {
+            setSearchParams({});
+        }
+    };
 
     return (
         <div className="min-h-screen flex flex-col">
@@ -46,27 +76,29 @@ export default function BlogHome() {
 
             <main className="flex-grow pt-24 pb-20">
                 <Helmet>
-                    <title>Blog Crie Valor | Insights sobre Negócios e Gestão</title>
+                    <title>
+                        {activeCategoryName ? `${activeCategoryName} | Blog Crie Valor` : "Blog Crie Valor | Insights sobre Negócios e Gestão"}
+                    </title>
                     <meta name="description" content="Artigos, dicas e insights sobre gestão empresarial, liderança, marketing e vendas para impulsionar o seu negócio." />
                 </Helmet>
 
                 <div className="container mx-auto px-4">
-                    <div className="flex flex-col items-center text-center mb-16 space-y-4 animate-fade-in">
+                    <div className="flex flex-col items-center text-center mb-12 space-y-4 animate-fade-in">
                         <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-primary">
-                            Blog Crie Valor
+                            {activeCategoryName ? activeCategoryName : "Blog Crie Valor"}
                         </h1>
                         <p className="text-xl text-muted-foreground max-w-2xl">
-                            Conteúdo estratégico para quem quer construir empresas de valor.
+                            {activeCategoryName
+                                ? `Artigos selecionados sobre ${activeCategoryName}.`
+                                : "Conteúdo estratégico para quem quer construir empresas de valor."}
                         </p>
                     </div>
 
-                    {/* Featured Section */}
-                    {loading ? (
-                        <div className="grid gap-8 mb-16">
-                            <Skeleton className="h-[400px] w-full rounded-xl" />
-                        </div>
-                    ) : featuredPosts.length > 0 && (
+                    {/* Featured Section (Only show on Home) */}
+                    {!categorySlug && featuredPosts.length > 0 && (
                         <section className="mb-16">
+                            {/* ... Featured Post Code (Simplified for brevity or same as before) ... */}
+                            {/* Re-using exact same featured block structure for visual consistency */}
                             <div className="relative overflow-hidden rounded-2xl bg-card border border-border/50 shadow-2xl group">
                                 <div className="grid md:grid-cols-2 gap-0">
                                     <div className="h-full min-h-[300px] relative overflow-hidden">
@@ -106,11 +138,33 @@ export default function BlogHome() {
                         </section>
                     )}
 
+                    {/* Category Filter Pills */}
+                    <div className="mb-12 flex flex-wrap justify-center gap-2">
+                        <Button
+                            variant={!categorySlug ? "default" : "outline"}
+                            onClick={() => handleCategoryClick(null)}
+                            className="rounded-full"
+                        >
+                            Todos
+                        </Button>
+                        {categories.map(cat => (
+                            <Button
+                                key={cat.id}
+                                variant={categorySlug === cat.slug ? "default" : "outline"}
+                                onClick={() => handleCategoryClick(cat.slug)}
+                                className="rounded-full"
+                            >
+                                {cat.name}
+                            </Button>
+                        ))}
+                    </div>
+
                     {/* Categories / Recents */}
                     <div className="space-y-12">
                         <div className="flex justify-between items-end border-b pb-4">
-                            <h3 className="text-2xl font-bold">Últimos Artigos</h3>
-                            {/* Can add category pills here later */}
+                            <h3 className="text-2xl font-bold">
+                                {categorySlug ? "Artigos" : "Últimos Artigos"}
+                            </h3>
                         </div>
 
                         {loading ? (
@@ -129,7 +183,10 @@ export default function BlogHome() {
 
                         {!loading && recentPosts.length === 0 && (
                             <div className="text-center py-20 text-muted-foreground border rounded-xl bg-muted/20">
-                                <p>Nenhum artigo encontrado.</p>
+                                <p>Nenhum artigo encontrado nesta categoria.</p>
+                                <Button variant="link" onClick={() => handleCategoryClick(null)}>
+                                    Ver todos os artigos
+                                </Button>
                             </div>
                         )}
                     </div>

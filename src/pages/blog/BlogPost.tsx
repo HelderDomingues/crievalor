@@ -10,10 +10,13 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Helmet } from "react-helmet-async";
 import { ArrowLeft, Calendar, User, Share2 } from "lucide-react";
+import { Post, PostCard } from "@/components/blog/PostCard";
 
 export default function BlogPost() {
     const { slug } = useParams<{ slug: string }>();
     const [post, setPost] = useState<FullPost | null>(null);
+    const [relatedPosts, setRelatedPosts] = useState<Post[]>([]);
+    const [adjacentPosts, setAdjacentPosts] = useState<{ next: any, prev: any } | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(false);
 
@@ -22,12 +25,26 @@ export default function BlogPost() {
     useEffect(() => {
         if (!slug) return;
 
-        const loadPost = async () => {
+        const loadPostData = async () => {
             setLoading(true);
             try {
-                const data = await blogService.getPostBySlug(slug);
-                if (data) {
-                    setPost(data);
+                const postData = await blogService.getPostBySlug(slug);
+                if (postData) {
+                    setPost(postData);
+
+                    // valid post, load extras
+                    const [related, adjacent] = await Promise.all([
+                        blogService.getRelatedPosts(
+                            postData.id,
+                            postData.categories?.map(c => c.id) || []
+                        ),
+                        postData.published_at
+                            ? blogService.getAdjacentPosts(postData.published_at)
+                            : Promise.resolve(null)
+                    ]);
+
+                    setRelatedPosts(related);
+                    setAdjacentPosts(adjacent);
                 } else {
                     setError(true);
                 }
@@ -39,7 +56,7 @@ export default function BlogPost() {
             }
         };
 
-        loadPost();
+        loadPostData();
     }, [slug]);
 
     if (loading) {
@@ -48,6 +65,7 @@ export default function BlogPost() {
                 <Header />
                 <main className="flex-grow pt-24 pb-20">
                     <div className="container mx-auto px-4 max-w-4xl">
+                        {/* Simplified Loading Skeleton */}
                         <Skeleton className="h-8 w-32 mb-8" />
                         <Skeleton className="h-12 w-3/4 mb-4" />
                         <Skeleton className="h-[400px] w-full rounded-xl mb-8" />
@@ -162,16 +180,57 @@ export default function BlogPost() {
                 )}
 
                 {/* Content */}
-                <div className="container mx-auto px-4 max-w-3xl">
+                <div className="container mx-auto px-4 max-w-3xl mb-16">
                     <div
-                        className="prose prose-lg prose-slate dark:prose-invert max-w-none 
-                      prose-headings:font-bold prose-headings:text-foreground 
-                      prose-p:text-muted-foreground prose-p:leading-relaxed
-                      prose-a:text-primary prose-a:no-underline hover:prose-a:underline
-                      prose-img:rounded-xl prose-img:shadow-md"
+                        className="prose prose-lg prose-invert max-w-none 
+                        prose-headings:text-foreground prose-p:text-muted-foreground prose-strong:text-foreground prose-li:text-muted-foreground"
                         dangerouslySetInnerHTML={{ __html: post.content }}
                     />
                 </div>
+
+                {/* Navigation (Prev/Next) */}
+                {(adjacentPosts?.prev || adjacentPosts?.next) && (
+                    <div className="container mx-auto px-4 max-w-4xl mb-16 border-t pt-12">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            {adjacentPosts.prev ? (
+                                <Link to={`/blog/${adjacentPosts.prev.slug}`} className="group flex flex-col items-start text-left">
+                                    <span className="text-sm text-muted-foreground mb-2 flex items-center gap-2 group-hover:text-primary transition-colors">
+                                        <ArrowLeft className="w-4 h-4" /> Anterior
+                                    </span>
+                                    <span className="text-lg font-bold group-hover:text-primary transition-colors line-clamp-2">
+                                        {adjacentPosts.prev.title}
+                                    </span>
+                                </Link>
+                            ) : <div />} {/* Spacer */}
+
+                            {adjacentPosts.next ? (
+                                <Link to={`/blog/${adjacentPosts.next.slug}`} className="group flex flex-col items-end text-right">
+                                    <span className="text-sm text-muted-foreground mb-2 flex items-center gap-2 group-hover:text-primary transition-colors">
+                                        Próximo <ArrowLeft className="w-4 h-4 rotate-180" />
+                                    </span>
+                                    <span className="text-lg font-bold group-hover:text-primary transition-colors line-clamp-2">
+                                        {adjacentPosts.next.title}
+                                    </span>
+                                </Link>
+                            ) : <div />}
+                        </div>
+                    </div>
+                )}
+
+                {/* Related Posts */}
+                {relatedPosts.length > 0 && (
+                    <div className="bg-muted/30 py-16 border-t">
+                        <div className="container mx-auto px-4 max-w-6xl">
+                            <h3 className="text-2xl font-bold mb-8">Você pode gostar também</h3>
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                                {relatedPosts.map(p => (
+                                    <PostCard key={p.id} post={p} />
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                )}
+
             </main>
 
             <FloatingCTA />

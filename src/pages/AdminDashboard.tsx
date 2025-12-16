@@ -44,6 +44,26 @@ const AdminDashboard = () => {
                 </Card>
               </Link>
 
+              {/* Blog Admin */}
+              <Link to="/admin-blog">
+                <Card className="h-full hover:shadow-md transition-shadow cursor-pointer">
+                  <CardHeader>
+                    <CardTitle className="flex items-center">
+                      <FileText className="mr-2 h-5 w-5 text-primary" />
+                      Blog / Artigos
+                    </CardTitle>
+                    <CardDescription>
+                      Gerenciar artigos e categorias
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm text-muted-foreground">
+                      Escreva novos posts, edite conteúdos e gerencie categorias do blog.
+                    </p>
+                  </CardContent>
+                </Card>
+              </Link>
+
               {/* Portfolio Admin */}
               <Link to="/portfolio-admin">
                 <Card className="h-full hover:shadow-md transition-shadow cursor-pointer">
