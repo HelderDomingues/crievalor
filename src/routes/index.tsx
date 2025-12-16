@@ -33,6 +33,9 @@ import AdminDashboard from "@/pages/AdminDashboard";
 import Apresentacao from "@/pages/Apresentacao";
 import ApresentacaoSC from "@/pages/ApresentacaoSC";
 
+import BlogHome from "@/pages/blog/BlogHome";
+import BlogPost from "@/pages/blog/BlogPost";
+
 import { RootLayout } from "@/components/layout/RootLayout";
 
 export const router = createBrowserRouter([
@@ -164,6 +167,15 @@ export const router = createBrowserRouter([
       {
         path: "planos",
         element: <Pricing />,
+      },
+      // Blog Routes
+      {
+        path: "blog",
+        element: <BlogHome />,
+      },
+      {
+        path: "blog/:slug",
+        element: <BlogPost />,
       },
       // Fallback 404 route for any unmatched path within the layout
       {
