@@ -111,7 +111,55 @@ export default function BlogPost() {
                 <Helmet>
                     <title>{post.title} | Blog Crie Valor</title>
                     <meta name="description" content={post.excerpt || post.title} />
+                    <link rel="canonical" href={`https://crievalor.com.br/blog/${post.slug}`} />
+
+                    {/* Open Graph / Facebook */}
+                    <meta property="og:type" content="article" />
+                    <meta property="og:url" content={`https://crievalor.com.br/blog/${post.slug}`} />
+                    <meta property="og:title" content={post.title} />
+                    <meta property="og:description" content={post.excerpt || post.title} />
                     {post.cover_image_url && <meta property="og:image" content={post.cover_image_url} />}
+                    <meta property="article:published_time" content={post.published_at || ""} />
+                    {post.author && <meta property="article:author" content={post.author.full_name} />}
+                    {post.categories?.map(cat => (
+                        <meta key={cat.slug} property="article:tag" content={cat.name} />
+                    ))}
+
+                    {/* Twitter */}
+                    <meta name="twitter:card" content="summary_large_image" />
+                    <meta name="twitter:url" content={`https://crievalor.com.br/blog/${post.slug}`} />
+                    <meta name="twitter:title" content={post.title} />
+                    <meta name="twitter:description" content={post.excerpt || post.title} />
+                    {post.cover_image_url && <meta name="twitter:image" content={post.cover_image_url} />}
+
+                    {/* Schema.org JSON-LD */}
+                    <script type="application/ld+json">
+                        {JSON.stringify({
+                            "@context": "https://schema.org",
+                            "@type": "BlogPosting",
+                            "headline": post.title,
+                            "image": post.cover_image_url ? [post.cover_image_url] : [],
+                            "datePublished": post.published_at,
+                            "dateModified": post.published_at, // Ideally we'd have updated_at
+                            "author": {
+                                "@type": "Person",
+                                "name": post.author?.full_name || "Crie Valor"
+                            },
+                            "publisher": {
+                                "@type": "Organization",
+                                "name": "Crie Valor",
+                                "logo": {
+                                    "@type": "ImageObject",
+                                    "url": "https://crievalor.com.br/lovable-uploads/92af6ddc-b869-4957-8dde-af26a0a8e7d2.png"
+                                }
+                            },
+                            "description": post.excerpt,
+                            "mainEntityOfPage": {
+                                "@type": "WebPage",
+                                "@id": `https://crievalor.com.br/blog/${post.slug}`
+                            }
+                        })}
+                    </script>
                 </Helmet>
 
                 {/* Header */}

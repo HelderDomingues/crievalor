@@ -79,7 +79,41 @@ export default function BlogHome() {
                     <title>
                         {activeCategoryName ? `${activeCategoryName} | Blog Crie Valor` : "Blog Crie Valor | Insights sobre Negócios e Gestão"}
                     </title>
-                    <meta name="description" content="Artigos, dicas e insights sobre gestão empresarial, liderança, marketing e vendas para impulsionar o seu negócio." />
+                    <meta name="description" content="Artigos, dicas e insights sobre gestão empresarial, liderança, marketing e vendas para impulsionar o seu negócio. Profissionalize sua empresa com a Crie Valor." />
+                    <link rel="canonical" href={`https://crievalor.com.br/blog${categorySlug ? `?category=${categorySlug}` : ""}`} />
+
+                    {/* Open Graph / Facebook */}
+                    <meta property="og:type" content="website" />
+                    <meta property="og:url" content={`https://crievalor.com.br/blog${categorySlug ? `?category=${categorySlug}` : ""}`} />
+                    <meta property="og:title" content={activeCategoryName ? `${activeCategoryName} | Blog Crie Valor` : "Blog Crie Valor | Insights sobre Negócios e Gestão"} />
+                    <meta property="og:description" content="Artigos, dicas e insights sobre gestão empresarial, liderança, marketing e vendas. Descubra como profissionalizar sua empresa." />
+                    <meta property="og:image" content="https://crievalor.com.br/og-image.jpg" />
+
+                    {/* Twitter */}
+                    <meta name="twitter:card" content="summary_large_image" />
+                    <meta name="twitter:url" content={`https://crievalor.com.br/blog${categorySlug ? `?category=${categorySlug}` : ""}`} />
+                    <meta name="twitter:title" content={activeCategoryName ? `${activeCategoryName} | Blog Crie Valor` : "Blog Crie Valor | Insights sobre Negócios e Gestão"} />
+                    <meta name="twitter:description" content="Artigos, dicas e insights sobre gestão empresarial, liderança, marketing e vendas." />
+                    <meta name="twitter:image" content="https://crievalor.com.br/og-image.jpg" />
+
+                    {/* Schema.org JSON-LD */}
+                    <script type="application/ld+json">
+                        {JSON.stringify({
+                            "@context": "https://schema.org",
+                            "@type": "Blog",
+                            "name": "Blog Crie Valor",
+                            "url": "https://crievalor.com.br/blog",
+                            "description": "Insights sobre gestão empresarial, liderança, marketing e vendas.",
+                            "publisher": {
+                                "@type": "Organization",
+                                "name": "Crie Valor",
+                                "logo": {
+                                    "@type": "ImageObject",
+                                    "url": "https://crievalor.com.br/lovable-uploads/92af6ddc-b869-4957-8dde-af26a0a8e7d2.png"
+                                }
+                            }
+                        })}
+                    </script>
                 </Helmet>
 
                 <div className="container mx-auto px-4">
