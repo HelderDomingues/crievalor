@@ -11,6 +11,10 @@ import { Button } from "@/components/ui/button";
 import { Helmet } from "react-helmet-async";
 import { ArrowLeft, Calendar, User, Share2 } from "lucide-react";
 import { Post, PostCard } from "@/components/blog/PostCard";
+import { marked } from "marked";
+
+// Configure marked options if needed (optional)
+// marked.use({ ... });
 
 export default function BlogPost() {
     const { slug } = useParams<{ slug: string }>();
@@ -181,10 +185,40 @@ export default function BlogPost() {
 
                 {/* Content */}
                 <div className="container mx-auto px-4 max-w-3xl mb-16">
+                    {/* Hack to force override inline styles from legacy content */}
+                    <style>{`
+                        .blog-content * {
+                            color: inherit !important;
+                            background-color: transparent !important;
+                            font-family: inherit !important;
+                        }
+                        .blog-content a {
+                            color: hsl(var(--primary)) !important;
+                        }
+                        .blog-content strong {
+                            font-weight: 700 !important;
+                        }
+                        .blog-content img {
+                            margin: 2rem auto;
+                            border-radius: 0.5rem;
+                            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+                        }
+                    `}</style>
                     <div
-                        className="prose prose-lg prose-invert max-w-none 
-                        prose-headings:text-foreground prose-p:text-muted-foreground prose-strong:text-foreground prose-li:text-muted-foreground"
-                        dangerouslySetInnerHTML={{ __html: post.content }}
+                        className="blog-content prose prose-lg dark:prose-invert max-w-none 
+                        text-foreground/90
+                        prose-headings:text-foreground prose-p:text-muted-foreground prose-strong:text-foreground prose-li:text-muted-foreground
+                        prose-a:text-primary prose-a:no-underline hover:prose-a:underline
+                        marker:text-primary"
+                        dangerouslySetInnerHTML={{
+                            __html: (() => {
+                                const content = post.content || "";
+                                // Heuristic: If it looks like HTML, return as is. Otherwise parse as Markdown.
+                                const isHtml = /<[a-z][\s\S]*>/i.test(content);
+                                if (isHtml) return content;
+                                return marked.parse(content) as string;
+                            })()
+                        }}
                     />
                 </div>
 
