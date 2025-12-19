@@ -95,9 +95,8 @@ export const createTestimonial = async (testimonial: Omit<Testimonial, 'id' | 'c
 export const updateTestimonial = async (id: string, testimonial: Partial<Testimonial>): Promise<Testimonial | null> => {
   try {
     // Prepare update payload
-    const payload: any = {
-      updated_at: new Date().toISOString()
-    };
+    // Note: updated_at is handled by database trigger
+    const payload: any = {};
 
     if (testimonial.name !== undefined) payload.name = testimonial.name;
     if (testimonial.role !== undefined) payload.role = testimonial.role;
