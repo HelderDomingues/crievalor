@@ -62,9 +62,18 @@ export const fetchAllTestimonials = async (): Promise<Testimonial[]> => {
  */
 export const createTestimonial = async (testimonial: Omit<Testimonial, 'id' | 'created_at' | 'updated_at'>): Promise<Testimonial | null> => {
   try {
+    // Sanitize payload to ensure no extra fields or undefined values are sent
+    const payload = {
+      name: testimonial.name,
+      role: testimonial.role,
+      company: testimonial.company,
+      text: testimonial.text,
+      active: testimonial.active
+    };
+
     const { data, error } = await supabase
       .from('testimonials')
-      .insert(testimonial)
+      .insert(payload)
       .select()
       .single();
 
@@ -85,12 +94,20 @@ export const createTestimonial = async (testimonial: Omit<Testimonial, 'id' | 'c
  */
 export const updateTestimonial = async (id: string, testimonial: Partial<Testimonial>): Promise<Testimonial | null> => {
   try {
+    // Prepare update payload
+    const payload: any = {
+      updated_at: new Date().toISOString()
+    };
+
+    if (testimonial.name !== undefined) payload.name = testimonial.name;
+    if (testimonial.role !== undefined) payload.role = testimonial.role;
+    if (testimonial.company !== undefined) payload.company = testimonial.company;
+    if (testimonial.text !== undefined) payload.text = testimonial.text;
+    if (testimonial.active !== undefined) payload.active = testimonial.active;
+
     const { data, error } = await supabase
       .from('testimonials')
-      .update({
-        ...testimonial,
-        updated_at: new Date().toISOString()
-      })
+      .update(payload)
       .eq('id', id)
       .select()
       .single();
