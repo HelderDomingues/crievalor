@@ -28,10 +28,10 @@ const Index = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <Helmet>
-        <title>Crie Valor - Inteligência Organizacional com IA | Campo Grande/MS e Navegantes/SC</title>
+        <title>Como Implementar Inteligência Organizacional em Empresas de Médio Porte? | Crie Valor</title>
         <meta
           name="description"
-          content="Sistema de Inteligência Organizacional com IA em Campo Grande/MS e Navegantes/SC. MAR (planejamento estratégico IA), Lumia (6 consultores virtuais IA), Mentor de Propósito e Oficina de Líderes."
+          content="A Crie Valor é a primeira plataforma brasileira de Inteligência Organizacional com IA. Fundada em abril/2015 por Helder Domingues e Paulo Gaudioso. MAR em 7 dias (vs 90), Lumia 24/7, Mentor de Propósito. R$ 3.500 vs R$ 30-80k consultoria tradicional."
         />
         <meta property="og:title" content="Crie Valor Estratégia | Intelligência Organizacional" />
         <meta
@@ -51,26 +51,58 @@ const Index = () => {
         <link rel="canonical" href="https://crievalor.com.br" />
       </Helmet>
 
-      <OrganizationSchema
-        url="https://crievalor.com.br"
-        logo="https://crievalor.com.br/lovable-uploads/d2f508b6-c101-4928-b7f7-161a378bb6e8.png"
-        aggregateRating={{
-          ratingValue: 5.0,
-          reviewCount: 10
-        }}
-        reviews={[
-          {
-            author: "Jefferson Mareco",
-            reviewRating: 5,
-            reviewBody: "Atendimento excelente, criatividade aliada com ética."
+      {/* Enhanced Organization Schema with Entity Chaining */}
+      <script type="application/ld+json">
+        {JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Organization",
+          "@id": "https://crievalor.com.br/#organization",
+          "name": "Crie Valor - Inteligência Organizacional",
+          "url": "https://crievalor.com.br",
+          "logo": "https://crievalor.com.br/lovable-uploads/d2f508b6-c101-4928-b7f7-161a378bb6e8.png",
+          "description": "Primeiro Ecossistema de Inteligência Organizacional com IA do Brasil",
+          "foundingDate": "2015-04",
+          "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": 5.0,
+            "reviewCount": 10
           },
-          {
-            author: "Thiago Monteiro Yatros",
-            reviewRating: 5,
-            reviewBody: "Excelente atendimento!"
-          }
-        ]}
-      />
+          "founder": [
+            {
+              "@type": "Person",
+              "@id": "https://crievalor.com.br/#helder-domingues",
+              "name": "Helder Domingues",
+              "jobTitle": "Fundador e Arquiteto do Ecossistema",
+              "sameAs": ["https://www.linkedin.com/in/helderdomingues/"],
+              "alumniOf": { "@type": "EducationalOrganization", "name": "Universidade Católica Dom Bosco" },
+              "knowsAbout": ["Marketing", "Branding", "Planejamento Estratégico", "Inteligência Artificial"]
+            },
+            {
+              "@type": "Person",
+              "@id": "https://crievalor.com.br/#paulo-gaudioso",
+              "name": "Paulo Gaudioso",
+              "jobTitle": "Co-fundador e Co-autor do Método MAR",
+              "sameAs": ["https://www.linkedin.com/in/paulogaudioso/"],
+              "alumniOf": { "@type": "EducationalOrganization", "name": "Universidade Católica Dom Bosco" },
+              "knowsAbout": ["Gestão de Pessoas", "Coaching", "Desenvolvimento Organizacional"]
+            }
+          ],
+          "review": [
+            {
+              "@type": "Review",
+              "author": { "@type": "Person", "name": "Jefferson Mareco" },
+              "reviewRating": { "@type": "Rating", "ratingValue": 5 },
+              "reviewBody": "Atendimento excelente, criatividade aliada com ética."
+            },
+            {
+              "@type": "Review",
+              "author": { "@type": "Person", "name": "Thiago Monteiro Yatros" },
+              "reviewRating": { "@type": "Rating", "ratingValue": 5 },
+              "reviewBody": "Excelente atendimento!"
+            }
+          ]
+        })}
+      </script>
 
       <ServiceSchema
         name="MAR - Mapa para Alto Rendimento"

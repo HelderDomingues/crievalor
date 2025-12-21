@@ -22,6 +22,8 @@ import IdentidadeVisualOriginal from "@/pages/IdentidadeVisualOriginal";
 import PrivacyPolicy from "@/pages/PrivacyPolicy";
 import RefundPolicy from "@/pages/RefundPolicy";
 import TermsOfService from "@/pages/TermsOfService";
+import Lumia from "@/pages/Lumia";
+import MentorProposito from "@/pages/MentorProposito";
 
 import Accessibility from "@/pages/Accessibility";
 import WhatsAppDashboard from "@/pages/WhatsAppDashboard";
@@ -79,6 +81,14 @@ export const router = createBrowserRouter([
       {
         path: "mentorias",
         element: <Mentorias />,
+      },
+      {
+        path: "lumia",
+        element: <Lumia />,
+      },
+      {
+        path: "mentor-proposito",
+        element: <MentorProposito />,
       },
       {
         path: "identidade-visual",

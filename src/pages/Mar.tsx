@@ -4,7 +4,7 @@ import Footer from "@/components/Footer";
 import HeroSection from "@/components/HeroSection";
 import ContactSection from "@/components/ContactSection";
 import MarExplanation from "@/components/MarExplanation";
-import MarComparisonSection from "@/components/MarComparisonSection";
+import MarComparativeTable from "@/components/MarComparativeTable";
 
 import VideoSection from "@/components/VideoSection";
 import ErrorBoundary from "@/components/ErrorBoundary";
@@ -20,8 +20,8 @@ const Mar = () => {
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-background to-background/95 relative overflow-hidden">
       <Helmet>
-        <title>MAR - Planejamento Estratégico com IA | Crie Valor</title>
-        <meta name="description" content="MAR - Sistema de planejamento estratégico com inteligência artificial para acelerar crescimento empresarial. IA para análise preditiva e decisões estratégicas. Campo Grande/MS e Navegantes/SC." />
+        <title>Como Criar um Plano Estratégico em 7 Dias com Inteligência Artificial? | MAR - Crie Valor</title>
+        <meta name="description" content="O MAR é um sistema de planejamento estratégico com IA que entrega em 7 dias (vs 90 dias tradicional). Personalizado com Mapeamento do DNA de Liderança + BSC + Porter. R$ 3.500-5.000 vs R$ 30-80k consultoria tradicional. Fundadores: Helder Domingues e Paulo Gaudioso." />
         <meta property="og:title" content="MAR - Mapa para Alto Rendimento | Crie Valor" />
         <meta property="og:description" content="Um mapa estratégico feito para acelerar o crescimento de empresas com decisões precisas." />
         <meta property="og:type" content="product" />
@@ -122,7 +122,7 @@ const Mar = () => {
         </ErrorBoundary>
 
         <ErrorBoundary>
-          <MarComparisonSection />
+          <MarComparativeTable />
         </ErrorBoundary>
 
         <ErrorBoundary>
@@ -165,27 +165,27 @@ const Mar = () => {
                 <div className="space-y-6">
                   <div className="bg-card rounded-lg p-6 shadow-sm">
                     <h3 className="text-xl font-semibold mb-3">O que exatamente é o MAR?</h3>
-                    <p className="text-muted-foreground">O MAR (Mapa para Alto Rendimento) é uma consultoria estratégica personalizada que cria um roadmap específico para acelerar o crescimento da sua empresa através de análises precisas e planos de ação customizados.</p>
+                    <p className="text-muted-foreground">O MAR (Mapa para Alto Rendimento) é um sistema de planejamento estratégico com IA que cria um roadmap personalizado para sua empresa. Combina Mapeamento do DNA de Liderança + Balanced Scorecard + Porter com validação humana de consultores com 26+ e 27+ anos de experiência.</p>
                   </div>
 
                   <div className="bg-card rounded-lg p-6 shadow-sm">
-                    <h3 className="text-xl font-semibold mb-3">Quanto tempo leva para ver resultados com o MAR?</h3>
-                    <p className="text-muted-foreground">Os primeiros insights e direcionamentos são entregues em até 30 dias. Resultados mensuráveis começam a aparecer entre 60-90 dias, dependendo da implementação das estratégias recomendadas.</p>
+                    <h3 className="text-xl font-semibold mb-3">Quanto tempo leva para receber o MAR?</h3>
+                    <p className="text-muted-foreground">O MAR é entregue em <strong>7 dias</strong> após o preenchimento do questionário de 64 perguntas. Depois da entrega, você tem uma reunião online com nosso consultor para apresentação e tira-dúvidas. Muito mais rápido que consultoria tradicional (60-90 dias).</p>
                   </div>
 
                   <div className="bg-card rounded-lg p-6 shadow-sm">
                     <h3 className="text-xl font-semibold mb-3">O MAR funciona para qualquer tipo de empresa?</h3>
-                    <p className="text-muted-foreground">Sim, nossa metodologia é adaptável para empresas de todos os portes e segmentos. Personalizamos as análises e estratégias conforme o perfil, mercado de atuação e objetivos específicos de cada negócio.</p>
+                    <p className="text-muted-foreground">O MAR é ideal para empresas que <strong>faturam no mínimo R$ 150 mil/mês e têm pelo menos 15 funcionários</strong>. Se você cresceu sem estrutura e precisa profissionalizar sem parar a operação, o MAR é para você. Nossa metodologia é adaptável para empresas de serviços B2B, comércio e pequena indústria.</p>
                   </div>
 
                   <div className="bg-card rounded-lg p-6 shadow-sm">
                     <h3 className="text-xl font-semibold mb-3">Como é o processo de implementação do MAR?</h3>
-                    <p className="text-muted-foreground">O processo inclui: diagnóstico inicial, análise estratégica, desenvolvimento do mapa personalizado e apresentação dos resultados.</p>
+                    <p className="text-muted-foreground">O processo inclui: <strong>1)</strong> Questionário de 64 perguntas + Mapeamento do DNA de Liderança, <strong>2)</strong> Análise com IA + Validação humana, <strong>3)</strong> Desenvolvimento do plano estratégico 12 meses, <strong>4)</strong> Apresentação dos resultados em reunião online. Tudo em 7 dias.</p>
                   </div>
 
                   <div className="bg-card rounded-lg p-6 shadow-sm">
                     <h3 className="text-xl font-semibold mb-3">Qual é a diferença do MAR para outras consultorias?</h3>
-                    <p className="text-muted-foreground">O MAR oferece soluções práticas e implementáveis, não apenas teorias. Focamos em resultados mensuráveis, com acompanhamento próximo e metodologia testada em centenas de empresas ao longo de 25 anos.</p>
+                    <p className="text-muted-foreground">O MAR combina <strong>IA nativa + metodologia estratégica robusta + validação humana</strong>. Entregamos em 7 dias (vs 60-90 dias tradicional), custamos 10-20x menos (R$ 3.500-5.000 vs R$ 30-80k), e oferecemos acompanhamento contínuo com Lumia 24/7. Não somos consultoria tradicional nem SaaS genérico - somos Inteligência Organizacional.</p>
                   </div>
 
                   <div className="bg-card rounded-lg p-6 shadow-sm">

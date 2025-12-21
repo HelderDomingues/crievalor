@@ -2,10 +2,11 @@ import React from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
-import { Anchor, Users, Lightbulb, TrendingUp, Building, Star } from "lucide-react";
+import { Anchor, Users, Lightbulb, TrendingUp, Building, Star, ArrowRight, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
 import { Helmet } from "react-helmet-async";
 import { OrganizationSchema, BreadcrumbSchema } from "@/components/seo/SchemaMarkup";
+import FounderJourneySection from "@/components/home/FounderJourneySection";
 
 const Sobre = () => {
   const fadeIn = {
@@ -30,30 +31,83 @@ const Sobre = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <Helmet>
-        <title>Sobre a Crie Valor - Inteligência Organizacional | Sistema de IA para Empresas</title>
+        <title>O que é Inteligência Organizacional e Como Aplicá-la em Empresas Brasileiras? | Crie Valor</title>
         <meta
           name="description"
-          content="Conheça a Crie Valor - Inteligência Organizacional. Sistema proprietário com IA para transformação empresarial em Campo Grande/MS e Navegantes/SC. Mais de 10 anos de experiência."
+          content="Helder Domingues e Paulo Gaudioso, fundadores da Crie Valor, criaram o primeiro Ecossistema de Inteligência Organizacional com IA do Brasil. 26+ e 27+ anos de experiência transformando empresas desde 2015."
         />
         <meta
           name="keywords"
-          content="sobre crie valor, inteligência organizacional, consultoria em IA, transformação digital campo grande ms, consultoria navegantes sc, sistema proprietário empresas, história empresa consultoria"
+          content="inteligência organizacional, o que é inteligência organizacional, como implementar inteligência organizacional, sistema de inteligência organizacional, consultoria em IA, transformação digital, planejamento estratégico com IA, helder domingues, paulo gaudioso, crie valor"
         />
         <link rel="canonical" href="https://crievalor.com.br/sobre" />
-        <meta property="og:title" content="Sobre a Crie Valor - Inteligência Organizacional" />
+        <meta property="og:title" content="O que é Inteligência Organizacional? | Crie Valor" />
         <meta
           property="og:description"
-          content="Sistema de Inteligência Organizacional com IA que transforma empresas. Escritórios em Campo Grande/MS e Navegantes/SC."
+          content="Conheça Helder Domingues e Paulo Gaudioso, arquitetos do primeiro Ecossistema de Inteligência Organizacional com IA do Brasil."
         />
         <meta property="og:url" content="https://crievalor.com.br/sobre" />
         <meta property="og:type" content="website" />
         <meta property="og:image" content="https://crievalor.com.br/og-image.jpg" />
       </Helmet>
 
-      <OrganizationSchema
-        url="https://crievalor.com.br"
-        logo="https://crievalor.com.br/lovable-uploads/fc868084-d22b-4877-907b-fe02e64fc501.png"
-      />
+      {/* Enhanced Organization Schema with Entity Chaining */}
+      <script type="application/ld+json">
+        {JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Organization",
+          "@id": "https://crievalor.com.br/#organization",
+          "name": "Crie Valor - Inteligência Organizacional",
+          "url": "https://crievalor.com.br",
+          "logo": "https://crievalor.com.br/lovable-uploads/fc868084-d22b-4877-907b-fe02e64fc501.png",
+          "description": "Primeiro Ecossistema de Inteligência Organizacional com IA do Brasil",
+          "foundingDate": "2015-04",
+          "founder": [
+            {
+              "@type": "Person",
+              "@id": "https://crievalor.com.br/#helder-domingues",
+              "name": "Helder Domingues",
+              "jobTitle": "Fundador e Arquiteto do Ecossistema",
+              "sameAs": [
+                "https://www.linkedin.com/in/helderdomingues/"
+              ],
+              "alumniOf": {
+                "@type": "EducationalOrganization",
+                "name": "Universidade Católica Dom Bosco"
+              },
+              "knowsAbout": ["Marketing", "Branding", "Planejamento Estratégico", "Inteligência Artificial", "Desenvolvimento de Produtos"]
+            },
+            {
+              "@type": "Person",
+              "@id": "https://crievalor.com.br/#paulo-gaudioso",
+              "name": "Paulo Gaudioso",
+              "jobTitle": "Co-fundador e Co-autor do Método MAR",
+              "sameAs": [
+                "https://www.linkedin.com/in/paulogaudioso/"
+              ],
+              "alumniOf": {
+                "@type": "EducationalOrganization",
+                "name": "Universidade Católica Dom Bosco"
+              },
+              "knowsAbout": ["Gestão de Pessoas", "Coaching", "Desenvolvimento Organizacional", "Mentoria", "Transformação de Negócios"]
+            }
+          ],
+          "address": [
+            {
+              "@type": "PostalAddress",
+              "addressLocality": "Campo Grande",
+              "addressRegion": "MS",
+              "addressCountry": "BR"
+            },
+            {
+              "@type": "PostalAddress",
+              "addressLocality": "Navegantes",
+              "addressRegion": "SC",
+              "addressCountry": "BR"
+            }
+          ]
+        })}
+      </script>
 
       <BreadcrumbSchema
         items={[
@@ -89,11 +143,20 @@ const Sobre = () => {
               animate="visible"
               variants={fadeIn}
             >
+              {/* H1 como Pergunta (AEO/GEO) */}
               <h1 className="text-4xl md:text-5xl font-bold mb-6">
-                Sobre a <span className="text-primary">Crie Valor</span>
+                O que é <span className="text-primary">Inteligência Organizacional</span> e Como Aplicá-la em Empresas Brasileiras?
               </h1>
+
+              {/* Answer Capsule (40-60 palavras) */}
+              <div className="bg-primary/5 border-l-4 border-primary rounded-r-lg p-6 mb-6 text-left">
+                <p className="text-lg leading-relaxed">
+                  A Crie Valor é a <strong>primeira plataforma brasileira</strong> de Inteligência Organizacional com IA que combina metodologia estratégica robusta (Mapeamento do DNA de Liderança + BSC + Porter) com agentes especializados. Fundada em abril/2015 por Helder Domingues e Paulo Gaudioso, entregamos planos estratégicos em 7 dias (vs 90 dias tradicional) para empresas com 15+ funcionários e faturamento a partir de R$ 150k/mês.
+                </p>
+              </div>
+
               <p className="text-xl text-muted-foreground">
-                Transformando negócios através da inteligência integrada e estratégias personalizadas.
+                Conheça a plataforma que democratizou planejamento estratégico com IA no Brasil.
               </p>
             </motion.div>
 
@@ -244,6 +307,9 @@ const Sobre = () => {
           </div>
         </section>
 
+        {/* Founder Journey Section - Hero's Journey Narrative */}
+        <FounderJourneySection />
+
         {/* Services Section */}
         <section className="py-16 md:py-24 relative">
           <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -258,9 +324,12 @@ const Sobre = () => {
               viewport={{ once: true }}
               transition={{ duration: 0.6 }}
             >
-              <h2 className="text-3xl md:text-4xl font-bold mb-4">O que oferecemos</h2>
+              {/* H2 como Pergunta (AEO/GEO) */}
+              <h2 className="text-3xl md:text-4xl font-bold mb-4">
+                Quais serviços oferecem soluções para análise de Inteligência Organizacional?
+              </h2>
               <p className="text-lg text-muted-foreground">
-                Conheça nossos serviços e soluções para impulsionar o seu negócio
+                Conheça o Ecossistema de Inteligência Organizacional da Crie Valor
               </p>
             </motion.div>
 
@@ -276,49 +345,65 @@ const Sobre = () => {
                   icon: Anchor,
                   title: "MAR - Mapa para Alto Rendimento",
                   description:
-                    "Uma ferramenta que utiliza nossa metodologia proprietária para criar planos estratégicos sob medida, visando otimizar suas operações, aumentar suas vendas e alcançar seus objetivos empresariais.",
+                    "Sistema de planejamento estratégico com IA que entrega em 7 dias (vs 90 dias tradicional). Personalizado com Mapeamento do DNA de Liderança + BSC + Porter.",
+                  link: "/mar"
                 },
                 {
-                  icon: Building,
-                  title: "Consultoria Estratégica",
+                  icon: Sparkles,
+                  title: "LUMIA - Consultores Virtuais",
                   description:
-                    "Serviços personalizados de consultoria para ajudar empresas a definirem direções claras, metas alcançáveis e estratégias eficazes para crescimento sustentável.",
+                    "6 agentes de IA especializados (Estratégia, Marketing, Vendas, Finanças, Operações, Pessoas) disponíveis 24/7 para decisões do dia a dia.",
+                  link: "/lumia"
                 },
                 {
-                  icon: TrendingUp,
-                  title: "Branding e Identidade Visual",
+                  icon: Lightbulb,
+                  title: "Mentor de Propósito",
                   description:
-                    "Desenvolvimento de marcas fortes e identidades visuais que conectam sua empresa com seu público-alvo, criando reconhecimento e valor.",
+                    "Jornada guiada por agente especializado de IA para descobrir o propósito organizacional. Bússola digital para clareza estratégica.",
+                  link: "/mentor-proposito"
                 },
                 {
                   icon: Users,
                   title: "Oficina de Líderes",
                   description:
-                    "Programas de desenvolvimento onde você pode aprimorar suas habilidades de liderança e gestão com nossos especialistas de mercado.",
+                    "Programa completo de desenvolvimento de competências de liderança com módulos práticos ministrados por especialistas com vasta experiência empresarial.",
+                  link: "/oficina-lideres"
                 },
                 {
-                  icon: Lightbulb,
-                  title: "Inovação e Transformação Digital",
+                  icon: TrendingUp,
+                  title: "Implementação Assistida",
                   description:
-                    "Consultoria para implementação de tecnologias e processos inovadores que modernizam e otimizam a operação do seu negócio.",
+                    "Acompanhamento hands-on para executar o plano do MAR. Reuniões semanais, suporte WhatsApp e validação de execução por 3-6 meses.",
+                  link: "/contato"
                 },
                 {
                   icon: Star,
                   title: "Mentoria Executiva",
                   description:
-                    "Acompanhamento personalizado para líderes e gestores, fornecendo orientação estratégica e suporte na tomada de decisões.",
+                    "Sessões estratégicas quinzenais com fundadores (Helder ou Paulo). LUMIA incluso. Sparring partner estratégico contínuo.",
+                  link: "/mentorias"
                 },
               ].map((service, index) => (
-                <motion.div
-                  key={index}
-                  variants={fadeIn}
-                  className="bg-card rounded-xl p-6 border border-border hover:glow-border transition-all duration-300"
-                >
-                  <div className="rounded-full bg-primary/10 p-3 w-12 h-12 flex items-center justify-center mb-4">
-                    <service.icon className="text-primary h-6 w-6" />
-                  </div>
-                  <h3 className="text-xl font-medium mb-2">{service.title}</h3>
-                  <p className="text-muted-foreground">{service.description}</p>
+                <motion.div key={index} variants={fadeIn}>
+                  <a
+                    href={service.link}
+                    className="block h-full bg-card border border-border rounded-xl p-6 hover:glow-border hover:shadow-xl transition-all duration-300 group"
+                  >
+                    <div className="flex flex-col h-full">
+                      <div className="mb-4">
+                        <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors duration-300">
+                          <service.icon className="h-6 w-6 text-primary" />
+                        </div>
+                      </div>
+                      <h3 className="text-xl font-bold mb-2 group-hover:text-primary transition-colors duration-300">
+                        {service.title}
+                      </h3>
+                      <p className="text-muted-foreground flex-1">{service.description}</p>
+                      <div className="mt-4 flex items-center text-primary font-medium group-hover:translate-x-1 transition-transform duration-300">
+                        Saiba mais <ArrowRight className="ml-2 h-4 w-4" />
+                      </div>
+                    </div>
+                  </a>
                 </motion.div>
               ))}
             </motion.div>
