@@ -217,7 +217,7 @@ Antes de publicar qualquer conteúdo, verificar:
 ---
 
 ## 📅 Última Atualização
-**Data**: 28 de outubro de 2025
+**Data**: 22 de dezembro de 2025
 **Responsável**: Equipe Crie Valor
 **Próxima Revisão**: Trimestral ou quando houver mudanças nos produtos/serviços
 
