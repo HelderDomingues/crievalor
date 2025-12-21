@@ -62,6 +62,9 @@
 - **Detalhes**: plataforma única com chat e dashboard do usuário (futura integração com o MAR)  
 - **Para quem**: Empresa quer clareza de identidade, cultura e direção de longo prazo
 
+**Planos e Preços**:
+- Pagamento único: R$ 299,00
+
 **Importantes**:
 - ✅ Descrever como "bússola do ecossistema"
 - ✅ Foco em alinhamento de propósito
@@ -71,6 +74,10 @@
 - **URL**: https://www.crievalor.com.br/oficina-de-lideres
 - **Descrição**: Programa de desenvolvimento de liderança com metodologia proprietária
 - **Detalhes**: Formação de líderes estratégicos e transformadores
+
+**Planos e Preços**:
+- 10 pagamentos mensais de R$ 699,00/pessoa
+
 
 ---
 
@@ -86,9 +93,9 @@
 - **Telefone Campo Grande/MS**: (67) 9 9654-2991
 
 ### Redes Sociais e Subdomínios
-- Facebook: https://www.facebook.com/crievalorestrategia
-- Instagram: https://www.instagram.com/crievalorestrategia/
+- Facebook: https://www.facebook.com/crievalor
 - LinkedIn: https://www.linkedin.com/company/crievalor/
+- Instagram: https://www.instagram.com/crievalor/
 - **Blog**: https://crievalor.com.br/blog
 - **Lumia**: https://lumia.crievalor.com.br
 - **Mentor de Propósito**: https://proposito.crievalor.com.br
