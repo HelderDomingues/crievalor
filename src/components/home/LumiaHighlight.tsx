@@ -121,9 +121,9 @@ const LumiaHighlight = () => {
                 className="shadow-glow bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-700 hover:to-purple-600"
                 asChild
               >
-                <a href="https://lumia.crievalor.com.br" target="_blank" rel="noopener noreferrer">
+                <Link to="/lumia">
                   Começar com o Lumia <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />
-                </a>
+                </Link>
               </Button>
               <Button variant="outline" size="lg" asChild>
                 <Link to="/sobre">
@@ -207,9 +207,9 @@ const LumiaHighlight = () => {
                         Integrado ao <span className="text-purple-400 font-medium">MAR</span>
                       </p>
                       <Button variant="outline" size="sm" asChild>
-                        <a href="https://lumia.crievalor.com.br" target="_blank" rel="noopener noreferrer">
+                        <Link to="/lumia">
                           Conhecer
-                        </a>
+                        </Link>
                       </Button>
                     </div>
                   </div>

@@ -88,7 +88,15 @@ const Contato = () => {
       <Header />
 
       <main className="flex-grow pt-16">
-        <h1 className="sr-only">Contato - Crie Valor Estratégia</h1>
+        <div className="container mx-auto px-4 mt-8">
+          {/* Answer Capsule */}
+          <div className="max-w-4xl p-6 bg-primary/5 border-l-4 border-primary rounded-r-lg mb-8">
+            <p className="text-lg leading-relaxed">
+              Entre em contato com a <strong>Crie Valor - Inteligência Organizacional</strong>. Escritórios em <strong>Campo Grande/MS</strong> e <strong>Navegantes/SC</strong>. Ponto de apoio para empresários que buscam transformar atitude em crescimento. <strong>contato@crievalor.com.br</strong> | WhatsApp: <strong>(47) 99215-0289</strong>. 27+ anos de experiência estratégica.
+            </p>
+          </div>
+          <h1 className="text-4xl md:text-5xl font-bold mb-6 text-center">Como podemos ajudar a transformar sua empresa hoje?</h1>
+        </div>
 
         {/* Hero Section */}
         <ContactHeroSection

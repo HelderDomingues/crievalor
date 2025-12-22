@@ -33,14 +33,21 @@ const Pricing = () => {
                             Investimento em Crescimento
                         </Badge>
                         <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 tracking-tight">
-                            Escolha o plano ideal para <br className="hidden md:block" />
+                            Quanto custa acelerar sua empresa com o <br className="hidden md:block" />
                             <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-blue-600">
-                                acelerar sua empresa
+                                Ecossistema da Crie Valor?
                             </span>
                         </h1>
                         <p className="text-xl text-muted-foreground max-w-2xl mx-auto mb-8">
-                            Soluções completas de planejamento estratégico, inteligência artificial e desenvolvimento de liderança.
+                            Soluções completas de planejamento estratégico, inteligência artificial e desenvolvimento de liderança para profissionalizar sua gestão sem perder velocidade.
                         </p>
+
+                        {/* Answer Capsule */}
+                        <div className="max-w-4xl mx-auto p-6 bg-primary/5 border-l-4 border-primary rounded-r-lg text-left">
+                            <p className="text-lg leading-relaxed">
+                                Os <strong>planos da Crie Valor</strong> são desenhados para PMEs que buscam profissionalização rápida e liberdade operacional. <strong>Mentor de Propósito</strong> (R$ 299), <strong>MAR</strong> (R$ 3.497), <strong>LUMIA</strong> (R$ 697/mês). <strong>Combos Estratégicos</strong> com até R$ 2.300 de economia. Primeira plataforma de Inteligência Organizacional com IA do Brasil.
+                            </p>
+                        </div>
                     </div>
                 </section>
 

@@ -98,9 +98,9 @@ const MentorPropositoHighlight = () => {
                         </p>
                       </div>
                       <Button variant="outline" size="sm" asChild>
-                        <a href="https://proposito.crievalor.com.br" target="_blank" rel="noopener noreferrer">
+                        <Link to="/mentor-proposito">
                           Cadastrar
-                        </a>
+                        </Link>
                       </Button>
                     </div>
                   </div>
@@ -189,14 +189,14 @@ const MentorPropositoHighlight = () => {
 
             <div className="flex flex-col sm:flex-row gap-4">
               <Button size="lg" className="shadow-glow bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-700 hover:to-amber-600" asChild>
-                <a href="https://proposito.crievalor.com.br" target="_blank" rel="noopener noreferrer">
+                <Link to="/mentor-proposito">
                   Começar Jornada Grátis <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />
-                </a>
+                </Link>
               </Button>
               <Button variant="outline" size="lg" asChild>
-                <a href="https://proposito.crievalor.com.br" target="_blank" rel="noopener noreferrer">
+                <Link to="/mentor-proposito">
                   Conhecer o Mentor <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />
-                </a>
+                </Link>
               </Button>
             </div>
 

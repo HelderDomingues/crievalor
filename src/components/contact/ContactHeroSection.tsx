@@ -54,31 +54,28 @@ export const ContactHeroSection: React.FC<ContactHeroSectionProps> = ({
         <div className="blur-dot w-96 h-96 -top-48 -right-48 opacity-10"></div>
         <div className="blur-dot w-64 h-64 bottom-0 left-1/4 opacity-5"></div>
       </div>
-      
+
       <div className="container mx-auto px-4 relative z-10">
-        <motion.div 
+        <motion.div
           className="max-w-4xl mx-auto text-center mb-12"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
-          <h1 className="text-4xl md:text-5xl font-bold mb-6">
-            Entre em <span className="text-primary">Contato</span>
-          </h1>
           <p className="text-xl text-muted-foreground">
             Estamos prontos para ajudar a transformar o seu negócio
           </p>
         </motion.div>
-        
-        <motion.div 
+
+        <motion.div
           className="grid grid-cols-1 lg:grid-cols-2 gap-12"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.3, duration: 0.5 }}
         >
           <LocationInfoCard />
-          
-          <ContactCard 
+
+          <ContactCard
             contactName={contactName}
             setContactName={setContactName}
             contactEmail={contactEmail}

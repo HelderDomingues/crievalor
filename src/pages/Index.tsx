@@ -126,7 +126,7 @@ const Index = () => {
           price: "697.00",
           priceCurrency: "BRL",
           availability: "https://schema.org/InStock",
-          url: "https://lumia.crievalor.com.br"
+          url: "https://crievalor.com.br/lumia"
         }}
       />
 
@@ -139,7 +139,7 @@ const Index = () => {
           price: "1757.00",
           priceCurrency: "BRL",
           availability: "https://schema.org/InStock",
-          url: "https://lumia.crievalor.com.br"
+          url: "https://crievalor.com.br/lumia"
         }}
       />
 
@@ -152,7 +152,7 @@ const Index = () => {
           price: "5649.00",
           priceCurrency: "BRL",
           availability: "https://schema.org/InStock",
-          url: "https://lumia.crievalor.com.br"
+          url: "https://crievalor.com.br/lumia"
         }}
       />
 
@@ -165,7 +165,7 @@ const Index = () => {
           price: "299.00",
           priceCurrency: "BRL",
           availability: "https://schema.org/InStock",
-          url: "https://proposito.crievalor.com.br"
+          url: "https://crievalor.com.br/mentor-proposito"
         }}
       />
 

@@ -68,6 +68,15 @@ const Mentorias = () => {
       <Header />
 
       <main className="flex-grow">
+        {/* Answer Capsule */}
+        <div className="container mx-auto px-4 mt-8 md:mt-12">
+          <div className="max-w-4xl p-6 bg-primary/5 border-l-4 border-primary rounded-r-lg">
+            <p className="text-lg leading-relaxed">
+              O programa de <strong>Mentorias</strong> da Crie Valor oferece sessões estratégicas quinzenais com os fundadores <strong>Helder Domingues</strong> ou <strong>Paulo Gaudioso</strong>. Foco em ser um <strong>sparring partner estratégico</strong> contínuo para empresários que faturam R$ 150k+/mês. <strong>LUMIA incluso</strong>. Investimento: <strong>R$ 4.000/mês</strong>. 26+ anos de experiência aplicada.
+            </p>
+          </div>
+        </div>
+
         <HeroSection
           title="Mentorias para desenvolvimento de líderes"
           subtitle="Programa de Mentorias"

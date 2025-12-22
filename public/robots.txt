@@ -32,9 +32,9 @@ Allow: /lovable-uploads/*.svg
 Allow: /*.css
 Allow: /*.js
 
-# Nossos produtos e conteúdos em subdomínios próprios:
-# Lumia - 6 Consultores Virtuais com IA: https://lumia.crievalor.com.br
-# Mentor de Propósito - Bússola do Ecossistema com IA: https://proposito.crievalor.com.br
+# Nossos produtos e conteúdos integrados:
+# Lumia - 6 Consultores Virtuais com IA: https://crievalor.com.br/lumia
+# Mentor de Propósito - Bússola do Ecossistema com IA: https://crievalor.com.br/mentor-proposito
 
 # Localizações:
 # Campo Grande/MS - Consultoria em IA e Inteligência Organizacional

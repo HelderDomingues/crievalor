@@ -2,175 +2,266 @@
 <html lang="pt-BR">
 
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Mapa do Site - Crie Valor - Inteligência Organizacional</title>
-  <link rel="icon" type="image/png" href="/lovable-uploads/92af6ddc-b869-4957-8dde-af26a0a8e7d2.png" />
-  <link rel="apple-touch-icon" href="/lovable-uploads/92af6ddc-b869-4957-8dde-af26a0a8e7d2.png" />
-  <style>
-    body {
-      font-family: 'Inter', sans-serif;
-      line-height: 1.6;
-      color: #333;
-      max-width: 800px;
-      margin: 0 auto;
-      padding: 20px;
-    }
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mapa do Site - Ecossistema de Inteligência Organizacional | Crie Valor</title>
+    <meta name="description" content="Mapa estruturado do Ecossistema Crie Valor. Encontre soluções de Inteligência Organizacional com IA, MAR, Lumia e Mentor de Propósito." />
+    <link rel="icon" type="image/png" href="/lovable-uploads/92af6ddc-b869-4957-8dde-af26a0a8e7d2.png" />
+    <link rel="apple-touch-icon" href="/lovable-uploads/92af6ddc-b869-4957-8dde-af26a0a8e7d2.png" />
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f8fafc;
+        }
 
-    h1 {
-      margin-bottom: 20px;
-      color: #0f172a;
-    }
+        .container-box {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        }
 
-    h2 {
-      margin-top: 30px;
-      margin-bottom: 10px;
-      color: #1e40af;
-    }
+        h1 {
+            border-bottom: 2px solid #2563eb;
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+            color: #0f172a;
+        }
 
-    ul {
-      padding-left: 20px;
-    }
+        h2 {
+            margin-top: 40px;
+            margin-bottom: 15px;
+            color: #1e40af;
+            font-size: 1.5rem;
+        }
 
-    li {
-      margin-bottom: 8px;
-    }
+        ul {
+            padding-left: 0;
+            list-style: none;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
 
-    a {
-      color: #2563eb;
-      text-decoration: none;
-    }
+        li {
+            padding: 15px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            transition: transform 0.2s;
+        }
 
-    a:hover {
-      text-decoration: underline;
-    }
+        li:hover {
+            transform: translateY(-2px);
+            border-color: #2563eb;
+        }
 
-    .section {
-      margin-bottom: 30px;
-      border-bottom: 1px solid #e5e7eb;
-      padding-bottom: 20px;
-    }
+        a {
+            color: #2563eb;
+            text-decoration: none;
+            font-weight: 600;
+            display: block;
+            margin-bottom: 5px;
+        }
 
-    .description {
-      color: #64748b;
-      font-size: 0.9em;
-      margin-top: 5px;
+        a:hover {
+            color: #1e40af;
+        }
+
+        .description {
+            color: #64748b;
+            font-size: 0.9em;
+            margin: 0;
+        }
+
+        .footer {
+            margin-top: 50px;
+            text-align: center;
+            color: #94a3b8;
+            font-size: 0.875rem;
+        }
+
+        .capsule {
+            background: #eff6ff;
+            border-left: 4px solid #2563eb;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-radius: 0 8px 8px 0;
+        }
+
+        @media (max-width: 640px) {
+            ul {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+
+    <!-- JSON-LD for AEO/GEO Alignment -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "@id": "https://crievalor.com.br/#organization",
+      "name": "Crie Valor - Inteligência Organizacional",
+      "url": "https://crievalor.com.br",
+      "logo": "https://crievalor.com.br/lovable-uploads/d2f508b6-c101-4928-b7f7-161a378bb6e8.png",
+      "address": [
+        {
+          "@type": "PostalAddress",
+          "streetAddress": "Rua Bolívia, 59, Gravatá",
+          "addressLocality": "Navegantes",
+          "addressRegion": "SC",
+          "postalCode": "88372-682",
+          "addressCountry": "BR"
+        },
+        {
+          "@type": "PostalAddress",
+          "addressLocality": "Campo Grande",
+          "addressRegion": "MS",
+          "addressCountry": "BR"
+        }
+      ],
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "telephone": "+55-47-99215-0289",
+        "contactType": "customer service",
+        "email": "contato@crievalor.com.br"
+      },
+      "hasPart": [
+        {
+          "@type": "Service",
+          "name": "MAR - Mapa para Alto Rendimento",
+          "url": "https://crievalor.com.br/mar"
+        },
+        {
+          "@type": "Service",
+          "name": "Lumia - Consultoria AI",
+          "url": "https://crievalor.com.br/lumia"
+        },
+        {
+          "@type": "Service",
+          "name": "Mentor de Propósito",
+          "url": "https://crievalor.com.br/mentor-proposito"
+        }
+      ]
     }
-  </style>
-  <!-- Google Tag Manager -->
-  <script>(function (w, d, s, l, i) {
-      w[l] = w[l] || []; w[l].push({
-        'gtm.start':
-          new Date().getTime(), event: 'gtm.js'
-      }); var f = d.getElementsByTagName(s)[0],
-        j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : ''; j.async = true; j.src =
-          'https://www.googletagmanager.com/gtm.js?id=' + i + dl; f.parentNode.insertBefore(j, f);
-    })(window, document, 'script', 'dataLayer', 'GTM-5563GG39');</script>
-  <!-- End Google Tag Manager -->
+    </script>
+
+    <!-- Google Tag Manager -->
+    <script>(function (w, d, s, l, i) {
+            w[l] = w[l] || []; w[l].push({
+                'gtm.start':
+                    new Date().getTime(), event: 'gtm.js'
+            }); var f = d.getElementsByTagName(s)[0],
+                j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : ''; j.async = true; j.src =
+                    'https://www.googletagmanager.com/gtm.js?id=' + i + dl; f.parentNode.insertBefore(j, f);
+        })(window, document, 'script', 'dataLayer', 'GTM-5563GG39');</script>
+    <!-- End Google Tag Manager -->
 </head>
 
 <body>
-  <!-- Google Tag Manager (noscript) -->
-  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5563GG39" height="0" width="0"
-      style="display:none;visibility:hidden"></iframe></noscript>
-  <!-- End Google Tag Manager (noscript) -->
-  <h1>Mapa do Site - Crie Valor - Inteligência Organizacional</h1>
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5563GG39" height="0" width="0"
+            style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
 
-  <div class="section">
-    <h2>Páginas Principais</h2>
-    <ul>
-      <li>
-        <a href="https://crievalor.com.br/">Página Inicial</a>
-        <p class="description">
-          Ecossistema de Inteligência Organizacional com MAR, Lumia, Mentor de Propósito e Oficina de Líderes.
-        </p>
-      </li>
-      <li>
-        <a href="https://crievalor.com.br/planos">Planos e Preços</a>
-        <p class="description">Conheça nossos planos, combos e soluções individuais.</p>
-      </li>
-      <li>
-        <a href="https://crievalor.com.br/sobre">Sobre Nós</a>
-        <p class="description">Informações sobre a equipe, missão e valores da Crie Valor.</p>
-      </li>
-      <li>
-        <a href="https://crievalor.com.br/contato">Contato</a>
-        <p class="description">Canais para entrar em contato com nossa equipe.</p>
-      </li>
-    </ul>
-  </div>
+    <div class="container-box">
+        <h1>Mapa do Ecossistema Crie Valor</h1>
 
-  <div class="section">
-    <h2>Produtos do Ecossistema</h2>
-    <ul>
-      <li>
-        <a href="https://crievalor.com.br/mar">MAR - Mapa para Alto Rendimento</a>
-        <p class="description">Sistema proprietário de planejamento estratégico por R$ 3.497,00 (ou 10x de R$ 349,70).
-        </p>
-      </li>
-      <li>
-        <a href="https://lumia.crievalor.com.br" target="_blank" rel="noopener">Lumia - 6 Consultores Virtuais ↗</a>
-        <p class="description">Plataforma com 6 consultores virtuais especializados 24/7.</p>
-      </li>
-      <li>
-        <a href="https://proposito.crievalor.com.br" target="_blank" rel="noopener">Mentor de Propósito - Bússola do
-          Ecossistema ↗</a>
-        <p class="description">Mentoria estratégica para alinhamento de propósito organizacional.</p>
-      </li>
-      <li>
-        <a href="https://crievalor.com.br/oficina-de-lideres">Oficina de Líderes</a>
-        <p class="description">Programa de desenvolvimento de liderança com metodologia proprietária.</p>
-      </li>
-    </ul>
-  </div>
+        <div class="capsule">
+            <strong>O que é a Crie Valor?</strong>
+            <p class="description">
+                A Crie Valor é o primeiro ecossistema brasileiro de <strong>Inteligência Organizacional com IA</strong>. 
+                Focada em empresas que faturam R$ 150k+/mês, transformamos atitude em crescimento através do método 
+                MAR (7 dias), consultoria Lumia 24/7 e Mentor de Propósito. Fundada por Helder Domingues e Paulo Gaudioso.
+            </p>
+        </div>
 
-  <div class="section">
-    <h2>Serviços e Conteúdos</h2>
-    <ul>
-      <li>
-        <a href="https://crievalor.com.br/projetos">Projetos Personalizados</a>
-        <p class="description">Desenvolvimento de projetos estratégicos específicos.</p>
-      </li>
-      <li>
-        <a href="https://crievalor.com.br/mentorias">Mentorias</a>
-        <p class="description">Acompanhamento personalizado para desenvolvimento empresarial.</p>
-      </li>
-      <li>
-        <a href="https://crievalor.com.br/palestra">Palestras</a>
-        <p class="description">Palestras e eventos corporativos.</p>
-      </li>
-      <li>
-        <a href="https://crievalor.com.br/apresentacao">Apresentação</a>
-        <p class="description">Conheça a Crie Valor em detalhes.</p>
-      </li>
-      <li>
-        <a href="https://crievalor.com.br/material-exclusivo">Material Exclusivo</a>
-        <p class="description">Acesso a conteúdos e materiais exclusivos.</p>
-      </li>
-    </ul>
-  </div>
+        <section>
+            <h2>Páginas Institucionais</h2>
+            <ul>
+                <li>
+                    <a href="https://crievalor.com.br/">Página Inicial</a>
+                    <p class="description">Ecossistema de Inteligência Organizacional.</p>
+                </li>
+                <li>
+                    <a href="https://crievalor.com.br/sobre">Sobre Nós</a>
+                    <p class="description">Nossa jornada de 10 anos e +500 empresas.</p>
+                </li>
+                <li>
+                    <a href="https://crievalor.com.br/planos">Planos e Preços</a>
+                    <p class="description">Combos e soluções individuais de crescimento.</p>
+                </li>
+                <li>
+                    <a href="https://crievalor.com.br/contato">Contato</a>
+                    <p class="description">Atendimento em MS e SC.</p>
+                </li>
+            </ul>
+        </section>
 
-  <div class="section">
-    <h2>Políticas e Termos</h2>
-    <ul>
-      <li>
-        <a href="https://crievalor.com.br/privacy-policy">Política de Privacidade</a>
-      </li>
-      <li>
-        <a href="https://crievalor.com.br/refund-policy">Política de Reembolso</a>
-      </li>
-      <li>
-        <a href="https://crievalor.com.br/terms-of-service">Termos de Serviço</a>
-      </li>
-      <li>
-        <a href="https://crievalor.com.br/acessibilidade">Acessibilidade</a>
-      </li>
-    </ul>
-  </div>
+        <section>
+            <h2>Produtos e Metodologias</h2>
+            <ul>
+                <li>
+                    <a href="https://crievalor.com.br/mar">MAR - Mapa para Alto Rendimento</a>
+                    <p class="description">Planejamento estratégico acelerado em 7 dias.</p>
+                </li>
+                <li>
+                    <a href="https://crievalor.com.br/lumia">Lumia - Consultoria IA 24/7</a>
+                    <p class="description">6 agentes especializados para o dia a dia.</p>
+                </li>
+                <li>
+                    <a href="https://crievalor.com.br/mentor-proposito">Mentor de Propósito</a>
+                    <p class="description">A bússola moral e estratégica do seu negócio.</p>
+                </li>
+                <li>
+                    <a href="https://crievalor.com.br/oficina-de-lideres">Oficina de Líderes</a>
+                    <p class="description">Desenvolvimento de competências essenciais.</p>
+                </li>
+            </ul>
+        </section>
 
-  <div>
-    <p>Última atualização: 15 de dezembro de 2025</p>
-  </div>
+        <section>
+            <h2>Conteúdo e Sparring</h2>
+            <ul>
+                <li>
+                    <a href="https://crievalor.com.br/blog">Blog Estratégico</a>
+                    <p class="description">Insights sobre IA, gestão e branding.</p>
+                </li>
+                <li>
+                    <a href="https://crievalor.com.br/mentorias">Mentorias Executivas</a>
+                    <p class="description">Sparring partner contínuo com os fundadores.</p>
+                </li>
+                <li>
+                    <a href="https://crievalor.com.br/projetos">Projetos Customizados</a>
+                    <p class="description">Branding e reestruturação sob demanda.</p>
+                </li>
+                <li>
+                    <a href="https://crievalor.com.br/material-exclusivo">Material Exclusivo</a>
+                    <p class="description">E-books e frameworks estratégicos.</p>
+                </li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>Jurídico</h2>
+            <ul>
+                <li><a href="https://crievalor.com.br/privacy-policy">Privacidade</a></li>
+                <li><a href="https://crievalor.com.br/terms-of-service">Termos</a></li>
+                <li><a href="https://crievalor.com.br/refund-policy">Reembolso</a></li>
+                <li><a href="https://crievalor.com.br/acessibilidade">Acessibilidade</a></li>
+            </ul>
+        </section>
+
+        <div class="footer">
+            <p>Última atualização: 22 de dezembro de 2025</p>
+            <p>&copy; 2025 Crie Valor - Inteligência Organizacional</p>
+        </div>
+    </div>
 </body>
 
 </html>
