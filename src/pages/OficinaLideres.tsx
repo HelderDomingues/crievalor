@@ -34,8 +34,8 @@ const OficinaLideres = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <Helmet>
-        <title>Oficina de Líderes - Formação Executiva Presencial | Baixo Vale do Itajaí/SC</title>
-        <meta name="description" content="Programa completo de desenvolvimento de liderança para o Baixo Vale do Itajaí/SC. Treinamentos práticos com mais de 25 anos de experiência. Navegantes, Santa Catarina." />
+        <title>Como Desenvolver Líderes Estratégicos em 10 Meses? | Oficina de Líderes - Crie Valor</title>
+        <meta name="description" content="Programa completo de desenvolvimento de liderança para o Baixo Vale do Itajaí/SC. 10 meses, híbrido (presencial + online). R$ 6.990 (10x R$ 699). Treinamentos práticos com 25+ anos de experiência. Fundadores: Helder Domingues e Paulo Gaudioso." />
         <meta name="keywords" content="oficina de líderes, formação executiva navegantes, curso liderança baixo vale itajaí, desenvolvimento gestores sc, treinamento líderes santa catarina, capacitação empresarial navegantes" />
         <link rel="canonical" href="https://crievalor.com.br/oficina-de-lideres" />
         <meta property="og:title" content="Oficina de Líderes - Formação Executiva Presencial" />
@@ -44,8 +44,8 @@ const OficinaLideres = () => {
         <meta property="og:type" content="website" />
         <meta property="og:image" content="https://crievalor.com.br/og-image.jpg" />
       </Helmet>
-      
-      <ProductSchema 
+
+      <ProductSchema
         name="Oficina de Líderes - Formação Executiva Presencial"
         description="Programa completo de desenvolvimento de competências de liderança voltado exclusivamente para profissionais e empresários da região do Baixo Vale do Itajaí em Santa Catarina. Treinamentos práticos com mais de 25 anos de experiência."
         image="https://iili.io/Kzv9C9j.png"
@@ -57,8 +57,8 @@ const OficinaLideres = () => {
           url: "https://crievalor.com.br/oficina-de-lideres"
         }}
       />
-      
-      <ServiceSchema 
+
+      <ServiceSchema
         name="Oficina de Líderes - Formação Executiva Presencial"
         description="Programa completo de desenvolvimento de competências de liderança voltado exclusivamente para profissionais e empresários da região do Baixo Vale do Itajaí em Santa Catarina."
         provider={{
@@ -68,8 +68,8 @@ const OficinaLideres = () => {
         url="https://crievalor.com.br/oficina-de-lideres"
         areaServed="Baixo Vale do Itajaí, Santa Catarina"
       />
-      
-      <VideoSchema 
+
+      <VideoSchema
         name="Oficina de Líderes - Formação de Líderes Estratégicos"
         description="Conheça o programa Oficina de Líderes e descubra como desenvolver competências essenciais para gerir pessoas e processos."
         thumbnailUrl="https://crievalor.com.br/lovable-uploads/oficina-lideres-logo.png"
@@ -77,14 +77,14 @@ const OficinaLideres = () => {
         duration="PT1M46S"
         embedUrl="https://www.youtube.com/embed/Lr_L7MAIUnM"
       />
-      
-      <BreadcrumbSchema 
+
+      <BreadcrumbSchema
         items={[
           { name: "Home", url: "https://crievalor.com.br" },
           { name: "Oficina de Líderes", url: "https://crievalor.com.br/oficina-de-lideres" }
         ]}
       />
-      
+
       <Header />
 
       <main className="flex-grow">
@@ -113,7 +113,14 @@ const OficinaLideres = () => {
                   </div>
                 </div>
 
-                <h2 className="text-3xl md:text-4xl font-bold mb-6">Formação Executiva Presencial</h2>
+                {/* Answer Capsule */}
+                <div className="mb-6 p-6 bg-primary/5 border-l-4 border-primary rounded-r-lg">
+                  <p className="text-lg leading-relaxed">
+                    A <strong>Oficina de Líderes</strong> é um programa completo de desenvolvimento de competências de liderança voltado para profissionais e empresários do <strong>Baixo Vale do Itajaí/SC</strong>. <strong>10 meses</strong>, híbrido (presencial + online). <strong>R$ 6.990</strong> (10x R$ 699). Métodos práticos com <strong>25+ anos de experiência</strong>.
+                  </p>
+                </div>
+
+                <h2 className="text-3xl md:text-4xl font-bold mb-6">Como desenvolver líderes estratégicos em 10 meses?</h2>
 
                 <p className="text-lg text-muted-foreground mb-4">
                   A Oficina de Líderes é um programa completo de desenvolvimento de competências de liderança voltado

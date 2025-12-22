@@ -13,8 +13,8 @@ const Pricing = () => {
     return (
         <div className="min-h-screen flex flex-col bg-background">
             <Helmet>
-                <title>Planos e Preços | Crie Valor - Inteligência Organizacional</title>
-                <meta name="description" content="Conheça nossos planos e combos para acelerar o crescimento da sua empresa. Consultoria estratégica, IA e desenvolvimento de liderança." />
+                <title>Quanto Custa Inteligência Organizacional com IA? | Planos - Crie Valor</title>
+                <meta name="description" content="Planos a partir de R$ 299 (Mentor de Propósito). MAR: R$ 3.500-5.000. LUMIA: R$ 697/mês. Combos com desconto. Primeira plataforma brasileira de IA para PMEs. Fundadores: Helder Domingues e Paulo Gaudioso." />
                 <link rel="canonical" href="https://crievalor.com.br/planos" />
             </Helmet>
 

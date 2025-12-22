@@ -19,8 +19,8 @@ const Mentorias = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <Helmet>
-        <title>Mentorias Empresariais | Desenvolvimento de Líderes - Crie Valor</title>
-        <meta name="description" content="Programa de mentorias com IA para desenvolvimento de líderes. Acompanhamento personalizado e resultados mensuráveis em Campo Grande/MS e Navegantes/SC." />
+        <title>Como Ter um Sparring Partner Estratégico Contínuo? | Mentorias - Crie Valor</title>
+        <meta name="description" content="Sessões estratégicas quinzenais com Helder Domingues ou Paulo Gaudioso. LUMIA incluso. R$ 4.000/mês. Sparring partner estratégico contínuo para empresários. 26+ e 27+ anos de experiência." />
         <meta name="keywords" content="mentorias empresariais, desenvolvimento de líderes, mentoria com IA, liderança estratégica, coach executivo campo grande, mentoria navegantes sc, programa desenvolvimento gestores" />
         <link rel="canonical" href="https://crievalor.com.br/mentorias" />
         <meta property="og:title" content="Mentorias Empresariais - Desenvolvimento de Líderes" />
