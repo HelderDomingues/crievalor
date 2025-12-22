@@ -224,7 +224,7 @@ const Index = () => {
 
         {/* CTA após Client Logos */}
         <QuickCTA
-          title="Quero fazer parte desta lista de sucesso"
+          title="Quero fazer parte deste grupo"
           description="Junte-se às empresas que já transformaram seus resultados conosco."
           ctaText="Falar com especialista"
           ctaUrl="/contato"

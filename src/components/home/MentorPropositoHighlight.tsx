@@ -93,9 +93,6 @@ const MentorPropositoHighlight = () => {
                         <p className="text-sm text-muted-foreground">
                           Metodologia <span className="text-amber-400 font-medium">proprietária Crie Valor</span>
                         </p>
-                        <p className="text-xs text-green-400 font-medium mt-1">
-                          🎁 BETA Gratuito até 30/11/2025
-                        </p>
                       </div>
                       <Button variant="outline" size="sm" asChild>
                         <Link to="/mentor-proposito">
@@ -190,7 +187,7 @@ const MentorPropositoHighlight = () => {
             <div className="flex flex-col sm:flex-row gap-4">
               <Button size="lg" className="shadow-glow bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-700 hover:to-amber-600" asChild>
                 <Link to="/mentor-proposito">
-                  Começar Jornada Grátis <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />
+                  Começar Jornada <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />
                 </Link>
               </Button>
               <Button variant="outline" size="lg" asChild>
