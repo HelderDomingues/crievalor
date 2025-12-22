@@ -28,8 +28,8 @@ const Contato = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <Helmet>
-        <title>Contato - Inteligência Organizacional com IA | Campo Grande/MS e Navegantes/SC</title>
-        <meta name="description" content="Entre em contato com a Crie Valor para consultoria em IA e inteligência organizacional. Escritórios em Campo Grande/MS e Navegantes/SC. Consultoria em inteligência artificial para negócios." />
+        <title>Como Podemos Ajudar Sua Empresa? | Contato - Crie Valor</title>
+        <meta name="description" content="Entre em contato com a Crie Valor para Inteligência Organizacional com IA. Escritórios em Campo Grande/MS e Navegantes/SC. Helder Domingues e Paulo Gaudioso. contato@crievalor.com.br | (47) 99215-0289" />
         <meta property="og:title" content="Contato | Crie Valor Estratégia" />
         <meta property="og:description" content="Entre em contato com a Crie Valor Estratégia. Estamos prontos para ajudar sua empresa a alcançar resultados excepcionais." />
         <meta property="og:type" content="website" />
