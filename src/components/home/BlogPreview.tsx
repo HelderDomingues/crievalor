@@ -1,45 +1,33 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, ExternalLink, Calendar, Clock } from 'lucide-react';
+import { ArrowRight, Calendar, Clock, BookOpen } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { blogService } from '@/services/blogService';
+import { Post } from '@/components/blog/PostCard';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const BlogPreview = () => {
-  // Artigos de exemplo do blog
-  const blogPosts = [
-    {
-      id: 1,
-      title: 'Como Implementar o MAR na Sua Empresa',
-      excerpt: 'Descubra o passo a passo para aplicar nossa metodologia proprietária e acelerar seus resultados empresariais.',
-      date: '2024-01-15',
-      readTime: '8 min',
-      category: 'Estratégia',
-      image: 'https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=2070',
-      url: 'https://blog.crievalor.com.br/como-implementar-mar-empresa'
-    },
-    {
-      id: 2,
-      title: '5 Erros Fatais em Gestão que Destroem Empresas',
-      excerpt: 'Conheça os principais erros de gestão que podem comprometer o crescimento da sua empresa e como evitá-los.',
-      date: '2024-01-10',
-      readTime: '6 min',
-      category: 'Gestão',
-      image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=2070',
-      url: 'https://blog.crievalor.com.br/erros-fatais-gestao-empresas'
-    },
-    {
-      id: 3,
-      title: 'Marketing Digital: Tendências 2024',
-      excerpt: 'As principais tendências de marketing digital para 2024 e como aplicá-las no seu negócio para maximizar resultados.',
-      date: '2024-01-05',
-      readTime: '10 min',
-      category: 'Marketing',
-      image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=2015',
-      url: 'https://blog.crievalor.com.br/marketing-digital-tendencias-2024'
-    }
-  ];
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const formatDate = (dateString: string) => {
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        const { posts: fetchedPosts } = await blogService.getPosts(3);
+        setPosts(fetchedPosts);
+      } catch (error) {
+        console.error('Error fetching blog posts for preview:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPosts();
+  }, []);
+
+  const formatDate = (dateString: string | null) => {
+    if (!dateString) return '';
     return new Date(dateString).toLocaleDateString('pt-BR', {
       day: 'numeric',
       month: 'long',
@@ -66,68 +54,86 @@ const BlogPreview = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-          {blogPosts.map((post) => (
-            <Card key={post.id} className="group hover:shadow-lg transition-all duration-300 overflow-hidden">
-              <div className="aspect-video overflow-hidden">
-                <img 
-                  src={post.image} 
-                  alt={post.title}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                  loading="lazy"
-                />
-              </div>
-              
-              <CardHeader className="space-y-2">
-                <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                  <span className="px-2 py-1 bg-primary/10 text-primary rounded-full text-xs font-medium">
-                    {post.category}
-                  </span>
-                  <div className="flex items-center gap-1">
-                    <Calendar className="h-3 w-3" />
-                    <span>{formatDate(post.date)}</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <Clock className="h-3 w-3" />
-                    <span>{post.readTime}</span>
-                  </div>
+          {loading ? (
+            [1, 2, 3].map((i) => (
+              <Card key={i} className="overflow-hidden">
+                <Skeleton className="aspect-video w-full" />
+                <CardHeader className="space-y-2">
+                  <Skeleton className="h-4 w-1/4" />
+                  <Skeleton className="h-6 w-3/4" />
+                </CardHeader>
+                <CardContent>
+                  <Skeleton className="h-4 w-full" />
+                  <Skeleton className="h-4 w-full mt-2" />
+                  <Skeleton className="h-4 w-2/3 mt-2" />
+                </CardContent>
+              </Card>
+            ))
+          ) : posts.length > 0 ? (
+            posts.map((post) => (
+              <Card key={post.id} className="group hover:shadow-lg transition-all duration-300 overflow-hidden flex flex-col">
+                <div className="aspect-video overflow-hidden">
+                  <Link to={`/blog/${post.slug}`}>
+                    <img
+                      src={post.cover_image_url || "/placeholder.svg"}
+                      alt={post.title}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      loading="lazy"
+                    />
+                  </Link>
                 </div>
-                
-                <h3 className="text-xl font-bold group-hover:text-primary transition-colors line-clamp-2">
-                  {post.title}
-                </h3>
-              </CardHeader>
-              
-              <CardContent className="pt-0">
-                <p className="text-muted-foreground mb-4 line-clamp-3">
-                  {post.excerpt}
-                </p>
-                
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  asChild
-                  className="w-full justify-between group-hover:bg-primary/5"
-                >
-                  <a href={post.url} target="_blank" rel="noopener noreferrer">
-                    Ler artigo completo
-                    <ExternalLink className="h-4 w-4" />
-                  </a>
-                </Button>
-              </CardContent>
-            </Card>
-          ))}
+
+                <CardHeader className="space-y-2 flex-grow">
+                  <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                    {post.categories && post.categories.length > 0 && (
+                      <span className="px-2 py-1 bg-primary/10 text-primary rounded-full text-xs font-medium">
+                        {post.categories[0].name}
+                      </span>
+                    )}
+                    <div className="flex items-center gap-1">
+                      <Calendar className="h-3 w-3" />
+                      <span>{formatDate(post.published_at)}</span>
+                    </div>
+                  </div>
+
+                  <Link to={`/blog/${post.slug}`}>
+                    <h3 className="text-xl font-bold group-hover:text-primary transition-colors line-clamp-2">
+                      {post.title}
+                    </h3>
+                  </Link>
+                </CardHeader>
+
+                <CardContent className="pt-0">
+                  <p className="text-muted-foreground mb-4 line-clamp-3">
+                    {post.excerpt}
+                  </p>
+
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    asChild
+                    className="w-full justify-between group-hover:bg-primary/5"
+                  >
+                    <Link to={`/blog/${post.slug}`}>
+                      Ler artigo completo
+                      <BookOpen className="h-4 w-4" />
+                    </Link>
+                  </Button>
+                </CardContent>
+              </Card>
+            ))
+          ) : (
+            <div className="col-span-full text-center py-12">
+              <p className="text-muted-foreground">Novos artigos estão sendo preparados.</p>
+            </div>
+          )}
         </div>
 
         <div className="text-center">
           <Button asChild size="lg" variant="outline">
-            <a 
-              href="https://blog.crievalor.com.br" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="inline-flex items-center"
-            >
+            <Link to="/blog" className="inline-flex items-center">
               Ver todos os artigos <ArrowRight className="ml-2 h-4 w-4" />
-            </a>
+            </Link>
           </Button>
         </div>
       </div>

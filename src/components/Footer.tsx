@@ -12,38 +12,38 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
           <div className="space-y-4">
             <Link to="/" className="flex items-center space-x-2">
-              <img 
-                src="/lovable-uploads/fc868084-d22b-4877-907b-fe02e64fc501.png" 
-                alt="Crie Valor Logo" 
+              <img
+                src="/lovable-uploads/fc868084-d22b-4877-907b-fe02e64fc501.png"
+                alt="Crie Valor Logo"
                 className="h-10"
               />
             </Link>
             <p className="text-muted-foreground text-sm">
-              Transformando sua empresa através da nossa metodologia proprietária de inteligência organizacional 
+              Transformando sua empresa através da nossa metodologia proprietária de inteligência organizacional
               de alto rendimento para empresas de todos os tamanhos.
             </p>
             <div className="flex space-x-4 pt-2">
-              <a 
-                href="https://linkedin.com" 
-                target="_blank" 
+              <a
+                href="https://linkedin.com"
+                target="_blank"
                 rel="noopener noreferrer"
                 className="text-muted-foreground hover:text-primary transition-colors"
                 aria-label="LinkedIn"
               >
                 <Linkedin size={20} />
               </a>
-              <a 
-                href="https://instagram.com" 
-                target="_blank" 
+              <a
+                href="https://instagram.com"
+                target="_blank"
                 rel="noopener noreferrer"
                 className="text-muted-foreground hover:text-primary transition-colors"
                 aria-label="Instagram"
               >
                 <Instagram size={20} />
               </a>
-              <a 
-                href="https://twitter.com" 
-                target="_blank" 
+              <a
+                href="https://twitter.com"
+                target="_blank"
                 rel="noopener noreferrer"
                 className="text-muted-foreground hover:text-primary transition-colors"
                 aria-label="Twitter"
@@ -67,14 +67,9 @@ const Footer = () => {
                 </Link>
               </li>
               <li>
-                <a 
-                  href="https://blog.crievalor.com.br" 
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-muted-foreground hover:text-primary transition-colors text-sm"
-                >
+                <Link to="/blog" className="text-muted-foreground hover:text-primary transition-colors text-sm">
                   Blog
-                </a>
+                </Link>
               </li>
               <li>
                 <Link to="/sobre" className="text-muted-foreground hover:text-primary transition-colors text-sm">
@@ -129,7 +124,7 @@ const Footer = () => {
               </li>
               <li className="flex items-start space-x-3">
                 <Phone size={18} className="text-primary mt-0.5" />
-                <span className="text-muted-foreground text-sm">67 99654-2991 (MS)<br/>47 99215-0289 (SC)</span>
+                <span className="text-muted-foreground text-sm">67 99654-2991 (MS)<br />47 99215-0289 (SC)</span>
               </li>
               <li className="flex items-start space-x-3">
                 <MapPin size={18} className="text-primary mt-0.5" />
@@ -157,7 +152,7 @@ const Footer = () => {
               Acessibilidade
             </Link>
           </div>
-          
+
           <p className="text-muted-foreground text-sm text-center">
             © {currentYear} Crie Valor. Todos os direitos reservados.
           </p>

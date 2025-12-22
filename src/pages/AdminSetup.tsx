@@ -5,7 +5,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import AdminAuth from "@/components/admin/AdminAuth";
 import { Button } from "@/components/ui/button";
-import { FileText, Image, MessageSquareQuote, Palette, Calendar, UserCheck, Stethoscope } from "lucide-react";
+import { FileText, Image, MessageSquareQuote, Palette, Calendar, UserCheck, Stethoscope, Newspaper } from "lucide-react";
 import AdminCard from "@/components/admin/AdminCard";
 
 const AdminSetup = () => {
@@ -63,6 +63,13 @@ const AdminSetup = () => {
                     icon={<Image className="h-10 w-10" />}
                     to="/admin-client-logos"
                     description="Gerenciar logos de clientes exibidos na página inicial"
+                  />
+
+                  <AdminCard
+                    title="Blog / Artigos"
+                    icon={<Newspaper className="h-10 w-10" />}
+                    to="/admin-blog"
+                    description="Gerenciar artigos e categorias do blog interno"
                   />
 
                   <AdminCard

@@ -100,7 +100,7 @@ export const OrganizationSchema: React.FC<OrganizationSchemaProps> = ({
       "https://www.facebook.com/crievalorestrategia",
       "https://www.instagram.com/crievalorestrategia/",
       "https://www.linkedin.com/company/crievalor/",
-      "https://blog.crievalor.com.br"
+      "https://crievalor.com.br/blog"
     ]
   };
 

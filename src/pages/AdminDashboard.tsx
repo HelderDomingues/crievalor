@@ -6,7 +6,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import AdminAuth from "@/components/admin/AdminAuth";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Settings, FileText, Briefcase, Users, Calendar, UserCheck, Stethoscope } from "lucide-react";
+import { Settings, FileText, Briefcase, Users, Calendar, UserCheck, Stethoscope, Newspaper } from "lucide-react";
 
 const AdminDashboard = () => {
   return (
@@ -49,7 +49,7 @@ const AdminDashboard = () => {
                 <Card className="h-full hover:shadow-md transition-shadow cursor-pointer">
                   <CardHeader>
                     <CardTitle className="flex items-center">
-                      <FileText className="mr-2 h-5 w-5 text-primary" />
+                      <Newspaper className="mr-2 h-5 w-5 text-primary" />
                       Blog / Artigos
                     </CardTitle>
                     <CardDescription>

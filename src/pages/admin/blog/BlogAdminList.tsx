@@ -15,7 +15,7 @@ import {
     TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Edit, Trash2, Plus, Eye, CheckCircle, XCircle } from "lucide-react";
+import { Edit, Trash2, Plus, Eye, CheckCircle, XCircle, ArrowLeft } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Post } from "@/components/blog/PostCard";
@@ -85,6 +85,13 @@ export default function BlogAdminList() {
             <main className="flex-grow py-16">
                 <div className="container mx-auto px-4">
                     <AdminAuth onAuthenticated={() => { }} redirectPath="/admin-setup">
+                        <div className="mb-4">
+                            <Button variant="ghost" asChild size="sm">
+                                <Link to="/admin-dashboard" className="flex items-center gap-1">
+                                    <ArrowLeft className="w-4 h-4" /> Voltar ao Painel
+                                </Link>
+                            </Button>
+                        </div>
                         <div className="flex justify-between items-center mb-8">
                             <h1 className="text-3xl font-bold">Gerenciar Blog</h1>
                             <div className="flex gap-2">
