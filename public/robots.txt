@@ -3,6 +3,8 @@
 
 User-agent: *
 Allow: /
+Allow: /blog/
+Allow: /blog/*
 
 # Bloquear páginas admin e protegidas
 Disallow: /admin
