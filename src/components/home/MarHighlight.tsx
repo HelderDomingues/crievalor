@@ -4,13 +4,15 @@ import { Link } from "react-router-dom";
 import { Anchor, Brain, Target, BarChart3, Zap, ArrowRight, Map } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
+import marLogo from "@/assets/mar-logo-horizontal.png";
+
 const MarHighlight = () => {
   return (
     <section className="py-16 md:py-24 relative bg-gradient-to-b from-background to-secondary/20" id="mar-produto" aria-labelledby="marProdutoHeading">
       <div className="absolute inset-0 overflow-hidden">
         <div className="blur-dot w-72 h-72 -top-36 -right-36 opacity-10"></div>
       </div>
-      
+
       <div className="container mx-auto px-4 relative z-10">
         <div className="text-center mb-12">
           <div className="inline-flex items-center bg-primary/10 text-primary rounded-full px-4 py-2 mb-4">
@@ -20,13 +22,13 @@ const MarHighlight = () => {
           <h2 id="marProdutoHeading" className="text-3xl md:text-5xl font-bold mb-4 animate-fade-in">
             MAR - Mapa para Alto Rendimento
           </h2>
-          <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto animate-fade-in" style={{animationDelay: "0.2s"}}>
+          <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto animate-fade-in" style={{ animationDelay: "0.2s" }}>
             A solução que combina <strong>nossa metodologia proprietária</strong> e <strong>consultoria humana especializada</strong> para criar estratégias de negócios excepcionais que transformam seu futuro.
           </p>
         </div>
-        
+
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-          <div className="order-2 lg:order-1 animate-fade-in" style={{animationDelay: "0.3s"}}>
+          <div className="order-2 lg:order-1 animate-fade-in" style={{ animationDelay: "0.3s" }}>
             <div className="bg-primary/10 text-primary rounded-full px-4 py-2 inline-block mb-4">
               Transforme sua estratégia
             </div>
@@ -34,8 +36,8 @@ const MarHighlight = () => {
               Acelere o crescimento do seu negócio com o MAR
             </h3>
             <p className="text-lg text-muted-foreground mb-6">
-              Um método híbrido revolucionário que combina o poder da inteligência 
-              artificial com o conhecimento de consultores humanos para gerar planos 
+              Um método híbrido revolucionário que combina o poder da inteligencia
+              artificial com o conhecimento de consultores humanos para gerar planos
               estratégicos com análises aprofundadas.
             </p>
             <p className="text-lg text-muted-foreground mb-8">
@@ -43,7 +45,7 @@ const MarHighlight = () => {
               barateia e democratiza o desenvolvimento de planejamentos estratégicos
               de alto nível.
             </p>
-            
+
             <div className="grid grid-cols-2 gap-4 mb-8">
               <div className="bg-card border border-border rounded-lg p-4 hover:shadow-md transition-all duration-300">
                 <div className="flex items-center mb-2">
@@ -56,7 +58,7 @@ const MarHighlight = () => {
                   Combine o melhor dos dois mundos para resultados superiores
                 </p>
               </div>
-              
+
               <div className="bg-card border border-border rounded-lg p-4 hover:shadow-md transition-all duration-300">
                 <div className="flex items-center mb-2">
                   <div className="bg-primary/10 p-2 rounded-full mr-3">
@@ -65,11 +67,11 @@ const MarHighlight = () => {
                   <h4 className="font-medium">Rapidez</h4>
                 </div>
                 <p className="text-sm text-muted-foreground">
-                  Estratégias entregues em semanas, não meses
+                  Estrutégias entregues em semanas, não meses
                 </p>
               </div>
             </div>
-            
+
             <div className="flex flex-col sm:flex-row gap-4">
               <Button size="lg" className="shadow-glow" asChild>
                 <Link to="/mar">
@@ -83,14 +85,14 @@ const MarHighlight = () => {
               </Button>
             </div>
           </div>
-          
-          <div className="order-1 lg:order-2 animate-fade-in" style={{animationDelay: "0.4s"}}>
+
+          <div className="order-1 lg:order-2 animate-fade-in" style={{ animationDelay: "0.4s" }}>
             <div className="relative">
               <div className="bg-card border border-border rounded-xl overflow-hidden shadow-xl glow-border">
                 <div className="p-6">
                   <div className="flex justify-between items-center mb-6">
                     <div className="flex items-center">
-                      <img src="/lovable-uploads/91e6888f-e3da-40dc-8c55-5718c15ada21.png" alt="MAR" className="h-10 mr-3" />
+                      <img src={marLogo} alt="MAR" className="h-10 mr-3" />
                       <div>
                         <h3 className="text-xl font-bold">MAR</h3>
                         <p className="text-muted-foreground text-sm">Mapa para Alto Rendimento</p>
@@ -100,7 +102,7 @@ const MarHighlight = () => {
                       <Map className="h-6 w-6 text-primary" aria-hidden="true" />
                     </div>
                   </div>
-                  
+
                   <div className="space-y-4 mb-6">
                     <div className="p-3 bg-secondary/30 rounded-lg flex items-start gap-3">
                       <div className="bg-primary/10 p-2 rounded-full">
@@ -111,7 +113,7 @@ const MarHighlight = () => {
                         <p className="text-sm text-muted-foreground">Sistema proprietário + expertise humana para insights únicos</p>
                       </div>
                     </div>
-                    
+
                     <div className="p-3 bg-secondary/30 rounded-lg flex items-start gap-3">
                       <div className="bg-primary/10 p-2 rounded-full">
                         <Target className="h-5 w-5 text-primary" aria-hidden="true" />
@@ -121,7 +123,7 @@ const MarHighlight = () => {
                         <p className="text-sm text-muted-foreground">Planos sob medida para seu negócio</p>
                       </div>
                     </div>
-                    
+
                     <div className="p-3 bg-secondary/30 rounded-lg flex items-start gap-3">
                       <div className="bg-primary/10 p-2 rounded-full">
                         <BarChart3 className="h-5 w-5 text-primary" aria-hidden="true" />
@@ -132,7 +134,7 @@ const MarHighlight = () => {
                       </div>
                     </div>
                   </div>
-                  
+
                   <div className="pt-4 border-t border-border">
                     <div className="flex justify-between items-center">
                       <p className="text-sm text-muted-foreground">
@@ -145,7 +147,7 @@ const MarHighlight = () => {
                   </div>
                 </div>
               </div>
-              
+
               <div className="absolute -top-4 -right-4 w-20 h-20 bg-primary/10 rounded-full blur-xl"></div>
               <div className="absolute -bottom-6 -left-6 w-32 h-32 bg-primary/10 rounded-full blur-xl"></div>
             </div>

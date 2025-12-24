@@ -14,6 +14,8 @@ import { BreadcrumbSchema } from "@/components/seo/BreadcrumbSchema";
 import { VideoSchema } from "@/components/seo/VideoSchema";
 import { useScrollToTop } from "@/hooks/useScrollToTop";
 
+import marLogo from "@/assets/mar-logo-horizontal.png";
+
 const Mar = () => {
   useScrollToTop();
 
@@ -26,11 +28,11 @@ const Mar = () => {
         <meta property="og:description" content="Um mapa estratégico feito para acelerar o crescimento de empresas com decisões precisas." />
         <meta property="og:type" content="product" />
         <meta property="og:url" content="https://crievalor.com.br/mar" />
-        <meta property="og:image" content="https://crievalor.com.br/lovable-uploads/91e6888f-e3da-40dc-8c55-5718c15ada21.png" />
+        <meta property="og:image" content={`https://crievalor.com.br${marLogo}`} />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="MAR - Mapa para Alto Rendimento | Crie Valor" />
         <meta name="twitter:description" content="Estratégias que funcionam: consultoria especializada para acelerar seu crescimento empresarial." />
-        <meta name="twitter:image" content="https://crievalor.com.br/lovable-uploads/91e6888f-e3da-40dc-8c55-5718c15ada21.png" />
+        <meta name="twitter:image" content={`https://crievalor.com.br${marLogo}`} />
         <link rel="canonical" href="https://crievalor.com.br/mar" />
       </Helmet>
 
