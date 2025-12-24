@@ -99,6 +99,13 @@ const AdminSetup = () => {
                     to="/admin-diagnostic-requests"
                     description="Visualize e gerencie as solicitações de contato"
                   />
+
+                  <AdminCard
+                    title="Gerenciar Bios"
+                    icon={<UserCheck className="h-10 w-10" />}
+                    to="/admin-bio"
+                    description="Gerenciar bios de autores e administradores do sistema"
+                  />
                 </div>
               </div>
             )}

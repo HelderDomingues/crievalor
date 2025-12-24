@@ -40,13 +40,8 @@ const AuthHeader = () => {
                 <span>Perfil</span>
               </Link>
             </DropdownMenuItem>
-            <DropdownMenuItem asChild>
-              <Link to="/subscription" className="flex items-center">
-                <CreditCard className="mr-2 h-4 w-4" />
-                <span>Assinaturas</span>
-              </Link>
-            </DropdownMenuItem>
-            
+
+
             {isAdmin && !rolesLoading && (
               <>
                 <DropdownMenuSeparator />
@@ -69,9 +64,15 @@ const AuthHeader = () => {
                     <span>Materiais</span>
                   </Link>
                 </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to="/admin-bio" className="flex items-center">
+                    <User className="mr-2 h-4 w-4" />
+                    <span>Gerenciar Bios</span>
+                  </Link>
+                </DropdownMenuItem>
               </>
             )}
-            
+
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={handleSignOut} className="flex items-center">
               <LogOut className="mr-2 h-4 w-4" />

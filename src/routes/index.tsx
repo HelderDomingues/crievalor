@@ -41,6 +41,7 @@ import BlogPost from "@/pages/blog/BlogPost";
 import BlogAdminList from "@/pages/admin/blog/BlogAdminList";
 import BlogPostEditor from "@/pages/admin/blog/BlogPostEditor";
 import CategoryManager from "@/pages/admin/blog/CategoryManager";
+import BioManager from "@/pages/admin/BioManager";
 
 import { RootLayout } from "@/components/layout/RootLayout";
 
@@ -149,6 +150,10 @@ export const router = createBrowserRouter([
       {
         path: "admin-blog/categories",
         element: <CategoryManager />,
+      },
+      {
+        path: "admin-bio",
+        element: <BioManager />,
       },
       {
         path: "auth",
