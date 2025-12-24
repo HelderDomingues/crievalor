@@ -1,9 +1,8 @@
-import React from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import HeroSection from "@/components/HeroSection";
 import ContactSection from "@/components/ContactSection";
-import MarExplanation from "@/components/MarExplanation";
+import MarBenefits from "@/components/MarBenefits";
 import MarComparativeTable from "@/components/MarComparativeTable";
 import MarProcessSteps from "@/components/MarProcessSteps";
 
@@ -77,7 +76,7 @@ const Mar = () => {
             subtitle="Estratégias que Funcionam"
             description="Um mapa estratégico criado para acelerar o crescimento de empresas com decisões precisas e personalizadas."
             ctaText="Quero Saber mais"
-            ctaUrl="#mar-explanation"
+            ctaUrl="#mar-benefits"
             secondaryCtaText="Contrate o MAR agora"
             secondaryCtaUrl="#pricing"
             isMarHero={true}
@@ -117,10 +116,8 @@ const Mar = () => {
         </ErrorBoundary>
 
         <ErrorBoundary>
-          <div id="mar-explanation" className="relative">
-            <MarExplanation />
-            {/* Background effect */}
-            <div className="absolute top-1/4 right-0 w-96 h-96 bg-primary/5 rounded-full blur-3xl translate-x-1/2 -z-10"></div>
+          <div id="mar-benefits">
+            <MarBenefits />
           </div>
         </ErrorBoundary>
 

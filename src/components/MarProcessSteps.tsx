@@ -29,12 +29,24 @@ interface ProcessPhase {
     phase: string;
     phaseTitle: string;
     steps: ProcessStep[];
+    colorTheme: {
+        badge: string;
+        text: string;
+        subtle: string;
+        border: string;
+    };
 }
 
 const processPhases: ProcessPhase[] = [
     {
         phase: "Fase 1",
         phaseTitle: "Diagnóstico & Imersão",
+        colorTheme: {
+            badge: "bg-blue-600",
+            text: "text-blue-500",
+            subtle: "bg-blue-500/10",
+            border: "border-blue-500/20"
+        },
         steps: [
             {
                 id: 1,
@@ -76,6 +88,12 @@ const processPhases: ProcessPhase[] = [
     {
         phase: "Fase 2",
         phaseTitle: "Arquitetura Estratégica",
+        colorTheme: {
+            badge: "bg-indigo-600",
+            text: "text-indigo-500",
+            subtle: "bg-indigo-500/10",
+            border: "border-indigo-500/20"
+        },
         steps: [
             {
                 id: 6,
@@ -96,6 +114,12 @@ const processPhases: ProcessPhase[] = [
     {
         phase: "Fase 3",
         phaseTitle: "Inteligência de Marca & Mercado",
+        colorTheme: {
+            badge: "bg-violet-600",
+            text: "text-violet-500",
+            subtle: "bg-violet-500/10",
+            border: "border-violet-500/20"
+        },
         steps: [
             {
                 id: 8,
@@ -123,6 +147,12 @@ const processPhases: ProcessPhase[] = [
     {
         phase: "Fase 4",
         phaseTitle: "Plano Tático & Entrega",
+        colorTheme: {
+            badge: "bg-purple-600",
+            text: "text-purple-500",
+            subtle: "bg-purple-500/10",
+            border: "border-purple-500/20"
+        },
         steps: [
             {
                 id: 11,
@@ -157,6 +187,12 @@ const processPhases: ProcessPhase[] = [
     {
         phase: "Fase 5",
         phaseTitle: "Pós-Entrega & Suporte",
+        colorTheme: {
+            badge: "bg-fuchsia-600",
+            text: "text-fuchsia-500",
+            subtle: "bg-fuchsia-500/10",
+            border: "border-fuchsia-500/20"
+        },
         steps: [
             {
                 id: 15,
@@ -215,8 +251,8 @@ const MarProcessSteps = () => {
                         >
                             {/* Phase Header */}
                             <div className="mb-8">
-                                <div className="inline-block px-4 py-2 bg-primary/10 rounded-full mb-3">
-                                    <span className="text-sm font-semibold text-primary">
+                                <div className={`inline-block px-4 py-2 ${phase.colorTheme.subtle} rounded-full mb-3`}>
+                                    <span className={`text-sm font-semibold ${phase.colorTheme.text}`}>
                                         {phase.phase}
                                     </span>
                                 </div>
@@ -228,7 +264,7 @@ const MarProcessSteps = () => {
                             {/* Steps in this phase */}
                             <div className="space-y-6 relative pl-8 md:pl-12">
                                 {/* Vertical line connecting steps */}
-                                <div className="absolute left-[19px] md:left-[27px] top-0 bottom-0 w-0.5 bg-gradient-to-b from-primary/50 via-primary/30 to-transparent"></div>
+                                <div className={`absolute left-[19px] md:left-[27px] top-0 bottom-0 w-0.5 bg-gradient-to-b ${phase.colorTheme.text.replace('text', 'from')} via-white/10 to-transparent opacity-40`}></div>
 
                                 {phase.steps.map((step, stepIndex) => {
                                     const Icon = step.icon;
@@ -245,18 +281,18 @@ const MarProcessSteps = () => {
                                             className="relative group"
                                         >
                                             {/* Step number badge */}
-                                            <div className="absolute -left-8 md:-left-12 top-0 w-10 h-10 md:w-14 md:h-14 rounded-full bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
-                                                <span className="text-sm md:text-base font-bold text-primary-foreground">
+                                            <div className={`absolute -left-8 md:-left-12 top-0 w-10 h-10 md:w-14 md:h-14 rounded-full ${phase.colorTheme.badge} flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300 z-10`}>
+                                                <span className="text-sm md:text-base font-bold text-white">
                                                     {step.id}
                                                 </span>
                                             </div>
 
                                             {/* Step content card */}
-                                            <div className="bg-card rounded-lg p-6 shadow-sm border border-border/50 hover:border-primary/30 hover:shadow-md transition-all duration-300">
+                                            <div className={`bg-card rounded-lg p-6 shadow-sm border border-border/50 hover:${phase.colorTheme.border} hover:shadow-md transition-all duration-300`}>
                                                 <div className="flex items-start gap-4">
                                                     {/* Icon */}
-                                                    <div className="flex-shrink-0 w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors duration-300">
-                                                        <Icon className="w-6 h-6 text-primary" />
+                                                    <div className={`flex-shrink-0 w-12 h-12 rounded-lg ${phase.colorTheme.subtle} flex items-center justify-center group-hover:bg-opacity-20 transition-colors duration-300`}>
+                                                        <Icon className={`w-6 h-6 ${phase.colorTheme.text}`} />
                                                     </div>
 
                                                     {/* Text content */}
@@ -293,7 +329,7 @@ const MarProcessSteps = () => {
                             </div>
                             <div>
                                 <h3 className="text-2xl font-bold mb-2">
-                                    O Diferencial do MAR
+                                    Os Diferenciais do MAR
                                 </h3>
                                 <p className="text-muted-foreground">
                                     Uma das principais características e diferenciais do MAR é a{" "}
@@ -319,7 +355,7 @@ const MarProcessSteps = () => {
                             </div>
                             <div className="text-center">
                                 <div className="text-3xl font-bold text-primary mb-2">
-                                    R$ 3.500-5.000
+                                    R$ 3.497
                                 </div>
                                 <div className="text-sm text-muted-foreground">
                                     vs R$ 30-80k consultoria

@@ -7,14 +7,14 @@ const MarComparativeTable = () => {
         {
             criterion: "Tempo de Entrega",
             icon: Clock,
-            mar: { value: "7 dias", highlight: true },
+            mar: { value: "em até 7 dias", highlight: true },
             traditional: { value: "60-90 dias", highlight: false },
             saas: { value: "Imediato", highlight: false }
         },
         {
             criterion: "Preço",
             icon: DollarSign,
-            mar: { value: "R$ 3.500 - 5.000", highlight: true },
+            mar: { value: "R$ 3.497", highlight: true },
             traditional: { value: "R$ 30.000 - 80.000", highlight: false },
             saas: { value: "R$ 200 - 500/mês", highlight: false }
         },
