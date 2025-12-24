@@ -189,7 +189,7 @@ const Mar = () => {
 
                   <div className="bg-card rounded-lg p-6 shadow-sm">
                     <h3 className="text-xl font-semibold mb-3">Qual é a diferença do MAR para outras consultorias?</h3>
-                    <p className="text-muted-foreground">O MAR combina <strong>IA nativa + metodologia estratégica robusta + validação humana</strong>. Entregamos em 7 dias (vs 60-90 dias tradicional), custamos 10-20x menos (R$ 3.500-5.000 vs R$ 30-80k), e oferecemos acompanhamento contínuo com Lumia 24/7. Não somos consultoria tradicional nem SaaS genérico - somos Inteligência Organizacional.</p>
+                    <p className="text-muted-foreground">O MAR combina <strong>IA nativa + metodologia estratégica robusta + validação humana</strong>. Entregamos em 7 dias (vs 60-90 dias tradicional), custamos 10-20x menos (R$ 3.497 vs R$ 30-80k), e oferecemos acompanhamento contínuo com Lumia 24/7. Não somos consultoria tradicional nem SaaS genérico - somos Inteligência Organizacional.</p>
                   </div>
 
                   <div className="bg-card rounded-lg p-6 shadow-sm">
