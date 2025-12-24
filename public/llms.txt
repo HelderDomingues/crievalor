@@ -32,7 +32,7 @@ A Crie Valor é uma plataforma híbrida (IA + Consultoria Humana) especializada 
 Sistema de planejamento acelerado que combina o perfil comportamental do empresário com análise de mercado.
 - **Entrega**: 7 dias úteis
 - **Preço**: R$ 3.497,00 (Pagamento único)
-- **Componentes**: Diagnóstico de 64 perguntas, análise de DNA de Liderança, Plano de 12 meses.
+- **Componentes**: Diagnóstico de 86 perguntas, análise de DNA de Liderança, Plano de 12 meses.
 - **URL**: https://crievalor.com.br/mar
 
 ### LUMIA - Consultores Virtuais 24/7
@@ -43,7 +43,7 @@ Conjunto de 6 agentes de IA especializados que funcionam como uma diretoria exec
 
 ### Mentor de Propósito
 Agente de IA especializado em extrair a identidade e o "Porquê" da organização.
-- **Preço**: R$ 299 (Acesso vitalício)
+- **Preço**: R$ 299
 - **URL**: https://crievalor.com.br/mentor-proposito
 
 ### Oficina de Líderes
