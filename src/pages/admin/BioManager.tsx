@@ -57,15 +57,19 @@ export default function BioManager() {
 
     const fetchAuthors = async () => {
         setLoading(true);
+        console.log("BioManager: Fetching authors...");
         const { data, error } = await supabase
             .from("authors")
             .select("*")
             .order("name", { ascending: true });
 
+        console.log("BioManager: Supabase response:", { data, error });
+
         if (error) {
             console.error("Error fetching authors:", error);
             toast.error("Erro ao carregar autores.");
         } else {
+            console.log("BioManager: Setting authors:", data);
             setAuthors(data || []);
         }
         setLoading(false);

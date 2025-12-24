@@ -78,7 +78,7 @@ export const useProfile = () => {
         }
 
         // If no explicit role, check if user's profile has admin role
-        if (profile?.role === "admin") {
+        if (["admin", "owner"].includes(profile?.role || "")) {
           setIsAdmin(true);
         } else {
           setIsAdmin(false);
@@ -111,7 +111,7 @@ export const useProfile = () => {
           instagram: "",
           facebook: ""
         };
-        
+
         updates = {
           social_media: {
             ...currentSocialMedia,
@@ -123,7 +123,7 @@ export const useProfile = () => {
       }
 
       const { data, error } = await updateUserProfile(user.id, updates, user.email);
-      
+
       if (error) {
         console.error(`Error updating ${fieldName}:`, error);
         return { error };
@@ -132,7 +132,7 @@ export const useProfile = () => {
       if (data) {
         setProfile(data);
       }
-      
+
       return { error: null };
     } catch (err) {
       console.error(`Unexpected error updating ${fieldName}:`, err);
@@ -172,11 +172,11 @@ export const useProfile = () => {
     }
   };
 
-  return { 
-    profile, 
-    isLoading, 
-    error, 
-    isAdmin, 
+  return {
+    profile,
+    isLoading,
+    error,
+    isAdmin,
     rolesLoading,
     uploadAvatar,
     avatarUploading,
