@@ -27,10 +27,10 @@ Disallow: /api/
 Disallow: /*.json$
 
 # Permitir crawl de recursos importantes
-Allow: /lovable-uploads/*.png
-Allow: /lovable-uploads/*.jpg
-Allow: /lovable-uploads/*.webp
-Allow: /lovable-uploads/*.svg
+Allow: /uploads/*.png
+Allow: /uploads/*.jpg
+Allow: /uploads/*.webp
+Allow: /uploads/*.svg
 Allow: /*.css
 Allow: /*.js
 

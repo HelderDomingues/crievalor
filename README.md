@@ -1,69 +1,48 @@
-# Welcome to your Lovable project
+# Crie Valor - Inteligência Organizacional
 
-## Project info
+## Sobre o Projeto
+Este é o repositório oficial da plataforma web Crie Valor, desenvolvido em React com Vite, TypeScript, Tailwind CSS e Shadcn/UI.
 
-**URL**: https://lovable.dev/projects/a882ff86-3929-4dd9-a7ce-87e37dd08713
+A plataforma oferece soluções de planejamento estratégico com IA (MAR), consultores virtuais (Lumia) e jornadas de propósito (Mentor de Propósito) para empresas que buscam profissionalização e crescimento.
 
-## How can I edit this code?
+## Tecnologias
 
-There are several ways of editing your application.
+- **Frontend**: React 18, Vite
+- **Linguagem**: TypeScript
+- **Estilização**: Tailwind CSS, Shadcn/UI
+- **Backend/Db**: Supabase (PostgreSQL, Edge Functions, Auth)
+- **Status Management**: React Query
 
-**Use Lovable**
+## Estrutura do Projeto
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/a882ff86-3929-4dd9-a7ce-87e37dd08713) and start prompting.
+- `/src`
+  - `/components`: Componentes reutilizáveis (UI, Header, Footer, etc)
+  - `/pages`: Rotas da aplicação (Home, MAR, Blog, Admin)
+  - `/hooks`: Hooks customizados (useProfile, useAuth)
+  - `/services`: Serviços de integração (Supabase, API)
+  - `/integrations`: Configurações de terceiros (Supabase client)
+- `/public`: Assets estáticos e imagens
 
-Changes made via Lovable will be committed automatically to this repo.
+## Como Rodar Localmente
 
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
+1. Clone o repositório
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+git clone <url-do-repo>
+```
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+2. Instale as dependências
+```sh
+npm install
+```
 
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+3. Inicie o servidor de desenvolvimento
+```sh
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+## Deploy
+O projeto está configurado para deploy via Netlify/Vercel integrado ao GitHub.
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with .
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/a882ff86-3929-4dd9-a7ce-87e37dd08713) and click on Share -> Publish.
-
-## I want to use a custom domain - is that possible?
-
-We don't support custom domains (yet). If you want to deploy your project under your own domain then we recommend using Netlify. Visit our docs for more details: [Custom domains](https://docs.lovable.dev/tips-tricks/custom-domain/)
+## Autores
+- Helder Domingues
+- Crie Valor Team

@@ -109,7 +109,7 @@ export default function BlogHome() {
                                 "name": "Crie Valor",
                                 "logo": {
                                     "@type": "ImageObject",
-                                    "url": "https://crievalor.com.br/lovable-uploads/92af6ddc-b869-4957-8dde-af26a0a8e7d2.png"
+                                    "url": "https://crievalor.com.br/uploads/92af6ddc-b869-4957-8dde-af26a0a8e7d2.png"
                                 }
                             }
                         })}

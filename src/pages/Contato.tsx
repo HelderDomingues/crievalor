@@ -54,7 +54,7 @@ const Contato = () => {
         telephone="+5547992150289"
         email="contato@crievalor.com.br"
         url="https://crievalor.com.br"
-        logo="https://crievalor.com.br/lovable-uploads/d2f508b6-c101-4928-b7f7-161a378bb6e8.png"
+        logo="https://crievalor.com.br/uploads/d2f508b6-c101-4928-b7f7-161a378bb6e8.png"
         priceRange="$$$"
         geo={{
           latitude: -26.8977,

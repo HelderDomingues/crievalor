@@ -87,7 +87,7 @@ const Header = () => {
               className="flex items-center"
             >
               <img
-                src="/lovable-uploads/fc868084-d22b-4877-907b-fe02e64fc501.png"
+                src="/uploads/fc868084-d22b-4877-907b-fe02e64fc501.png"
                 alt="Crie Valor Logo"
                 className="h-6 w-auto mr-2 object-contain"
               />

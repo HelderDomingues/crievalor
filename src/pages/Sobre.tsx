@@ -59,7 +59,7 @@ const Sobre = () => {
           "@id": "https://crievalor.com.br/#organization",
           "name": "Crie Valor - Inteligência Organizacional",
           "url": "https://crievalor.com.br",
-          "logo": "https://crievalor.com.br/lovable-uploads/fc868084-d22b-4877-907b-fe02e64fc501.png",
+          "logo": "https://crievalor.com.br/uploads/fc868084-d22b-4877-907b-fe02e64fc501.png",
           "description": "Primeiro Ecossistema de Inteligência Organizacional com IA do Brasil",
           "foundingDate": "2015-04",
           "founder": [

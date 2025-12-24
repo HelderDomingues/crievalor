@@ -59,7 +59,7 @@ const Index = () => {
           "@id": "https://crievalor.com.br/#organization",
           "name": "Crie Valor - Inteligência Organizacional",
           "url": "https://crievalor.com.br",
-          "logo": "https://crievalor.com.br/lovable-uploads/d2f508b6-c101-4928-b7f7-161a378bb6e8.png",
+          "logo": "https://crievalor.com.br/uploads/d2f508b6-c101-4928-b7f7-161a378bb6e8.png",
           "description": "Primeiro Ecossistema de Inteligência Organizacional com IA do Brasil",
           "foundingDate": "2015-04",
           "aggregateRating": {

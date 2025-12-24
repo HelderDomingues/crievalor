@@ -72,7 +72,7 @@ const OficinaLideres = () => {
       <VideoSchema
         name="Oficina de Líderes - Formação de Líderes Estratégicos"
         description="Conheça o programa Oficina de Líderes e descubra como desenvolver competências essenciais para gerir pessoas e processos."
-        thumbnailUrl="https://crievalor.com.br/lovable-uploads/oficina-lideres-logo.png"
+        thumbnailUrl="https://crievalor.com.br/uploads/oficina-lideres-logo.png"
         uploadDate="2024-01-01"
         duration="PT1M46S"
         embedUrl="https://www.youtube.com/embed/Lr_L7MAIUnM"

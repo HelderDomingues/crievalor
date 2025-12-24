@@ -13,7 +13,7 @@ const Footer = () => {
           <div className="space-y-4">
             <Link to="/" className="flex items-center space-x-2">
               <img
-                src="/lovable-uploads/fc868084-d22b-4877-907b-fe02e64fc501.png"
+                src="/uploads/fc868084-d22b-4877-907b-fe02e64fc501.png"
                 alt="Crie Valor Logo"
                 className="h-10"
               />

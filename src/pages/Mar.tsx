@@ -53,7 +53,7 @@ const Mar = () => {
       <VideoSchema
         name="MAR - Clareza para decidir. Direção para crescer."
         description="Descubra como o MAR pode transformar a estratégia da sua empresa com planejamento estratégico baseado em inteligência artificial."
-        thumbnailUrl="https://crievalor.com.br/lovable-uploads/mar-logo.png"
+        thumbnailUrl="https://crievalor.com.br/uploads/mar-logo.png"
         uploadDate="2024-01-01T08:00:00-03:00"
         duration="PT3M8S"
         embedUrl="https://www.youtube.com/embed/Y22PDZ7-zhY"
