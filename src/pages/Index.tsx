@@ -173,7 +173,7 @@ const Index = () => {
         questions={[
           {
             question: "Quanto tempo leva o processo do MAR?",
-            answer: "O MAR é entregue em 7 dias após o preenchimento do questionário. Depois da entrega, você tem uma reunião online com nosso consultor para apresentação e tira-dúvidas."
+            answer: "O MAR é entregue em até7 dias após o preenchimento do questionário. Depois da entrega, você tem uma reunião online com nosso consultor para apresentação e tira-dúvidas."
           },
           {
             question: "O que diferencia a Crie Valor de uma consultoria tradicional?",
@@ -201,7 +201,7 @@ const Index = () => {
       <Header />
 
       <main className="flex-grow">
-        <h1 className="sr-only">Crie Valor Estratégia - Inteligência Organizacional</h1>
+        <h1 className="sr-only">Crie Valor - Inteligência Organizacional</h1>
 
         {/* Hero Carrossel - Propósito + MAR + Mentorias + Mentor de Propósito */}
         <InteractiveGalaxyHeroCarousel />
