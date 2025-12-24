@@ -61,23 +61,7 @@ export const useProfile = () => {
       try {
         setRolesLoading(true);
 
-        // First, check if user has admin role in user_roles table
-        const { data: roleData, error: roleError } = await supabase
-          .from("user_roles")
-          .select("role")
-          .eq("user_id", user.id)
-          .eq("role", "admin")
-          .maybeSingle();
-
-        if (roleError) {
-          console.error("Error checking admin role:", roleError);
-        } else if (roleData) {
-          setIsAdmin(true);
-          setRolesLoading(false);
-          return;
-        }
-
-        // If no explicit role, check if user's profile has admin role
+        // Check if user's profile has admin or owner role
         if (["admin", "owner"].includes(profile?.role || "")) {
           setIsAdmin(true);
         } else {
