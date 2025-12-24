@@ -184,7 +184,7 @@ const Mar = () => {
 
                   <div className="bg-card rounded-lg p-6 shadow-sm">
                     <h3 className="text-xl font-semibold mb-3">Como é o processo de implementação do MAR?</h3>
-                    <p className="text-muted-foreground">O processo inclui: <strong>1)</strong> Questionário de 64 perguntas + Mapeamento do DNA de Liderança, <strong>2)</strong> Análise com IA + Validação humana, <strong>3)</strong> Desenvolvimento do plano estratégico 12 meses, <strong>4)</strong> Apresentação dos resultados em reunião online. Tudo em 7 dias.</p>
+                    <p className="text-muted-foreground">O processo inclui: <strong>1)</strong> Questionário online simples, mas detalhado, sobre a empresa + Mapeamento do DNA de Liderança, <strong>2)</strong> Análises profundas e definições estratégicas + Validação humana, <strong>3)</strong> Desenvolvimento do plano estratégico 12 meses, <strong>4)</strong> Apresentação dos resultados em reunião online. Tudo em 7 dias.</p>
                   </div>
 
                   <div className="bg-card rounded-lg p-6 shadow-sm">
