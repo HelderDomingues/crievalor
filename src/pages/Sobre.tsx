@@ -68,6 +68,7 @@ const Sobre = () => {
               "@id": "https://crievalor.com.br/#helder-domingues",
               "name": "Helder Domingues",
               "jobTitle": "Fundador e Arquiteto do Ecossistema",
+              "image": "https://crievalor.com.br/uploads/helder.jpg",
               "sameAs": [
                 "https://www.linkedin.com/in/helderdomingues/"
               ],
@@ -82,6 +83,7 @@ const Sobre = () => {
               "@id": "https://crievalor.com.br/#paulo-gaudioso",
               "name": "Paulo Gaudioso",
               "jobTitle": "Co-fundador e Co-autor do Método MAR",
+              "image": "https://crievalor.com.br/uploads/paulo.jpg",
               "sameAs": [
                 "https://www.linkedin.com/in/paulogaudioso/"
               ],

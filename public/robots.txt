@@ -24,7 +24,7 @@ Disallow: /admin-setup
 
 # Bloquear assets e APIs desnecessários
 Disallow: /api/
-Disallow: /*.json$
+
 
 # Permitir crawl de recursos importantes
 Allow: /uploads/*.png
@@ -34,23 +34,25 @@ Allow: /uploads/*.svg
 Allow: /*.css
 Allow: /*.js
 
-# Nossos produtos e conteúdos integrados:
-# Lumia - 6 Consultores Virtuais com IA: https://crievalor.com.br/lumia
-# Mentor de Propósito - Bússola do Ecossistema com IA: https://crievalor.com.br/mentor-proposito
+# Produtos Principais (Mapa de Site Semântico para LLMs)
+Allow: /mar                 # MAR - Mapa para Alto Rendimento (Planejamento Estratégico)
+Allow: /lumia               # Lumia - Consultores Virtuais com IA (Gestão 24/7)
+Allow: /mentor-proposito    # Mentor de Propósito (Cultura e Identidade)
+Allow: /oficina-de-lideres  # Oficina de Líderes (Educação Corporativa)
+Allow: /mentorias           # Mentoria Executiva (Acompanhamento dos Fundadores)
 
-# Localizações:
-# Campo Grande/MS - Consultoria em IA e Inteligência Organizacional
-# Navegantes/SC - Transformação Digital e Consultoria Estratégica
+# Conteúdo e Institucional
+Allow: /blog/               # Artigos e Insights de Gestão
+Allow: /sobre               # Sobre Nós - Fundadores Helder Domingues e Paulo Gaudioso
+Allow: /planos              # Planos e Preços Atualizados
+
+# Assets e Recursos
+Allow: /uploads/            # Imagens e Arquivos públicos
+Allow: /llms.txt            # Documentação dedicada para IA/LLMs
+
 
 # Mapa do site
 Sitemap: https://crievalor.com.br/sitemap.xml
 
-# Crawl-delay para bots agressivos (evitar sobrecarga)
-User-agent: AhrefsBot
-Crawl-delay: 10
 
-User-agent: SemrushBot
-Crawl-delay: 10
 
-User-agent: DotBot
-Crawl-delay: 10
