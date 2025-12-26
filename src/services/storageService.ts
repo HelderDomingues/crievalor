@@ -10,7 +10,7 @@ import { v4 as uuidv4 } from "uuid";
 export const createStorageBucketIfNotExists = async (bucketName: string, options = { public: true, fileSizeLimit: 10485760 }) => {
   try {
     console.log(`Verificando/criando bucket ${bucketName}...`);
-    
+
     // Use direct SQL query through Edge Function instead of RPC
     const { data, error } = await supabaseExtended.functions.invoke('setup-storage-policies', {
       body: {
@@ -19,14 +19,14 @@ export const createStorageBucketIfNotExists = async (bucketName: string, options
         is_public: options.public
       }
     });
-    
+
     if (error) {
       console.error(`Erro ao criar/verificar bucket ${bucketName}: ${error.message}`);
       return false;
     }
-    
+
     console.log(`Bucket ${bucketName} configurado com sucesso`);
-    
+
     // Configurar políticas para o bucket
     const { data: policyData, error: policyError } = await supabaseExtended.functions.invoke('setup-storage-policies', {
       body: {
@@ -34,12 +34,12 @@ export const createStorageBucketIfNotExists = async (bucketName: string, options
         bucket_name: bucketName
       }
     });
-    
+
     if (policyError) {
       console.error(`Erro ao configurar políticas para ${bucketName}: ${policyError.message}`);
       return false;
     }
-    
+
     console.log(`Políticas para ${bucketName} configuradas com sucesso`);
     return true;
   } catch (error) {
@@ -89,13 +89,23 @@ export const createAvatarsBucketIfNotExists = async () => {
 };
 
 /**
+ * Create the blog_images bucket if it doesn't exist
+ */
+export const createBlogImagesBucketIfNotExists = async () => {
+  return createStorageBucketIfNotExists('blog_images', {
+    public: true,
+    fileSizeLimit: 5242880 // 5MB
+  });
+};
+
+/**
  * Initialize all required storage buckets
  * Uses the improved setup-rls unified function
  */
 export const initializeStorageBuckets = async () => {
   try {
     console.log("Setting up storage buckets...");
-    
+
     // This will be handled by the setup-rls function, but we'll call it here
     // for backward compatibility and debug purposes
     const { data, error } = await supabaseExtended.functions.invoke('setup-rls', {
@@ -104,7 +114,7 @@ export const initializeStorageBuckets = async () => {
         'Content-Type': 'application/json'
       }
     });
-    
+
     if (error) {
       console.error("Error setting up storage and RLS policies:", error);
       return false;
@@ -128,7 +138,7 @@ export const uploadPortfolioImage = async (file: File): Promise<string> => {
     const fileExt = file.name.split('.').pop();
     const fileName = `${Date.now()}.${fileExt}`;
     const filePath = `${fileName}`;
-    
+
     const { error: uploadError, data } = await supabaseExtended.storage
       .from('portfolio')
       .upload(filePath, file, {
@@ -161,9 +171,9 @@ export const deletePortfolioImage = async (url: string): Promise<void> => {
     // Extract file path from URL
     const urlParts = url.split('/');
     const path = urlParts[urlParts.length - 1];
-    
+
     if (!path) throw new Error('Invalid URL');
-    
+
     const { error } = await supabaseExtended.storage
       .from('portfolio')
       .remove([path]);
