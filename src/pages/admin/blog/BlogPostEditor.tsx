@@ -62,18 +62,20 @@ export default function BlogPostEditor() {
     const [coverUrl, setCoverUrl] = useState("");
     const [published, setPublished] = useState(false);
     const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-    const [authorId, setAuthorId] = useState<string | null>(null);
+    const [authorId, setAuthorId] = useState<string | null>(null); // System user
+    const [displayAuthorId, setDisplayAuthorId] = useState<string | null>(null); // Guest/Display author
 
     // Data State
     const [categories, setCategories] = useState<any[]>([]);
     const [profiles, setProfiles] = useState<any[]>([]);
+    const [authors, setAuthors] = useState<any[]>([]); // New authors table
 
     useEffect(() => {
         fetchInitialData();
         if (isEditing) {
             fetchPost(id);
         } else {
-            // Set current user as author by default
+            // Set current user as system author by default
             supabase.auth.getUser().then(({ data }) => {
                 if (data.user) setAuthorId(data.user.id);
             });
@@ -81,13 +83,15 @@ export default function BlogPostEditor() {
     }, [id]);
 
     const fetchInitialData = async () => {
-        const [cats, profs] = await Promise.all([
+        const [cats, profs, auths] = await Promise.all([
             supabase.from("categories" as any).select("*").order("name"),
             supabase.from("profiles" as any).select("id, full_name, email"),
+            supabase.from("authors").select("id, name, role").order("name"),
         ]);
 
         if (cats.data) setCategories(cats.data);
         if (profs.data) setProfiles(profs.data);
+        if (auths.data) setAuthors(auths.data);
     };
 
     const fetchPost = async (postId: string) => {
@@ -108,14 +112,16 @@ export default function BlogPostEditor() {
         }
 
         // Populate Fields
-        setTitle(data.title);
-        setSlug(data.slug);
-        setExcerpt(data.excerpt || "");
-        setContent(data.content || "");
-        setCoverUrl(data.cover_image_url || "");
-        setPublished(data.published);
-        setAuthorId(data.author_id);
-        setSelectedCategories(data.post_categories?.map((pc: any) => pc.category_id) || []);
+        const postData = data as any;
+        setTitle(postData.title);
+        setSlug(postData.slug);
+        setExcerpt(postData.excerpt || "");
+        setContent(postData.content || "");
+        setCoverUrl(postData.cover_image_url || "");
+        setPublished(postData.published);
+        setAuthorId(postData.author_id);
+        setDisplayAuthorId(postData.display_author_id);
+        setSelectedCategories(postData.post_categories?.map((pc: any) => pc.category_id) || []);
 
         setLoading(false);
     };
@@ -184,6 +190,7 @@ export default function BlogPostEditor() {
                 cover_image_url: coverUrl,
                 published,
                 author_id: authorId,
+                display_author_id: displayAuthorId === "" ? null : displayAuthorId,
                 updated_at: new Date().toISOString(),
             };
 
@@ -203,7 +210,7 @@ export default function BlogPostEditor() {
                     .select()
                     .single();
                 if (error) throw error;
-                savedPostId = data.id;
+                savedPostId = (data as any).id;
                 toast.success("Post criado!");
             }
 
@@ -338,14 +345,35 @@ export default function BlogPostEditor() {
                                         </div>
 
                                         <div className="space-y-2">
-                                            <Label htmlFor="author">Autor</Label>
+                                            <Label htmlFor="display-author">Autor de Exibição</Label>
                                             <select
-                                                id="author"
+                                                id="display-author"
                                                 className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                                value={displayAuthorId || ""}
+                                                onChange={(e) => setDisplayAuthorId(e.target.value)}
+                                            >
+                                                <option value="">User Sistema (Padrão)</option>
+                                                {authors.map(author => (
+                                                    <option key={author.id} value={author.id}>
+                                                        {author.name} {author.role ? `(${author.role})` : ""}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                            <p className="text-xs text-muted-foreground">
+                                                Selecione um autor da tabela "Autores" para exibir na página (sobrescreve o usuário do sistema).
+                                            </p>
+                                        </div>
+
+                                        <div className="space-y-2 pt-4 border-t">
+                                            <Label htmlFor="system-author" className="text-xs text-muted-foreground">Usuário do Sistema (Interno)</Label>
+                                            <select
+                                                id="system-author"
+                                                className="flex h-8 w-full items-center justify-between rounded-md border border-input bg-muted/50 px-3 py-1 text-xs ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                                                 value={authorId || ""}
                                                 onChange={(e) => setAuthorId(e.target.value)}
+                                                disabled
                                             >
-                                                <option value="">Selecione um autor</option>
+                                                <option value="">Selecione um usuário</option>
                                                 {profiles.map(profile => (
                                                     <option key={profile.id} value={profile.id}>
                                                         {profile.full_name || profile.email}

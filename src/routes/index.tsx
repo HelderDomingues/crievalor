@@ -37,6 +37,7 @@ import ApresentacaoSC from "@/pages/ApresentacaoSC";
 
 import BlogHome from "@/pages/blog/BlogHome";
 import BlogPost from "@/pages/blog/BlogPost";
+import AuthorProfile from "@/pages/blog/AuthorProfile";
 
 import BlogAdminList from "@/pages/admin/blog/BlogAdminList";
 import BlogPostEditor from "@/pages/admin/blog/BlogPostEditor";
@@ -211,6 +212,10 @@ export const router = createBrowserRouter([
       {
         path: "blog/:slug",
         element: <BlogPost />,
+      },
+      {
+        path: "blog/author/:id",
+        element: <AuthorProfile />,
       },
       // Fallback 404 route for any unmatched path within the layout
       {

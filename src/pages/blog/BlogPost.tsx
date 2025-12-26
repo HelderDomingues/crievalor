@@ -120,7 +120,7 @@ export default function BlogPost() {
                     <meta property="og:description" content={post.excerpt || post.title} />
                     {post.cover_image_url && <meta property="og:image" content={post.cover_image_url} />}
                     <meta property="article:published_time" content={post.published_at || ""} />
-                    {post.author && <meta property="article:author" content={post.author.full_name} />}
+                    {post.author && <meta property="article:author" content={post.author.name} />}
                     {post.categories?.map(cat => (
                         <meta key={cat.slug} property="article:tag" content={cat.name} />
                     ))}
@@ -143,7 +143,7 @@ export default function BlogPost() {
                             "dateModified": post.published_at, // Ideally we'd have updated_at
                             "author": {
                                 "@type": "Person",
-                                "name": post.author?.full_name || "Crie Valor"
+                                "name": post.author?.name || "Crie Valor"
                             },
                             "publisher": {
                                 "@type": "Organization",
@@ -186,19 +186,19 @@ export default function BlogPost() {
                     <div className="flex items-center justify-between border-y py-6 mt-8">
                         <div className="flex items-center gap-6">
                             {post.author && (
-                                <div className="flex items-center gap-3">
+                                <Link to={post.author.id ? `/blog/author/${post.author.id}` : "#"} className="flex items-center gap-3 group">
                                     {post.author.avatar_url ? (
-                                        <img src={post.author.avatar_url} alt={post.author.full_name} className="w-10 h-10 rounded-full object-cover" />
+                                        <img src={post.author.avatar_url} alt={post.author_name || ""} className="w-10 h-10 rounded-full object-cover group-hover:opacity-80 transition-opacity" />
                                     ) : (
-                                        <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center">
+                                        <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center group-hover:bg-muted/80 transition-colors">
                                             <User className="w-5 h-5 text-muted-foreground" />
                                         </div>
                                     )}
                                     <div>
-                                        <p className="font-semibold text-sm">{post.author.full_name}</p>
+                                        <p className="font-semibold text-sm group-hover:text-primary transition-colors">{post.author.name}</p>
                                         <p className="text-xs text-muted-foreground">{post.author.role || "Autor"}</p>
                                     </div>
-                                </div>
+                                </Link>
                             )}
                             {post.published_at && (
                                 <div className="flex items-center gap-2 text-muted-foreground text-sm">
@@ -212,9 +212,37 @@ export default function BlogPost() {
                             )}
                         </div>
 
-                        <Button variant="ghost" size="icon" title="Compartilhar">
-                            <Share2 className="w-5 h-5" />
-                        </Button>
+                        <div className="flex items-center gap-2">
+                            <span className="text-sm text-muted-foreground mr-2 hidden sm:inline">Compartilhar:</span>
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                title="Compartilhar no WhatsApp"
+                                onClick={() => window.open(`https://wa.me/?text=${encodeURIComponent(`${post.title} - https://crievalor.com.br/blog/${post.slug}`)}`, '_blank')}
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-phone"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" /></svg>
+                                {/* Ideally use actual WA icon, but Phone is close enough for generic lucide or check if MessageCircle is better. Let's use simple text or generic share for now if icon missing, but wait, lucide-react has MessageCircle. Revert to Share2 if needed, but valid WA link works. */}
+                            </Button>
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                title="Compartilhar no LinkedIn"
+                                onClick={() => window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(`https://crievalor.com.br/blog/${post.slug}`)}`, '_blank')}
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-linkedin"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" /><rect width="4" height="12" x="2" y="9" /><circle cx="4" cy="4" r="2" /></svg>
+                            </Button>
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                title="Copiar Link"
+                                onClick={() => {
+                                    navigator.clipboard.writeText(`https://crievalor.com.br/blog/${post.slug}`);
+                                    // toast.success("Link copiado!"); // Need toast import if we want feedback
+                                }}
+                            >
+                                <Share2 className="w-5 h-5" />
+                            </Button>
+                        </div>
                     </div>
                 </div>
 
