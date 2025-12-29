@@ -145,25 +145,6 @@ const AdminDashboard = () => {
                 </Card>
               </Link>
 
-              {/* Solicitações de Contato */}
-              <Link to="/admin-diagnostic-requests">
-                <Card className="h-full hover:shadow-md transition-shadow cursor-pointer">
-                  <CardHeader>
-                    <CardTitle className="flex items-center">
-                      <Stethoscope className="mr-2 h-5 w-5 text-primary" />
-                      Solicitações de Contato
-                    </CardTitle>
-                    <CardDescription>
-                      Gerenciar solicitações de contato
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-sm text-muted-foreground">
-                      Visualize e gerencie as solicitações de contato.
-                    </p>
-                  </CardContent>
-                </Card>
-              </Link>
 
               {/* System Settings */}
               <Link to="/admin-settings">

@@ -95,7 +95,7 @@ const FloatingCTA: React.FC<FloatingCTAProps> = ({ className }) => {
 
                   <Button variant="outline" size="sm" className="w-full text-xs" onClick={handleCTAClick} asChild>
                     <a
-                      href="https://wa.me/+5547992150289?text=Tenho%20interesse%20no%20diagnóstico%20gratuito"
+                      href="https://wa.me/+5547992150289?text=Olá!%20Gostaria%20de%20saber%20mais%20sobre%20as%20soluções%20da%20Crie%20Valor"
                       target="_blank"
                       rel="noopener noreferrer"
                     >
@@ -110,7 +110,7 @@ const FloatingCTA: React.FC<FloatingCTAProps> = ({ className }) => {
             <div className="p-4">
               <Button variant="outline" size="sm" className="w-full" onClick={handleMinimize}>
                 <Calendar className="mr-2 h-4 w-4" />
-                Diagnóstico Gratuito
+                Fale Conosco
               </Button>
             </div>
           )}

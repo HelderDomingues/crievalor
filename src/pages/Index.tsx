@@ -284,7 +284,7 @@ const Index = () => {
         {/* Partners Section */}
         <PartnersSection />
 
-        {/* CTA Final - Diagnóstico Gratuito */}
+        {/* CTA Final */}
         <MainCTA />
 
         {/* Contact Section */}

@@ -93,12 +93,6 @@ const AdminSetup = () => {
                     description="Visualize e gerencie os leads capturados através das palestras"
                   />
 
-                  <AdminCard
-                    title="Diagnósticos Gratuitos"
-                    icon={<Stethoscope className="h-10 w-10" />}
-                    to="/admin-diagnostic-requests"
-                    description="Visualize e gerencie as solicitações de contato"
-                  />
 
                   <AdminCard
                     title="Gerenciar Bios"

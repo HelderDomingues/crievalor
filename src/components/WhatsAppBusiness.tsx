@@ -41,7 +41,7 @@ export const WhatsAppBusiness: React.FC<WhatsAppBusinessProps> = ({
         `Olá! Vim através do site e tenho interesse no serviço: ${serviceType}. Gostaria de saber mais informações.`
       );
       const whatsappUrl = `https://wa.me/${defaultNumber.replace(/[^0-9]/g, '')}?text=${message}`;
-      
+
       logConversationStarted(defaultNumber, `quick_start_${serviceType}`, {
         serviceType,
         source: 'floating_widget'
@@ -56,7 +56,7 @@ export const WhatsAppBusiness: React.FC<WhatsAppBusinessProps> = ({
 
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     try {
       const message = encodeURIComponent(
         `Olá! Meu nome é ${formData.name}.\n\n` +
@@ -67,7 +67,7 @@ export const WhatsAppBusiness: React.FC<WhatsAppBusinessProps> = ({
       );
 
       const whatsappUrl = `https://wa.me/${defaultNumber.replace(/[^0-9]/g, '')}?text=${message}`;
-      
+
       logConversationStarted(defaultNumber, 'form_submission', {
         formData,
         source: 'floating_widget'
@@ -75,7 +75,7 @@ export const WhatsAppBusiness: React.FC<WhatsAppBusinessProps> = ({
 
       window.open(whatsappUrl, '_blank');
       setIsOpen(false);
-      
+
       // Reset form
       setFormData({
         name: '',
@@ -102,7 +102,7 @@ export const WhatsAppBusiness: React.FC<WhatsAppBusinessProps> = ({
           aria-label="Abrir WhatsApp Business"
         >
           <MessageCircle className="h-6 w-6" />
-          
+
           {/* Notification dot */}
           <div className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full flex items-center justify-center">
             <span className="text-xs text-white">!</span>
@@ -148,7 +148,7 @@ export const WhatsAppBusiness: React.FC<WhatsAppBusinessProps> = ({
                   >
                     🎯 Conhecer o MAR
                   </Button>
-                  
+
                   <Button
                     variant="outline"
                     className="w-full justify-start text-sm"
@@ -156,7 +156,7 @@ export const WhatsAppBusiness: React.FC<WhatsAppBusinessProps> = ({
                   >
                     ⚡ Lumia Consultores Virtuais
                   </Button>
-                  
+
                   <Button
                     variant="outline"
                     className="w-full justify-start text-sm"
@@ -164,7 +164,7 @@ export const WhatsAppBusiness: React.FC<WhatsAppBusinessProps> = ({
                   >
                     🧭 Mentor de Propósito
                   </Button>
-                  
+
                   <Button
                     variant="outline"
                     className="w-full justify-start text-sm"
@@ -172,7 +172,7 @@ export const WhatsAppBusiness: React.FC<WhatsAppBusinessProps> = ({
                   >
                     👥 Oficina de Líderes
                   </Button>
-                  
+
                   <Button
                     variant="outline"
                     className="w-full justify-start text-sm"
@@ -180,7 +180,7 @@ export const WhatsAppBusiness: React.FC<WhatsAppBusinessProps> = ({
                   >
                     👨‍💼 Mentorias Empresariais
                   </Button>
-                  
+
                   <Button
                     variant="outline"
                     className="w-full justify-start text-sm"
@@ -188,14 +188,7 @@ export const WhatsAppBusiness: React.FC<WhatsAppBusinessProps> = ({
                   >
                     🎨 Identidade Visual
                   </Button>
-                  
-                  <Button
-                    variant="outline"
-                    className="w-full justify-start text-sm"
-                    onClick={() => handleQuickStart('Diagnóstico Empresarial Gratuito')}
-                  >
-                    📊 Diagnóstico Gratuito
-                  </Button>
+
                 </div>
 
                 <div className="pt-2 border-t">
@@ -216,40 +209,40 @@ export const WhatsAppBusiness: React.FC<WhatsAppBusinessProps> = ({
                   <Input
                     placeholder="Seu nome"
                     value={formData.name}
-                    onChange={(e) => setFormData({...formData, name: e.target.value})}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     required
                     className="text-sm"
                   />
-                  
+
                   <Input
                     type="email"
                     placeholder="Seu email"
                     value={formData.email}
-                    onChange={(e) => setFormData({...formData, email: e.target.value})}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                     required
                     className="text-sm"
                   />
-                  
+
                   <Input
                     placeholder="Seu telefone"
                     value={formData.phone}
-                    onChange={(e) => setFormData({...formData, phone: e.target.value})}
+                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                     required
                     className="text-sm"
                   />
-                  
+
                   <Input
                     placeholder="Serviço de interesse"
                     value={formData.service}
-                    onChange={(e) => setFormData({...formData, service: e.target.value})}
+                    onChange={(e) => setFormData({ ...formData, service: e.target.value })}
                     required
                     className="text-sm"
                   />
-                  
+
                   <Textarea
                     placeholder="Sua mensagem..."
                     value={formData.message}
-                    onChange={(e) => setFormData({...formData, message: e.target.value})}
+                    onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                     rows={3}
                     className="text-sm resize-none"
                   />
