@@ -5,7 +5,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import AdminAuth from "@/components/admin/AdminAuth";
 import { Button } from "@/components/ui/button";
-import { FileText, Image, MessageSquareQuote, Palette, Calendar, UserCheck, Stethoscope, Newspaper } from "lucide-react";
+import { FileText, Image, MessageSquareQuote, Palette, Calendar, UserCheck, Stethoscope, Newspaper, Shield } from "lucide-react";
 import AdminCard from "@/components/admin/AdminCard";
 
 const AdminSetup = () => {
@@ -99,6 +99,12 @@ const AdminSetup = () => {
                     icon={<UserCheck className="h-10 w-10" />}
                     to="/admin-bio"
                     description="Gerenciar bios de autores e administradores do sistema"
+                  />
+                  <AdminCard
+                    title="Gerenciar Usuários"
+                    icon={<Shield className="h-10 w-10" />}
+                    to="/admin-users"
+                    description="Gerenciar permissões, papéis e níveis de acesso de todos os usuários"
                   />
                 </div>
               </div>

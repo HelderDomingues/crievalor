@@ -71,6 +71,12 @@ const AuthHeader = () => {
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
+                  <Link to="/admin-users" className="flex items-center text-primary font-medium">
+                    <Shield className="mr-2 h-4 w-4" />
+                    <span>Gerenciar Usuários</span>
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
                   <Link to="/admin-bio" className="flex items-center">
                     <User className="mr-2 h-4 w-4" />
                     <span>Gerenciar Bios</span>
