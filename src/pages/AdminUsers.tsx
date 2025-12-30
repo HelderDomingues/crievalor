@@ -63,6 +63,17 @@ const AdminUsers: React.FC = () => {
     const [newUserPassword, setNewUserPassword] = useState("");
     const [newUserFullName, setNewUserFullName] = useState("");
     const [newUserUsername, setNewUserUsername] = useState("");
+
+    // Edit User State
+    const [isEditUserOpen, setIsEditUserOpen] = useState(false);
+
+    // User fields state for both Add and Edit
+    const [editUserId, setEditUserId] = useState<string | null>(null);
+    const [editEmail, setEditEmail] = useState("");
+    const [editPassword, setEditPassword] = useState(""); // Optional for edit
+    const [editFullName, setEditFullName] = useState("");
+    const [editUsername, setEditUsername] = useState("");
+
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     useEffect(() => {
@@ -186,6 +197,76 @@ const AdminUsers: React.FC = () => {
         }
     };
 
+    // Prepare modal for editing
+    const openEditModal = (user: UserWithProfile) => {
+        setEditUserId(user.id);
+        setEditEmail(user.email || "");
+        setEditFullName(user.full_name || "");
+        setEditUsername(user.username || "");
+        setEditPassword(""); // Reset password field
+        setIsEditUserOpen(true);
+    };
+
+    const handleUpdateUser = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!editUserId) return;
+
+        setIsSubmitting(true);
+
+        try {
+            // 1. Update Authentication Data (Email/Password) via Edge Function
+            const { data, error } = await supabaseExtended.functions.invoke('admin-action', {
+                body: {
+                    action: 'updateUser',
+                    userId: editUserId,
+                    email: editEmail,
+                    password: editPassword || undefined, // Only send if not empty
+                    userData: {
+                        // We also update metadata in auth for consistency
+                        full_name: editFullName,
+                        username: editUsername
+                    }
+                }
+            });
+
+            if (error) throw new Error(error.message || 'Erro ao atualizar dados de autenticação');
+            if (data?.error) throw new Error(data.error);
+
+            // 2. Update Profile Data (Name/Username) directly in profiles table
+            // Since we are admin, RLS allows this now.
+            const { error: profileError } = await supabase
+                .from('profiles')
+                .update({
+                    full_name: editFullName,
+                    username: editUsername,
+                    // We don't update email in profiles yet as it might not be confirmed, 
+                    // but usually triggers handle this. For now let's update it for UI consistency if simple.
+                    email: editEmail
+                })
+                .eq('id', editUserId);
+
+            if (profileError) throw new Error(profileError.message || 'Erro ao atualizar perfil');
+
+            toast({
+                title: "Usuário atualizado",
+                description: "Os dados foram atualizados com sucesso.",
+            });
+
+            setIsEditUserOpen(false);
+            fetchUsers(); // Refresh list
+
+        } catch (error: any) {
+            console.error("Error updating user:", error);
+            toast({
+                title: "Erro ao atualizar usuário",
+                description: error.message,
+                variant: "destructive",
+            });
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
     const handleDeleteUser = async (userId: string, email: string | null) => {
         if (!confirm(`Tem certeza que deseja excluir o usuário ${email}? Esta ação não pode ser desfeita.`)) {
             return;
@@ -243,6 +324,7 @@ const AdminUsers: React.FC = () => {
                         </div>
 
                         <div className="flex flex-col md:flex-row gap-4 w-full md:w-auto">
+                            {/* Add User Dialog */}
                             <Dialog open={isAddUserOpen} onOpenChange={setIsAddUserOpen}>
                                 <DialogTrigger asChild>
                                     <Button className="bg-primary hover:bg-primary/90 text-white">
@@ -308,6 +390,72 @@ const AdminUsers: React.FC = () => {
                                             <Button type="submit" disabled={isSubmitting} className="bg-primary hover:bg-primary/90">
                                                 {isSubmitting ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : null}
                                                 Criar Usuário
+                                            </Button>
+                                        </DialogFooter>
+                                    </form>
+                                </DialogContent>
+                            </Dialog>
+
+                            {/* Edit User Dialog */}
+                            <Dialog open={isEditUserOpen} onOpenChange={setIsEditUserOpen}>
+                                <DialogContent className="bg-[#1a2e4c] text-white border-white/10">
+                                    <DialogHeader>
+                                        <DialogTitle>Editar Usuário</DialogTitle>
+                                        <DialogDescription className="text-gray-400">
+                                            Atualize os dados cadastrais e de acesso do usuário.
+                                        </DialogDescription>
+                                    </DialogHeader>
+                                    <form onSubmit={handleUpdateUser} className="space-y-4 py-4">
+                                        <div className="space-y-2">
+                                            <Label htmlFor="edit_full_name">Nome Completo</Label>
+                                            <Input
+                                                id="edit_full_name"
+                                                value={editFullName}
+                                                onChange={(e) => setEditFullName(e.target.value)}
+                                                className="bg-[#010816] border-white/10 text-white"
+                                                required
+                                            />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <Label htmlFor="edit_username">Usuário (Username)</Label>
+                                            <Input
+                                                id="edit_username"
+                                                value={editUsername}
+                                                onChange={(e) => setEditUsername(e.target.value)}
+                                                className="bg-[#010816] border-white/10 text-white"
+                                                required
+                                            />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <Label htmlFor="edit_email">Email</Label>
+                                            <Input
+                                                id="edit_email"
+                                                type="email"
+                                                value={editEmail}
+                                                onChange={(e) => setEditEmail(e.target.value)}
+                                                className="bg-[#010816] border-white/10 text-white"
+                                                required
+                                            />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <Label htmlFor="edit_password">Nova Senha (opcional)</Label>
+                                            <Input
+                                                id="edit_password"
+                                                type="password"
+                                                placeholder="Deixe em branco para não alterar"
+                                                value={editPassword}
+                                                onChange={(e) => setEditPassword(e.target.value)}
+                                                className="bg-[#010816] border-white/10 text-white"
+                                                minLength={6}
+                                            />
+                                        </div>
+                                        <DialogFooter>
+                                            <Button type="button" variant="outline" onClick={() => setIsEditUserOpen(false)} className="bg-transparent border-white/10 text-white hover:bg-white/5">
+                                                Cancelar
+                                            </Button>
+                                            <Button type="submit" disabled={isSubmitting} className="bg-primary hover:bg-primary/90">
+                                                {isSubmitting ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : null}
+                                                Salvar Alterações
                                             </Button>
                                         </DialogFooter>
                                     </form>
@@ -403,8 +551,19 @@ const AdminUsers: React.FC = () => {
                                                         <Button
                                                             variant="ghost"
                                                             size="icon"
+                                                            className="h-8 w-8 text-blue-400 hover:text-blue-300 hover:bg-blue-900/20"
+                                                            onClick={() => openEditModal(user)}
+                                                            title="Editar usuário"
+                                                        >
+                                                            <Edit className="h-4 w-4" />
+                                                        </Button>
+
+                                                        <Button
+                                                            variant="ghost"
+                                                            size="icon"
                                                             className="h-8 w-8 text-red-400 hover:text-red-300 hover:bg-red-900/20"
                                                             onClick={() => handleDeleteUser(user.id, user.email)}
+                                                            title="Excluir usuário"
                                                         >
                                                             <Trash2 className="h-4 w-4" />
                                                         </Button>
