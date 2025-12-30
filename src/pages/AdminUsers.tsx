@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { supabaseExtended } from "@/integrations/supabase/extendedClient"; // Use extended client for functions
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import {
@@ -24,10 +25,20 @@ import {
     SelectTrigger,
     SelectValue
 } from "@/components/ui/select";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { Search, Shield, User as UserIcon, Loader2 } from "lucide-react";
+import { Search, Shield, User as UserIcon, Loader2, Plus, Trash2, Edit } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { formatDate } from "@/lib/utils";
 
@@ -45,6 +56,14 @@ const AdminUsers: React.FC = () => {
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState("");
     const { toast } = useToast();
+
+    // Add User State
+    const [isAddUserOpen, setIsAddUserOpen] = useState(false);
+    const [newUserEmail, setNewUserEmail] = useState("");
+    const [newUserPassword, setNewUserPassword] = useState("");
+    const [newUserFullName, setNewUserFullName] = useState("");
+    const [newUserUsername, setNewUserUsername] = useState("");
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     useEffect(() => {
         fetchUsers();
@@ -123,6 +142,85 @@ const AdminUsers: React.FC = () => {
         }
     };
 
+    const handleCreateUser = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setIsSubmitting(true);
+
+        try {
+            const { data, error } = await supabaseExtended.functions.invoke('admin-action', {
+                body: {
+                    action: 'createUser',
+                    email: newUserEmail,
+                    password: newUserPassword,
+                    userData: {
+                        full_name: newUserFullName,
+                        username: newUserUsername
+                    }
+                }
+            });
+
+            if (error) throw new Error(error.message || 'Erro ao criar usuário');
+            if (data?.error) throw new Error(data.error);
+
+            toast({
+                title: "Usuário criado com sucesso",
+                description: `O usuário ${newUserEmail} foi adicionado.`,
+            });
+
+            setIsAddUserOpen(false);
+            setNewUserEmail("");
+            setNewUserPassword("");
+            setNewUserFullName("");
+            setNewUserUsername("");
+            fetchUsers(); // Refresh list immediately
+
+        } catch (error: any) {
+            console.error("Error creating user:", error);
+            toast({
+                title: "Erro ao criar usuário",
+                description: error.message,
+                variant: "destructive",
+            });
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+    const handleDeleteUser = async (userId: string, email: string | null) => {
+        if (!confirm(`Tem certeza que deseja excluir o usuário ${email}? Esta ação não pode ser desfeita.`)) {
+            return;
+        }
+
+        try {
+            const { data, error } = await supabaseExtended.functions.invoke('admin-action', {
+                body: {
+                    action: 'deleteUser',
+                    userId: userId
+                }
+            });
+
+            if (error) throw new Error(error.message || 'Erro ao excluir usuário');
+            if (data?.error) throw new Error(data.error);
+
+            toast({
+                title: "Usuário excluído",
+                description: "O usuário foi removido do sistema.",
+            });
+
+            // Optimistic update
+            setUsers(users.filter(u => u.id !== userId));
+
+        } catch (error: any) {
+            console.error("Error deleting user:", error);
+            toast({
+                title: "Erro ao excluir usuário",
+                description: error.message,
+                variant: "destructive",
+            });
+        }
+    };
+
+
     const filteredUsers = users.filter(user =>
         user.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         user.full_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -141,17 +239,90 @@ const AdminUsers: React.FC = () => {
                                 <Shield className="w-8 h-8 mr-3 text-primary" />
                                 Gerenciamento de Usuários
                             </h1>
-                            <p className="text-gray-400">Gerencie permissões e papéis dos usuários da plataforma.</p>
+                            <p className="text-gray-400">Gerencie permissões e usuários da plataforma.</p>
                         </div>
 
-                        <div className="relative w-full md:w-80">
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
-                            <Input
-                                placeholder="Buscar por nome, email ou login..."
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                                className="pl-10 bg-[#1a2e4c]/20 border-white/10 text-white placeholder:text-gray-600"
-                            />
+                        <div className="flex flex-col md:flex-row gap-4 w-full md:w-auto">
+                            <Dialog open={isAddUserOpen} onOpenChange={setIsAddUserOpen}>
+                                <DialogTrigger asChild>
+                                    <Button className="bg-primary hover:bg-primary/90 text-white">
+                                        <Plus className="w-4 h-4 mr-2" />
+                                        Novo Usuário
+                                    </Button>
+                                </DialogTrigger>
+                                <DialogContent className="bg-[#1a2e4c] text-white border-white/10">
+                                    <DialogHeader>
+                                        <DialogTitle>Adicionar Novo Usuário</DialogTitle>
+                                        <DialogDescription className="text-gray-400">
+                                            Crie uma nova conta de acesso. O usuário receberá um email de confirmação se configurado.
+                                        </DialogDescription>
+                                    </DialogHeader>
+                                    <form onSubmit={handleCreateUser} className="space-y-4 py-4">
+                                        <div className="space-y-2">
+                                            <Label htmlFor="full_name">Nome Completo</Label>
+                                            <Input
+                                                id="full_name"
+                                                value={newUserFullName}
+                                                onChange={(e) => setNewUserFullName(e.target.value)}
+                                                className="bg-[#010816] border-white/10 text-white"
+                                                required
+                                            />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <Label htmlFor="username">Usuário (Username)</Label>
+                                            <Input
+                                                id="username"
+                                                value={newUserUsername}
+                                                onChange={(e) => setNewUserUsername(e.target.value)}
+                                                className="bg-[#010816] border-white/10 text-white"
+                                                required
+                                            />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <Label htmlFor="email">Email</Label>
+                                            <Input
+                                                id="email"
+                                                type="email"
+                                                value={newUserEmail}
+                                                onChange={(e) => setNewUserEmail(e.target.value)}
+                                                className="bg-[#010816] border-white/10 text-white"
+                                                required
+                                            />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <Label htmlFor="password">Senha</Label>
+                                            <Input
+                                                id="password"
+                                                type="password"
+                                                value={newUserPassword}
+                                                onChange={(e) => setNewUserPassword(e.target.value)}
+                                                className="bg-[#010816] border-white/10 text-white"
+                                                required
+                                                minLength={6}
+                                            />
+                                        </div>
+                                        <DialogFooter>
+                                            <Button type="button" variant="outline" onClick={() => setIsAddUserOpen(false)} className="bg-transparent border-white/10 text-white hover:bg-white/5">
+                                                Cancelar
+                                            </Button>
+                                            <Button type="submit" disabled={isSubmitting} className="bg-primary hover:bg-primary/90">
+                                                {isSubmitting ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : null}
+                                                Criar Usuário
+                                            </Button>
+                                        </DialogFooter>
+                                    </form>
+                                </DialogContent>
+                            </Dialog>
+
+                            <div className="relative w-full md:w-64">
+                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+                                <Input
+                                    placeholder="Buscar..."
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                    className="pl-10 bg-[#1a2e4c]/20 border-white/10 text-white placeholder:text-gray-600"
+                                />
+                            </div>
                         </div>
                     </div>
 
@@ -163,7 +334,7 @@ const AdminUsers: React.FC = () => {
                                         <TableHead className="text-gray-400">Usuário</TableHead>
                                         <TableHead className="text-gray-400">Login / Email</TableHead>
                                         <TableHead className="text-gray-400">Papel</TableHead>
-                                        <TableHead className="text-gray-400">Cadastro</TableHead>
+                                        <TableHead className="text-gray-400">Atualizado em</TableHead>
                                         <TableHead className="text-gray-400 text-right">Ações</TableHead>
                                     </TableRow>
                                 </TableHeader>
@@ -214,19 +385,30 @@ const AdminUsers: React.FC = () => {
                                                     {formatDate(user.updated_at)}
                                                 </TableCell>
                                                 <TableCell className="text-right">
-                                                    <Select
-                                                        defaultValue={user.role || 'user'}
-                                                        onValueChange={(val) => handleUpdateRole(user.id, val)}
-                                                    >
-                                                        <SelectTrigger className="w-32 bg-[#010816]/50 border-white/10 text-white ml-auto">
-                                                            <SelectValue placeholder="Papel" />
-                                                        </SelectTrigger>
-                                                        <SelectContent className="bg-[#1a2e4c] border-white/10 text-white">
-                                                            <SelectItem value="user">Usuário</SelectItem>
-                                                            <SelectItem value="admin">Admin</SelectItem>
-                                                            <SelectItem value="owner">Owner</SelectItem>
-                                                        </SelectContent>
-                                                    </Select>
+                                                    <div className="flex items-center justify-end gap-2">
+                                                        <Select
+                                                            defaultValue={user.role || 'user'}
+                                                            onValueChange={(val) => handleUpdateRole(user.id, val)}
+                                                        >
+                                                            <SelectTrigger className="w-28 bg-[#010816]/50 border-white/10 text-white h-8 text-xs">
+                                                                <SelectValue placeholder="Papel" />
+                                                            </SelectTrigger>
+                                                            <SelectContent className="bg-[#1a2e4c] border-white/10 text-white">
+                                                                <SelectItem value="user">Usuário</SelectItem>
+                                                                <SelectItem value="admin">Admin</SelectItem>
+                                                                <SelectItem value="owner">Owner</SelectItem>
+                                                            </SelectContent>
+                                                        </Select>
+
+                                                        <Button
+                                                            variant="ghost"
+                                                            size="icon"
+                                                            className="h-8 w-8 text-red-400 hover:text-red-300 hover:bg-red-900/20"
+                                                            onClick={() => handleDeleteUser(user.id, user.email)}
+                                                        >
+                                                            <Trash2 className="h-4 w-4" />
+                                                        </Button>
+                                                    </div>
                                                 </TableCell>
                                             </TableRow>
                                         ))
