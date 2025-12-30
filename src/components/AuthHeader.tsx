@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useProfile } from "@/hooks/useProfile";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator, DropdownMenuLabel } from "@/components/ui/dropdown-menu";
-import { User, CreditCard, LogOut, Settings, Shield, Palette } from "lucide-react";
+import { User, CreditCard, LogOut, Settings, Shield, Palette, BookOpen } from "lucide-react";
 
 const AuthHeader = () => {
   const { user, signOut } = useAuth();
@@ -38,6 +38,12 @@ const AuthHeader = () => {
               <Link to="/profile" className="flex items-center">
                 <User className="mr-2 h-4 w-4" />
                 <span>Perfil</span>
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link to="/dashboard" className="flex items-center">
+                <BookOpen className="mr-2 h-4 w-4" />
+                <span>Materiais Exclusivos</span>
               </Link>
             </DropdownMenuItem>
 

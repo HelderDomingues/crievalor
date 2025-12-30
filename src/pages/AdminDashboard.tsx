@@ -6,7 +6,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import AdminAuth from "@/components/admin/AdminAuth";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Settings, FileText, Briefcase, Users, Calendar, UserCheck, Stethoscope, Newspaper } from "lucide-react";
+import { Settings, FileText, Briefcase, Users, Calendar, UserCheck, Stethoscope, Newspaper, Shield } from "lucide-react";
 
 const AdminDashboard = () => {
   return (
@@ -84,25 +84,27 @@ const AdminDashboard = () => {
                 </Card>
               </Link>
 
-              {/* Client Logos Admin */}
-              <Link to="/admin-client-logos">
-                <Card className="h-full hover:shadow-md transition-shadow cursor-pointer">
+              {/* Gerenciamento de Usuários */}
+              <Link to="/admin-users">
+                <Card className="h-full hover:shadow-md transition-shadow cursor-pointer border-primary/20">
                   <CardHeader>
                     <CardTitle className="flex items-center">
-                      <Users className="mr-2 h-5 w-5 text-primary" />
-                      Logos dos Clientes
+                      <Shield className="mr-2 h-5 w-5 text-primary" />
+                      Gerenciar Usuários
                     </CardTitle>
                     <CardDescription>
-                      Gerenciar logos de clientes
+                      Gerenciar permissões e papéis
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
                     <p className="text-sm text-muted-foreground">
-                      Adicione, edite ou remova logos dos clientes exibidos no carrossel.
+                      Visualize todos os usuários e altere seus níveis de acesso no sistema.
                     </p>
                   </CardContent>
                 </Card>
               </Link>
+
+              {/* Client Logos Admin */}
 
 
               {/* Palestras & Eventos */}

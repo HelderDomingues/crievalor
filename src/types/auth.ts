@@ -8,7 +8,7 @@ export interface AuthState {
 }
 
 export interface AuthContextType extends AuthState {
-  signUp: (email: string, password: string, username?: string) => Promise<{
+  signUp: (email: string, password: string, username?: string, fullName?: string) => Promise<{
     error: Error | null;
     data: any | null;
   }>;

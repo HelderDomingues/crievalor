@@ -32,8 +32,10 @@ import PalestraSucesso from "@/pages/PalestraSucesso";
 import LecturesAdmin from "@/pages/LecturesAdmin";
 import EventLeadsAdmin from "@/pages/EventLeadsAdmin";
 import AdminDashboard from "@/pages/AdminDashboard";
+import Dashboard from "@/pages/Dashboard";
 import Apresentacao from "@/pages/Apresentacao";
 import ApresentacaoSC from "@/pages/ApresentacaoSC";
+import ProtectedRoute from "@/components/auth/ProtectedRoute";
 
 import BlogHome from "@/pages/blog/BlogHome";
 import BlogPost from "@/pages/blog/BlogPost";
@@ -43,6 +45,7 @@ import BlogAdminList from "@/pages/admin/blog/BlogAdminList";
 import BlogPostEditor from "@/pages/admin/blog/BlogPostEditor";
 import CategoryManager from "@/pages/admin/blog/CategoryManager";
 import BioManager from "@/pages/admin/BioManager";
+import AdminUsers from "@/pages/AdminUsers";
 
 import { RootLayout } from "@/components/layout/RootLayout";
 
@@ -114,47 +117,99 @@ export const router = createBrowserRouter([
       },
       {
         path: "admin-setup",
-        element: <AdminSetup />,
+        element: (
+          <ProtectedRoute requiredRole="admin">
+            <AdminSetup />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "admin-portfolio",
-        element: <PortfolioAdmin />,
+        element: (
+          <ProtectedRoute requiredRole="admin">
+            <PortfolioAdmin />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "admin-materials",
-        element: <AdminMaterialsPage />,
+        element: (
+          <ProtectedRoute requiredRole="admin">
+            <AdminMaterialsPage />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "admin-logos",
-        element: <ClientLogosAdminPage />,
+        element: (
+          <ProtectedRoute requiredRole="admin">
+            <ClientLogosAdminPage />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "admin-client-logos",
-        element: <ClientLogosAdminPage />,
+        element: (
+          <ProtectedRoute requiredRole="admin">
+            <ClientLogosAdminPage />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "admin-testimonials",
-        element: <TestimonialsAdmin />,
+        element: (
+          <ProtectedRoute requiredRole="admin">
+            <TestimonialsAdmin />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "admin-blog",
-        element: <BlogAdminList />,
+        element: (
+          <ProtectedRoute requiredRole="admin">
+            <BlogAdminList />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "admin-blog/posts/new",
-        element: <BlogPostEditor />,
+        element: (
+          <ProtectedRoute requiredRole="admin">
+            <BlogPostEditor />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "admin-blog/posts/:id",
-        element: <BlogPostEditor />,
+        element: (
+          <ProtectedRoute requiredRole="admin">
+            <BlogPostEditor />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "admin-blog/categories",
-        element: <CategoryManager />,
+        element: (
+          <ProtectedRoute requiredRole="admin">
+            <CategoryManager />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "admin-bio",
-        element: <BioManager />,
+        element: (
+          <ProtectedRoute requiredRole="admin">
+            <BioManager />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "admin-users",
+        element: (
+          <ProtectedRoute requiredRole="admin">
+            <AdminUsers />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "auth",
@@ -162,7 +217,11 @@ export const router = createBrowserRouter([
       },
       {
         path: "profile",
-        element: <Profile />,
+        element: (
+          <ProtectedRoute>
+            <Profile />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "acessibilidade",
@@ -170,7 +229,11 @@ export const router = createBrowserRouter([
       },
       {
         path: "admin-whatsapp",
-        element: <WhatsAppDashboard />,
+        element: (
+          <ProtectedRoute requiredRole="admin">
+            <WhatsAppDashboard />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "palestra",
@@ -182,15 +245,35 @@ export const router = createBrowserRouter([
       },
       {
         path: "admin-lectures",
-        element: <LecturesAdmin />,
+        element: (
+          <ProtectedRoute requiredRole="admin">
+            <LecturesAdmin />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "admin-event-leads",
-        element: <EventLeadsAdmin />,
+        element: (
+          <ProtectedRoute requiredRole="admin">
+            <EventLeadsAdmin />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "admin-dashboard",
-        element: <AdminDashboard />,
+        element: (
+          <ProtectedRoute requiredRole="admin">
+            <AdminDashboard />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "dashboard",
+        element: (
+          <ProtectedRoute>
+            <Dashboard />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "apresentacao",

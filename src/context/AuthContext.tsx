@@ -14,7 +14,7 @@ const AuthContext = createContext<AuthContextType>({
   ...initialState,
   signUp: async () => ({ error: null, data: null }),
   signIn: async () => ({ error: null, data: null }),
-  signOut: async () => {},
+  signOut: async () => { },
 });
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
@@ -45,10 +45,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     return () => subscription.unsubscribe();
   }, []);
 
-  const signUp = async (email: string, password: string, username?: string) => {
+  const signUp = async (email: string, password: string, username?: string, fullName?: string) => {
     try {
       const userData = {
         username: username || email.split("@")[0],
+        full_name: fullName,
       };
 
       const { data, error } = await supabase.auth.signUp({
@@ -61,6 +62,20 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
       if (data?.user) {
         console.log("User signed up successfully:", data.user.id);
+
+        // Explicitly create/update profile as a backup for the database trigger
+        const { error: profileError } = await supabase
+          .from("profiles")
+          .upsert({
+            id: data.user.id,
+            username: userData.username,
+            full_name: userData.full_name,
+            updated_at: new Date().toISOString(),
+          });
+
+        if (profileError) {
+          console.error("Error creating/updating profile during sign up:", profileError);
+        }
       }
 
       return { data, error };

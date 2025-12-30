@@ -18,11 +18,11 @@ const Profile = () => {
   const { user, signOut } = useAuth();
   const { profile, isLoading, updateProfileField } = useProfile();
   const { toast } = useToast();
-  
+
   const [activeTab, setActiveTab] = useState("personal");
   const [subscription, setSubscription] = useState(null);
   const [subscriptionLoading, setSubscriptionLoading] = useState(true);
-  
+
   useEffect(() => {
     if (!user && !isLoading) {
       navigate("/auth");
@@ -43,14 +43,14 @@ const Profile = () => {
         }
       }
     };
-    
+
     loadSubscription();
   }, [user]);
 
   const handleSaveField = async (field: string, value: string) => {
     console.log(`Saving field ${field} with value:`, value);
     const { error } = await updateProfileField(field, value);
-    
+
     if (error) {
       toast({
         variant: "destructive",
@@ -59,7 +59,7 @@ const Profile = () => {
       });
       return Promise.reject(error);
     }
-    
+
     return Promise.resolve();
   };
 
@@ -90,9 +90,9 @@ const Profile = () => {
 
   // Fix: Convert string values to boolean for isProfileComplete
   const isProfileComplete = !!(
-    profile?.full_name && 
-    profile?.company_name && 
-    profile?.company_address && 
+    profile?.full_name &&
+    profile?.company_name &&
+    profile?.company_address &&
     (profile?.cnpj || profile?.cpf)
   );
 
@@ -102,23 +102,23 @@ const Profile = () => {
         <meta name="robots" content="noindex, nofollow" />
       </Helmet>
       <Header />
-      
+
       <main className="flex-grow py-10">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-            
+
             <div className="lg:col-span-1">
-              <ProfileSidebar 
-                profile={profile} 
-                user={user} 
-                activeTab={activeTab} 
-                setActiveTab={setActiveTab} 
-                isProfileComplete={isProfileComplete} 
-                handleSignOut={handleSignOut} 
+              <ProfileSidebar
+                profile={profile}
+                user={user}
+                activeTab={activeTab}
+                setActiveTab={setActiveTab}
+                isProfileComplete={isProfileComplete}
+                handleSignOut={handleSignOut}
                 subscription={subscription}
               />
             </div>
-            
+
             <div className="lg:col-span-3">
               <Card className="shadow-sm border-0">
                 <CardHeader className="pb-3">
@@ -126,35 +126,27 @@ const Profile = () => {
                     {activeTab === "personal" && "Dados Pessoais"}
                     {activeTab === "company" && "Dados da Empresa"}
                     {activeTab === "social" && "Redes Sociais"}
-                    {activeTab === "subscription" && "Assinatura e Financeiro"}
                   </CardTitle>
                   <CardDescription>
                     {activeTab === "personal" && "Gerencie suas informações pessoais"}
                     {activeTab === "company" && "Gerencie as informações da sua empresa"}
                     {activeTab === "social" && "Gerencie suas redes sociais"}
-                    {activeTab === "subscription" && "Gerencie sua assinatura e dados financeiros"}
                   </CardDescription>
                 </CardHeader>
-                
-                {activeTab === "subscription" ? (
-                  <CardContent>
-                    <SubscriptionDetails />
-                  </CardContent>
-                ) : (
-                  <ProfileTabs 
-                    activeTab={activeTab} 
-                    profile={profile} 
-                    loading={isLoading} 
-                    handleSaveField={handleSaveField} 
-                    openWhatsApp={openWhatsApp} 
-                  />
-                )}
+
+                <ProfileTabs
+                  activeTab={activeTab}
+                  profile={profile}
+                  loading={isLoading}
+                  handleSaveField={handleSaveField}
+                  openWhatsApp={openWhatsApp}
+                />
               </Card>
             </div>
           </div>
         </div>
       </main>
-      
+
       <Footer />
     </div>
   );
