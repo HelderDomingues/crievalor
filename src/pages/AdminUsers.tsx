@@ -37,7 +37,7 @@ interface UserWithProfile {
     full_name: string | null;
     username: string | null;
     role: string | null;
-    created_at: string;
+    updated_at: string;
 }
 
 const AdminUsers: React.FC = () => {
@@ -57,7 +57,7 @@ const AdminUsers: React.FC = () => {
             const { data: profiles, error: profileError } = await supabase
                 .from('profiles')
                 .select('*')
-                .order('created_at', { ascending: false });
+                .order('updated_at', { ascending: false });
 
             if (profileError) throw profileError;
 
@@ -68,7 +68,7 @@ const AdminUsers: React.FC = () => {
                 full_name: p.full_name,
                 username: p.username,
                 role: p.role,
-                created_at: p.created_at || new Date().toISOString()
+                updated_at: p.updated_at || new Date().toISOString()
             }));
 
             setUsers(validatedUsers);
@@ -203,15 +203,15 @@ const AdminUsers: React.FC = () => {
                                                     <Badge
                                                         variant="outline"
                                                         className={`${user.role === 'owner' ? 'bg-purple-500/20 text-purple-400 border-purple-500/20' :
-                                                                user.role === 'admin' ? 'bg-primary/20 text-primary border-primary/20' :
-                                                                    'bg-gray-500/20 text-gray-400 border-gray-500/20'
+                                                            user.role === 'admin' ? 'bg-primary/20 text-primary border-primary/20' :
+                                                                'bg-gray-500/20 text-gray-400 border-gray-500/20'
                                                             } capitalize border-0`}
                                                     >
                                                         {user.role || 'user'}
                                                     </Badge>
                                                 </TableCell>
                                                 <TableCell className="text-gray-400 text-sm">
-                                                    {formatDate(user.created_at)}
+                                                    {formatDate(user.updated_at)}
                                                 </TableCell>
                                                 <TableCell className="text-right">
                                                     <Select
