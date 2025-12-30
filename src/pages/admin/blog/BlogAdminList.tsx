@@ -87,7 +87,7 @@ export default function BlogAdminList() {
                     <AdminAuth onAuthenticated={() => { }} redirectPath="/admin-setup">
                         <div className="mb-4">
                             <Button variant="ghost" asChild size="sm">
-                                <Link to="/admin-dashboard" className="flex items-center gap-1">
+                                <Link to="/admin-setup" className="flex items-center gap-1">
                                     <ArrowLeft className="w-4 h-4" /> Voltar ao Painel
                                 </Link>
                             </Button>

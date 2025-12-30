@@ -110,7 +110,7 @@ const Dashboard: React.FC = () => {
                         <div className="flex gap-3">
                             {isAdmin && (
                                 <Button asChild variant="outline" className="border-white/10 text-white hover:bg-white/5">
-                                    <Link to="/admin-dashboard">
+                                    <Link to="/admin-setup">
                                         <Settings className="w-4 h-4 mr-2" />
                                         Painel Admin
                                     </Link>

@@ -31,7 +31,7 @@ import Palestra from "@/pages/Palestra";
 import PalestraSucesso from "@/pages/PalestraSucesso";
 import LecturesAdmin from "@/pages/LecturesAdmin";
 import EventLeadsAdmin from "@/pages/EventLeadsAdmin";
-import AdminDashboard from "@/pages/AdminDashboard";
+
 import Dashboard from "@/pages/Dashboard";
 import Apresentacao from "@/pages/Apresentacao";
 import ApresentacaoSC from "@/pages/ApresentacaoSC";
@@ -259,14 +259,7 @@ export const router = createBrowserRouter([
           </ProtectedRoute>
         ),
       },
-      {
-        path: "admin-dashboard",
-        element: (
-          <ProtectedRoute requiredRole="admin">
-            <AdminDashboard />
-          </ProtectedRoute>
-        ),
-      },
+
       {
         path: "dashboard",
         element: (
