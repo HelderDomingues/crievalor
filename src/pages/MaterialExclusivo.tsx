@@ -15,6 +15,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle, BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { FolderBreadcrumb } from "@/components/materials/FolderBreadcrumb";
+import { MaterialFolderView } from "@/components/materials/MaterialFolderView";
+import { MaterialFolder } from "@/types/materialFolder";
+
 
 export interface Material {
   id: string;
@@ -27,6 +31,7 @@ export interface Material {
   updated_at: string;
   plan_level: string;
   access_count: number;
+  folder_id?: string | null;
 }
 
 const MaterialExclusivoPage: React.FC = () => {
@@ -34,6 +39,8 @@ const MaterialExclusivoPage: React.FC = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [materials, setMaterials] = useState<Material[]>([]);
+  const [folders, setFolders] = useState<MaterialFolder[]>([]);
+  const [currentFolderId, setCurrentFolderId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [hasSubscription, setHasSubscription] = useState(false);
   const [activeFilter, setActiveFilter] = useState("todos");
@@ -76,13 +83,19 @@ const MaterialExclusivoPage: React.FC = () => {
         query = query.eq('category', activeFilter);
       }
 
-      const { data, error } = await query;
+      const { data: materialsData, error: materialsError } = await query;
 
-      if (error) {
-        throw error;
-      }
+      const { data: foldersData, error: foldersError } = await (supabaseExtended as any)
+        .from('material_folders')
+        .select('*')
+        .order('order_number');
 
-      setMaterials(data || []);
+      if (materialsError) throw materialsError;
+      // foldersError might happen if table doesn't exist yet or permission denied, handle gracefully
+      if (foldersError) console.warn("Error fetching folders", foldersError);
+
+      setMaterials(materialsData || []);
+      setFolders((foldersData as any) || []);
     } catch (error) {
       console.error("Error fetching materials:", error);
       toast({
@@ -97,6 +110,7 @@ const MaterialExclusivoPage: React.FC = () => {
 
   const handleFilterChange = (filter: string) => {
     setActiveFilter(filter);
+    setCurrentFolderId(null); // Reset to root or handle filter behavior
     fetchMaterials();
   };
 
@@ -240,14 +254,36 @@ const MaterialExclusivoPage: React.FC = () => {
               </CardContent>
             </Card>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredMaterials.map((material) => (
-                <MaterialCard
-                  key={material.id}
-                  material={material}
-                  onAccess={() => handleAccessMaterial(material.id)}
-                />
-              ))}
+            <div className="space-y-6">
+              {activeFilter === "todos" ? (
+                <>
+                  <div className="flex justify-between items-center bg-card/50 p-4 rounded-xl border border-border/50 backdrop-blur-sm">
+                    <FolderBreadcrumb
+                      currentFolderId={currentFolderId}
+                      folders={folders}
+                      onNavigate={setCurrentFolderId}
+                    />
+                  </div>
+
+                  <MaterialFolderView
+                    currentFolderId={currentFolderId}
+                    folders={folders}
+                    materials={materials}
+                    onNavigate={setCurrentFolderId}
+                    onAccessMaterial={(m) => handleAccessMaterial(m.id)}
+                  />
+                </>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {filteredMaterials.map((material) => (
+                    <MaterialCard
+                      key={material.id}
+                      material={material}
+                      onAccess={() => handleAccessMaterial(material.id)}
+                    />
+                  ))}
+                </div>
+              )}
             </div>
           )}
         </div>

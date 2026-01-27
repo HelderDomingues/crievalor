@@ -14,9 +14,14 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { File, UploadCloud, Loader2 } from "lucide-react";
 import { PLANS } from "@/services/subscriptionService";
+import { FolderSelect } from "./FolderSelect";
+
+import { Material } from "@/pages/MaterialExclusivo";
 
 interface MaterialFormProps {
   onMaterialAdded: () => void;
+  onCancel?: () => void;
+  initialData?: Material | null;
 }
 
 const formSchema = z.object({
@@ -25,25 +30,25 @@ const formSchema = z.object({
   category: z.string().min(1, { message: "Selecione uma categoria" }),
   // plan_level kept as optional string to satisfy potential backend requirements but hidden from UI
   plan_level: z.string().optional().default("subscriber"),
-  file: z.any()
-    .refine((file) => file?.size > 0, { message: "O arquivo é obrigatório" })
-    .refine((file) => file?.size <= 10 * 1024 * 1024, { message: "O arquivo deve ter no máximo 10MB" }),
+  folder_id: z.string().optional().nullable(),
+  file: z.any().optional(), // File is optional when editing
   thumbnail: z.any().optional(),
 });
 
-const MaterialForm: React.FC<MaterialFormProps> = ({ onMaterialAdded }) => {
+const MaterialForm: React.FC<MaterialFormProps> = ({ onMaterialAdded, onCancel, initialData }) => {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [filePreview, setFilePreview] = useState<string | null>(null);
-  const [thumbnailPreview, setThumbnailPreview] = useState<string | null>(null);
+  const [filePreview, setFilePreview] = useState<string | null>(initialData?.file_url || null);
+  const [thumbnailPreview, setThumbnailPreview] = useState<string | null>(initialData?.thumbnail_url || null);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      title: "",
-      description: "",
-      category: "",
-      plan_level: "subscriber",
+      title: initialData?.title || "",
+      description: initialData?.description || "",
+      category: initialData?.category || "",
+      plan_level: initialData?.plan_level || "subscriber",
+      folder_id: initialData?.folder_id || null,
     },
   });
 
@@ -75,39 +80,44 @@ const MaterialForm: React.FC<MaterialFormProps> = ({ onMaterialAdded }) => {
     try {
       setIsSubmitting(true);
 
-      // Upload file to storage
-      const fileExt = values.file.name.split('.').pop();
-      const fileName = `${uuidv4()}.${fileExt}`;
-      const filePath = `materials/${fileName}`;
+      // Upload file to storage ONLY if a new file is selected
+      let fileUrl = initialData?.file_url;
 
-      const { error: uploadError } = await supabaseExtended.storage
-        .from('materials')
-        .upload(filePath, values.file);
+      if (values.file && values.file instanceof File) {
+        const file = values.file as File;
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${uuidv4()}.${fileExt}`;
+        const filePath = `materials/${fileName}`;
 
-      if (uploadError) {
-        throw uploadError;
+        const { error: uploadError } = await supabaseExtended.storage
+          .from('materials')
+          .upload(filePath, file);
+
+        if (uploadError) throw uploadError;
+
+        const { data: fileData } = supabaseExtended.storage
+          .from('materials')
+          .getPublicUrl(filePath);
+
+        fileUrl = fileData.publicUrl;
+      } else if (!fileUrl) {
+        throw new Error("É necessário incluir um arquivo.");
       }
 
-      // Get the public URL
-      const { data: fileData } = supabaseExtended.storage
-        .from('materials')
-        .getPublicUrl(filePath);
-
-      let thumbnailUrl = null;
+      let thumbnailUrl = initialData?.thumbnail_url || null;
 
       // Upload thumbnail if provided
-      if (values.thumbnail && values.thumbnail.size > 0) {
-        const thumbExt = values.thumbnail.name.split('.').pop();
+      if (values.thumbnail && values.thumbnail instanceof File) {
+        const thumb = values.thumbnail as File;
+        const thumbExt = thumb.name.split('.').pop();
         const thumbName = `${uuidv4()}.${thumbExt}`;
         const thumbPath = `thumbnails/${thumbName}`;
 
         const { error: thumbUploadError } = await supabaseExtended.storage
           .from('materials')
-          .upload(thumbPath, values.thumbnail);
+          .upload(thumbPath, thumb);
 
-        if (thumbUploadError) {
-          throw thumbUploadError;
-        }
+        if (thumbUploadError) throw thumbUploadError;
 
         const { data: thumbData } = supabaseExtended.storage
           .from('materials')
@@ -116,29 +126,45 @@ const MaterialForm: React.FC<MaterialFormProps> = ({ onMaterialAdded }) => {
         thumbnailUrl = thumbData.publicUrl;
       }
 
-      // Insert material record
-      const { error: insertError } = await supabaseExtended
-        .from('materials')
-        .insert([
-          {
-            title: values.title,
-            description: values.description,
-            category: values.category,
-            file_url: fileData.publicUrl,
-            thumbnail_url: thumbnailUrl,
-            plan_level: values.plan_level,
-            access_count: 0,
-          },
-        ]);
+      const materialData = {
+        title: values.title,
+        description: values.description,
+        category: values.category,
+        file_url: fileUrl,
+        thumbnail_url: thumbnailUrl,
+        plan_level: values.plan_level,
+        folder_id: values.folder_id,
+        // Don't reset access_count on edit
+        ...(initialData ? {} : { access_count: 0 }),
+      };
 
-      if (insertError) {
-        throw insertError;
+      if (initialData) {
+        // Update existing
+        const { error: updateError } = await supabaseExtended
+          .from('materials')
+          .update(materialData)
+          .eq('id', initialData.id);
+
+        if (updateError) throw updateError;
+
+        toast({ title: "Material atualizado com sucesso" });
+      } else {
+        // Insert new
+        const { error: insertError } = await supabaseExtended
+          .from('materials')
+          .insert([materialData]);
+
+        if (insertError) throw insertError;
+
+        toast({ title: "Material adicionado com sucesso" });
       }
 
       // Reset form
-      form.reset();
-      setFilePreview(null);
-      setThumbnailPreview(null);
+      if (!initialData) {
+        form.reset();
+        setFilePreview(null);
+        setThumbnailPreview(null);
+      }
 
       // Notify parent
       onMaterialAdded();
@@ -158,7 +184,7 @@ const MaterialForm: React.FC<MaterialFormProps> = ({ onMaterialAdded }) => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Adicionar Novo Material</CardTitle>
+        <CardTitle>{initialData ? "Editar Material" : "Adicionar Novo Material"}</CardTitle>
       </CardHeader>
       <CardContent>
         <Form {...form}>
@@ -226,6 +252,24 @@ const MaterialForm: React.FC<MaterialFormProps> = ({ onMaterialAdded }) => {
 
 
             </div>
+
+            <FormField
+              control={form.control}
+              name="folder_id"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Pasta (Opcional)</FormLabel>
+                  <FormControl>
+                    <FolderSelect
+                      value={field.value}
+                      onValueChange={field.onChange}
+                      placeholder="Selecione uma pasta"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
             <FormField
               control={form.control}
@@ -307,20 +351,27 @@ const MaterialForm: React.FC<MaterialFormProps> = ({ onMaterialAdded }) => {
               )}
             />
 
-            <Button
-              type="submit"
-              className="w-full"
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Enviando...
-                </>
-              ) : (
-                "Adicionar Material"
+            <div className="flex gap-2">
+              {onCancel && (
+                <Button type="button" variant="outline" className="w-full" onClick={onCancel} disabled={isSubmitting}>
+                  Cancelar
+                </Button>
               )}
-            </Button>
+              <Button
+                type="submit"
+                className="w-full"
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    {initialData ? "Salvando..." : "Enviando..."}
+                  </>
+                ) : (
+                  initialData ? "Salvar Alterações" : "Adicionar Material"
+                )}
+              </Button>
+            </div>
           </form>
         </Form>
       </CardContent>

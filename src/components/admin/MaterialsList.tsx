@@ -22,10 +22,11 @@ import {
 interface MaterialsListProps {
   materials: Material[];
   onDelete: (id: string) => void;
+  onEdit: (material: Material) => void;
   isLoading: boolean;
 }
 
-const MaterialsList: React.FC<MaterialsListProps> = ({ materials, onDelete, isLoading }) => {
+const MaterialsList: React.FC<MaterialsListProps> = ({ materials, onDelete, onEdit, isLoading }) => {
   const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState("");
   const [deletingId, setDeletingId] = useState<string | null>(null);
@@ -154,15 +155,26 @@ const MaterialsList: React.FC<MaterialsListProps> = ({ materials, onDelete, isLo
                   </TableCell>
                   <TableCell>{formatDate(material.created_at)}</TableCell>
                   <TableCell className="text-right">
-                    <Button
-                      size="icon"
-                      variant="ghost"
-                      className="text-destructive hover:text-destructive/90 hover:bg-destructive/10"
-                      onClick={() => setDeletingId(material.id)}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                      <span className="sr-only">Excluir</span>
-                    </Button>
+                    <div className="flex justify-end gap-1">
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        className="text-primary hover:text-primary/90 hover:bg-primary/10"
+                        onClick={() => onEdit(material)}
+                      >
+                        <FilePenLine className="h-4 w-4" />
+                        <span className="sr-only">Editar</span>
+                      </Button>
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        className="text-destructive hover:text-destructive/90 hover:bg-destructive/10"
+                        onClick={() => setDeletingId(material.id)}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                        <span className="sr-only">Excluir</span>
+                      </Button>
+                    </div>
                   </TableCell>
                 </TableRow>
               ))}
