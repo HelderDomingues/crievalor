@@ -38,9 +38,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { Search, Shield, User as UserIcon, Loader2, Plus, Trash2, Edit } from "lucide-react";
+import { Search, Shield, User as UserIcon, Loader2, Plus, Trash2, Edit, Package } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { formatDate } from "@/lib/utils";
+import { UserProductsManager } from "@/components/admin/UserProductsManager";
 
 interface UserWithProfile {
     id: string;
@@ -66,6 +67,10 @@ const AdminUsers: React.FC = () => {
 
     // Edit User State
     const [isEditUserOpen, setIsEditUserOpen] = useState(false);
+
+    // Product Manager State
+    const [isProductManagerOpen, setIsProductManagerOpen] = useState(false);
+    const [selectedUserForProducts, setSelectedUserForProducts] = useState<UserWithProfile | null>(null);
 
     // User fields state for both Add and Edit
     const [editUserId, setEditUserId] = useState<string | null>(null);
@@ -299,6 +304,11 @@ const AdminUsers: React.FC = () => {
                 variant: "destructive",
             });
         }
+    };
+
+    const openProductManager = (user: UserWithProfile) => {
+        setSelectedUserForProducts(user);
+        setIsProductManagerOpen(true);
     };
 
 
@@ -551,6 +561,16 @@ const AdminUsers: React.FC = () => {
                                                         <Button
                                                             variant="ghost"
                                                             size="icon"
+                                                            className="h-8 w-8 text-green-400 hover:text-green-300 hover:bg-green-900/20"
+                                                            onClick={() => openProductManager(user)}
+                                                            title="Gerenciar produtos"
+                                                        >
+                                                            <Package className="h-4 w-4" />
+                                                        </Button>
+
+                                                        <Button
+                                                            variant="ghost"
+                                                            size="icon"
                                                             className="h-8 w-8 text-blue-400 hover:text-blue-300 hover:bg-blue-900/20"
                                                             onClick={() => openEditModal(user)}
                                                             title="Editar usuário"
@@ -576,6 +596,23 @@ const AdminUsers: React.FC = () => {
                             </Table>
                         </div>
                     </Card>
+                    {/* User Product Manager Dialog */}
+                    <Dialog open={isProductManagerOpen} onOpenChange={setIsProductManagerOpen}>
+                        <DialogContent className="max-w-4xl bg-[#1a2e4c] text-white border-white/10 overflow-y-auto max-h-[90vh]">
+                            <DialogHeader>
+                                <DialogTitle>Gerenciar Produtos - {selectedUserForProducts?.full_name}</DialogTitle>
+                                <DialogDescription className="text-gray-400">
+                                    Visualize e gerencie os acessos deste usuário aos produtos.
+                                </DialogDescription>
+                            </DialogHeader>
+                            {selectedUserForProducts && (
+                                <UserProductsManager
+                                    userId={selectedUserForProducts.id}
+                                    userName={selectedUserForProducts.full_name || selectedUserForProducts.email || ""}
+                                />
+                            )}
+                        </DialogContent>
+                    </Dialog>
                 </div>
             </main>
 
