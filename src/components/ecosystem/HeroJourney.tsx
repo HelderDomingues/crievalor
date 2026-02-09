@@ -179,7 +179,7 @@ export const HeroJourney = () => {
                                 <div className="p-2 bg-slate-900/50 rounded-xl border border-white/10 shadow-2xl backdrop-blur-sm ring-1 ring-white/10">
                                     <img
                                         className="rounded-lg shadow-[0_0_50px_-12px_rgba(124,58,237,0.25)] w-full object-cover"
-                                        src="/telas-sistema/dashboard-lumia.png"
+                                        src="/dashboard-lumia.png"
                                         alt="LUMIA Dashboard Interface"
                                     />
                                 </div>
