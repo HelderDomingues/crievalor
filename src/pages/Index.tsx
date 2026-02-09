@@ -4,16 +4,12 @@ import Footer from "@/components/Footer";
 import ContactSection from "@/components/ContactSection";
 import ClientLogosCarousel from "@/components/ClientLogosCarousel";
 import InteractiveGalaxyHeroCarousel from "@/components/home/InteractiveGalaxyHeroCarousel";
-import HowWeDoItSection from "@/components/home/HowWeDoItSection";
-import WhatWhyTransition from "@/components/home/WhatWhyTransition";
-import MentoriasSection from "@/components/home/MentoriasSection";
-import MarHighlight from "@/components/home/MarHighlight";
-import LumiaHighlight from "@/components/home/LumiaHighlight";
-import MentorPropositoHighlight from "@/components/home/MentorPropositoHighlight";
+import PricingSection from "@/components/home/PricingSection";
+import EcosystemHighlight from "@/components/home/EcosystemHighlight";
+import PillarsSection from "@/components/home/PillarsSection";
 
 import TestimonialsSection from "@/components/home/TestimonialsSection";
 import PartnersSection from "@/components/home/PartnersSection";
-import ServicesSections from "@/components/home/ServicesSections";
 import BlogPreview from "@/components/home/BlogPreview";
 import MainCTA from "@/components/home/MainCTA";
 import QuickCTA from "@/components/ui/quick-cta";
@@ -28,10 +24,10 @@ const Index = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <Helmet>
-        <title>Como Implementar Inteligência Organizacional em Empresas de Médio Porte? | Crie Valor</title>
+        <title>Ecossistema LUMIA | Inteligência Organizacional de Alto Rendimento</title>
         <meta
           name="description"
-          content="A Crie Valor é a primeira plataforma brasileira de Inteligência Organizacional com IA. Fundada em abril/2015 por Helder Domingues e Paulo Gaudioso. MAR em 7 dias (vs 90), Lumia 24/7, Mentor de Propósito. R$ 3.500 vs R$ 30-80k consultoria tradicional."
+          content="A Crie Valor apresenta o Ecossistema LUMIA: a primeira plataforma brasileira de Inteligência Organizacional com IA. Controle total do seu planejamento estratégico com especialistas virtuais 24/7."
         />
         <meta property="og:title" content="Crie Valor Estratégia | Intelligência Organizacional" />
         <meta
@@ -172,28 +168,24 @@ const Index = () => {
       <FAQSchema
         questions={[
           {
-            question: "Quanto tempo leva o processo do MAR?",
-            answer: "O MAR é entregue em até7 dias após o preenchimento do questionário. Depois da entrega, você tem uma reunião online com nosso consultor para apresentação e tira-dúvidas."
+            question: "Como funciona o Ecossistema LUMIA?",
+            answer: "O LUMIA é um ecossistema integrado que combina o motor lógico do MAR (Mapa de Alto Rendimento) com consultores virtuais especialistas e o Mentor de Propósito. Você tem controle total sobre cada etapa do seu planejamento e execução estratégica."
           },
           {
             question: "O que diferencia a Crie Valor de uma consultoria tradicional?",
-            answer: "Combinamos IA proprietária com validação humana, entregamos em 7 dias (vs 60-90 dias), custamos 10-20x menos (a partir de R$ 3.497 vs R$ 30-80k) e oferecemos acompanhamento contínuo com Lumia 24/7."
+            answer: "Diferente de relatórios estáticos que levam meses, o LUMIA entrega inteligência organizacional em tempo real. Você controla o processo, conta com especialistas virtuais 24/7 e tem validação humana opcional, custando até 10-20x menos que modelos tradicionais."
           },
           {
-            question: "Preciso parar a operação para implementar o plano?",
-            answer: "Não. Nossa metodologia é feita para empresas que não podem parar. O MAR traz um plano realista de 12 meses que você implementa sem interromper o dia a dia."
+            question: "Eu mesmo controlo o processo?",
+            answer: "Sim. O cerne do sistema é o seu controle total. Você aprova cada etapa da jornada estratégica e utiliza os consultores virtuais para implementar as ações no ritmo do seu negócio."
           },
           {
-            question: "Como funciona a validação humana?",
-            answer: "Consultores com 20+ anos de experiência revisam todos os documentos gerados pela IA, validam análises e garantem consistência com a realidade da sua empresa e mercado."
-          },
-          {
-            question: "Minha empresa é do tamanho certo para o MAR?",
-            answer: "O MAR é ideal para empresas que faturam no mínimo R$ 150 mil/mês e têm pelo menos 15 funcionários. Se você cresceu sem estrutura e precisa profissionalizar, o MAR é para você."
+            question: "Para que tamanho de empresa o LUMIA é indicado?",
+            answer: "O Ecossistema LUMIA é ideal para empresas que faturam R$ 150 mil/mês ou mais e possuem pelo menos 10 colaboradores. É a solução perfeita para quem precisa profissionalizar a gestão com agilidade."
           },
           {
             question: "O que é a Implementação Assistida?",
-            answer: "É o acompanhamento hands-on de 3 a 6 meses para executar o plano do MAR, com reuniões semanais, suporte via WhatsApp e validação da execução. Garante que você não só tenha o plano, mas execute de verdade."
+            answer: "É o suporte 'hands-on' onde nossos consultores seniores acompanham você na execução das estratégias geradas pelo ecossistema. Disponível nos planos Intermediário (2 reuniões/mês) e Avançado (4 reuniões/mês)."
           }
         ]}
       />
@@ -206,6 +198,8 @@ const Index = () => {
         {/* Hero Carrossel - Propósito + MAR + Mentorias + Mentor de Propósito */}
         <InteractiveGalaxyHeroCarousel />
 
+        {/* Pillars Section - 3 Pilares de Atuação */}
+        <PillarsSection />
 
         {/* Client Logos Section */}
         <div id="clientes" aria-labelledby="clientesHeading" className="py-16 md:py-24">
@@ -215,43 +209,18 @@ const Index = () => {
                 Empresas que confiam em nós
               </h2>
               <p className="text-lg text-muted-foreground">
-                Parceiros de sucesso que transformaram seus resultados com nossas soluções.
+                Parceiros de sucesso que transformaram seus resultados com o Ecossistema LUMIA.
               </p>
             </div>
             <ClientLogosCarousel />
           </div>
         </div>
 
-        {/* CTA após Client Logos */}
-        <QuickCTA
-          title="Quero fazer parte deste grupo"
-          description="Junte-se às empresas que já transformaram seus resultados conosco."
-          ctaText="Falar com especialista"
-          ctaUrl="/contato"
-          centerAlign
-          className="bg-primary/5"
-        />
+        {/* Ecosystem Highlight - Unified flow */}
+        <EcosystemHighlight />
 
-        {/* Como Fazemos - Nova seção metodológica */}
-        <HowWeDoItSection />
-
-        {/* Transição Por que → O que */}
-        <WhatWhyTransition />
-
-        {/* MAR Product Highlight - Seção dedicada */}
-        <MarHighlight />
-
-        {/* Lumia Product Highlight - Nova seção do ecossistema */}
-        <LumiaHighlight />
-
-        {/* Mentor de Propósito Product Highlight - Bússola do ecossistema */}
-        <MentorPropositoHighlight />
-
-        {/* Mentorias Section - Seção dedicada */}
-        <MentoriasSection />
-
-        {/* Services Sections - Seções completas */}
-        <ServicesSections />
+        {/* Pricing Section - 3 Tiers */}
+        <PricingSection />
 
         {/* Blog Preview - Conectando com o blog */}
         <BlogPreview />

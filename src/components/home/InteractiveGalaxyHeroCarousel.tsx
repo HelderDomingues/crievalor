@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Target, Users, Lightbulb, Palette, Brain, Zap, Compass } from "lucide-react";
+import { ArrowRight, Target, Users, Lightbulb, Palette, Brain, Zap, Compass, UserCheck } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import { FlagIcon } from "@/components/ui/flag-icon";
 import { Link } from "react-router-dom";
 import {
@@ -242,6 +243,7 @@ const InteractiveGalaxyHeroCarousel = () => {
     title: string;
     subtitle: string;
     description: string;
+    badge?: string;
     ctaText: string;
     ctaUrl: string;
     secondaryCtaText: string;
@@ -252,141 +254,51 @@ const InteractiveGalaxyHeroCarousel = () => {
     glowColor: string;
   }> = [
       {
-        id: "mar",
-        icon: Target,
-        logo: marLogo,
-        title: "MAR — Mapa de Alto Rendimento",
-        subtitle: "Clareza e direção para 1 ano em 7 dias",
-        description:
-          "Metodologia proprietária, testada em +10 anos e +500 empresas. Decisões embasadas, prioridades claras e metas mensuráveis para crescer com consistência.",
-        ctaText: "Ver como funciona",
-        ctaUrl: "/mar",
-        secondaryCtaText: "Agendar avaliação",
-        secondaryCtaUrl: "/contato",
-        backgroundType: "neural" as const,
-        gradientColors: "from-blue-900/20 via-indigo-900/10 to-purple-900/20",
-        accentColor: "text-blue-400",
-        glowColor: "shadow-blue-500/20",
-      },
-      {
-        id: "proposito-empresa",
-        icon: FlagIcon,
-        title: "Nosso Propósito",
-        subtitle: "Gerar clareza e direção para as empresas",
-        description: "Fazendo da atitude o motor do crescimento.",
-        ctaText: "Descubra como fazemos isso",
-        ctaUrl: "#como-fazemos",
-        secondaryCtaText: "Converse conosco",
-        secondaryCtaUrl:
-          "https://wa.me/5547992150289?text=Tenho%20interesse%20em%20conhecer%20o%20propósito%20da%20Crie%20Valor",
-        backgroundType: "purpose" as const,
-        gradientColors: "from-amber-900/20 via-yellow-900/10 to-orange-900/20",
-        accentColor: "text-amber-400",
-        glowColor: "shadow-amber-500/20",
-      },
-      {
-        id: "ecosystem",
-        icon: Brain,
-        logo: lumiaLogo,
-        title: "Ecossistema de Inteligência Organizacional",
-        subtitle: "Estratégia, clareza e ação — em um só lugar",
-        description:
-          "O MAR analisa profundamente seu negócio. O Lumia transforma estratégia em execução com consultores virtuais em Vendas, Marketing, Operações, Finanças, RH e Gestão. Some a isso a definição de Propósito — e ganhe direção com clareza e impacto.",
-        ctaText: "Conheça o Lumia",
-        ctaUrl: "/lumia",
-        secondaryCtaText: "Entenda o MAR",
-        secondaryCtaUrl: "/mar",
-        backgroundType: "ecosystem" as const,
-        gradientColors: "from-blue-900/20 via-purple-900/10 to-indigo-900/20",
-        accentColor: "text-blue-400",
-        glowColor: "shadow-blue-500/20",
-      },
-      {
-        id: "proposito",
-        icon: Compass,
-        logo: mentorPropositoLogo,
-        title: "Mentor de Propósito",
-        subtitle: 'Descubra o "Por Quê" que transforma empresas comuns em marcas extraordinárias',
-        description:
-          "A ferramenta de inteligência conversacional que guia líderes e organizações na descoberta do propósito que impulsiona resultados extraordinários.",
-        ctaText: "Descobrir o Mentor",
-        ctaUrl: "/mentor-proposito",
-        secondaryCtaText: "Agendar Demonstração",
-        secondaryCtaUrl:
-          "https://wa.me/5547992150289?text=Tenho%20interesse%20em%20conhecer%20o%20Mentor%20de%20Propósito",
-        backgroundType: "purpose" as const,
-        gradientColors: "from-yellow-900/20 via-orange-900/10 to-amber-900/20",
-        accentColor: "text-yellow-400",
-        glowColor: "shadow-yellow-500/20",
-      },
-      {
-        id: "lumia",
+        id: "lumia-main",
         icon: Zap,
         logo: lumiaLogo,
-        title: "Lumia: consultoria virtual sob medida",
-        subtitle: "6 especialistas treinados especificamente para a sua empresa",
-        description:
-          "Consultores virtuais calibrados pelo MAR e pelo contexto da sua empresa. Respostas práticas, análises, recomendações e acompanhamento de resultados — na velocidade do seu negócio.",
-        ctaText: "Experimente o Lumia",
-        ctaUrl: "/lumia",
-        secondaryCtaText: "Falar com um especialista",
-        secondaryCtaUrl: "https://wa.me/5547992150289?text=Tenho%20interesse%20em%20conhecer%20o%20Lumia",
+        title: "Ecossistema LUMIA",
+        subtitle: "Se você procura clareza e direção para sua empresa, o LUMIA foi feito para você",
+        description: "Inteligência Organizacional de ponta para empresas que buscam profissionalização e escala progressiva. Você no centro da estratégia.",
+        badge: "Ideal para faturamento R$ 150k+ e 10+ colaboradores",
+        ctaText: "Começar Agora",
+        ctaUrl: "#pricing",
+        secondaryCtaText: "Falar com consultor",
+        secondaryCtaUrl: "https://wa.me/5547992150289?text=Tenho%20interesse%20em%20conhecer%20o%20LUMIA",
         backgroundType: "lumia" as const,
         gradientColors: "from-purple-900/20 via-violet-900/10 to-pink-900/20",
         accentColor: "text-purple-400",
         glowColor: "shadow-purple-500/20",
       },
       {
-        id: "mentorias",
-        icon: Users,
-        title: "Mentorias Empresariais",
-        subtitle: "Desenvolva todo o potencial da sua liderança",
-        description:
-          "Acelere seu crescimento profissional com acompanhamento 1:1 de especialistas em gestão, marketing e recursos humanos.",
-        ctaText: "Conhecer Mentorias",
-        ctaUrl: "/mentorias",
-        secondaryCtaText: "Conversar no WhatsApp",
-        secondaryCtaUrl:
-          "https://wa.me/5547992150289?text=Tenho%20interesse%20em%20saber%20mais%20sobre%20as%20Mentorias%20Empresariais",
-        backgroundType: "growth" as const,
-        gradientColors: "from-green-900/20 via-emerald-900/10 to-teal-900/20",
-        accentColor: "text-green-400",
-        glowColor: "shadow-green-500/20",
+        id: "pillars",
+        icon: Target,
+        title: "Os 3 Pilares da Crie Valor",
+        subtitle: "Uma solução completa para cada fase do seu crescimento",
+        description: "1. PRODUTO: Ecossistema LUMIA (IA + Mentor) | 2. SERVIÇOS: Implementação Assistida e Projetos | 3. EDUCAÇÃO: Oficina de Líderes e Treinamentos.",
+        ctaText: "Ver Estrutura",
+        ctaUrl: "#ecosystem-flow",
+        secondaryCtaText: "Conhecer Oficina",
+        secondaryCtaUrl: "/oficina-lideres",
+        backgroundType: "ecosystem" as const,
+        gradientColors: "from-blue-900/20 via-indigo-900/10 to-purple-900/20",
+        accentColor: "text-blue-400",
+        glowColor: "shadow-blue-500/20",
       },
       {
-        id: "oficina",
-        icon: Lightbulb,
-        logo: oficinaLideresLogo,
-        title: "Oficina de Líderes",
-        subtitle: "Desenvolva habilidades de liderança excepcionais",
-        description:
-          "Programa intensivo para formar líderes capazes de inspirar, motivar e conduzir equipes ao sucesso em qualquer cenário.",
-        ctaText: "Conhecer Oficina",
-        ctaUrl: "/oficina-lideres",
-        secondaryCtaText: "Conversar no WhatsApp",
-        secondaryCtaUrl:
-          "https://wa.me/5547992150289?text=Tenho%20interesse%20em%20saber%20mais%20sobre%20a%20Oficina%20de%20Líderes",
-        backgroundType: "energy" as const,
-        gradientColors: "from-purple-900/20 via-pink-900/10 to-red-900/20",
-        accentColor: "text-purple-400",
-        glowColor: "shadow-purple-500/20",
-      },
-      {
-        id: "identidade",
-        icon: Palette,
-        title: "Identidade Visual",
-        subtitle: "Crie uma marca que conecta e converte",
-        description:
-          "Desenvolvemos identidades visuais únicas que refletem a essência da sua marca e criam conexões duradouras com seu público.",
-        ctaText: "Ver Portfólio",
-        ctaUrl: "/identidade-visual",
-        secondaryCtaText: "Solicitar Orçamento",
-        secondaryCtaUrl:
-          "https://wa.me/5547992150289?text=Tenho%20interesse%20em%20saber%20mais%20sobre%20Identidade%20Visual",
-        backgroundType: "design" as const,
-        gradientColors: "from-orange-900/20 via-yellow-900/10 to-red-900/20",
-        accentColor: "text-orange-400",
-        glowColor: "shadow-orange-500/20",
+        id: "user-control",
+        icon: UserCheck,
+        title: "Controle Total. Zero Espera.",
+        subtitle: "Você valida cada etapa. A IA executa a velocidade.",
+        description: "Diferente de consultorias tradicionais com relatórios estáticos, o LUMIA evolui com você. Use especialistas virtuais em Vendas, Marketing e Gestão em tempo real.",
+        ctaText: "Experimentar Agora",
+        ctaUrl: "/lumia",
+        secondaryCtaText: "Como funciona?",
+        secondaryCtaUrl: "#ecosystem-flow",
+        backgroundType: "neural" as const,
+        gradientColors: "from-emerald-900/20 via-teal-900/10 to-blue-900/20",
+        accentColor: "text-emerald-400",
+        glowColor: "shadow-emerald-500/20",
       },
     ];
 
@@ -482,6 +394,11 @@ const InteractiveGalaxyHeroCarousel = () => {
 
                       {/* Title with gradient */}
                       <div className="space-y-3 md:space-y-6">
+                        {slide.badge && (
+                          <Badge variant="outline" className="mb-2 border-white/20 bg-white/10 text-white backdrop-blur-sm px-4 py-1 text-sm md:text-base animate-fade-in">
+                            {slide.badge}
+                          </Badge>
+                        )}
                         <h1 className="text-3xl sm:text-4xl lg:text-6xl xl:text-7xl font-bold leading-tight">
                           <span
                             className={`bg-gradient-to-r from-white via-white to-gray-300 bg-clip-text text-transparent`}

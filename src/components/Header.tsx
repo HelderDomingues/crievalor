@@ -11,6 +11,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import AuthHeader from "@/components/AuthHeader";
 
+import { RainbowBordersButton } from "@/components/ui/rainbow-borders-button";
+
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -51,20 +53,16 @@ const Header = () => {
 
   const menuItems: MenuItem[] = [
     { title: "Home", path: "/" },
-    { title: "Planos", path: "/planos" },
+    { title: "Oficina de Líderes", path: "/oficina-de-lideres" },
     { title: "Blog", path: "/blog" },
     { title: "Sobre", path: "/sobre" },
     { title: "Contato", path: "/contato" },
   ];
 
   const servicesItems = [
-    { title: "MAR", path: "/mar" },
-    { title: "Lumia", path: "/lumia" },
-    { title: "Mentor de Propósito", path: "/mentor-proposito" },
-    { title: "Identidade Visual", path: "/identidade-visual" },
-    { title: "Mentorias", path: "/mentorias" },
-    { title: "Oficina de Líderes", path: "/oficina-de-lideres" },
-    { title: "Projetos sob Medida", path: "/projetos" },
+    { title: "Projetos Customizados", path: "/projetos" },
+    { title: "Identidades Visuais", path: "/identidade-visual" },
+    { title: "Treinamentos", path: "/mentorias" },
   ];
 
   const handleWhatsAppContact = () => {
@@ -96,36 +94,29 @@ const Header = () => {
 
           {/* Desktop Menu */}
           <nav className="hidden md:flex items-center space-x-4">
-            {menuItems.map((item) => (
-              item.external ? (
-                <a
-                  key={item.path}
-                  href={item.path}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-sm transition-all hover:text-primary text-foreground/80 link-underline"
-                >
-                  {item.title}
-                </a>
-              ) : (
-                <Link
-                  key={item.path}
-                  to={item.path}
-                  className={`text-sm transition-all hover:text-primary ${isActive(item.path)
-                    ? "text-primary font-medium"
-                    : "text-foreground/80"
-                    } link-underline`}
-                >
-                  {item.title}
-                </Link>
-              )
-            ))}
+            {/* Home */}
+            <Link
+              to="/"
+              className={`text-sm transition-all hover:text-primary ${isActive("/")
+                ? "text-primary font-medium"
+                : "text-foreground/80"
+                } link-underline`}
+            >
+              Home
+            </Link>
+
+            {/* LUMIA Special Button */}
+            <Link to="/lumia" className="mx-2">
+              <RainbowBordersButton className="h-9">
+                LUMIA
+              </RainbowBordersButton>
+            </Link>
 
             {/* Services Dropdown */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <button className="flex items-center text-sm transition-all hover:text-primary text-foreground/80 link-underline">
-                  Soluções
+                  Serviços
                   <ChevronDown className="ml-1 h-3 w-3" />
                 </button>
               </DropdownMenuTrigger>
@@ -143,6 +134,21 @@ const Header = () => {
                 ))}
               </DropdownMenuContent>
             </DropdownMenu>
+
+            {/* Other Menu Items */}
+            {menuItems.slice(1).map((item) => (
+              <Link
+                key={item.path}
+                to={item.path}
+                className={`text-sm transition-all hover:text-primary ${isActive(item.path)
+                  ? "text-primary font-medium"
+                  : "text-foreground/80"
+                  } link-underline`}
+              >
+                {item.title}
+              </Link>
+            ))}
+
             <Button
               size="sm"
               className="ml-2 bg-primary text-primary-foreground hover:bg-primary/90 transition-all shadow-glow"
@@ -183,32 +189,23 @@ const Header = () => {
         style={{ top: "56px" }}
       >
         <nav className="flex flex-col p-8 space-y-4">
-          {menuItems.map((item) => (
-            item.external ? (
-              <a
-                key={item.path}
-                href={item.path}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-lg py-2 border-b border-border text-foreground/80"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                {item.title}
-              </a>
-            ) : (
-              <Link
-                key={item.path}
-                to={item.path}
-                className={`text-lg py-2 border-b border-border ${isActive(item.path)
-                  ? "text-primary font-medium"
-                  : "text-foreground/80"
-                  }`}
-                onClick={() => setIsMenuOpen(false)}
-              >
-                {item.title}
-              </Link>
-            )
-          ))}
+          <Link
+            to="/"
+            className={`text-lg py-2 border-b border-border ${isActive("/") ? "text-primary font-medium" : "text-foreground/80"}`}
+            onClick={() => setIsMenuOpen(false)}
+          >
+            Home
+          </Link>
+
+          <Link
+            to="/lumia"
+            className="py-2 border-b border-border flex justify-start"
+            onClick={() => setIsMenuOpen(false)}
+          >
+            <RainbowBordersButton className="h-10 w-full max-w-[140px]">
+              LUMIA
+            </RainbowBordersButton>
+          </Link>
 
           {/* Mobile Services Menu */}
           <div className="space-y-2">
@@ -229,6 +226,26 @@ const Header = () => {
               </Link>
             ))}
           </div>
+
+          {[
+            { title: "Oficina de Líderes", path: "/oficina-de-lideres" },
+            { title: "Blog", path: "/blog" },
+            { title: "Sobre", path: "/sobre" },
+            { title: "Contato", path: "/contato" },
+          ].map((item) => (
+            <Link
+              key={item.path}
+              to={item.path}
+              className={`text-lg py-2 border-b border-border ${isActive(item.path)
+                ? "text-primary font-medium"
+                : "text-foreground/80"
+                }`}
+              onClick={() => setIsMenuOpen(false)}
+            >
+              {item.title}
+            </Link>
+          ))}
+
           <Button
             className="mt-4 bg-primary text-primary-foreground hover:bg-primary/90 transition-all shadow-glow"
             asChild

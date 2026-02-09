@@ -1,0 +1,74 @@
+
+# 🧠 **Guia de Edição para Humanização de Textos com IA**
+
+**Objetivo:** Tornar textos gerados por inteligência artificial mais naturais, autênticos e eficazes na comunicação com seres humanos.
+
+---
+
+## ✅ **1. Pontuação: simplifique e torne fluido**
+
+🔹 **Evite travessões (—)**
+Substitua por vírgulas, parênteses ou reescreva a frase para evitar quebras abruptas.
+
+🔹 **Esqueça o ponto e vírgula**
+Prefira ponto final ou conectores simples como "e", "mas", "ou".
+
+🔹 **Corte reticências no meio das frases**
+Use apenas quando quiser simular hesitação ou interrupção intencional.
+
+🔹 **Parênteses? Só se for crucial**
+Se puder, integre a informação diretamente no fluxo da frase.
+
+🔹 **Dois-pontos com parcimônia**
+Evite usá-los antes de listas ou explicações óbvias. Deixe o texto mais direto.
+
+---
+
+## 🗣️ **2. Linguagem: natural, direta e sem floreios**
+
+🔸 **Diga o que precisa ser dito. Ponto.**
+Troque expressões fracas como *"vale destacar"*, *"no entanto"* por afirmações objetivas.
+
+🔸 **Transições clichês? Não aqui.**
+Corte "além disso", "em conclusão", "outrossim", exceto se forem essenciais à clareza.
+
+🔸 **Varie o vocabulário**
+Evite repetir palavras ou estruturas. Sinônimos e reformulações mantêm o leitor atento.
+
+🔸 **Use contrações em contextos informais**
+Simples e direto: *"não tá", "tá certo"*, ao invés de *"não está", "está correto"*, se o tom permitir.
+
+🔸 **Fuja do “juridiquês” ou “burocratês”**
+Substitua termos como *"utilizar"*, *"averiguar"*, *"ascertar"* por alternativas naturais como *"usar"*, *"descobrir"*, *"entender"*.
+
+---
+
+## 🧾 **3. Estilo: clareza com ritmo**
+
+✅ **Frases curtas com ritmo variado**
+Misture períodos curtos e médios. Evite blocos longos e monótonos.
+
+✅ **Aceite imperfeições casuais**
+Fragmentos de frase? Tudo bem, se forem naturais e estiverem no tom certo.
+
+✅ **Adapte o tom ao público-alvo**
+Mais formal para relatórios e apresentações corporativas.
+Mais leve e conversacional para posts, vídeos e VSLs.
+
+---
+
+## 🧪 **Exemplo de Revisão**
+
+**Antes:**
+
+> "Os resultados — embora preliminares — sugerem sucesso; no entanto, vale destacar algumas limitações."
+
+**Depois:**
+
+> "Os resultados preliminares sugerem sucesso, mas ainda há limitações que precisam ser enfrentadas."
+
+---
+
+### 🛠️ **Aplicação**
+
+Aplique essas orientações em todos os textos que forem adaptados a partir de conteúdo gerado por IA, exceto quando houver uma instrução específica para manter o estilo original.
