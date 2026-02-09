@@ -41,7 +41,7 @@ const Ecosystem = () => {
                             handle: "CEO, Primeira Linha Acabamentos",
                             avatar: "https://nmxfknwkhnengqqjtwru.supabase.co/storage/v1/object/public/testimonials-photos/carlinhos-primeiralInha.jpeg"
                         },
-                        text: "O faturávamos entre 600 e 800 mil sem previsibilidade. Em um ano de MAR, crescemos 30% e ultrapassamos a casa do milhão com consistência."
+                        text: "O faturávamos entre 600 e 800 mil sem previsibilidade. Em um ano comLUMIA, crescemos 30% e ultrapassamos a casa do milhão com consistência."
                     },
                     {
                         author: {
@@ -49,7 +49,7 @@ const Ecosystem = () => {
                             handle: "Proprietária, Expresso Contabilidade",
                             avatar: "https://nmxfknwkhnengqqjtwru.supabase.co/storage/v1/object/public/testimonials-photos/debora_expressocontabilidade.png"
                         },
-                        text: "O MAR foi essencial para o crescimento do meu escritório. O resultado foi um aumento na lucratividade e uma expansão consistente da carteira de clientes."
+                        text: "O LUMIA foi essencial para o crescimento do meu escritório. O resultado foi um aumento na lucratividade e uma expansão consistente da carteira de clientes."
                     },
                     {
                         author: {
@@ -57,7 +57,7 @@ const Ecosystem = () => {
                             handle: "Proprietário, Loged Consultoria",
                             avatar: "https://nmxfknwkhnengqqjtwru.supabase.co/storage/v1/object/public/testimonials-photos/edson-loged.png"
                         },
-                        text: "O MAR foi essencial para mudar minha empresa!! Consegui organizar processos, reduzir custos e aumentar a eficiência operacional."
+                        text: "O LUMIA mudou minha empresa!! Consegui organizar processos, reduzir custos e aumentar a eficiência operacional."
                     },
                     {
                         author: {
@@ -65,7 +65,7 @@ const Ecosystem = () => {
                             handle: "Proprietário, Itasul Modas",
                             avatar: "https://nmxfknwkhnengqqjtwru.supabase.co/storage/v1/object/public/testimonials-photos/cesargomes-itasul.png"
                         },
-                        text: "Minha loja de roupas estava estagnada. O MAR me deu um guia prático e detalhado e assim organizei processos e otimizei estoques. O resultado foi um aumento significativo nas vendas."
+                        text: "Minha loja de roupas estava estagnada. O LUMIA me deu um guia prático e detalhado e assim organizei processos e otimizei estoques. O resultado foi um aumento significativo nas vendas."
                     }
                 ]}
             />

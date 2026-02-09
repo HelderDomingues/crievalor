@@ -13,7 +13,7 @@ export const PainEducation = () => {
                 <div className="text-center max-w-3xl mx-auto mb-16">
                     <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
                         Planilhas te dão dados. <br />
-                        <span className="text-violet-400">O MAR te dá respostas.</span>
+                        <span className="text-violet-400">O LUMIA te dá respostas.</span>
                     </h2>
                     <p className="text-slate-400 text-lg">
                         A maioria dos softwares exige que VOCÊ interprete os gráficos e decida.
@@ -54,7 +54,7 @@ export const PainEducation = () => {
                         </div>
                         <div className="flex items-center gap-4 mb-6 text-white">
                             <BrainCircuit size={32} className="text-violet-400" />
-                            <h3 className="text-xl font-semibold">Sistema MAR</h3>
+                            <h3 className="text-xl font-semibold">Sistema LUMIA</h3>
                         </div>
                         <ul className="space-y-4">
                             <li className="flex gap-3 items-start">
