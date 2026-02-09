@@ -53,6 +53,7 @@ const Header = () => {
 
   const menuItems: MenuItem[] = [
     { title: "Home", path: "/" },
+    { title: "Planos", path: "/planos" },
     { title: "Oficina de Líderes", path: "/oficina-de-lideres" },
     { title: "Blog", path: "/blog" },
     { title: "Sobre", path: "/sobre" },
