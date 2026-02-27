@@ -53,7 +53,7 @@ const FounderJourneySection = () => {
         {
             year: "2025",
             title: "Primeiro Ecossistema de IA do Brasil",
-            description: "Nasce o Ecossistema de Inteligência Organizacional: MAR (7 dias vs 90), Lumia (6 consultores 24/7), Mentor de Propósito. IA nativa + Metodologia estratégica robusta + Validação humana.",
+            description: "Nasce o Sistema LUMIA: planejamento acelerado (7 dias vs 90), consultores de IA (24/7) e descoberta de propósito integrados. IA nativa + Metodologia estratégica robusta + Validação humana.",
             icon: Award,
             color: "from-emerald-500 to-teal-500"
         }
@@ -65,8 +65,8 @@ const FounderJourneySection = () => {
             role: "Fundador e Arquiteto do Ecossistema",
             photo: "https://media.licdn.com/dms/image/v2/D4D03AQEcKxGZ8vYGpg/profile-displayphoto-shrink_400_400/profile-displayphoto-shrink_400_400/0/1729084283090?e=1740614400&v=beta&t=YourActualToken",
             linkedin: "https://www.linkedin.com/in/helderdomingues/",
-            bioShort: "Com 26+ anos de experiência em Marketing, Branding e Planejamento Estratégico, Helder é o arquiteto do Ecossistema de Inteligência Organizacional da Crie Valor. MBA em Gestão Estratégica Avançada (UCDB), fluente em inglês com vivência em Londres. Idealizou e projetou MAR, Lumia e Mentor de Propósito. Diretor de Marketing internacional há 11+ anos.",
-            bioLong: "Helder Domingues é fundador da Crie Valor e arquiteto do primeiro Ecossistema de Inteligência Organizacional com IA do Brasil. Com 26+ anos de experiência em Marketing, Branding, Planejamento Estratégico e Desenvolvimento de Produtos com IA, liderou a transformação de dezenas de empresas desde 2015.\n\nPossui MBA em Gestão Estratégica Avançada e Especialização em Administração de Marketing e Propaganda (UCDB), com fluência em inglês e vivência em Londres. Há 11+ anos, atua como Diretor de Marketing para empresa inglesa de consultoria internacional (Diakrino Limited).\n\nIdealizador e projetista de todos os produtos digitais da Crie Valor: MAR - Mapa para Alto Rendimento (co-autor com Paulo Gaudioso), LUMIA - Sistema de Consultores Virtuais, e Mentor de Propósito. Este último foi inspirado pela palestra de Simon Sinek no TED em 2014 sobre o poder do propósito organizacional. Combina visão criativa com rigor estratégico para profissionalizar PMEs brasileiras, atuando como Consultor de Resultados e Mentor de Alta Performance."
+            bioShort: "Com 26+ anos de experiência em Marketing, Branding e Planejamento Estratégico, Helder é o arquiteto do Ecossistema de Inteligência Organizacional da Crie Valor. MBA em Gestão Estratégica Avançada (UCDB), fluente em inglês com vivência em Londres. Idealizou e projetou o Sistema LUMIA. Diretor de Marketing internacional há 11+ anos.",
+            bioLong: "Helder Domingues é fundador da Crie Valor e arquiteto do primeiro Ecossistema de Inteligência Organizacional com IA do Brasil. Com 26+ anos de experiência em Marketing, Branding, Planejamento Estratégico e Desenvolvimento de Produtos com IA, liderou a transformação de dezenas de empresas desde 2015.\n\nPossui MBA em Gestão Estratégica Avançada e Especialização em Administração de Marketing e Propaganda (UCDB), com fluência em inglês e vivência em Londres. Há 11+ anos, atua como Diretor de Marketing para empresa inglesa de consultoria internacional (Diakrino Limited).\n\nIdealizador e projetista de toda a plataforma digital da Crie Valor, que evoluiu para o atual Sistema LUMIA. Sua jornada organizacional e de propósito foi profundamente influenciada pela palestra de Simon Sinek no TED em 2014 sobre o poder do propósito. Combina visão criativa com rigor estratégico para profissionalizar PMEs brasileiras, atuando como Consultor de Resultados e Mentor de Alta Performance."
         },
         {
             name: "Paulo Gaudioso",
@@ -276,8 +276,8 @@ const FounderJourneySection = () => {
                     transition={{ duration: 0.6 }}
                 >
                     <Button size="lg" asChild>
-                        <a href="/mar">
-                            Conhecer o MAR <ArrowRight className="ml-2 h-4 w-4" />
+                        <a href="/lumia">
+                            Conhecer o LUMIA <ArrowRight className="ml-2 h-4 w-4" />
                         </a>
                     </Button>
                     <Button variant="outline" size="lg" asChild>

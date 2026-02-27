@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/context/AuthContext";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -26,6 +27,7 @@ const Auth = () => {
   const [signUpEmail, setSignUpEmail] = useState("");
   const [signUpPassword, setSignUpPassword] = useState("");
   const [fullName, setFullName] = useState("");
+  const [companyName, setCompanyName] = useState("");
   const [username, setUsername] = useState("");
 
   const [error, setError] = useState<string | null>(null);
@@ -69,12 +71,21 @@ const Auth = () => {
     setError(null);
 
     try {
-      const { error } = await signUp(signUpEmail, signUpPassword, username, fullName);
+      const { error, data } = await signUp(signUpEmail, signUpPassword, username, fullName);
+
       if (error) {
         setError(error.message);
-      } else {
+      } else if (data?.user) {
+        // Update user metadata with company name if needed or handle via profile
+        const { error: profileError } = await supabase
+          .from('profiles')
+          .update({ company_name: companyName })
+          .eq('id', data.user.id);
+
+        if (profileError) console.error("Error updating profile with company name:", profileError);
+
         toast({
-          title: "Conta criada com sucesso!",
+          title: "Conta criada!",
           description: "Verifique seu e-mail para confirmar o cadastro.",
         });
       }

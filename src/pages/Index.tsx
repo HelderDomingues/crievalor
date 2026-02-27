@@ -27,21 +27,21 @@ const Index = () => {
         <title>Ecossistema LUMIA | Inteligência Organizacional de Alto Rendimento</title>
         <meta
           name="description"
-          content="A Crie Valor apresenta o Ecossistema LUMIA: a primeira plataforma brasileira de Inteligência Organizacional com IA. Controle total do seu planejamento estratégico com especialistas virtuais 24/7."
+          content="A Crie Valor apresenta o Ecossistema LUMIA: a primeira plataforma brasileira de Inteligência Organizacional com IA. Planejamento, consultoria e cultura, tudo em um só lugar."
         />
-        <meta property="og:title" content="Crie Valor Estratégia | Intelligência Organizacional" />
+        <meta property="og:title" content="Crie Valor | Inteligência Organizacional" />
         <meta
           property="og:description"
-          content="Transforme sua empresa com o MAR: Mapa para Alto Rendimento. Intelligência Organizacional."
+          content="Transforme sua empresa com o Sistema LUMIA. Um ecossistema de Inteligência Organizacional que profissionaliza sua gestão em tempo real."
         />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://crievalor.com.br" />
         <meta property="og:image" content="https://crievalor.com.br/og-image.png" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Crie Valor Estratégia | Inteligência Organizacional" />
+        <meta name="twitter:title" content="Crie Valor | Inteligência Organizacional" />
         <meta
           name="twitter:description"
-          content="Transforme sua empresa com o MAR: Mapa para Alto Rendimento. Direção e clareza estratégica para resultados excepcionais."
+          content="Transforme sua empresa com o Sistema LUMIA. Direção, planejamento e consultores de IA à sua disposição 24/7."
         />
         <meta name="twitter:image" content="https://crievalor.com.br/og-image.png" />
         <link rel="canonical" href="https://crievalor.com.br" />
@@ -101,21 +101,8 @@ const Index = () => {
       </script>
 
       <ServiceSchema
-        name="MAR - Mapa para Alto Rendimento"
-        description="Planejamento estratégico com inteligência artificial que cria um roadmap personalizado para acelerar o crescimento empresarial. Sistema de Inteligência Organizacional que analisa dados e gera insights estratégicos precisos. Ideal para empresas em Campo Grande/MS, Navegantes/SC e todo Brasil."
-        image="https://iili.io/3vlTe6l.png"
-        brand="Crie Valor - Inteligência Organizacional"
-        offers={{
-          price: "3497.00",
-          priceCurrency: "BRL",
-          availability: "https://schema.org/InStock",
-          url: "https://crievalor.com.br/mar"
-        }}
-      />
-
-      <ServiceSchema
-        name="Lumia - 6 Consultores Virtuais com Inteligência Artificial"
-        description="Plataforma de consultoria virtual com 6 consultores especializados baseados em IA: Vendas, Marketing, Operações, Finanças, RH e Estratégia. Disponíveis 24/7 para apoiar decisões empresariais com inteligência artificial. Sistema de IA conversacional para negócios."
+        name="LUMIA - Sistema de Inteligência Organizacional"
+        description="Ecossistema completo que unifica planejamento estratégico executável em 7 dias, um time de 6 especialistas de Inteligência Artificial para consultoria 24/7 e jornadas de definição de DNA corporativo."
         image="https://iili.io/KnFOVTb.png"
         brand="Crie Valor - Inteligência Organizacional"
         offers={{
@@ -126,50 +113,11 @@ const Index = () => {
         }}
       />
 
-      <ServiceSchema
-        name="Lumia - Plano Trimestral"
-        description="Plataforma de consultoria virtual com 6 consultores especializados baseados em IA. Plano trimestral com economia."
-        image="https://iili.io/KnFOVTb.png"
-        brand="Crie Valor - Inteligência Organizacional"
-        offers={{
-          price: "1757.00",
-          priceCurrency: "BRL",
-          availability: "https://schema.org/InStock",
-          url: "https://crievalor.com.br/lumia"
-        }}
-      />
-
-      <ServiceSchema
-        name="Lumia - Plano Anual"
-        description="Plataforma de consultoria virtual com 6 consultores especializados baseados em IA. Plano anual com máxima economia."
-        image="https://iili.io/KnFOVTb.png"
-        brand="Crie Valor - Inteligência Organizacional"
-        offers={{
-          price: "5649.00",
-          priceCurrency: "BRL",
-          availability: "https://schema.org/InStock",
-          url: "https://crievalor.com.br/lumia"
-        }}
-      />
-
-      <ServiceSchema
-        name="Mentor de Propósito - Inteligência Conversacional para Propósito"
-        description="Sistema de inteligência conversacional que ajuda empresas a descobrir e articular seu propósito autêntico através de conversas estruturadas. Ferramenta de IA para clareza estratégica e cultura organizacional fortalecida."
-        image="https://iili.io/Kzktdnn.png"
-        brand="Crie Valor - Inteligência Organizacional"
-        offers={{
-          price: "299.00",
-          priceCurrency: "BRL",
-          availability: "https://schema.org/InStock",
-          url: "https://crievalor.com.br/mentor-proposito"
-        }}
-      />
-
       <FAQSchema
         questions={[
           {
-            question: "Como funciona o Ecossistema LUMIA?",
-            answer: "O LUMIA é um ecossistema integrado que combina o motor lógico do MAR (Mapa de Alto Rendimento) com consultores virtuais especialistas e o Mentor de Propósito. Você tem controle total sobre cada etapa do seu planejamento e execução estratégica."
+            question: "Como funciona o Sistema LUMIA?",
+            answer: "O LUMIA é um ecossistema integrado que unifica planejamento estratégico acelerado, consultoria virtual por IA 24/7 e suporte contínuo para implementação de ações. Você ganha clareza com um plano estruturado e executa com ajuda de assistentes de IA especializados em todas as áreas da sua empresa."
           },
           {
             question: "O que diferencia a Crie Valor de uma consultoria tradicional?",

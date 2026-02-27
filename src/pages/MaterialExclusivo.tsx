@@ -117,18 +117,18 @@ const MaterialExclusivoPage: React.FC = () => {
   const handleAccessMaterial = async (materialId: string) => {
     try {
       // Record the access
-      await supabaseExtended
+      await (supabaseExtended as any)
         .from('material_accesses')
         .insert([
           { material_id: materialId, user_id: user?.id }
         ]);
 
       // Update the material's access count
-      await supabaseExtended
+      await (supabaseExtended as any)
         .rpc('increment_material_access_count', { material_id: materialId });
 
       // Get the material details
-      const { data } = await supabaseExtended
+      const { data } = await (supabaseExtended as any)
         .from('materials')
         .select('file_url')
         .eq('id', materialId)
@@ -207,7 +207,7 @@ const MaterialExclusivoPage: React.FC = () => {
                   </AlertDescription>
                 </Alert>
                 <Button asChild>
-                  <a href="/mar">Ver Planos de Assinatura</a>
+                  <a href="/lumia">Ver Planos de Assinatura</a>
                 </Button>
               </CardContent>
             </Card>

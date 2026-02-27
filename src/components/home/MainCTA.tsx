@@ -18,13 +18,13 @@ const MainCTA = () => {
             Pronto para transformar sua estratégia?
           </h2>
           <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
-            Descubra como o MAR - Mapa para Alto Rendimento pode impulsionar os resultados
-            da sua empresa com estratégias personalizadas.
+            Descubra como o Sistema LUMIA pode impulsionar os resultados
+            da sua empresa com inteligência e estratégias personalizadas.
           </p>
           <div className="flex flex-col sm:flex-row justify-center gap-4">
             <Button size="lg" asChild>
-              <Link to="/mar" aria-label="Conheça o MAR - Saiba mais sobre o Mapa para Alto Rendimento">
-                Conheça o MAR <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />
+              <Link to="/lumia" aria-label="Conheça o LUMIA - Sistema de Inteligência Organizacional">
+                Conheça o LUMIA <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />
               </Link>
             </Button>
             <Button variant="outline" size="lg" asChild>

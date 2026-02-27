@@ -62,8 +62,8 @@ const Footer = () => {
                 </Link>
               </li>
               <li>
-                <Link to="/mar" className="text-muted-foreground hover:text-primary transition-colors text-sm">
-                  MAR - Mapa para Alto Rendimento
+                <Link to="/lumia" className="text-muted-foreground hover:text-primary transition-colors text-sm">
+                  Sistema LUMIA
                 </Link>
               </li>
               <li>
@@ -88,8 +88,8 @@ const Footer = () => {
             <h4 className="text-base font-medium text-foreground">Serviços</h4>
             <ul className="space-y-2">
               <li>
-                <Link to="/mar" className="text-muted-foreground hover:text-primary transition-colors text-sm">
-                  MAR - Mapa para Alto Rendimento
+                <Link to="/lumia" className="text-muted-foreground hover:text-primary transition-colors text-sm">
+                  Sistema LUMIA
                 </Link>
               </li>
               <li>

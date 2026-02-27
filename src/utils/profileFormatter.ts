@@ -17,7 +17,7 @@ export function formatSocialMedia(socialMediaData: Json | null) {
 
   // Handle different possible types from the database
   const socialMedia = socialMediaData as any;
-  
+
   if (typeof socialMedia === 'object' && !Array.isArray(socialMedia)) {
     return {
       linkedin: socialMedia.linkedin || "",
@@ -51,6 +51,10 @@ export function formatProfileData(data: any, userEmail: string | null | undefine
     cnpj: data.cnpj,
     cpf: data.cpf,
     social_media: formattedSocialMedia,
-    email: userEmail
+    email: userEmail,
+    role: data.role,
+    subscription_status: data.subscription_status,
+    trial_ends_at: data.trial_ends_at,
+    workspace_id: data.workspace_id
   };
 }

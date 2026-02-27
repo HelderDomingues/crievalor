@@ -27,7 +27,7 @@ const Mentorias = () => {
         <meta property="og:description" content="Transforme líderes com mentorias personalizadas. Resultados mensuráveis e acompanhamento contínuo." />
         <meta property="og:url" content="https://crievalor.com.br/mentorias" />
         <meta property="og:type" content="website" />
-        <meta property="og:image" content="https://crievalor.com.br/og-image.jpg" />
+        <meta property="og:image" content="https://crievalor.com.br/og-image.png" />
       </Helmet>
 
       <ServiceSchema

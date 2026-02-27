@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Check, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { ecosystemPlans } from "@/components/pricing/pricingData";
+import CheckoutController from "@/components/subscription/CheckoutController";
 
 const PricingSection = () => {
     return (
@@ -67,18 +68,16 @@ const PricingSection = () => {
                             </CardContent>
 
                             <CardFooter className="pb-10 pt-6">
-                                <Button
-                                    asChild
+                                <CheckoutController
+                                    planId={plan.id}
+                                    installments={1}
+                                    paymentType="credit"
+                                    buttonText={plan.cta}
                                     className={`w-full py-6 text-lg font-bold transition-all duration-300 ${plan.popular
-                                            ? "bg-primary hover:bg-primary/90 shadow-glow"
-                                            : "bg-slate-800 hover:bg-slate-700 text-white"
+                                        ? "bg-primary hover:bg-primary/90 shadow-glow"
+                                        : "bg-slate-800 hover:bg-slate-700 text-white"
                                         }`}
-                                >
-                                    <Link to={plan.ctaUrl}>
-                                        {plan.cta}
-                                        <ArrowRight className="ml-2 w-5 h-5" />
-                                    </Link>
-                                </Button>
+                                />
                             </CardFooter>
                         </Card>
                     ))}

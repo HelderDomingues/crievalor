@@ -48,7 +48,7 @@ const Sobre = () => {
         />
         <meta property="og:url" content="https://crievalor.com.br/sobre" />
         <meta property="og:type" content="website" />
-        <meta property="og:image" content="https://crievalor.com.br/og-image.jpg" />
+        <meta property="og:image" content="https://crievalor.com.br/og-image.png" />
       </Helmet>
 
       {/* Enhanced Organization Schema with Entity Chaining */}
@@ -344,25 +344,11 @@ const Sobre = () => {
             >
               {[
                 {
-                  icon: Anchor,
-                  title: "MAR - Mapa para Alto Rendimento",
-                  description:
-                    "Sistema de planejamento estratégico com IA que entrega em 7 dias (vs 90 dias tradicional). Personalizado com Mapeamento do DNA de Liderança + BSC + Porter.",
-                  link: "/mar"
-                },
-                {
                   icon: Sparkles,
-                  title: "LUMIA - Consultores Virtuais",
+                  title: "Sistema LUMIA",
                   description:
-                    "6 agentes de IA especializados (Estratégia, Marketing, Vendas, Finanças, Operações, Pessoas) disponíveis 24/7 para decisões do dia a dia.",
+                    "Ecossistema completo que unifica planejamento estratégico em 7 dias, consultores virtuais 24/7 e jornada de propósito.",
                   link: "/lumia"
-                },
-                {
-                  icon: Lightbulb,
-                  title: "Mentor de Propósito",
-                  description:
-                    "Jornada guiada por agente especializado de IA para descobrir o propósito organizacional. Bússola digital para clareza estratégica.",
-                  link: "/mentor-proposito"
                 },
                 {
                   icon: Users,
@@ -436,7 +422,7 @@ const Sobre = () => {
               transition={{ duration: 0.6 }}
             >
               <p className="text-lg mb-6">
-                O perfil ideal para o produto MAR – Mapa para Alto Rendimento não se resume apenas a "empresas e
+                O perfil ideal para o Sistema LUMIA não se resume apenas a "empresas e
                 empreendedores", mas a líderes que já compreendem (ou desejam compreender) o valor de uma estratégia bem
                 estruturada para o crescimento sustentável.
               </p>

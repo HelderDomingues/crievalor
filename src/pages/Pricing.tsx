@@ -6,7 +6,7 @@ import ContactSection from "@/components/ContactSection";
 import { Badge } from "@/components/ui/badge";
 import { Sparkles } from "lucide-react";
 import PricingSection from "@/components/home/PricingSection";
-import FAQSection from "@/components/home/FAQSection"; // A generic FAQ section if available, or I'll just omit it for now or implement inline.
+
 import { FAQSchema } from "@/components/seo/SchemaMarkup";
 
 const Pricing = () => {
@@ -26,7 +26,7 @@ const Pricing = () => {
                 questions={[
                     {
                         question: "O que está incluído no Plano Básico?",
-                        answer: "O Plano Básico inclui acesso aos módulos estratégicos do MAR, 6 consultores virtuais especialistas (LUMIA), o Mentor de Propósito e acesso para 1 usuário principal."
+                        answer: "O Plano Básico inclui acesso ao planejamento estratégico acelerado, 6 consultores virtuais especialistas em IA e ferramentas de propósito organizacional do Sistema LUMIA, para 1 usuário principal."
                     },
                     {
                         question: "Como funciona a Implementação Assistida?",

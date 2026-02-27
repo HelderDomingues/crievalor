@@ -144,25 +144,9 @@ export const WhatsAppBusiness: React.FC<WhatsAppBusinessProps> = ({
                   <Button
                     variant="outline"
                     className="w-full justify-start text-sm"
-                    onClick={() => handleQuickStart('MAR - Mapa de Alto Rendimento')}
+                    onClick={() => handleQuickStart('Sistema LUMIA - Inteligência Organizacional')}
                   >
-                    🎯 Conhecer o MAR
-                  </Button>
-
-                  <Button
-                    variant="outline"
-                    className="w-full justify-start text-sm"
-                    onClick={() => handleQuickStart('Lumia - Consultores Virtuais')}
-                  >
-                    ⚡ Lumia Consultores Virtuais
-                  </Button>
-
-                  <Button
-                    variant="outline"
-                    className="w-full justify-start text-sm"
-                    onClick={() => handleQuickStart('Mentor de Propósito - Descubra seu Por Quê')}
-                  >
-                    🧭 Mentor de Propósito
+                    🎯 Conhecer o Sistema LUMIA
                   </Button>
 
                   <Button

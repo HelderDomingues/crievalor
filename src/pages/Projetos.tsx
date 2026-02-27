@@ -23,7 +23,7 @@ const Projetos = () => {
         <meta property="og:description" content="Soluções empresariais customizadas com IA para seu negócio. Projetos especiais e inovadores." />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://crievalor.com.br/projetos" />
-        <meta property="og:image" content="https://crievalor.com.br/og-image.jpg" />
+        <meta property="og:image" content="https://crievalor.com.br/og-image.png" />
         <link rel="canonical" href="https://crievalor.com.br/projetos" />
       </Helmet>
       

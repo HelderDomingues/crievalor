@@ -20,7 +20,7 @@ const ComingSoon = () => {
 
       <div className="min-h-screen bg-gradient-to-b from-background via-background/95 to-muted/30">
         <Header />
-        
+
         <main className="container mx-auto px-4 pt-32 pb-20">
           <div className="max-w-4xl mx-auto text-center space-y-8 animate-fade-in">
             {/* Icon Animation */}
@@ -68,24 +68,24 @@ const ComingSoon = () => {
               <p className="text-xl font-medium text-foreground">
                 Enquanto isso, que tal conversarmos sobre o seu projeto?
               </p>
-              
+
               <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                <Button 
-                  size="lg" 
+                <Button
+                  size="lg"
                   asChild
                   className="min-w-[200px]"
                 >
-                  <a 
-                    href="https://wa.me/5547992150289" 
-                    target="_blank" 
+                  <a
+                    href="https://wa.me/5547992150289"
+                    target="_blank"
                     rel="noopener noreferrer"
                   >
                     Falar no WhatsApp
                   </a>
                 </Button>
-                
-                <Button 
-                  size="lg" 
+
+                <Button
+                  size="lg"
                   variant="outline"
                   asChild
                   className="min-w-[200px]"
@@ -104,7 +104,7 @@ const ComingSoon = () => {
               </p>
               <div className="flex flex-wrap justify-center gap-4">
                 <Button variant="ghost" asChild>
-                  <Link to="/mar">MAR - Método de Avaliação de Risco</Link>
+                  <Link to="/lumia">Sistema LUMIA</Link>
                 </Button>
                 <Button variant="ghost" asChild>
                   <Link to="/mentorias">Mentorias</Link>

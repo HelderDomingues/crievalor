@@ -22,14 +22,14 @@ export const ecosystemPlans: PricingPlan[] = [
     monthlyPrice: "R$ 560",
     annualPrice: "R$ 6.720",
     features: [
-      "Relatórios Estratégicos (Módulos MAR)",
-      "6 Consultores Virtuais Especialistas",
-      "Mentor de Propósito Integrado",
+      "Planejamento Estratégico Acelerado (7 dias)",
+      "6 Consultores Virtuais Especialistas (24/7)",
+      "Jornada de Identidade e Propósito",
       "Acesso para 1 usuário principal",
       "Suporte básico via plataforma"
     ],
-    cta: "Começar agora",
-    ctaUrl: "/contato",
+    cta: "Iniciar Trial Grátis (7 Dias)",
+    ctaUrl: "/subscription?plan=basico",
     popular: false
   },
   {
@@ -46,7 +46,7 @@ export const ecosystemPlans: PricingPlan[] = [
       "Relatórios de progresso mensais"
     ],
     cta: "Escolher Intermediário",
-    ctaUrl: "/contato",
+    ctaUrl: "/subscription?plan=intermediario",
     popular: true
   },
   {
@@ -63,7 +63,7 @@ export const ecosystemPlans: PricingPlan[] = [
       "Suporte VIP dedicado"
     ],
     cta: "Escolher Avançado",
-    ctaUrl: "/contato",
+    ctaUrl: "/subscription?plan=avancado",
     popular: false
   }
 ];

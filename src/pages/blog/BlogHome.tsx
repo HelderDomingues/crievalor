@@ -87,14 +87,14 @@ export default function BlogHome() {
                     <meta property="og:url" content={`https://crievalor.com.br/blog${categorySlug ? `?category=${categorySlug}` : ""}`} />
                     <meta property="og:title" content={activeCategoryName ? `${activeCategoryName} | Blog Crie Valor` : "Blog Crie Valor | Insights sobre Negócios e Gestão"} />
                     <meta property="og:description" content="Artigos, dicas e insights sobre gestão empresarial, liderança, marketing e vendas. Descubra como profissionalizar sua empresa." />
-                    <meta property="og:image" content="https://crievalor.com.br/og-image.jpg" />
+                    <meta property="og:image" content="https://crievalor.com.br/og-image.png" />
 
                     {/* Twitter */}
                     <meta name="twitter:card" content="summary_large_image" />
                     <meta name="twitter:url" content={`https://crievalor.com.br/blog${categorySlug ? `?category=${categorySlug}` : ""}`} />
                     <meta name="twitter:title" content={activeCategoryName ? `${activeCategoryName} | Blog Crie Valor` : "Blog Crie Valor | Insights sobre Negócios e Gestão"} />
                     <meta name="twitter:description" content="Artigos, dicas e insights sobre gestão empresarial, liderança, marketing e vendas." />
-                    <meta name="twitter:image" content="https://crievalor.com.br/og-image.jpg" />
+                    <meta name="twitter:image" content="https://crievalor.com.br/og-image.png" />
 
                     {/* Schema.org JSON-LD */}
                     <script type="application/ld+json">

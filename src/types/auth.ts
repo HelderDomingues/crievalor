@@ -39,4 +39,7 @@ export interface UserProfile {
   cpf: string | null;
   email?: string | null;
   role?: string | null;
+  subscription_status?: string | null;
+  trial_ends_at?: string | null;
+  workspace_id?: string | null;
 }

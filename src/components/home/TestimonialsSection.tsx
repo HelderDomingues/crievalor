@@ -14,21 +14,21 @@ const TestimonialsSection = () => {
             O que nossos clientes dizem
           </h2>
           <p className="text-lg text-muted-foreground">
-            Transformamos a estratégia de negócios de diversas empresas. 
+            Transformamos a estratégia de negócios de diversas empresas.
             Veja o que elas têm a dizer.
           </p>
         </div>
-        
+
         <TestimonialCarousel />
-        
+
         <div className="text-center mt-12">
           <p className="text-lg mb-6">
             Junte-se a outros negócios de sucesso e descubra como podemos impulsionar sua empresa.
           </p>
           <div className="flex flex-col sm:flex-row justify-center gap-4">
             <Button asChild>
-              <Link to="/mar" aria-label="Conhecer planos MAR - Descubra nossas soluções estratégicas">
-                Conhecer planos MAR <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />
+              <Link to="/lumia" aria-label="Conhecer planos LUMIA - Descubra nossas soluções estratégicas">
+                Conhecer planos LUMIA <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />
               </Link>
             </Button>
             <Button variant="outline" asChild>

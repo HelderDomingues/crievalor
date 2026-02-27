@@ -19,19 +19,17 @@ interface PlanPaymentLinks {
 
 // Links estáticos de pagamento conforme fornecido nas instruções
 export const MAR_PAYMENT_LINKS: PlanPaymentLinks = {
-
   pro_plan: {
-    installments: "https://www.asaas.com/c/rb9ayqo3l1y7hlym", // Plano Profissional - Parcelado
-    cash: "https://www.asaas.com/c/tywf1vy9r3wcvgq1", // Plano Profissional - À Vista
+    installments: "#",
+    cash: "#",
   },
   enterprise_plan: {
-    installments: "https://www.asaas.com/c/7djyx165i9enjota", // Plano Empresarial - Parcelado
-    cash: "https://www.asaas.com/c/w8pd9qazz99tjsvc", // Plano Empresarial - À Vista
+    installments: "#",
+    cash: "#",
   },
   corporate_plan: {
-    // O plano corporativo não tem links de pagamento, é sob consulta via WhatsApp
-    installments: "wa.me//+5547992150289",
-    cash: "wa.me//+5547992150289",
+    installments: "https://wa.me/5547992150289",
+    cash: "https://wa.me/5547992150289",
   }
 };
 

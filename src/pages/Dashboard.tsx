@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
+import { useNavigate, Link } from "react-router-dom";
 import { useProfile } from "@/hooks/useProfile";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -15,11 +16,11 @@ import { BookOpen, User as UserIcon, Settings, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Material } from "@/pages/MaterialExclusivo";
-import { Link } from "react-router-dom";
 
 const Dashboard: React.FC = () => {
     const { user, signOut } = useAuth();
     const { profile, isAdmin, isLoading: profileLoading } = useProfile();
+    const navigate = useNavigate();
     const { toast } = useToast();
 
     const [materials, setMaterials] = useState<Material[]>([]);
@@ -27,8 +28,16 @@ const Dashboard: React.FC = () => {
     const [activeFilter, setActiveFilter] = useState("todos");
 
     useEffect(() => {
+        // Simple paywall/status check
+        if (profile && !profileLoading) {
+            const userProfile = profile as any;
+            const status = userProfile.subscription_status?.toLowerCase();
+            if (status === 'past_due' || status === 'payment_required') {
+                navigate('/subscription?expired=true');
+            }
+        }
         fetchMaterials();
-    }, [activeFilter]);
+    }, [activeFilter, profile, profileLoading]);
 
     const fetchMaterials = async () => {
         try {

@@ -33,9 +33,9 @@ const PillarsSection = () => {
                             <h3 className="text-2xl font-bold text-white mb-4">Produtos</h3>
                             <div className="w-12 h-1 bg-primary/50 rounded-full mb-6" />
                             <p className="text-slate-300 leading-relaxed">
-                                <strong className="text-white">Ecossistema LUMIA</strong>
+                                <strong className="text-white">Sistema LUMIA</strong>
                                 <br />
-                                MAR, Lumia e Mentor de Propósito integrados para máxima inteligência.
+                                Planejamento estratégico, Diretoria de IA e gestão de cultura integrados.
                             </p>
                         </div>
                     </div>

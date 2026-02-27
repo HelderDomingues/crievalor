@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import { Loader2, CheckCircle2, XCircle } from "lucide-react";
 import CheckoutError from "./CheckoutError";
 import { PaymentType } from "@/components/pricing/PaymentOptions";
-import { paymentProcessor } from "@/services/paymentProcessor";
 
 interface CheckoutControllerProps {
   planId: string;
@@ -57,24 +56,24 @@ const CheckoutController: React.FC<CheckoutControllerProps> = ({
       const lastPaymentUrl = localStorage.getItem('lastPaymentUrl');
       const lastPlanId = localStorage.getItem('checkoutPlanId');
       const lastTimestamp = localStorage.getItem('checkoutTimestamp');
-      
+
       // If we have a recent payment URL and it matches the current plan, try to use it
       if (lastPaymentUrl && lastPlanId === planId && lastTimestamp) {
         const timeSince = Date.now() - Number(lastTimestamp);
-        
+
         // Only consider URLs created in the last 10 minutes
         if (timeSince < 10 * 60 * 1000) {
           console.log("Found recent payment URL:", lastPaymentUrl);
           return;
         }
       }
-      
+
       // Clear any checkout recovery state if user wasn't in the middle of checkout
       if (!lastTimestamp || Date.now() - Number(lastTimestamp) > 30 * 60 * 1000) {
         localStorage.removeItem('checkoutRecoveryState');
       }
     };
-    
+
     checkForExistingSession();
   }, [planId]);
 
@@ -85,18 +84,18 @@ const CheckoutController: React.FC<CheckoutControllerProps> = ({
   useEffect(() => {
     const lastCheckoutTime = localStorage.getItem('checkoutTimestamp');
     const checkoutPlanId = localStorage.getItem('checkoutPlanId');
-    
+
     if (lastCheckoutTime && checkoutPlanId === planId) {
       const timeSinceLastCheckout = Date.now() - Number(lastCheckoutTime);
-      
+
       if (timeSinceLastCheckout < 5000) {
         console.log("Recent checkout attempt detected, waiting...");
         setIsCheckingOut(true);
-        
+
         const timer = setTimeout(() => {
           setIsCheckingOut(false);
         }, 3000);
-        
+
         return () => clearTimeout(timer);
       }
     }
@@ -134,12 +133,12 @@ const CheckoutController: React.FC<CheckoutControllerProps> = ({
     const now = Date.now();
     const lastTime = Number(localStorage.getItem('checkoutTimestamp') || '0');
     const attempts = Number(localStorage.getItem('checkoutAttempts') || '0');
-    
+
     if (now - lastTime > 5 * 60 * 1000) {
       localStorage.setItem('checkoutAttempts', '1');
       return true;
     }
-    
+
     if (attempts >= 3) {
       toast({
         title: "Muitas tentativas",
@@ -148,9 +147,9 @@ const CheckoutController: React.FC<CheckoutControllerProps> = ({
       });
       return false;
     }
-    
+
     localStorage.setItem('checkoutAttempts', String(attempts + 1));
-    
+
     if (now - lastTime < 15000) {
       toast({
         title: "Aguarde um momento",
@@ -159,7 +158,7 @@ const CheckoutController: React.FC<CheckoutControllerProps> = ({
       });
       return false;
     }
-    
+
     return true;
   };
 
@@ -168,39 +167,39 @@ const CheckoutController: React.FC<CheckoutControllerProps> = ({
     try {
       const recoveryData = safeJsonParse(localStorage.getItem('checkoutRecoveryState'));
       if (!recoveryData) return false;
-      
+
       // Only try to recover for the same plan and within 30 minutes
-      const isValidRecovery = 
-        recoveryData.planId === planId && 
+      const isValidRecovery =
+        recoveryData.planId === planId &&
         Date.now() - recoveryData.timestamp < 30 * 60 * 1000;
-        
+
       if (!isValidRecovery) return false;
-      
+
       console.log("Attempting to recover checkout from:", recoveryData);
       setIsRecovering(true);
-      
+
       // Try to get existing payment info
       if (recoveryData.paymentLink) {
         console.log("Found existing payment link, redirecting to:", recoveryData.paymentLink);
         localStorage.setItem('lastPaymentUrl', recoveryData.paymentLink);
-        
+
         // Added a subtle delay and animation before redirecting
         setProcessingStep("redirect");
-        
+
         // Mostrar toast informando a recuperação
         toast({
           title: "Recuperando sessão",
           description: "Redirecionando para sua sessão de pagamento anterior...",
           variant: "default",
         });
-        
+
         setTimeout(() => {
           window.location.href = recoveryData.paymentLink;
         }, 1500);
-        
+
         return true;
       }
-      
+
       setIsRecovering(false);
       return false;
     } catch (error) {
@@ -233,7 +232,7 @@ const CheckoutController: React.FC<CheckoutControllerProps> = ({
     if (!canAttemptCheckout()) {
       return;
     }
-    
+
     // Try to recover from a previous checkout attempt first
     if (await attemptRecovery()) {
       return;
@@ -241,35 +240,35 @@ const CheckoutController: React.FC<CheckoutControllerProps> = ({
 
     const processId = `checkout_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
     setCheckoutProcessId(processId);
-    
+
     setIsCheckingOut(true);
     setCheckoutError(null);
-    
+
     try {
       console.log(`[${processId}] Starting checkout for plan: ${planId} with ${installments} installments, payment method: ${paymentType}`);
-      
+
       // Visual feedback for user - show initialization step
       setProcessingStep("initializing");
-      
+
       // Save important information to localStorage
       localStorage.setItem('checkoutTimestamp', String(Date.now()));
       localStorage.setItem('checkoutInstallments', String(installments));
       localStorage.setItem('checkoutPaymentType', paymentType);
       localStorage.setItem('checkoutPlanId', planId);
-      
+
       // Add a slight delay for better UX
       await new Promise(resolve => setTimeout(resolve, 600));
-      
+
       // Visual feedback for user - show processing step
       setProcessingStep("processing");
-      
+
       // Mostrar toast informando o início do processamento
       toast({
         title: "Iniciando processamento",
         description: "Estamos preparando seu pagamento, aguarde um momento...",
         variant: "default",
       });
-      
+
       // Save recovery state
       const recoveryState = {
         timestamp: Date.now(),
@@ -279,87 +278,94 @@ const CheckoutController: React.FC<CheckoutControllerProps> = ({
         processId
       };
       localStorage.setItem('checkoutRecoveryState', JSON.stringify(recoveryState));
-      
-      // Process the payment
-      const result = await paymentProcessor.processPayment({
-        planId,
-        installments,
-        paymentType,
-        processId,
-        recoveryState
+
+      // Process the payment via Netlify Function
+      const response = await fetch('/.netlify/functions/create-checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          planId,
+          userId: user.id,
+          amount: installments > 1 ? 497 : 4970, // TODO: Get actual price from plans service
+          name: user.user_metadata?.full_name || user.email,
+          email: user.email,
+          installments
+        })
       });
-      
+
+      const result = await response.json();
+
       if (!result.success) {
         throw new Error(result.error || "Não foi possível iniciar o processo de assinatura");
       }
-      
+
       // Visual feedback for user - show success step
       setProcessingStep("success");
-      
+
       // Mostrar toast de sucesso
       toast({
         title: "Pagamento iniciado com sucesso",
         description: "Você será redirecionado para a página de pagamento.",
         variant: "default",
       });
-      
+
       // Add a slight delay before redirecting for better UX
       await new Promise(resolve => setTimeout(resolve, 800));
-      
-      if (result.isCustomPlan) {
-        navigate(result.url || "/");
+
+      if (result.redirect) {
+        navigate(result.redirect);
         return;
       }
-      
+
       // Update recovery state with payment link
       const updatedRecoveryState = {
         ...recoveryState,
         paymentLink: result.url
       };
       localStorage.setItem('checkoutRecoveryState', JSON.stringify(updatedRecoveryState));
-      
-      // Store payment information
-      paymentProcessor.storePaymentState(result, updatedRecoveryState);
-      
+
+      // Store basic payment information if needed for local state
+      localStorage.setItem('checkoutNetcredId', result.id);
+
       // Visual feedback for user - show redirect step
       setProcessingStep("redirect");
-      
+
       // Use window.location.href to ensure a complete redirect
       // Add a slight delay for the animation
       setTimeout(() => {
         window.location.href = result.url || "/";
       }, 1200);
-      
+
     } catch (error: any) {
       console.error(`[${processId}] Error creating checkout session:`, error);
-      
+
       // Visual feedback for user - show error step
       setProcessingStep("error");
-      
+
       // Enhanced error logging
       let errorMessage = error.message || "Não foi possível iniciar o processo de assinatura.";
-      
+
       console.log(`[${processId}] Error details:`, {
         message: errorMessage,
         originalError: error,
         stack: error.stack
       });
-      
+
       // More user-friendly error message
       setCheckoutError(errorMessage);
-      
+
       toast({
         title: "Erro ao iniciar checkout",
         description: "Não foi possível iniciar o processo de assinatura. Por favor, verifique seus dados de perfil e tente novamente.",
         variant: "destructive",
       });
-      
+
       // Add a slight delay before resetting state for better UX
       setTimeout(() => {
         setIsCheckingOut(false);
         setProcessingStep(null);
       }, 1500);
-      
+
       // Clear recovery state on error
       localStorage.setItem('checkoutRecoveryAttempted', 'true');
     }
@@ -371,7 +377,7 @@ const CheckoutController: React.FC<CheckoutControllerProps> = ({
       if (isRecovering) {
         return "Recuperando...";
       }
-      
+
       switch (processingStep) {
         case "initializing":
           return "Iniciando...";
@@ -387,14 +393,14 @@ const CheckoutController: React.FC<CheckoutControllerProps> = ({
           return "Processando...";
       }
     }
-    
+
     return buttonText;
   };
 
   // Get the appropriate icon based on processing state
   const getButtonIcon = () => {
     if (!isCheckingOut) return null;
-    
+
     switch (processingStep) {
       case "success":
         return <CheckCircle2 className="mr-2 h-4 w-4 animate-bounce" />;
@@ -408,7 +414,7 @@ const CheckoutController: React.FC<CheckoutControllerProps> = ({
   return (
     <div className="checkout-controller">
       {checkoutError && <CheckoutError error={checkoutError} className="slide-up" />}
-      
+
       <Button
         onClick={handleCheckout}
         disabled={isCheckingOut}

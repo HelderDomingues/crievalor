@@ -42,7 +42,7 @@ const OficinaLideres = () => {
         <meta property="og:description" content="Desenvolva seu potencial de liderança. Programa exclusivo para o Baixo Vale do Itajaí com métodos testados e aprovados." />
         <meta property="og:url" content="https://crievalor.com.br/oficina-de-lideres" />
         <meta property="og:type" content="website" />
-        <meta property="og:image" content="https://crievalor.com.br/og-image.jpg" />
+        <meta property="og:image" content="https://crievalor.com.br/og-image.png" />
       </Helmet>
 
       <ProductSchema

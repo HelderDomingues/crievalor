@@ -124,7 +124,7 @@ const Palestra = () => {
         <meta property="og:description" content="Conteúdo estratégico, insights práticos e networking qualificado em palestras sobre IA e gestão empresarial." />
         <meta property="og:url" content="https://crievalor.com.br/palestra" />
         <meta property="og:type" content="website" />
-        <meta property="og:image" content="https://crievalor.com.br/og-image.jpg" />
+        <meta property="og:image" content="https://crievalor.com.br/og-image.png" />
       </Helmet>
       
       <BreadcrumbSchema 

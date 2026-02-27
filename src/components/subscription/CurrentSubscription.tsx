@@ -22,7 +22,7 @@ const CurrentSubscription = ({
 }: CurrentSubscriptionProps) => {
   const getStatusBadge = (status: string) => {
     const statusLowerCase = status.toLowerCase();
-    
+
     switch (statusLowerCase) {
       case "active":
         return <Badge className="bg-green-500">Ativa</Badge>;
@@ -49,8 +49,8 @@ const CurrentSubscription = ({
   };
 
   const isActive = subscription.status.toLowerCase() === "active";
-  const installmentsText = subscription.installments > 1 
-    ? `em ${subscription.installments}x` 
+  const installmentsText = subscription.installments > 1
+    ? `em ${subscription.installments}x`
     : "à vista";
 
   return (
@@ -73,20 +73,10 @@ const CurrentSubscription = ({
             <p className="text-sm font-medium">Válida até:</p>
             <p>{formatDate(subscription.current_period_end)}</p>
           </div>
-          {subscription.asaas_payment_link && !isActive && (
-            <div>
-              <p className="text-sm font-medium text-primary mb-1">Link de pagamento:</p>
-              <Button variant="outline" asChild className="h-8 px-2 py-0 text-xs">
-                <a href={subscription.asaas_payment_link} target="_blank" rel="noopener noreferrer">
-                  Abrir link de pagamento
-                </a>
-              </Button>
-            </div>
-          )}
         </CardContent>
         <CardFooter className="flex flex-wrap gap-2">
-          <Button 
-            variant="destructive" 
+          <Button
+            variant="destructive"
             disabled={isCanceling || subscription.status.toLowerCase() === "canceled"}
             onClick={onCancelSubscription}
           >
@@ -99,9 +89,9 @@ const CurrentSubscription = ({
               "Cancelar Assinatura"
             )}
           </Button>
-          
-          <Button 
-            variant="outline" 
+
+          <Button
+            variant="outline"
             asChild
           >
             <Link to="/subscription?tab=plans">
