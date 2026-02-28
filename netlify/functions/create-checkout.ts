@@ -122,12 +122,23 @@ class CreateCheckoutController extends BaseController {
 
             if (pendingSubError) throw pendingSubError;
 
+            // Map planId to human-readable name
+            const planNames: Record<string, string> = {
+                'basico': 'LUMIA - Básico',
+                'intermediario': 'LUMIA - Intermediário',
+                'avancado': 'LUMIA - Avançado'
+            };
+            const planName = planNames[planId] || `LUMIA - ${planId}`;
+
+            // NetCred expects baseAmount in decimal format, but we receive it in cents from frontend
+            const amountDecimal = amount / 100;
+
             const netcredLink = await this.netcred.createCheckout({
-                planId,
+                planId: planName,
                 userId,
                 email,
                 name,
-                amount,
+                amount: amountDecimal,
                 paymentMethods: ["CREDIT_CARD", "PIX"],
                 subscriptionId: pendingSub.id // Pass the sub ID
             });
