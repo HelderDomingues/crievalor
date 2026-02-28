@@ -14,23 +14,40 @@ export class NetCredService {
     subscriptionId: string;
   }) {
     const query = `
-      mutation createSubscriptionLink($input: SubscriptionLinkInput!) {
-        createSubscriptionLink(input: $input) {
-          url
-          id
+      mutation chargeLinkCreate($input: ChargeLinkCreateInput!) {
+        chargeLinkCreate(input: $input) {
+          chargeLink {
+            url
+            id
+          }
+          errors {
+            field
+            message
+          }
         }
       }
     `;
 
-    return await this.client.request(query, {
+    const result = await this.client.request(query, {
       input: {
-        externalId: `${input.subscriptionId}_${Date.now()}`,
-        name: input.name,
-        email: input.email,
-        value: input.amount,
-        paymentMethods: input.paymentMethods,
-        // NetCred specific fields will go here
+        companyId: process.env.NETCRED_COMPANY_ID || "2032",
+        title: `Assinatura ${input.planId} (${input.email})`,
+        description: input.subscriptionId,
+        baseAmount: input.amount,
+        subscription: true,
+        cardRecurringAllowed: true,
+        pixAllowed: false,
+        billetAllowed: false,
+        rrule: "FREQ=MONTHLY;COUNT=60", // Maximum allowed cycles by NetCred
       }
     });
+
+    // Check for business-logic errors
+    if (result.chargeLinkCreate?.errors?.length > 0) {
+      const errorMsg = result.chargeLinkCreate.errors.map((e: any) => `${e.field}: ${e.message}`).join(', ');
+      throw new Error(`NetCred chargeLinkCreate error: ${errorMsg}`);
+    }
+
+    return result;
   }
 }

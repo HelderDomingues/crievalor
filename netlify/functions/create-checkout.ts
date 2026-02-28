@@ -161,7 +161,7 @@ class CreateCheckoutController extends BaseController {
 
             return new Response(JSON.stringify({
                 success: true,
-                url: netcredLink.createSubscriptionLink.url
+                url: netcredLink.chargeLinkCreate.chargeLink.url
             }), { status: 200 });
 
         } catch (error: any) {
