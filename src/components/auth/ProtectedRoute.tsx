@@ -6,7 +6,9 @@ import { useProfile } from "@/hooks/useProfile";
 
 interface ProtectedRouteProps {
     children: React.ReactNode;
-    requiredRole?: "user" | "admin" | "owner";
+    requireAuth?: boolean;
+    requiredRole?: 'admin' | 'user' | 'owner' | 'company_admin';
+    redirectTo?: string;
 }
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, requiredRole }) => {

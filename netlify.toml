@@ -5,6 +5,15 @@
   publish = "dist"
   command = "npm run build"
 
+[functions]
+  node_bundler = "esbuild"
+
+[dev]
+  command = "npm run dev"
+  targetPort = 8080
+  port = 8888
+  framework = "#auto"
+
 # Redirect www to non-www (SEO canonicalização)
 [[redirects]]
   from = "https://www.crievalor.com.br/*"
@@ -18,11 +27,11 @@
   to = "/index.html"
   status = 200
 
-[[headers]]
-  for = "/*"
-  [headers.values]
-    X-Frame-Options = "DENY"
-    X-XSS-Protection = "1; mode=block"
-    X-Content-Type-Options = "nosniff"
-    Referrer-Policy = "no-referrer-when-downgrade"
-    Content-Security-Policy = "default-src 'self' https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' data: blob: https:; font-src 'self' data: https:; connect-src 'self' https: wss:; frame-src 'self' https:; object-src 'none'; base-uri 'self'; form-action 'self' https:"
+# [[headers]]
+#   for = "/*"
+#   [headers.values]
+#     X-Frame-Options = "DENY"
+#     X-XSS-Protection = "1; mode=block"
+
+# Evitar nosniff e CSP estritos no ambiente dev que quebram o Vite HMR e Modulos TS
+# Se necessário, configurar isso especificamente no painel do Netlify em vez de no toml local para não quebrar o dev

@@ -21,6 +21,7 @@ export const ecosystemPlans: PricingPlan[] = [
     description: "Ideal para começar a estruturar sua clareza estratégica.",
     monthlyPrice: "R$ 560",
     annualPrice: "R$ 6.720",
+    hasTrial: true,
     features: [
       "Planejamento Estratégico Acelerado (7 dias)",
       "6 Consultores Virtuais Especialistas (24/7)",
@@ -38,6 +39,7 @@ export const ecosystemPlans: PricingPlan[] = [
     description: "Para empresas que buscam aceleração assistida.",
     monthlyPrice: "R$ 740",
     annualPrice: "R$ 8.880",
+    hasTrial: false,
     features: [
       "Tudo do plano Básico",
       "Implementação Assistida (2 reuniões/mês)",
@@ -55,6 +57,7 @@ export const ecosystemPlans: PricingPlan[] = [
     description: "Foco total em escala e acompanhamento intensivo.",
     monthlyPrice: "R$ 810",
     annualPrice: "R$ 9.720",
+    hasTrial: false,
     features: [
       "Tudo do plano Intermediário",
       "Implementação Assistida (4 reuniões/mês)",

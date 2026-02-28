@@ -280,16 +280,18 @@ const CheckoutController: React.FC<CheckoutControllerProps> = ({
       localStorage.setItem('checkoutRecoveryState', JSON.stringify(recoveryState));
 
       // Process the payment via Netlify Function
-      const response = await fetch('/.netlify/functions/create-checkout', {
+      const functionUrl = `${window.location.origin}/.netlify/functions/create-checkout`;
+      const response = await fetch(functionUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           planId,
           userId: user.id,
-          amount: installments > 1 ? 497 : 4970, // TODO: Get actual price from plans service
+          amount: planId === 'basico' ? 0 : (installments > 1 ? 497 : 4970), // TODO: Get actual price from plans service
           name: user.user_metadata?.full_name || user.email,
           email: user.email,
-          installments
+          installments,
+          intent: localStorage.getItem('checkoutIntent') || 'purchase'
         })
       });
 
@@ -313,7 +315,7 @@ const CheckoutController: React.FC<CheckoutControllerProps> = ({
       await new Promise(resolve => setTimeout(resolve, 800));
 
       if (result.redirect) {
-        navigate(result.redirect);
+        navigate(result.redirect === '/dashboard' && planId === 'basico' ? '/lumia/sucesso' : result.redirect);
         return;
       }
 
@@ -394,6 +396,7 @@ const CheckoutController: React.FC<CheckoutControllerProps> = ({
       }
     }
 
+    if (planId === 'basico') return "Iniciar Trial Grátis";
     return buttonText;
   };
 

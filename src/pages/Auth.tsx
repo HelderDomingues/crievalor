@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/context/AuthContext";
+import { useProfile } from "@/hooks/useProfile";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -17,6 +18,7 @@ const Auth = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { user, signIn, signUp } = useAuth();
+  const { profile, isLoading: profileLoading } = useProfile();
   const { toast } = useToast();
 
   // Login State
@@ -29,23 +31,50 @@ const Auth = () => {
   const [fullName, setFullName] = useState("");
   const [companyName, setCompanyName] = useState("");
   const [username, setUsername] = useState("");
+  const [termsAccepted, setTermsAccepted] = useState(false);
 
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   // Check if the user is already signed in
   useEffect(() => {
-    if (user) {
-      const selectedPlanId = localStorage.getItem('selectedPlanId');
-      if (selectedPlanId) {
-        localStorage.removeItem('selectedPlanId');
-        navigate(`/checkout?plan=${selectedPlanId}`);
+    if (user && !profileLoading) {
+      const params = new URLSearchParams(location.search);
+      const planFromUrl = params.get('plan');
+
+      const effectivePlanId = localStorage.getItem('selectedPlanId') || localStorage.getItem('checkoutPlanId') || planFromUrl;
+      const checkoutIntent = localStorage.getItem('checkoutIntent');
+
+      if (effectivePlanId) {
+        // Handle checkout/trial intent first
+        if (effectivePlanId === 'basico' && checkoutIntent === 'trial') {
+          localStorage.removeItem('selectedPlanId');
+          localStorage.removeItem('checkoutIntent');
+          navigate('/lumia/sucesso');
+        } else {
+          localStorage.removeItem('selectedPlanId');
+          localStorage.removeItem('checkoutIntent');
+          navigate(`/checkout?plan=${effectivePlanId}`);
+        }
+        return; // Important: stop execution here
+      }
+
+      // If no pending checkout, handle normal login flow
+      const state = location.state as { returnUrl?: string };
+      if (state?.returnUrl) {
+        navigate(state.returnUrl);
+        return;
+      }
+
+      // Logic for LUMIA vs Materials
+      const status = (profile as any)?.subscription_status;
+      if (status === 'trialing' || status === 'active') {
+        navigate('/lumia/dashboard');
       } else {
-        const state = location.state as { returnUrl?: string };
-        navigate(state?.returnUrl || "/dashboard");
+        navigate("/dashboard");
       }
     }
-  }, [user, navigate, location.state]);
+  }, [user, profile, profileLoading, navigate, location.state, location.search]);
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -70,19 +99,37 @@ const Auth = () => {
     setIsLoading(true);
     setError(null);
 
+    // Get plan from search params if present
+    const params = new URLSearchParams(location.search);
+    const planFromUrl = params.get('plan');
+
+    if (!termsAccepted) {
+      setError("Você precisa ler e aceitar os Termos de Serviço e a Política de Privacidade para criar uma conta.");
+      setIsLoading(false);
+      return;
+    }
+
     try {
       const { error, data } = await signUp(signUpEmail, signUpPassword, username, fullName);
 
       if (error) {
         setError(error.message);
       } else if (data?.user) {
-        // Update user metadata with company name if needed or handle via profile
+        if (planFromUrl) {
+          localStorage.setItem('selectedPlanId', planFromUrl);
+        }
+
+        // Update user metadata with company name and terms acceptance
         const { error: profileError } = await supabase
           .from('profiles')
-          .update({ company_name: companyName })
+          .update({
+            company_name: companyName,
+            terms_accepted: true,
+            terms_accepted_at: new Date().toISOString()
+          })
           .eq('id', data.user.id);
 
-        if (profileError) console.error("Error updating profile with company name:", profileError);
+        if (profileError) console.error("Error updating profile:", profileError);
 
         toast({
           title: "Conta criada!",
@@ -217,6 +264,19 @@ const Auth = () => {
                   />
                 </div>
 
+                <div className="flex items-start space-x-2 pt-2">
+                  <input
+                    type="checkbox"
+                    id="terms"
+                    className="mt-1 h-4 w-4 rounded border-white/10 bg-[#010816]/50 text-primary focus:ring-primary focus:ring-offset-0"
+                    checked={termsAccepted}
+                    onChange={(e) => setTermsAccepted(e.target.checked)}
+                  />
+                  <Label htmlFor="terms" className="text-sm text-gray-400 font-normal leading-tight cursor-pointer">
+                    Li e aceito o <a href="/termos-de-servico" target="_blank" className="text-primary hover:underline">Contrato de Licença de Uso (Termos de Serviço)</a> e a <a href="/politica-de-privacidade" target="_blank" className="text-primary hover:underline">Política de Privacidade</a>.
+                  </Label>
+                </div>
+
                 {error && <Alert variant="destructive" className="bg-red-950/20 border-red-500/50 text-red-400">
                   <AlertCircle className="h-4 w-4" />
                   <AlertDescription>{error}</AlertDescription>
@@ -229,9 +289,6 @@ const Auth = () => {
             </TabsContent>
           </Tabs>
 
-          <p className="text-center mt-8 text-sm text-gray-500">
-            Ao continuar, você concorda com nossos <a href="/termos-de-servico" className="text-primary hover:underline">Termos</a> e <a href="/politica-de-privacidade" className="text-primary hover:underline">Privacidade</a>.
-          </p>
         </div>
       </main>
 

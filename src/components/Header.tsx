@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, ChevronDown } from "lucide-react";
+import { Menu, X, ChevronDown, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -107,11 +107,37 @@ const Header = () => {
             </Link>
 
             {/* LUMIA Special Button */}
-            <Link to="/lumia" className="mx-2">
-              <RainbowBordersButton className="h-9">
-                LUMIA
-              </RainbowBordersButton>
-            </Link>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <div className="mx-2 cursor-pointer">
+                  <RainbowBordersButton className="h-9">
+                    LUMIA
+                    <ChevronDown className="ml-1 h-3 w-3" />
+                  </RainbowBordersButton>
+                </div>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="center" className="w-56 bg-background border border-border shadow-lg p-2">
+                <DropdownMenuItem asChild className="p-3 cursor-pointer hover:bg-primary/10 rounded-lg">
+                  <Link to="/lumia" className="flex flex-col">
+                    <span className="font-bold text-primary">Sobre o LUMIA</span>
+                    <span className="text-[10px] text-muted-foreground uppercase">Conheça o ecossistema</span>
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild className="p-3 cursor-pointer hover:bg-primary/10 rounded-lg">
+                  <Link to="/lumia/dashboard" className="flex flex-col">
+                    <span className="font-bold text-foreground">Meu Painel LUMIA</span>
+                    <span className="text-[10px] text-muted-foreground uppercase">Acesso rápido</span>
+                  </Link>
+                </DropdownMenuItem>
+                <div className="h-px bg-border my-1" />
+                <DropdownMenuItem asChild className="p-3 cursor-pointer bg-primary/5 hover:bg-primary/20 rounded-lg">
+                  <a href="https://lumia.crievalor.com.br" target="_blank" rel="noopener noreferrer" className="flex items-center justify-between w-full">
+                    <span className="font-bold text-primary">Login Sistema LUMIA</span>
+                    <ExternalLink className="w-3 h-3 text-primary" />
+                  </a>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
 
             {/* Services Dropdown */}
             <DropdownMenu>

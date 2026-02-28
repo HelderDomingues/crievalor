@@ -32,7 +32,7 @@ const PricingSection = () => {
                         <Card
                             key={plan.id}
                             className={`flex flex-col h-full bg-slate-900/50 backdrop-blur-xl border-slate-800 transition-all duration-500 hover:translate-y-[-8px] group ${plan.popular ? "ring-2 ring-primary shadow-[0_0_50px_-12px_rgba(59,130,246,0.3)] scale-105" : "hover:border-slate-700"
-                                }`}
+                                } relative`}
                         >
                             {plan.popular && (
                                 <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-primary text-white text-sm font-bold rounded-full shadow-lg z-20">
@@ -40,44 +40,82 @@ const PricingSection = () => {
                                 </div>
                             )}
 
-                            <CardHeader className="text-center pt-10 pb-6">
-                                <h3 className="text-2xl font-bold text-white mb-2">{plan.name}</h3>
-                                <p className="text-slate-400 text-sm mb-6">{plan.description}</p>
-                                <div className="flex flex-col items-center">
-                                    <div className="flex items-baseline gap-1">
-                                        <span className="text-4xl font-extrabold text-white">{plan.monthlyPrice}</span>
-                                        <span className="text-slate-500 font-medium">/mês</span>
-                                    </div>
-                                    <div className="mt-2 text-sm text-slate-500">
-                                        Ou {plan.annualPrice} à vista anual
-                                    </div>
-                                </div>
-                            </CardHeader>
-
-                            <CardContent className="flex-grow pt-0">
-                                <div className="space-y-4">
-                                    {plan.features.map((feature, idx) => (
-                                        <div key={idx} className="flex items-start gap-3">
-                                            <div className="mt-1 flex-shrink-0 w-5 h-5 rounded-full bg-primary/20 flex items-center justify-center border border-primary/30 group-hover:bg-primary/30 transition-colors">
-                                                <Check className="w-3.2 h-3.2 text-primary" />
-                                            </div>
-                                            <span className="text-sm text-slate-300 leading-tight">{feature}</span>
+                            <div className="flex-grow">
+                                <CardHeader className="text-center pt-10 pb-6">
+                                    <h3 className="text-2xl font-bold text-white mb-2">{plan.name}</h3>
+                                    <p className="text-slate-400 text-sm mb-6 min-h-[40px]">{plan.description}</p>
+                                    <div className="flex flex-col items-center">
+                                        <div className="flex items-baseline gap-1">
+                                            <span className="text-4xl font-extrabold text-white">{plan.monthlyPrice}</span>
+                                            <span className="text-slate-500 font-medium">/mês</span>
                                         </div>
-                                    ))}
-                                </div>
-                            </CardContent>
+                                        <div className="mt-2 text-sm text-slate-500">
+                                            Ou {plan.annualPrice} à vista anual
+                                        </div>
+                                    </div>
+                                </CardHeader>
 
-                            <CardFooter className="pb-10 pt-6">
-                                <CheckoutController
-                                    planId={plan.id}
-                                    installments={1}
-                                    paymentType="credit"
-                                    buttonText={plan.cta}
-                                    className={`w-full py-6 text-lg font-bold transition-all duration-300 ${plan.popular
-                                        ? "bg-primary hover:bg-primary/90 shadow-glow"
-                                        : "bg-slate-800 hover:bg-slate-700 text-white"
-                                        }`}
-                                />
+                                <CardContent className="pt-0">
+                                    <div className="space-y-4">
+                                        {plan.features.map((feature, idx) => (
+                                            <div key={idx} className="flex items-start gap-3">
+                                                <div className="mt-1 flex-shrink-0 w-5 h-5 rounded-full bg-primary/20 flex items-center justify-center border border-primary/30 group-hover:bg-primary/30 transition-colors">
+                                                    <Check className="w-3.2 h-3.2 text-primary" />
+                                                </div>
+                                                <span className="text-sm text-slate-300 leading-tight">{feature}</span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </CardContent>
+                            </div>
+
+                            <CardFooter className="pb-10 pt-6 flex flex-col gap-3">
+                                {plan.id === 'basico' ? (
+                                    <>
+                                        <Button
+                                            asChild
+                                            className="w-full py-6 text-lg font-bold bg-primary hover:bg-primary/90 transition-all duration-300"
+                                            onClick={() => {
+                                                localStorage.setItem('checkoutIntent', 'trial');
+                                                localStorage.setItem('selectedPlanId', plan.id);
+                                                localStorage.setItem('checkoutPlanId', plan.id);
+                                            }}
+                                        >
+                                            <Link to={`/auth?plan=${plan.id}`}>
+                                                Iniciar Trial Grátis
+                                            </Link>
+                                        </Button>
+                                        <Button
+                                            asChild
+                                            variant="outline"
+                                            className="w-full py-6 text-lg font-bold border-primary/20 hover:border-primary/50 text-white transition-all duration-300"
+                                            onClick={() => {
+                                                localStorage.setItem('checkoutIntent', 'purchase');
+                                                localStorage.setItem('selectedPlanId', plan.id);
+                                            }}
+                                        >
+                                            <Link to={`/auth?plan=${plan.id}`}>
+                                                Assinar Agora
+                                            </Link>
+                                        </Button>
+                                    </>
+                                ) : (
+                                    <Button
+                                        asChild
+                                        className={`w-full py-6 text-lg font-bold transition-all duration-300 ${plan.popular
+                                            ? "bg-primary hover:bg-primary/90 shadow-glow"
+                                            : "bg-slate-800 hover:bg-slate-700 text-white"
+                                            }`}
+                                        onClick={() => {
+                                            localStorage.setItem('checkoutIntent', 'purchase');
+                                            localStorage.setItem('selectedPlanId', plan.id);
+                                        }}
+                                    >
+                                        <Link to={`/auth?plan=${plan.id}`}>
+                                            {plan.cta}
+                                        </Link>
+                                    </Button>
+                                )}
                             </CardFooter>
                         </Card>
                     ))}

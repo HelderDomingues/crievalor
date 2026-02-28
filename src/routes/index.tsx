@@ -31,6 +31,12 @@ import Palestra from "@/pages/Palestra";
 import PalestraSucesso from "@/pages/PalestraSucesso";
 import LecturesAdmin from "@/pages/LecturesAdmin";
 import EventLeadsAdmin from "@/pages/EventLeadsAdmin";
+import LumiaSuccess from "@/pages/LumiaSuccess";
+import LumiaDashboard from "@/pages/LumiaDashboard";
+import Checkout from "@/pages/Checkout";
+import Settings from "@/pages/Settings";
+import WorkspaceSettings from "@/pages/WorkspaceSettings";
+import Relatorios from "@/pages/Relatorios";
 
 import Dashboard from "@/pages/Dashboard";
 import Apresentacao from "@/pages/Apresentacao";
@@ -46,6 +52,8 @@ import BlogPostEditor from "@/pages/admin/blog/BlogPostEditor";
 import CategoryManager from "@/pages/admin/blog/CategoryManager";
 import BioManager from "@/pages/admin/BioManager";
 import AdminUsers from "@/pages/AdminUsers";
+import AdminWorkspaces from "@/pages/AdminWorkspaces";
+import AdminSubscriptions from "@/pages/AdminSubscriptions";
 
 import { RootLayout } from "@/components/layout/RootLayout";
 
@@ -208,6 +216,22 @@ export const router = createBrowserRouter([
         ),
       },
       {
+        path: "admin-workspaces",
+        element: (
+          <ProtectedRoute requiredRole="admin">
+            <AdminWorkspaces />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "admin-subscriptions",
+        element: (
+          <ProtectedRoute requiredRole="admin">
+            <AdminSubscriptions />
+          </ProtectedRoute>
+        ),
+      },
+      {
         path: "auth",
         element: <Auth />,
       },
@@ -257,6 +281,14 @@ export const router = createBrowserRouter([
       },
 
       {
+        path: "checkout",
+        element: (
+          <ProtectedRoute>
+            <Checkout />
+          </ProtectedRoute>
+        ),
+      },
+      {
         path: "dashboard",
         element: (
           <ProtectedRoute>
@@ -275,6 +307,26 @@ export const router = createBrowserRouter([
       {
         path: "planos",
         element: <Pricing />,
+      },
+      {
+        path: "lumia/sucesso",
+        element: <LumiaSuccess />,
+      },
+      {
+        path: "lumia/dashboard",
+        element: (
+          <ProtectedRoute>
+            <LumiaDashboard />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "workspace-settings",
+        element: (
+          <ProtectedRoute requiredRole="company_admin">
+            <WorkspaceSettings />
+          </ProtectedRoute>
+        ),
       },
       // Blog Routes
       {

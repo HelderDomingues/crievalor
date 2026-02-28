@@ -12,7 +12,7 @@ import MaterialCard from "@/components/materials/MaterialCard";
 import MaterialFilters from "@/components/materials/MaterialFilters";
 import MaterialSkeleton from "@/components/materials/MaterialSkeleton";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { BookOpen, User as UserIcon, Settings, LogOut } from "lucide-react";
+import { BookOpen, User as UserIcon, Settings, LogOut, Sparkles, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Material } from "@/pages/MaterialExclusivo";
@@ -33,7 +33,7 @@ const Dashboard: React.FC = () => {
             const userProfile = profile as any;
             const status = userProfile.subscription_status?.toLowerCase();
             if (status === 'past_due' || status === 'payment_required') {
-                navigate('/subscription?expired=true');
+                navigate('/planos?expired=true');
             }
         }
         fetchMaterials();
@@ -68,14 +68,14 @@ const Dashboard: React.FC = () => {
 
     const handleAccessMaterial = async (materialId: string) => {
         try {
-            await supabaseExtended
-                .from('material_accesses')
+            await (supabaseExtended
+                .from('material_accesses') as any)
                 .insert([{ material_id: materialId, user_id: user?.id }]);
 
-            await supabaseExtended.rpc('increment_material_access_count', { material_id: materialId });
+            await (supabaseExtended as any).rpc('increment_material_access_count', { material_id: materialId });
 
-            const { data } = await supabaseExtended
-                .from('materials')
+            const { data } = await (supabaseExtended
+                .from('materials') as any)
                 .select('file_url')
                 .eq('id', materialId)
                 .single();
@@ -138,6 +138,26 @@ const Dashboard: React.FC = () => {
                         </div>
                     </div>
 
+                    {((profile as any)?.subscription_status === 'trialing' || (profile as any)?.subscription_status === 'active') && (
+                        <div className="mb-10 p-6 bg-gradient-to-r from-[#1a2e4c]/40 to-primary/10 border border-primary/20 rounded-2xl flex flex-col md:flex-row items-center justify-between gap-4">
+                            <div className="flex items-center gap-4">
+                                <div className="p-3 rounded-full bg-primary/20 text-primary uppercase">
+                                    <Sparkles className="w-6 h-6" />
+                                </div>
+                                <div className="text-left">
+                                    <h3 className="text-white font-bold text-lg">Ambiente LUMIA Ativo</h3>
+                                    <p className="text-gray-400 text-sm">Você tem acesso aos consultores de estratégia e inteligência de negócios.</p>
+                                </div>
+                            </div>
+                            <Button asChild className="bg-primary hover:bg-primary/90 text-white shrink-0">
+                                <Link to="/lumia/dashboard" className="flex items-center gap-2">
+                                    Acessar Painel LUMIA
+                                    <ExternalLink className="w-4 h-4" />
+                                </Link>
+                            </Button>
+                        </div>
+                    )}
+
                     <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
                         {/* Sidebar / Profile Summary */}
                         <div className="lg:col-span-1 space-y-6">
@@ -154,46 +174,70 @@ const Dashboard: React.FC = () => {
                                         <p className="text-xs text-gray-500 uppercase tracking-wider">Papel</p>
                                         <p className="text-sm capitalize">{profile?.role || 'Membro'}</p>
                                     </div>
+
+                                    {(profile as any)?.subscription_status === 'trialing' && (
+                                        <div className="pt-4 border-t border-white/5">
+                                            <p className="text-xs text-amber-500 font-medium mb-2">Seu trial do LUMIA expira em breve.</p>
+                                            <Button asChild size="sm" className="w-full bg-primary hover:bg-primary/90 text-xs py-1">
+                                                <Link to="/planos">Assinar Plano LUMIA</Link>
+                                            </Button>
+                                        </div>
+                                    )}
                                 </CardContent>
                             </Card>
                         </div>
 
                         {/* Main Content - Materials */}
-                        <div className="lg:col-span-3">
-                            <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
-                                <h2 className="text-2xl font-bold text-white flex items-center">
-                                    <BookOpen className="w-6 h-6 mr-2 text-primary" />
-                                    Materiais Exclusivos
-                                </h2>
-                                <MaterialFilters
-                                    activeFilter={activeFilter}
-                                    onFilterChange={setActiveFilter}
-                                />
-                            </div>
+                        {(isAdmin || (profile as any)?.tags?.includes('oficina-lideres')) ? (
+                            <div className="lg:col-span-3">
+                                <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+                                    <h2 className="text-2xl font-bold text-white flex items-center">
+                                        <BookOpen className="w-6 h-6 mr-2 text-primary" />
+                                        Materiais Exclusivos
+                                    </h2>
+                                    <MaterialFilters
+                                        activeFilter={activeFilter}
+                                        onFilterChange={setActiveFilter}
+                                    />
+                                </div>
 
-                            {isLoadingMaterials ? (
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    {[1, 2, 3, 4].map(i => <MaterialSkeleton key={i} />)}
+                                {isLoadingMaterials ? (
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        {[1, 2, 3, 4].map(i => <MaterialSkeleton key={i} />)}
+                                    </div>
+                                ) : materials.length === 0 ? (
+                                    <Card className="bg-[#1a2e4c]/10 border-dashed border-white/10 text-center py-12">
+                                        <CardContent>
+                                            <BookOpen className="h-12 w-12 text-gray-600 mx-auto mb-4" />
+                                            <p className="text-gray-400">Nenhum material encontrado nesta categoria.</p>
+                                        </CardContent>
+                                    </Card>
+                                ) : (
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        {materials.map((material) => (
+                                            <MaterialCard
+                                                key={material.id}
+                                                material={material}
+                                                onAccess={() => handleAccessMaterial(material.id)}
+                                            />
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                        ) : (
+                            <div className="lg:col-span-3">
+                                <div className="p-12 text-center bg-[#1a2e4c]/10 border border-white/5 rounded-3xl backdrop-blur-sm">
+                                    <Sparkles className="w-12 h-12 text-primary mx-auto mb-6 opacity-50" />
+                                    <h2 className="text-2xl font-bold text-white mb-4">Bem-vindo ao Ecossistema LUMIA</h2>
+                                    <p className="text-gray-400 max-w-md mx-auto mb-8">
+                                        Seu acesso está focado na Inteligência Organizacional e Consultoria via IA. Explore todas as funcionalidades no seu painel dedicado.
+                                    </p>
+                                    <Button asChild className="bg-primary hover:bg-primary/90 text-white px-8 h-12">
+                                        <Link to="/lumia/dashboard">Acessar Painel LUMIA</Link>
+                                    </Button>
                                 </div>
-                            ) : materials.length === 0 ? (
-                                <Card className="bg-[#1a2e4c]/10 border-dashed border-white/10 text-center py-12">
-                                    <CardContent>
-                                        <BookOpen className="h-12 w-12 text-gray-600 mx-auto mb-4" />
-                                        <p className="text-gray-400">Nenhum material encontrado nesta categoria.</p>
-                                    </CardContent>
-                                </Card>
-                            ) : (
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    {materials.map((material) => (
-                                        <MaterialCard
-                                            key={material.id}
-                                            material={material}
-                                            onAccess={() => handleAccessMaterial(material.id)}
-                                        />
-                                    ))}
-                                </div>
-                            )}
-                        </div>
+                            </div>
+                        )}
                     </div>
                 </div>
             </main>

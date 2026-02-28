@@ -1,13 +1,21 @@
-
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { AlertCircle, User, Briefcase, Globe, BookOpen, CheckCircle } from "lucide-react";
+import {
+  User,
+  LogOut,
+  LayoutDashboard,
+  Briefcase,
+  Globe,
+  BookOpen,
+  CheckCircle,
+  AlertCircle
+} from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import AvatarUpload from "@/components/AvatarUpload";
 import { UserProfile } from "@/types/auth";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { Subscription } from "@/types/subscription";
 
@@ -53,9 +61,9 @@ const ProfileSidebar: React.FC<ProfileSidebarProps> = ({
             <p className="text-sm text-muted-foreground">{user?.email}</p>
 
             {hasActiveSubscription && (
-              <Badge className="mt-2 bg-green-600 hover:bg-green-700">
+              <Badge className={`mt-2 ${subscription?.status === 'trialing' ? 'bg-amber-600 hover:bg-amber-700' : 'bg-green-600 hover:bg-green-700'}`}>
                 <CheckCircle className="h-3 w-3 mr-1" />
-                Assinante
+                {subscription?.status === 'trialing' ? 'Trial Ativo' : 'Assinante'}
               </Badge>
             )}
           </div>
@@ -105,6 +113,30 @@ const ProfileSidebar: React.FC<ProfileSidebarProps> = ({
             <BookOpen className="mr-2 h-4 w-4" />
             Materiais Exclusivos
           </Button>
+
+          {subscription?.status === 'trialing' && (
+            <Button
+              variant="outline"
+              className="justify-start border-primary/30 text-primary hover:bg-primary/5 mt-2"
+              onClick={() => navigate('/planos')}
+            >
+              <CheckCircle className="mr-2 h-4 w-4" />
+              Assinar Plano LUMIA
+            </Button>
+          )}
+
+          <Separator className="my-4" />
+
+          <Button
+            variant="outline"
+            className="w-full justify-start border-primary/30 text-primary hover:bg-primary/5"
+            asChild
+          >
+            <Link to="/lumia/dashboard">
+              <LayoutDashboard className="mr-2 h-4 w-4" />
+              Painel LUMIA
+            </Link>
+          </Button>
         </nav>
 
         <Separator className="my-4" />
@@ -114,6 +146,7 @@ const ProfileSidebar: React.FC<ProfileSidebarProps> = ({
           className="w-full text-destructive hover:bg-destructive/10"
           onClick={handleSignOut}
         >
+          <LogOut className="mr-2 h-4 w-4" />
           Sair
         </Button>
       </CardContent>

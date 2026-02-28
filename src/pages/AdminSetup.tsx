@@ -5,7 +5,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import AdminAuth from "@/components/admin/AdminAuth";
 import { Button } from "@/components/ui/button";
-import { FileText, Image, MessageSquareQuote, Palette, Calendar, UserCheck, Stethoscope, Newspaper, Shield } from "lucide-react";
+import { FileText, Image, MessageSquareQuote, Palette, Calendar, UserCheck, Stethoscope, Newspaper, Shield, Building2, Wallet } from "lucide-react";
 import AdminCard from "@/components/admin/AdminCard";
 
 const AdminSetup = () => {
@@ -105,6 +105,18 @@ const AdminSetup = () => {
                     icon={<Shield className="h-10 w-10" />}
                     to="/admin-users"
                     description="Gerenciar permissões, papéis e níveis de acesso de todos os usuários"
+                  />
+                  <AdminCard
+                    title="Gerenciar Workspaces"
+                    icon={<Building2 className="h-10 w-10" />}
+                    to="/admin-workspaces"
+                    description="Gerenciar empresas cadastradas e seus membros (assentos)"
+                  />
+                  <AdminCard
+                    title="Gerenciar Assinaturas"
+                    icon={<Wallet className="h-10 w-10" />}
+                    to="/admin-subscriptions"
+                    description="Histórico de pagamentos e assinaturas via NetCred"
                   />
                 </div>
               </div>

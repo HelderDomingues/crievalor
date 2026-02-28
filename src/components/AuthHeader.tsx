@@ -5,7 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useProfile } from "@/hooks/useProfile";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator, DropdownMenuLabel } from "@/components/ui/dropdown-menu";
-import { User, CreditCard, LogOut, Settings, Shield, Palette, BookOpen } from "lucide-react";
+import { Label } from "@/components/ui/label";
+import { User, CreditCard, LogOut, Settings, Shield, Palette, BookOpen, ExternalLink, LayoutDashboard, Building2, Wallet } from "lucide-react";
 
 const AuthHeader = () => {
   const { user, signOut } = useAuth();
@@ -47,6 +48,23 @@ const AuthHeader = () => {
               </Link>
             </DropdownMenuItem>
 
+            <DropdownMenuSeparator />
+            <DropdownMenuLabel>Sistema LUMIA</DropdownMenuLabel>
+            <DropdownMenuItem asChild>
+              <Link to="/lumia/dashboard" className="flex items-center text-primary font-medium">
+                <LayoutDashboard className="mr-2 h-4 w-4" />
+                <span>Meu Painel LUMIA</span>
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <a href="https://lumia.crievalor.com.br" target="_blank" rel="noopener noreferrer" className="flex items-center justify-between w-full">
+                <div className="flex items-center">
+                  <ExternalLink className="mr-2 h-4 w-4 text-primary" />
+                  <span className="font-bold text-primary">Login Sistema LUMIA</span>
+                </div>
+              </a>
+            </DropdownMenuItem>
+
 
             {isAdmin && !rolesLoading && (
               <>
@@ -74,6 +92,18 @@ const AuthHeader = () => {
                   <Link to="/admin-users" className="flex items-center text-primary font-medium">
                     <Shield className="mr-2 h-4 w-4" />
                     <span>Gerenciar Usuários</span>
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to="/admin-workspaces" className="flex items-center text-primary font-medium">
+                    <Building2 className="mr-2 h-4 w-4" />
+                    <span>Gerenciar Workspaces</span>
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to="/admin-subscriptions" className="flex items-center text-primary font-medium">
+                    <Wallet className="mr-2 h-4 w-4" />
+                    <span>Gerenciar Assinaturas</span>
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>

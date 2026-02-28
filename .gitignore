@@ -26,3 +26,6 @@ dist-ssr
 # Agent
 .agent
 .agent/*
+
+# Local Netlify folder
+.netlify
