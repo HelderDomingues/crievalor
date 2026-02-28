@@ -106,7 +106,7 @@ const Index = () => {
         image="https://iili.io/KnFOVTb.png"
         brand="Crie Valor - Inteligência Organizacional"
         offers={{
-          price: "697.00",
+          price: "560.00",
           priceCurrency: "BRL",
           availability: "https://schema.org/InStock",
           url: "https://crievalor.com.br/lumia"

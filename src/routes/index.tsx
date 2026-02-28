@@ -10,7 +10,7 @@ import ClientLogosAdminPage from "@/pages/ClientLogosAdminPage";
 import TestimonialsAdmin from "@/pages/TestimonialsAdmin";
 import Auth from "@/pages/Auth";
 import Profile from "@/pages/Profile";
-import Mar from "@/pages/Mar";
+
 import Sobre from "@/pages/Sobre";
 import Contato from "@/pages/Contato";
 import Projetos from "@/pages/Projetos";
@@ -22,7 +22,7 @@ import IdentidadeVisualOriginal from "@/pages/IdentidadeVisualOriginal";
 import PrivacyPolicy from "@/pages/PrivacyPolicy";
 import RefundPolicy from "@/pages/RefundPolicy";
 import TermsOfService from "@/pages/TermsOfService";
-import MentorProposito from "@/pages/MentorProposito";
+
 import Ecosystem from "@/pages/Ecosystem";
 
 import Accessibility from "@/pages/Accessibility";
@@ -67,10 +67,7 @@ export const router = createBrowserRouter([
         index: true,
         element: <Index />,
       },
-      {
-        path: "mar",
-        element: <Mar />,
-      },
+
       {
         path: "sobre",
         element: <Sobre />,

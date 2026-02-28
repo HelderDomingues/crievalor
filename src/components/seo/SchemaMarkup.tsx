@@ -85,7 +85,7 @@ export const OrganizationSchema: React.FC<OrganizationSchemaProps> = ({
   url,
   logo,
   name = "Crie Valor - Inteligência Organizacional",
-  description = "Sistema de Inteligência Organizacional que transforma empresas através de produtos proprietários: MAR, Lumia (6 consultores virtuais), Mentor de Propósito e Oficina de Líderes.",
+  description = "Ecossistema de Inteligência Organizacional com IA que ajuda empresários a profissionalizarem a gestão rapidamente através do Sistema Lumia e serviços de educação executiva.",
   aggregateRating,
   reviews
 }) => {

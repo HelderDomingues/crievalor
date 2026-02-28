@@ -12,9 +12,7 @@ import {
   CarouselPrevious,
   CarouselApi,
 } from "@/components/ui/carousel";
-import marLogo from "@/assets/mar-logo-hero.png";
 import lumiaLogo from "@/assets/lumia-logo-hero.png";
-import mentorPropositoLogo from "@/assets/mentor-proposito-logo-hero.png";
 import oficinaLideresLogo from "@/assets/oficina-lideres-logo-hero.png";
 
 interface InteractiveBackgroundProps {
@@ -393,8 +391,7 @@ const InteractiveGalaxyHeroCarousel = () => {
                         </h1>
 
                         {/* Subtitle */}
-                        <h2 className={`text-lg sm:text-xl lg:text-2xl xl:text-3xl font-semibold ${slide.accentColor} leading-relaxed ${slide.id === 'mar' ? 'animate-pulse font-bold text-2xl sm:text-3xl lg:text-4xl xl:text-5xl tracking-tight drop-shadow-[0_0_15px_rgba(96,165,250,0.5)]' : ''
-                          }`}>
+                        <h2 className={`text-lg sm:text-xl lg:text-2xl xl:text-3xl font-semibold ${slide.accentColor} leading-relaxed`}>
                           {slide.subtitle}
                         </h2>
 
