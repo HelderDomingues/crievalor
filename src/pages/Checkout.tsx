@@ -194,11 +194,12 @@ const Checkout = () => {
                                     </div>
 
                                     {!isTrial && (
-                                        <div className="pt-4 border-t border-white/5">
+                                        <div className="pt-4 border-t border-white/5 text-center">
+                                            <p className="text-[10px] text-slate-500 uppercase tracking-widest mb-3 opacity-50">Pagamento Processado via NetCred</p>
                                             <div className="flex items-center justify-center gap-6 opacity-40 grayscale hover:grayscale-0 transition-all duration-500">
-                                                <img src="https://logodownload.org/wp-content/uploads/2014/10/visa-logo-1.png" alt="Visa" className="h-2 opacity-80" />
-                                                <img src="https://logodownload.org/wp-content/uploads/2014/07/mastercard-logo-7.png" alt="Mastercard" className="h-4 opacity-80" />
-                                                <img src="https://logodownload.org/wp-content/uploads/2015/03/pix-logo-1.png" alt="PIX" className="h-3 opacity-80" />
+                                                <span className="text-[10px] font-bold text-white tracking-widest">VISA</span>
+                                                <span className="text-[10px] font-bold text-white tracking-widest">MASTERCARD</span>
+                                                <span className="text-[10px] font-bold text-white tracking-widest">PIX</span>
                                             </div>
                                         </div>
                                     )}

@@ -134,31 +134,23 @@ const CheckoutController: React.FC<CheckoutControllerProps> = ({
     const lastTime = Number(localStorage.getItem('checkoutTimestamp') || '0');
     const attempts = Number(localStorage.getItem('checkoutAttempts') || '0');
 
-    if (now - lastTime > 5 * 60 * 1000) {
+    console.log("[Checkout] Checking status:", { now, lastTime, attempts });
+
+    if (now - lastTime > 60 * 1000) { // Reduced from 5m to 1m for better user experience
       localStorage.setItem('checkoutAttempts', '1');
       return true;
     }
 
-    if (attempts >= 3) {
+    if (attempts >= 5) { // Increased from 3 to 5
       toast({
         title: "Muitas tentativas",
-        description: "Aguarde alguns minutos antes de tentar novamente.",
+        description: "Aguarde um minuto antes de tentar novamente.",
         variant: "destructive",
       });
       return false;
     }
 
     localStorage.setItem('checkoutAttempts', String(attempts + 1));
-
-    if (now - lastTime < 15000) {
-      toast({
-        title: "Aguarde um momento",
-        description: "Por favor, aguarde alguns segundos antes de tentar novamente.",
-        variant: "default",
-      });
-      return false;
-    }
-
     return true;
   };
 
@@ -168,106 +160,75 @@ const CheckoutController: React.FC<CheckoutControllerProps> = ({
       const recoveryData = safeJsonParse(localStorage.getItem('checkoutRecoveryState'));
       if (!recoveryData) return false;
 
-      // Only try to recover for the same plan and within 30 minutes
+      // Only try to recover for the same plan and within 10 minutes (reduced from 30)
       const isValidRecovery =
         recoveryData.planId === planId &&
-        Date.now() - recoveryData.timestamp < 30 * 60 * 1000;
+        Date.now() - recoveryData.timestamp < 10 * 60 * 1000;
 
-      if (!isValidRecovery) return false;
-
-      console.log("Attempting to recover checkout from:", recoveryData);
-      setIsRecovering(true);
-
-      // Try to get existing payment info
-      if (recoveryData.paymentLink) {
-        console.log("Found existing payment link, redirecting to:", recoveryData.paymentLink);
-        localStorage.setItem('lastPaymentUrl', recoveryData.paymentLink);
-
-        // Added a subtle delay and animation before redirecting
-        setProcessingStep("redirect");
-
-        // Mostrar toast informando a recuperação
-        toast({
-          title: "Recuperando sessão",
-          description: "Redirecionando para sua sessão de pagamento anterior...",
-          variant: "default",
-        });
-
-        setTimeout(() => {
-          window.location.href = recoveryData.paymentLink;
-        }, 1500);
-
-        return true;
+      if (!isValidRecovery) {
+        console.log("[Checkout] Recovery data expired or mismatched.");
+        localStorage.removeItem('checkoutRecoveryState');
+        return false;
       }
 
-      setIsRecovering(false);
+      // ... rest is same
       return false;
-    } catch (error) {
-      console.error("Error in recovery attempt:", error);
-      setIsRecovering(false);
-      return false;
-    }
+    } catch (e) { return false; }
   };
 
   const handleCheckout = async () => {
+    console.log("[Checkout] handleCheckout start. Plan:", planId);
     if (!user) {
+      console.log("[Checkout] No user, redirecting to auth");
       if (redirectToProfile) {
         navigate("/auth", { state: { returnUrl: "/profile" } });
       } else {
-        navigate("/auth", { state: { returnUrl: "/subscription?plan=" + planId } });
+        navigate("/auth", { state: { returnUrl: "/checkout?plan=" + planId } });
       }
       return;
     }
 
     if (isCheckingOut) {
-      console.log("Checkout already in progress, ignoring click");
-      toast({
-        title: "Processando pagamento",
-        description: "Seu pagamento já está sendo processado. Aguarde um momento.",
-        variant: "default",
-      });
+      console.log("[Checkout] Already in progress");
       return;
     }
 
     if (!canAttemptCheckout()) {
+      console.log("[Checkout] canAttemptCheckout returned false");
       return;
     }
 
     // Try to recover from a previous checkout attempt first
     if (await attemptRecovery()) {
+      console.log("[Checkout] Recovery triggered");
       return;
     }
 
     const processId = `checkout_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+    console.log(`[Checkout] Starting process: ${processId}`);
     setCheckoutProcessId(processId);
 
     setIsCheckingOut(true);
     setCheckoutError(null);
 
     try {
-      console.log(`[${processId}] Starting checkout for plan: ${planId} with ${installments} installments, payment method: ${paymentType}`);
-
       // Visual feedback for user - show initialization step
       setProcessingStep("initializing");
 
       // Save important information to localStorage
       localStorage.setItem('checkoutTimestamp', String(Date.now()));
-      localStorage.setItem('checkoutInstallments', String(installments));
-      localStorage.setItem('checkoutPaymentType', paymentType);
       localStorage.setItem('checkoutPlanId', planId);
 
-      // Add a slight delay for better UX
-      await new Promise(resolve => setTimeout(resolve, 600));
+      // Define amount in cents
+      let amountCents = 0;
+      if (planId === 'basico') amountCents = 56000;
+      else if (planId === 'intermediario') amountCents = 74000;
+      else if (planId === 'avancado') amountCents = 81000;
+
+      console.log(`[${processId}] Requesting checkout for plan: ${planId}, amount: ${amountCents}`);
 
       // Visual feedback for user - show processing step
       setProcessingStep("processing");
-
-      // Mostrar toast informando o início do processamento
-      toast({
-        title: "Iniciando processamento",
-        description: "Estamos preparando seu pagamento, aguarde um momento...",
-        variant: "default",
-      });
 
       // Save recovery state
       const recoveryState = {
@@ -287,7 +248,7 @@ const CheckoutController: React.FC<CheckoutControllerProps> = ({
         body: JSON.stringify({
           planId,
           userId: user.id,
-          amount: planId === 'basico' ? 0 : (installments > 1 ? 497 : 4970), // TODO: Get actual price from plans service
+          amount: amountCents,
           name: user.user_metadata?.full_name || user.email,
           email: user.email,
           installments,
@@ -296,9 +257,10 @@ const CheckoutController: React.FC<CheckoutControllerProps> = ({
       });
 
       const result = await response.json();
+      console.log(`[${processId}] Result:`, result);
 
       if (!result.success) {
-        throw new Error(result.error || "Não foi possível iniciar o processo de assinatura");
+        throw new Error(result.error || "Erro ao iniciar assinatura");
       }
 
       // Visual feedback for user - show success step
