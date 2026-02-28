@@ -123,7 +123,7 @@ const AdminWorkspaces: React.FC = () => {
                 .from('workspaces')
                 .insert({
                     name: newWorkspaceName,
-                    created_by: userData.user.id
+                    owner_id: userData.user.id
                 })
                 .select();
 

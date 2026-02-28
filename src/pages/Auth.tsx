@@ -131,6 +131,28 @@ const Auth = () => {
 
         if (profileError) console.error("Error updating profile:", profileError);
 
+        // Fetch Lumia Basico Product ID
+        const { data: productData } = await (supabase as any)
+          .from('products')
+          .select('id')
+          .eq('slug', 'lumia-basico')
+          .single();
+
+        if (productData) {
+          // Grant access to Lumia Basico on signup
+          const expiresAt = new Date();
+          expiresAt.setDate(expiresAt.getDate() + 7); // 7-day trial example limit
+
+          await (supabase as any).from('user_products').insert({
+            user_id: data.user.id,
+            product_id: productData.id,
+            access_granted_at: new Date().toISOString(),
+            access_expires_at: expiresAt.toISOString(),
+            status: 'active',
+            notes: 'Atribuição automática após cadastro (Trial 7 dias)'
+          });
+        }
+
         toast({
           title: "Conta criada!",
           description: "Verifique seu e-mail para confirmar o cadastro.",

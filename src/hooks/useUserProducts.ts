@@ -90,6 +90,31 @@ export const useUserProducts = (userId?: string) => {
         },
     });
 
+    // Mutação para editar um produto de um usuário
+    const updateProduct = useMutation({
+        mutationFn: async ({ userProductId, data }: { userProductId: string, data: Partial<AssignProductFormData> & { status?: string } }) => {
+            const { error } = await (supabaseExtended
+                .from("user_products") as any)
+                .update({
+                    access_expires_at: data.access_expires_at,
+                    notes: data.notes,
+                    status: data.status,
+                })
+                .eq("id", userProductId);
+
+            if (error) throw error;
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["admin-user-products", userId] });
+            queryClient.invalidateQueries({ queryKey: ["user-products", userId] });
+            toast.success("Produto atualizado com sucesso!");
+        },
+        onError: (error) => {
+            console.error("Error updating product:", error);
+            toast.error("Erro ao atualizar produto.");
+        },
+    });
+
     return {
         allProducts,
         userProducts,
@@ -98,5 +123,7 @@ export const useUserProducts = (userId?: string) => {
         isAssigning: assignProduct.isPending,
         revokeProduct: revokeProduct.mutate,
         isRevoking: revokeProduct.isPending,
+        updateProduct: updateProduct.mutate,
+        isUpdating: updateProduct.isPending,
     };
 };

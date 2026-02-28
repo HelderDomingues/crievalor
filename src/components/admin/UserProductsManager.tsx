@@ -5,9 +5,10 @@ import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useUserProducts } from "@/hooks/useUserProducts";
 import { AssignProductDialog } from "./AssignProductDialog";
+import { EditProductDialog } from "./EditProductDialog";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { Package, Plus, Trash2, XCircle } from "lucide-react";
+import { Package, Plus, Trash2, XCircle, Edit2 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 
 interface UserProductsManagerProps {
@@ -21,6 +22,7 @@ export const UserProductsManager: React.FC<UserProductsManagerProps> = ({
 }) => {
     const { userProducts, isLoading, revokeProduct, isRevoking } = useUserProducts(userId);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const [editData, setEditData] = useState<{ id: string; access_expires_at: string | null; notes: string | null; status: string; product_name?: string } | null>(null);
 
     // Status mapping to colors
     const statusColors: Record<string, string> = {
@@ -111,17 +113,34 @@ export const UserProductsManager: React.FC<UserProductsManagerProps> = ({
                                                 : "Vitalício"}
                                         </TableCell>
                                         <TableCell className="text-right">
-                                            {up.status === 'active' && (
+                                            <div className="flex justify-end gap-2">
                                                 <Button
                                                     variant="ghost"
                                                     size="icon"
-                                                    className="text-destructive hover:text-destructive hover:bg-destructive/10"
-                                                    onClick={() => handleRevoke(up.id)}
-                                                    disabled={isRevoking}
+                                                    className="text-blue-500 hover:text-blue-600 hover:bg-blue-500/10"
+                                                    onClick={() => setEditData({
+                                                        id: up.id,
+                                                        access_expires_at: up.access_expires_at,
+                                                        notes: up.notes,
+                                                        status: up.status,
+                                                        product_name: up.product?.name
+                                                    })}
                                                 >
-                                                    <XCircle className="h-4 w-4" />
+                                                    <Edit2 className="h-4 w-4" />
+                                                    <span className="sr-only">Editar</span>
                                                 </Button>
-                                            )}
+                                                {up.status === 'active' && (
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="icon"
+                                                        className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                                                        onClick={() => handleRevoke(up.id)}
+                                                        disabled={isRevoking}
+                                                    >
+                                                        <XCircle className="h-4 w-4" />
+                                                    </Button>
+                                                )}
+                                            </div>
                                         </TableCell>
                                     </TableRow>
                                 ))}
@@ -136,6 +155,13 @@ export const UserProductsManager: React.FC<UserProductsManagerProps> = ({
                 open={isDialogOpen}
                 onOpenChange={setIsDialogOpen}
             />
-        </Card>
+
+            <EditProductDialog
+                userId={userId}
+                open={!!editData}
+                onOpenChange={(open) => !open && setEditData(null)}
+                editData={editData}
+            />
+        </Card >
     );
 };
