@@ -34,17 +34,42 @@ class NetCredWebhookController extends BaseController {
             return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401 });
         }
 
-        // --- Parse body ---
-        const body = await req.json();
-        const { type, data } = body as {
-            type: string;
-            data: Record<string, any>;
-        };
+        // --- Parse Event and Body ---
+        const eventType = req.headers.get("x-netcred-event");
+        const body = await req.json() as any;
 
-        console.log(`[Webhook] Event received: ${type}`, JSON.stringify(data));
+        // Common mapping based on NetCred Docs:
+        // transaction_state: "PAID", "EXPIRED", etc.
+        // charge.reference_code: Our internal subscription ID
+        const type = eventType || body.type; // Fallback to body.type for manual tests
+        const transactionState = body.transaction_state;
+        const externalId = body.charge?.reference_code || body.externalId || "";
+        const subscriptionId = externalId.split("_")[0] || null;
+        const customerEmail = body.charge?.customer_email || body.customerEmail || "";
+        const customerName = body.charge?.customer_name || body.customerName || "Consultor";
+        const amount = body.amount ?? 0;
+        const paymentMethod = body.method ?? body.paymentMethod ?? "";
+
+        console.log(`[Webhook] Event: ${type}, State: ${transactionState}, Sub: ${subscriptionId}`);
 
         try {
-            await this.dispatch(type, data, body);
+            // Map NetCred states to our internal dispatch events
+            let internalEvent = type;
+            if (type === "TRANSACTION_UPDATE") {
+                if (transactionState === "PAID") internalEvent = "PAYMENT_PAID";
+                if (transactionState === "EXPIRED") internalEvent = "PAYMENT_EXPIRED";
+                if (transactionState === "REFUNDED") internalEvent = "PAYMENT_REFUNDED";
+            }
+
+            await this.dispatch(internalEvent, {
+                subscriptionId,
+                customerEmail,
+                customerName,
+                amount,
+                paymentMethod,
+                externalId: body.id || externalId
+            }, body);
+
             return new Response(JSON.stringify({ success: true }), { status: 200 });
         } catch (error: any) {
             console.error("[Webhook] Handler error:", error.message);
@@ -56,18 +81,12 @@ class NetCredWebhookController extends BaseController {
     // dispatch – routes each event type to its handler
     // ------------------------------------------------------------------
     private async dispatch(type: string, data: Record<string, any>, rawBody: any) {
-        // Safely extract common fields
-        const externalId: string = data.externalId ?? data.external_id ?? "";
-        const subscriptionId = externalId.split("_")[0] || null;
-        const customerEmail: string = data.customerEmail ?? data.email ?? "";
-        const customerName: string = data.customerName ?? data.name ?? "Consultor";
-        const amount: number = data.amount ?? 0;
-        const paymentMethod: string = data.paymentMethod ?? data.method ?? "";
+        const { subscriptionId, customerEmail, customerName, amount, paymentMethod, externalId } = data;
 
         // --- Always log the raw payment/event ---
         await this.logPayment({
             subscriptionId,
-            externalId: data.id ?? externalId,
+            externalId,
             amount,
             status: type,
             paymentMethod,
@@ -138,6 +157,29 @@ class NetCredWebhookController extends BaseController {
                     .from("profiles")
                     .update({ subscription_status: "active" })
                     .eq("id", sub.user_id);
+
+                // --- SIO_MAR Synchronization ---
+                // Now that payment is confirmed, we trigger the account sync
+                try {
+                    const baseUrl = process.env.URL || "http://localhost:8888";
+                    console.log(`[Webhook][PAID] Triggering SIO_MAR sync for user: ${sub.user_id}`);
+
+                    await fetch(`${baseUrl}/.netlify/functions/sync-user-to-sio-mar`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            userId: sub.user_id,
+                            email: p.customerEmail,
+                            name: p.customerName,
+                            // Fetch additional workspace data if needed, or use defaults
+                            // Using defaults for now as profiles/subscriptions are updated
+                            planLevel: sub.plan_id === 'avancado' ? 'pro' : (sub.plan_id === 'basico' ? 'free' : 'pro'),
+                            subscriptionId: p.subscriptionId
+                        })
+                    });
+                } catch (syncErr: any) {
+                    console.error("[Webhook][PAID] SIO_MAR Sync trigger failed:", syncErr.message);
+                }
             }
         }
 

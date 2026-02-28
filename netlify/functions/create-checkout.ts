@@ -132,32 +132,33 @@ class CreateCheckoutController extends BaseController {
                 subscriptionId: pendingSub.id // Pass the sub ID
             });
 
-            // 4. Sync SIO_MAR user asynchronously (best-effort)
-            try {
-                // Ensure internal hostname works whether locally or in Netlify prod
-                const baseUrl = process.env.URL || "http://localhost:8888";
-                console.log(`[CreateCheckout] Dispatching background sync to ${baseUrl}`);
-
-                // We use fetch in non-blocking mode essentially by not awaiting a long response
-                // But edge functions limit backgrounding so for now we await.
-                await fetch(`${baseUrl}/.netlify/functions/sync-user-to-sio-mar`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        userId,
-                        email,
-                        name,
-                        workspaceId: workspace.id,
-                        workspaceName: workspace.name,
-                        planLevel: planId === 'basico' ? 'free' : 'pro',
-                        seatLimit: planId === 'basico' ? 1 : (planId === 'intermediario' ? 3 : 5),
-                        role: 'admin',
-                        subscriptionId: pendingSub.id
-                    })
-                });
-            } catch (syncErr) {
-                console.error("[CreateCheckout] SIO_MAR sync fetch failed:", syncErr);
+            // 4. Handle Redirection / Response
+            if (planId === 'basico') {
+                // For the basic plan (soft trial), we can sync immediately as there's no payment delay
+                try {
+                    const baseUrl = process.env.URL || "http://localhost:8888";
+                    await fetch(`${baseUrl}/.netlify/functions/sync-user-to-sio-mar`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            userId,
+                            email,
+                            name,
+                            workspaceId: workspace.id,
+                            workspaceName: workspace.name,
+                            planLevel: 'free',
+                            seatLimit: 1,
+                            role: 'admin',
+                            subscriptionId: pendingSub.id
+                        })
+                    });
+                } catch (syncErr) {
+                    console.error("[CreateCheckout] Trial SIO_MAR sync failed:", syncErr);
+                }
             }
+
+            // Note: For paid plans, SIO_MAR synchronization is now handled in netcred-webhook.ts
+            // to avoid Netlify function chaining timeouts (502).
 
             return new Response(JSON.stringify({
                 success: true,
