@@ -5,6 +5,7 @@ export class NetCredClient {
     private static instance: NetCredClient;
     private token: string | null = null;
     private tokenExpiry: number = 0;
+    private companyId: string | null = null;
 
     private constructor() { }
 
@@ -13,6 +14,10 @@ export class NetCredClient {
             NetCredClient.instance = new NetCredClient();
         }
         return NetCredClient.instance;
+    }
+
+    public getAuthenticatedCompanyId(): string | null {
+        return this.companyId;
     }
 
     private async authenticate() {
@@ -27,6 +32,11 @@ export class NetCredClient {
       mutation tokenAuth($username: String!, $password: String!) {
         tokenAuth(username: $username, password: $password) {
           token
+          user {
+            company {
+              id
+            }
+          }
         }
       }
     `;
@@ -41,11 +51,14 @@ export class NetCredClient {
         });
 
         const data = await response.json();
-        if (data.errors) {
-            throw new Error(`NetCred Auth Error: ${JSON.stringify(data.errors)}`);
+        if (data.errors || !data.data?.tokenAuth) {
+            console.error("[NetCredClient] Auth API Error:", data.errors);
+            throw new Error(`NetCred Auth Error: ${JSON.stringify(data.errors || "Failed to get token")}`);
         }
 
         this.token = data.data.tokenAuth.token;
+        this.companyId = data.data.tokenAuth.user?.company?.id || null;
+
         // Set expiry to 23 hours (assuming 24h token)
         this.tokenExpiry = Date.now() + 23 * 60 * 60 * 1000;
     }

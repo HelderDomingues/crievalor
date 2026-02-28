@@ -30,7 +30,7 @@ export class NetCredService {
 
     const result = await this.client.request(query, {
       input: {
-        companyId: process.env.NETCRED_COMPANY_ID || "2032",
+        companyId: this.client.getAuthenticatedCompanyId() || process.env.NETCRED_COMPANY_ID || "2032",
         title: `${input.planId} (${input.email})`,
         description: input.subscriptionId,
         baseAmount: input.amount,
