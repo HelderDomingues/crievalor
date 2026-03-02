@@ -20,15 +20,16 @@ export class NetCredClient {
     }
 
     private async authenticate() {
-        const username = process.env.NETCRED_USERNAME;
-        const password = process.env.NETCRED_PASSWORD;
-        const apiUrl = process.env.NETCRED_API_URL || "https://api.sandbox.netcredbrasil.com.br/graphql";
+        const username = (process.env.NETCRED_USERNAME || "").trim();
+        const password = (process.env.NETCRED_PASSWORD || "").trim();
+        const apiUrl = (process.env.NETCRED_API_URL || "https://api.sandbox.netcredbrasil.com.br/graphql").trim();
 
         if (!username || !password) {
-            throw new Error("NetCred credentials not configured (NETCRED_USERNAME/PASSWORD)");
+            throw new Error(`NetCred credentials not configured. USER: ${username ? 'OK' : 'MISSING'}, PASS: ${password ? 'OK' : 'MISSING'}`);
         }
 
-        console.log(`[NetCredClient] Authenticating against ${apiUrl}...`);
+        console.log(`[NetCredClient] Authenticating against: ${apiUrl}`);
+        console.log(`[NetCredClient] Debug Data: U=${username.substring(0, 3)}... (len: ${username.length}), P=${password.substring(0, 2)}... (len: ${password.length})`);
 
         const query = `
       mutation tokenAuth($username: String!, $password: String!) {
@@ -49,7 +50,10 @@ export class NetCredClient {
 
         const response = await fetch(apiUrl, {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            },
             body: JSON.stringify({
                 query,
                 variables: { username, password }
@@ -59,17 +63,20 @@ export class NetCredClient {
         const data = await response.json();
 
         if (data.errors) {
-            throw new Error(`NetCred GraphQL Auth Error: ${JSON.stringify(data.errors)}`);
+            console.error("[NetCredClient] GraphQL Protocol Errors:", JSON.stringify(data.errors));
+            throw new Error(`NetCred GraphQL Protocol Error: ${data.errors[0]?.message || "Unknown"}`);
         }
 
         const auth = data.data?.tokenAuth;
 
         if (auth?.errors && auth.errors.length > 0) {
-            const errorMsg = auth.errors.map((e: any) => `${e.field}: ${e.message}`).join(', ');
+            const errorMsg = auth.errors.map((e: any) => `${e.field || 'General'}: ${e.message}`).join(', ');
+            console.error(`[NetCredClient] Auth Rejection: ${errorMsg}`);
             throw new Error(`NetCred Auth Refused: ${errorMsg}`);
         }
 
         if (!auth?.token) {
+            console.error("[NetCredClient] Auth Error: No token in response", JSON.stringify(data));
             throw new Error("NetCred Auth Error: Token not found in response");
         }
 
