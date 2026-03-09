@@ -93,9 +93,14 @@ serve(async (req) => {
             }
         );
 
-    } catch (error) {
+    } catch (error: any) {
+        console.error("ADMIN ACTION ERROR: ", error);
         return new Response(
-            JSON.stringify({ error: error.message }),
+            JSON.stringify({ 
+                error: error.message || 'Unknown error',
+                details: error,
+                stack: error.stack
+            }),
             {
                 status: 400,
                 headers: { ...corsHeaders, "Content-Type": "application/json" }
