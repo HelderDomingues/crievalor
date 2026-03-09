@@ -24,8 +24,23 @@ dist-ssr
 *.sw?
 
 # Agent
-.agent
-.agent/*
+.agent/skills/skills/
+.agent/skills/docs/
+.agent/skills/assets/
+.agent/skills/*.json
+.agent/skills/*.md
+.agent/skills/scripts/
+.agent/*.md
+!.agent/Supabase_credentials.md
+!.agent/Netlify_Credentials.md
+!.agent/NetCred_Credentials.md
 
 # Local Netlify folder
 .netlify
+
+# Claude/Antigravity local cache and config
+.claude/
+.antigravity/
+.agent/NetCred_Credentials.md
+.agent/Netlify_Credentials.md
+.agent/Supabase_credentials.md

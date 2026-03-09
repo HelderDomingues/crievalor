@@ -56,15 +56,22 @@ const AdminWorkspaces: React.FC = () => {
         try {
             setLoading(true);
 
-            // Fetch workspaces and join with members to get counts and owner info
-            const { data, error } = await (supabase as any)
+            // Fetch workspaces and join with owner and members
+            const { data, error } = await supabase
                 .from('workspaces')
                 .select(`
                     id,
                     name,
+                    plan_id,
+                    seat_limit,
                     created_at,
-                    profiles:created_by (email, full_name),
-                    workspace_members (id, user_id, role, profiles(email, full_name))
+                    profiles!owner_id (email, full_name),
+                    workspace_members (
+                        id, 
+                        user_id, 
+                        role, 
+                        profiles (email, full_name)
+                    )
                 `)
                 .order('created_at', { ascending: false });
 
@@ -191,6 +198,14 @@ const AdminWorkspaces: React.FC = () => {
         w.profiles?.email?.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
+    const getPlanBadgeStyle = (plan: string) => {
+        switch (plan) {
+            case 'avancado': return 'bg-purple-900/40 text-purple-400 border-purple-500/20';
+            case 'intermediario': return 'bg-blue-900/40 text-blue-400 border-blue-500/20';
+            default: return 'bg-gray-900/40 text-gray-400 border-gray-500/20';
+        }
+    };
+
     return (
         <div className="min-h-screen flex flex-col bg-[#010816]">
             <Header />
@@ -292,8 +307,9 @@ const AdminWorkspaces: React.FC = () => {
                                 <TableHeader className="bg-[#1a2e4c]/20">
                                     <TableRow className="border-white/5 hover:bg-transparent">
                                         <TableHead className="text-gray-400">Nome</TableHead>
-                                        <TableHead className="text-gray-400">Criador</TableHead>
-                                        <TableHead className="text-gray-400">Membros</TableHead>
+                                        <TableHead className="text-gray-400">Dono (Owner)</TableHead>
+                                        <TableHead className="text-gray-400">Plano</TableHead>
+                                        <TableHead className="text-gray-400">Membros / Limite</TableHead>
                                         <TableHead className="text-gray-400">Criado em</TableHead>
                                         <TableHead className="text-gray-400 text-right">Ações</TableHead>
                                     </TableRow>
@@ -315,18 +331,28 @@ const AdminWorkspaces: React.FC = () => {
                                         filteredWorkspaces.map((ws) => (
                                             <TableRow key={ws.id} className="border-white/5 hover:bg-white/5 transition-colors">
                                                 <TableCell className="font-medium text-white">
-                                                    {ws.name}
+                                                    <div className="flex flex-col">
+                                                        <span>{ws.name}</span>
+                                                        <span className="text-[10px] text-gray-600 font-mono">{ws.id}</span>
+                                                    </div>
                                                 </TableCell>
                                                 <TableCell className="text-gray-300">
                                                     {ws.profiles?.email || 'N/A'}
                                                 </TableCell>
                                                 <TableCell>
-                                                    <div className="flex items-center text-gray-400">
+                                                    <span className={`px-2 py-0.5 rounded-full text-[10px] border uppercase font-semibold ${getPlanBadgeStyle(ws.plan_id)}`}>
+                                                        {ws.plan_id}
+                                                    </span>
+                                                </TableCell>
+                                                <TableCell>
+                                                    <div className="flex items-center text-gray-300">
                                                         <Users className="w-4 h-4 mr-1 text-primary" />
-                                                        {ws.workspace_members?.length || 0}
+                                                        <span className="font-bold">{ws.workspace_members?.length || 0}</span>
+                                                        <span className="text-gray-500 mx-1">/</span>
+                                                        <span className="text-gray-500">{ws.seat_limit}</span>
                                                     </div>
                                                 </TableCell>
-                                                <TableCell className="text-gray-400 text-sm">
+                                                <TableCell className="text-gray-400 text-sm whitespace-nowrap">
                                                     {formatDate(ws.created_at)}
                                                 </TableCell>
                                                 <TableCell className="text-right">

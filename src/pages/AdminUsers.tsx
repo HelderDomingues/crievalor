@@ -50,6 +50,13 @@ interface UserWithProfile {
     username: string | null;
     role: string | null;
     updated_at: string;
+    workspace_members?: Array<{
+        role: string;
+        workspaces: {
+            id: string;
+            name: string;
+        } | null;
+    }>;
 }
 
 const AdminUsers: React.FC = () => {
@@ -91,7 +98,7 @@ const AdminUsers: React.FC = () => {
 
             const { data: profiles, error: profileError } = await supabase
                 .from('profiles')
-                .select('*')
+                .select('*, workspace_members(role, workspaces(id, name))')
                 .order('updated_at', { ascending: false });
 
             if (profileError) throw profileError;
@@ -103,7 +110,8 @@ const AdminUsers: React.FC = () => {
                 full_name: p.full_name,
                 username: p.username,
                 role: p.role,
-                updated_at: p.updated_at || new Date().toISOString()
+                updated_at: p.updated_at || new Date().toISOString(),
+                workspace_members: p.workspace_members
             }));
 
             setUsers(validatedUsers);
@@ -491,6 +499,7 @@ const AdminUsers: React.FC = () => {
                                     <TableRow className="border-white/5 hover:bg-transparent">
                                         <TableHead className="text-gray-400">Usuário</TableHead>
                                         <TableHead className="text-gray-400">Login / Email</TableHead>
+                                        <TableHead className="text-gray-400">Workspace</TableHead>
                                         <TableHead className="text-gray-400">Papel</TableHead>
                                         <TableHead className="text-gray-400">Atualizado em</TableHead>
                                         <TableHead className="text-gray-400 text-right">Ações</TableHead>
@@ -527,6 +536,16 @@ const AdminUsers: React.FC = () => {
                                                         <span className="text-gray-300">@{user.username || 'n/a'}</span>
                                                         <span className="text-xs text-gray-500">{user.email}</span>
                                                     </div>
+                                                </TableCell>
+                                                <TableCell>
+                                                    {user.workspace_members && user.workspace_members.length > 0 ? (
+                                                        <div className="flex flex-col">
+                                                            <span className="text-white text-sm">{user.workspace_members[0].workspaces?.name}</span>
+                                                            <span className="text-[10px] text-gray-500 uppercase">{user.workspace_members[0].role}</span>
+                                                        </div>
+                                                    ) : (
+                                                        <span className="text-gray-600 text-xs italic">Nenhum</span>
+                                                    )}
                                                 </TableCell>
                                                 <TableCell>
                                                     <Badge

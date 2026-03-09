@@ -17,6 +17,7 @@ interface CheckoutControllerProps {
   className?: string;
   variant?: "default" | "outline" | "secondary" | "destructive" | "ghost" | "link";
   size?: "default" | "sm" | "lg" | "icon" | null;
+  autoTrigger?: boolean;
 }
 
 // Helper function to safely parse JSON
@@ -38,7 +39,8 @@ const CheckoutController: React.FC<CheckoutControllerProps> = ({
   redirectToProfile = false,
   className = "",
   variant = "default",
-  size = "default"
+  size = "default",
+  autoTrigger = false
 }) => {
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -80,6 +82,13 @@ const CheckoutController: React.FC<CheckoutControllerProps> = ({
   useEffect(() => {
     setCheckoutError(null);
   }, [planId, installments, paymentType]);
+
+  useEffect(() => {
+    if (autoTrigger && !isCheckingOut && user && !checkoutError && processingStep === null) {
+      console.log("[CheckoutController] Auto-triggering checkout for trial...");
+      handleCheckout();
+    }
+  }, [autoTrigger, user, isCheckingOut, checkoutError, processingStep]);
 
   useEffect(() => {
     const lastCheckoutTime = localStorage.getItem('checkoutTimestamp');
@@ -170,8 +179,6 @@ const CheckoutController: React.FC<CheckoutControllerProps> = ({
         localStorage.removeItem('checkoutRecoveryState');
         return false;
       }
-
-      // ... rest is same
       return false;
     } catch (e) { return false; }
   };
@@ -268,16 +275,18 @@ const CheckoutController: React.FC<CheckoutControllerProps> = ({
 
       // Mostrar toast de sucesso
       toast({
-        title: "Pagamento iniciado com sucesso",
-        description: "Você será redirecionado para a página de pagamento.",
+        title: "Processamento concluído",
+        description: "Iniciando sua jornada no LUMIA.",
         variant: "default",
       });
 
       // Add a slight delay before redirecting for better UX
       await new Promise(resolve => setTimeout(resolve, 800));
 
-      if (result.redirect) {
-        navigate(result.redirect === '/dashboard' && planId === 'basico' ? '/lumia/sucesso' : result.redirect);
+      // NEW: Unified redirect for trials and successes
+      if (result.redirect || (planId === 'basico' && localStorage.getItem('checkoutIntent') === 'trial')) {
+        const finalRedirect = (result.redirect === '/dashboard' || !result.redirect) && planId === 'basico' ? '/lumia/sucesso' : result.redirect;
+        navigate(finalRedirect);
         return;
       }
 
@@ -396,7 +405,7 @@ const CheckoutController: React.FC<CheckoutControllerProps> = ({
           </>
         )}
         {!isCheckingOut && (
-          <span className="hover-raise inline-block">{buttonText}</span>
+          <span className="hover-raise inline-block">{getButtonText()}</span>
         )}
       </Button>
     </div>

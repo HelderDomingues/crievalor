@@ -158,6 +158,69 @@ class NetCredWebhookController extends BaseController {
                     .update({ subscription_status: "active" })
                     .eq("id", sub.user_id);
 
+                // --- Workspace Management (multi-seat) ---
+                let workspaceId = null;
+                const multiSeatPlans = ['intermediario', 'avancado'];
+                const planSeats: Record<string, number> = {
+                    'basico': 1,
+                    'intermediario': 3,
+                    'avancado': 5
+                };
+
+                if (multiSeatPlans.includes(sub.plan_id)) {
+                    console.log(`[Webhook][PAID] Multi-seat plan detected (${sub.plan_id}). Checking for existing workspace.`);
+                    
+                    // Check if owner already has a workspace (could be from trial)
+                    const { data: existingWs } = await (supabaseAdmin as any).from("workspaces")
+                        .select("id")
+                        .eq("owner_id", sub.user_id)
+                        .maybeSingle();
+
+                    if (existingWs) {
+                        workspaceId = existingWs.id;
+                        console.log(`[Webhook][PAID] Existing workspace found: ${workspaceId}. Updating plan level.`);
+                        
+                        await (supabaseAdmin as any).from("workspaces")
+                            .update({ 
+                                plan_level: sub.plan_id === 'avancado' ? 'pro' : 'pro', // Both levels get pro seats
+                                seat_limit: planSeats[sub.plan_id] || 3
+                            })
+                            .eq("id", workspaceId);
+                    } else {
+                        console.log(`[Webhook][PAID] Creating new workspace for ${sub.plan_id}.`);
+                        const { data: ws, error: wsErr } = await (supabaseAdmin as any).from("workspaces")
+                            .insert({
+                                name: `${p.customerName}'s Workspace`,
+                                owner_id: sub.user_id,
+                                plan_level: sub.plan_id === 'avancado' ? 'pro' : 'pro',
+                                seat_limit: planSeats[sub.plan_id] || 3
+                            })
+                            .select()
+                            .single();
+
+                        if (wsErr) {
+                            console.error("[Webhook][PAID] Workspace creation error:", wsErr.message);
+                        } else if (ws) {
+                            workspaceId = ws.id;
+                            // Add owner as first member if not already there
+                            await (supabaseAdmin as any).from("workspace_members")
+                                .upsert({
+                                    workspace_id: workspaceId,
+                                    user_id: sub.user_id,
+                                    role: 'admin'
+                                });
+                        }
+                    }
+
+                    // Link current subscription to workspace
+                    if (workspaceId) {
+                        await supabaseAdmin
+                            .from("subscriptions")
+                            .update({ workspace_id: workspaceId })
+                            .eq("id", p.subscriptionId);
+                    }
+                }
+
                 // --- SIO_MAR Synchronization ---
                 // Now that payment is confirmed, we trigger the account sync
                 try {
@@ -171,9 +234,11 @@ class NetCredWebhookController extends BaseController {
                             userId: sub.user_id,
                             email: p.customerEmail,
                             name: p.customerName,
-                            // Fetch additional workspace data if needed, or use defaults
-                            // Using defaults for now as profiles/subscriptions are updated
+                            workspaceId: workspaceId,
+                            workspaceName: `${p.customerName}'s Workspace`,
                             planLevel: sub.plan_id === 'avancado' ? 'pro' : (sub.plan_id === 'basico' ? 'free' : 'pro'),
+                            seatLimit: planSeats[sub.plan_id] || 1,
+                            role: 'admin',
                             subscriptionId: p.subscriptionId
                         })
                     });

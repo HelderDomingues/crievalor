@@ -46,11 +46,10 @@ const Auth = () => {
       const checkoutIntent = localStorage.getItem('checkoutIntent');
 
       if (effectivePlanId) {
-        // Handle checkout/trial intent first
+        // Handle checkout/trial intent
         if (effectivePlanId === 'basico' && checkoutIntent === 'trial') {
-          localStorage.removeItem('selectedPlanId');
-          localStorage.removeItem('checkoutIntent');
-          navigate('/lumia/sucesso');
+          console.log("[Auth] Basic trial signup detected. Redirecting to checkout for automatic activation.");
+          navigate(`/checkout?plan=${effectivePlanId}`, { replace: true });
         } else {
           localStorage.removeItem('selectedPlanId');
           localStorage.removeItem('checkoutIntent');
@@ -131,7 +130,8 @@ const Auth = () => {
 
         if (profileError) console.error("Error updating profile:", profileError);
 
-        // Fetch Lumia Basico Product ID
+        // 2026-03-08: Legacy direct trial activation via user_products removed to unify flow via /checkout -> create-checkout.ts
+        /*
         const { data: productData } = await (supabase as any)
           .from('products')
           .select('id')
@@ -139,9 +139,8 @@ const Auth = () => {
           .single();
 
         if (productData) {
-          // Grant access to Lumia Basico on signup
           const expiresAt = new Date();
-          expiresAt.setDate(expiresAt.getDate() + 7); // 7-day trial example limit
+          expiresAt.setDate(expiresAt.getDate() + 7);
 
           await (supabase as any).from('user_products').insert({
             user_id: data.user.id,
@@ -152,6 +151,7 @@ const Auth = () => {
             notes: 'Atribuição automática após cadastro (Trial 7 dias)'
           });
         }
+        */
 
         toast({
           title: "Conta criada!",

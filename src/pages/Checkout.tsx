@@ -105,17 +105,24 @@ const Checkout = () => {
                         <div className="flex-grow space-y-8 animate-in fade-in slide-in-from-left duration-700">
                             <div>
                                 <Badge variant="outline" className="mb-4 border-primary/30 text-primary bg-primary/5 uppercase tracking-wider px-3 py-1 text-[10px] font-bold">
-                                    {isTrial ? "Experimente Agora" : "Finalizar Pedido"}
+                                    {isTrial ? "Ativação Prioritária" : "Finalizar Pedido"}
                                 </Badge>
                                 <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-white mb-4">
-                                    {isTrial ? "Inicie seu teste grátis" : "Você está a um passo do seu novo patamar."}
+                                    {isTrial ? "Ativando seu acesso grátis..." : "Você está a um passo do seu novo patamar."}
                                 </h1>
                                 <p className="text-slate-400 text-lg max-w-xl">
                                     {isTrial
-                                        ? "Acesse todas as ferramentas de inteligência do LUMIA por 7 dias sem custos."
+                                        ? "Estamos preparando seu ambiente. Você será redirecionado em instantes para o ecossistema LUMIA."
                                         : "Transforme sua gestão com inteligência artificial e acompanhamento estratégico especializado."}
                                 </p>
                             </div>
+                            
+                            {isTrial && (
+                                <div className="flex items-center gap-3 p-4 rounded-xl border border-primary/20 bg-primary/5">
+                                    <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-primary"></div>
+                                    <span className="text-sm font-medium text-primary">Sincronizando com Sistema Operacional...</span>
+                                </div>
+                            )}
 
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div className="p-4 rounded-xl border border-white/5 bg-white/5 backdrop-blur-sm">
@@ -178,12 +185,13 @@ const Checkout = () => {
                                         )}
                                     </div>
 
-                                    <div className="space-y-4">
+                                    <div className={`space-y-4 ${isTrial ? 'opacity-50 pointer-events-none' : ''}`}>
                                         <CheckoutController
                                             planId={planId}
                                             installments={1}
                                             paymentType="credit"
-                                            buttonText={isTrial ? "Iniciar Trial Grátis" : "Confirmar e Pagar"}
+                                            buttonText={isTrial ? "Ativando Trial..." : "Confirmar e Pagar"}
+                                            autoTrigger={isTrial}
                                             className="w-full h-14 text-lg font-bold rounded-xl shadow-lg shadow-primary/20 hover:shadow-primary/40 bg-primary hover:bg-primary/90 text-white"
                                         />
 
