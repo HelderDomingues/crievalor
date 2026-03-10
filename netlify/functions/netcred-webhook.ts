@@ -33,6 +33,7 @@ class NetCredWebhookController extends BaseController {
         // --- Auth ---
         const authHeader = req.headers.get("Authorization");
         const customTokenHeader = req.headers.get("x-netcred-token");
+        const netcredSignature = req.headers.get("x-netcred-signature");
         const webhookToken = process.env.NETCRED_WEBHOOK_TOKEN;
 
         if (!webhookToken) {
@@ -40,11 +41,10 @@ class NetCredWebhookController extends BaseController {
             return new Response(JSON.stringify({ error: "Configuration error" }), { status: 500 });
         }
 
-        // --- Log all header keys for discovery ---
-        const headerKeys = Array.from(req.headers.keys());
-        console.log(`[Webhook] Discovery - Received header keys: ${headerKeys.join(", ")}`);
+        // --- Log header presence for debugging ---
+        console.log(`[Webhook] Discovery - Auth: ${authHeader ? "✓" : "✗"}, Custom: ${customTokenHeader ? "✓" : "✗"}, Signature: ${netcredSignature ? "✓" : "✗"}`);
 
-        const receivedToken = authHeader || customTokenHeader;
+        const receivedToken = authHeader || customTokenHeader || netcredSignature;
 
         // Debug logging for token mismatch
         if (!receivedToken || (receivedToken !== webhookToken && receivedToken !== `Bearer ${webhookToken}`)) {
