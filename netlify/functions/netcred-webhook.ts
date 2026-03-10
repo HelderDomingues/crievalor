@@ -306,7 +306,8 @@ class NetCredWebhookController extends BaseController {
                     userId: subscription.user_id,
                     email: finalEmail,
                     name: finalName,
-                    subscriptionId: subscription.id
+                    subscriptionId: subscription.id,
+                    planLevel: subscription.plan_id // This will be 'basico', 'intermediario', etc.
                 })
             });
             

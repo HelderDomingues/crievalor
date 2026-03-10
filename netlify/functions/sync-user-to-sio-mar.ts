@@ -19,13 +19,10 @@ class SyncUserToSioMarController extends BaseController {
 
             console.log(`[SyncSioMar] Starting sync for user: ${userId} (${email})`);
 
-            // 1. Check if user already exists in SIO_MAR (Idempotency)
-            const { data: existingUser } = await supabaseSioMar.auth.admin.getUserById(userId);
+            // 2. Create the user in SIO_MAR Auth if missing
+            const { data: userData } = await supabaseSioMar.auth.admin.getUserById(userId);
 
-            if (existingUser?.user) {
-                console.log(`[SyncSioMar] User ${userId} already exists in SIO_MAR. Proceeding to update workspace context.`);
-            } else {
-                // 2. Create the user in SIO_MAR using the same UUID
+            if (!userData?.user) {
                 const { error: createError } = await supabaseSioMar.auth.admin.createUser({
                     id: userId,
                     email: email,
@@ -38,20 +35,52 @@ class SyncUserToSioMarController extends BaseController {
                 });
 
                 if (createError) {
-                    console.error('[SyncSioMar] Error creating user in SIO_MAR:', createError.message);
+                    console.error('[SyncSioMar] Error creating auth user in SIO_MAR:', createError.message);
                     return new Response(JSON.stringify({ error: createError.message }), { status: 500 });
                 }
-                console.log(`[SyncSioMar] User ${userId} successfully created in SIO_MAR.`);
+                console.log(`[SyncSioMar] Auth User ${userId} created in SIO_MAR.`);
+            }
+
+            // --- DATA INTEGRITY: Sync SIO_MAR Profiles table ---
+            // Even if workspace sync fails, we WANT the profile to exist
+            const { error: profileError } = await supabaseSioMar.from('profiles').upsert({
+                id: userId,
+                full_name: name || '',
+                user_email: email,
+                updated_at: new Date().toISOString()
+            }, { onConflict: 'id' });
+
+            if (profileError) {
+                console.error('[SyncSioMar] Error upserting profile in SIO_MAR:', profileError.message);
+                // We continue, as auth user is already created/exists
+            } else {
+                console.log(`[SyncSioMar] Profile upserted for user ${userId} in SIO_MAR.`);
             }
 
             // 3. Upsert Workspace Context if workspace info is provided
             if (workspaceId && workspaceName) {
+                // Map plan ID to normalized level and seat limit
+                // IDs in Website DB are 'basico', 'intermediario', 'avancado'
+                let finalPlanLevel = 'free';
+                let finalSeatLimit = 1;
+
+                if (planLevel === 'basico' || planLevel === 'Básico') {
+                    finalPlanLevel = 'basico';
+                    finalSeatLimit = 1;
+                } else if (planLevel === 'intermediario' || planLevel === 'Intermediário') {
+                    finalPlanLevel = 'intermediario';
+                    finalSeatLimit = 3;
+                } else if (planLevel === 'avancado' || planLevel === 'Avançado') {
+                    finalPlanLevel = 'avancado';
+                    finalSeatLimit = 5;
+                }
+
                 const { error: contextError } = await supabaseSioMar.from('workspace_context').upsert({
                     user_id: userId,
                     workspace_id: workspaceId,
                     workspace_name: workspaceName,
-                    plan_level: planLevel || 'free',
-                    seat_limit: seatLimit || 1,
+                    plan_level: finalPlanLevel,
+                    seat_limit: finalSeatLimit,
                     role: role || 'member',
                     crievalor_sub_id: subscriptionId || null,
                     updated_at: new Date().toISOString()
@@ -59,13 +88,12 @@ class SyncUserToSioMarController extends BaseController {
 
                 if (contextError) {
                     console.error('[SyncSioMar] Error upserting workspace_context:', contextError.message);
-                    // Do not fail the request if just the context fails, as the user was created.
                 } else {
-                    console.log(`[SyncSioMar] Workspace context upserted for user ${userId}.`);
+                    console.log(`[SyncSioMar] Workspace context (Plan: ${finalPlanLevel}, Seats: ${finalSeatLimit}) upserted for user ${userId}.`);
                 }
             }
 
-            // 4. Mark as synced in local crievalor DB
+            // 4. Mark as synced in local Website DB
             try {
                 const { error: updateLocalError } = await supabaseAdmin
                     .from('profiles')
