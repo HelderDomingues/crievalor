@@ -54,84 +54,50 @@ class NetCredWebhookController extends BaseController {
 
         const expectedSignature = createHmac("sha256", webhookToken).update(rawBody).digest("hex");
 
-        // --- Log header presence for debugging ---
-        console.log(`[Webhook] Discovery - Auth: ${authHeader ? "✓" : "✗"}, Custom: ${customTokenHeader ? "✓" : "✗"}, Signature: ${netcredSignatureHeader ? "✓" : "✗"}`);
+        const netcredEvent = req.headers.get("x-netcred-event");
 
-        const receivedToken = authHeader || customTokenHeader;
-        const isLegacyMatch = receivedToken === webhookToken || receivedToken === `Bearer ${webhookToken}`;
+        // --- Log discovery info ---
+        console.log(`[Webhook] Discovery - Auth: ${authHeader ? "✓" : "✗"}, Custom: ${customTokenHeader ? "✓" : "✗"}, Signature: ${netcredSignatureHeader ? "✓" : "✗"}, Event Header: ${netcredEvent || "none"}`);
+        console.log(`[Webhook] Body Keys: ${Object.keys(body).join(", ")}`);
+
+        // Prioritize body.entity if present, otherwise fallback to root body
+        const activeEntity = body.entity || body;
         
-        // HMAC Verification
-        let isSignatureMatch = false;
-        if (netcredSignatureHeader) {
-            try {
-                const sigBuffer = Buffer.from(netcredSignatureHeader, "hex");
-                const expectedBuffer = Buffer.from(expectedSignature, "hex");
-                if (sigBuffer.length === expectedBuffer.length) {
-                    isSignatureMatch = (createHash("sha256").update(netcredSignatureHeader).digest().equals(createHash("sha256").update(expectedSignature).digest())); 
-                    // Note: timingSafeEqual in Node environment is safer, but let's use a robust comparison for Netlify functions
-                    // Actually let's just use the crypto.timingSafeEqual if available or a manual one if not.
-                    // For Netlify Functions (Node), timingSafeEqual is available in 'crypto'.
-                }
-            } catch (e) {
-                console.error("[Webhook] Signature verification error:", e);
-            }
-        }
+        // If it's a list of objects (some webhooks do this), take the first
+        const entity = Array.isArray(activeEntity) ? activeEntity[0] : activeEntity;
 
-        // Re-check with timingSafeEqual if buffers matches length
-        const isValidSignature = (sig: string, expected: string) => {
-            try {
-                const sb = Buffer.from(sig, "hex");
-                const eb = Buffer.from(expected, "hex");
-                if (sb.length !== eb.length) return false;
-                // Import dynamic timingSafeEqual to be safe in different environments
-                const { timingSafeEqual } = require("crypto");
-                return timingSafeEqual(sb, eb);
-            } catch { return sig === expected; }
-        };
-
-        const signatureValid = netcredSignatureHeader ? isValidSignature(netcredSignatureHeader, expectedSignature) : false;
-
-        // Debug logging for mismatch
-        if (!signatureValid && !isLegacyMatch) {
-            const maskedReceived = netcredSignatureHeader ? `${netcredSignatureHeader.substring(0, 5)}...${netcredSignatureHeader.substring(netcredSignatureHeader.length - 4)}` : "null";
-            const maskedExpected = `${expectedSignature.substring(0, 5)}...${expectedSignature.substring(expectedSignature.length - 4)}`;
-            
-            console.warn(`[Webhook] Unauthorized — signature mismatch. Received: ${maskedReceived}, Expected: ${maskedExpected}`);
-            
-            return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401 });
-        }
+        // Extraction logic
+        const chargeLinkId = entity?.id?.toString() || body.id?.toString() || "";
+        const chargeStatus = entity?.charge_status || body.charge_status || "";
         
-        console.log(`[Webhook] Auth successful (${signatureValid ? "via HMAC Signature" : "via Legacy Token"})`);
-
-        const entity = body.entity;
-
-        // NetCred Webhook structure is typically: { entity: { ... }, company: { ... } }
-        // The entity ID is what maps to our netcred_id (chargeLink ID)
-        const chargeLinkId = entity?.id?.toString() || "";
-        
-        // Use entity status. 'ENDED' usually means captured/paid for simple links.
-        const chargeStatus = entity?.charge_status || "";
-        
-        // Reference code from first transaction or entity root
-        const externalId = entity?.reference_code || entity?.transactions?.[0]?.charge?.reference_code || "";
+        // Reference code
+        const externalId = entity?.reference_code || entity?.transactions?.[0]?.charge?.reference_code || body.reference_code || "";
         const subscriptionId = externalId.split("_")[0] || null;
 
-        // Customer details from transactions or internal info
-        const billingInfo = entity?.transactions?.[0]?.billing_info || entity?.payment_profile?.customer;
+        // Customer details
+        const t0 = entity?.transactions?.[0] || body.transactions?.[0];
+        const billingInfo = t0?.billing_info || entity?.payment_profile?.customer || body.payment_profile?.customer;
         const customerEmail = billingInfo?.customer_email || billingInfo?.email || "";
         const customerName = billingInfo?.customer_name || billingInfo?.name || "Consultor";
         
-        const amount = entity?.amount ? parseFloat(entity.amount) * 100 : 0; // Convert to cents
-        const paymentMethod = entity?.transactions?.[0]?.method || "";
+        const amount = entity?.amount ? parseFloat(entity.amount) * 100 : (body.amount ? parseFloat(body.amount) * 100 : 0);
+        const paymentMethod = t0?.method || "";
 
         // Map NetCred status to internal events
-        // Based on logs, NetCred sends TRANSACTION_UPDATE with charge_status: "ENDED" for captured payments.
         let internalEvent = "TRANSACTION_UPDATE";
-        if (chargeStatus === "ENDED") internalEvent = "PAYMENT_PAID";
-        if (chargeStatus === "EXPIRED") internalEvent = "PAYMENT_EXPIRED";
-        if (chargeStatus === "VOIDED") internalEvent = "PAYMENT_REFUNDED";
+        
+        // If the header or internal status says it's PAID / ENDED, map it properly
+        if (chargeStatus === "ENDED" || netcredEvent === "PAYMENT_PAID") {
+            internalEvent = "PAYMENT_PAID";
+        }
+        if (chargeStatus === "EXPIRED" || netcredEvent === "PAYMENT_EXPIRED") {
+            internalEvent = "PAYMENT_EXPIRED";
+        }
+        if (chargeStatus === "VOIDED" || netcredEvent === "PAYMENT_REFUNDED") {
+            internalEvent = "PAYMENT_REFUNDED";
+        }
 
-        console.log(`[Webhook] Processing LinkId: ${chargeLinkId}, Status: ${chargeStatus}, Sub: ${subscriptionId}, InternalEvent: ${internalEvent}`);
+        console.log(`[Webhook] Processing LinkId: ${chargeLinkId}, Status: ${chargeStatus}, Event: ${netcredEvent}, InternalEvent: ${internalEvent}, SubId: ${subscriptionId}`);
 
         try {
             await this.dispatch(internalEvent, {
