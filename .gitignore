@@ -48,3 +48,4 @@ dist-ssr
 .agent/Exemplos Notificação JSON NetCred/exemplo_cobranca_cartao.json
 .agent/Exemplos Notificação JSON NetCred/exemplo_cobranca_pix.json
 atalho de .agent 2
+.agent/API NetCred Docs/API Netcred.postman_collection.json
