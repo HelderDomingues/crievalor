@@ -31,7 +31,9 @@ class NetCredWebhookController extends BaseController {
         }
 
         // --- Auth ---
+        // Some systems might strip 'Authorization' or use custom headers
         const authHeader = req.headers.get("Authorization");
+        const customTokenHeader = req.headers.get("x-netcred-token");
         const webhookToken = process.env.NETCRED_WEBHOOK_TOKEN;
 
         if (!webhookToken) {
@@ -39,19 +41,19 @@ class NetCredWebhookController extends BaseController {
             return new Response(JSON.stringify({ error: "Configuration error" }), { status: 500 });
         }
 
+        const receivedToken = authHeader || customTokenHeader;
+
         // Debug logging for token mismatch
-        if (authHeader !== `Bearer ${webhookToken}`) {
-            const maskedReceived = authHeader ? `${authHeader.substring(0, 10)}...${authHeader.substring(authHeader.length - 4)}` : "null";
-            const maskedExpected = `Bearer ${webhookToken.substring(0, 4)}...${webhookToken.substring(webhookToken.length - 4)}`;
+        if (!receivedToken || (receivedToken !== webhookToken && receivedToken !== `Bearer ${webhookToken}`)) {
+            const maskedReceived = receivedToken ? `${receivedToken.substring(0, 5)}...${receivedToken.substring(receivedToken.length - 4)}` : "null";
+            const maskedExpected = `${webhookToken.substring(0, 4)}...${webhookToken.substring(webhookToken.length - 4)}`;
             console.warn(`[Webhook] Unauthorized — token mismatch. Received: ${maskedReceived}, Expected: ${maskedExpected}`);
+            console.log(`[Webhook] Headers debug: Auth: ${authHeader ? 'present' : 'null'}, Custom: ${customTokenHeader ? 'present' : 'null'}`);
             
-            // If it's a simple case of NetCred not sending 'Bearer ', we handle it
-            if (authHeader === webhookToken) {
-                console.log("[Webhook] Auth match found WITHOUT Bearer prefix. Proceeding...");
-            } else {
-                return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401 });
-            }
+            return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401 });
         }
+        
+        console.log("[Webhook] Auth successful");
 
         // --- Parse Event and Body ---
         const body = await req.json() as any;
