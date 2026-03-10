@@ -83,7 +83,7 @@ class SyncUserToSioMarController extends BaseController {
                     workspace_name: workspaceName,
                     plan_level: finalPlanLevel,
                     seat_limit: finalSeatLimit,
-                    role: role || 'member',
+                    role: role || 'admin', // Default to admin for the primary synced user
                     crievalor_sub_id: subscriptionId || null,
                     updated_at: new Date().toISOString()
                 }, { onConflict: 'user_id' });
