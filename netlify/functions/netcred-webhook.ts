@@ -234,6 +234,12 @@ class NetCredWebhookController extends BaseController {
             .update({
                 status: "active",
                 payment_status: "paid",
+                payment_id: p.externalId,
+                payment_details: {
+                    method: p.paymentMethod,
+                    amount: p.amount,
+                    webhook_event: "PAID"
+                },
                 updated_at: new Date().toISOString(),
             })
             .eq("id", subscription.id);

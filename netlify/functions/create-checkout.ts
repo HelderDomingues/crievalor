@@ -108,19 +108,24 @@ class CreateCheckoutController extends BaseController {
             }
 
             // 3. Handle Paid Plan (NetCred)
-            // 3.1 Check for existing PENDING subscription for this user and plan
-            let { data: pendingSub, error: pendingSubError } = await supabaseAdmin
+            // 3.1 Check for any existing subscription for this user and plan to avoid duplicates
+            // We look for 'pending', 'trialing' or even 'active' if they are trying to renew/upgrade same plan
+            let { data: existingSub, error: subFetchError } = await supabaseAdmin
                 .from("subscriptions")
                 .select()
                 .eq('user_id', userId)
                 .eq('plan_id', planId)
-                .eq('status', 'pending')
+                .in('status', ['pending', 'trialing', 'active'])
+                .order('created_at', { ascending: false })
+                .limit(1)
                 .maybeSingle();
 
-            if (pendingSubError) throw pendingSubError;
+            if (subFetchError) throw subFetchError;
 
-            // 3.2 If no pending exists, create one
-            if (!pendingSub) {
+            let targetSub = existingSub;
+
+            // 3.2 If no record exists, create a pending one
+            if (!targetSub) {
                 const { data: newSub, error: createError } = await supabaseAdmin
                     .from("subscriptions")
                     .insert({
@@ -133,9 +138,9 @@ class CreateCheckoutController extends BaseController {
                     .single();
 
                 if (createError) throw createError;
-                pendingSub = newSub;
+                targetSub = newSub;
             } else {
-                console.log(`[CreateCheckout] Reusing existing pending subscription: ${pendingSub.id}`);
+                console.log(`[CreateCheckout] Reusing existing subscription: ${targetSub.id} (Status: ${targetSub.status})`);
             }
 
             // Map planId to human-readable name
@@ -157,22 +162,15 @@ class CreateCheckoutController extends BaseController {
                 name,
                 amount: amountDecimal,
                 paymentMethods: ["CREDIT_CARD", "PIX"],
-                subscriptionId: pendingSub.id // Pass the sub ID
+                subscriptionId: targetSub.id // Pass the sub ID
             });
 
-            // Note: For paid plans, SIO_MAR synchronization is handled in netcred-webhook.ts
-            // to avoid Netlify function chaining timeouts (502).
-            // For trial plans, synchronization is already handled in the trial block above.
-
-            // Note: For paid plans, SIO_MAR synchronization is now handled in netcred-webhook.ts
-            // to avoid Netlify function chaining timeouts (502).
-
-            // 3. Update the pending subscription with the NetCred Link ID for webhook mapping
+            // 3. Update the subscription with the NetCred Link ID for webhook mapping
             const { error: updateError } = await supabaseAdmin.from('subscriptions')
                 .update({
                     netcred_id: netcredLink.chargeLinkCreate.chargeLink.id
                 })
-                .eq('id', pendingSub.id);
+                .eq('id', targetSub.id);
 
             if (updateError) {
                 console.error(`[CreateCheckout] Error saving NetCred ID:`, updateError);
