@@ -3,7 +3,7 @@ import { BaseController } from "./baseController";
 import { Context } from "@netlify/functions";
 import { supabaseAdmin } from "./lib/supabaseAdmin";
 import { sendTemplateEmail } from "./lib/emailService";
-import { createHash } from "crypto";
+import { createHash, createHmac, timingSafeEqual } from "crypto";
 
 // ---------------------------------------------------------------------------
 // NetCred Webhook Event Types
@@ -42,18 +42,57 @@ class NetCredWebhookController extends BaseController {
             return new Response(JSON.stringify({ error: "Configuration error" }), { status: 500 });
         }
 
-        // NetCred sends a SHA256 hash of the secret key in x-netcred-signature
-        const expectedSignature = createHash("sha256").update(webhookToken).digest("hex");
+        // NetCred sends an HMAC SHA256 of the body using the secret key in x-netcred-signature
+        const rawBody = await req.text();
+        let body: any;
+        try {
+            body = JSON.parse(rawBody);
+        } catch (e) {
+            console.error("[Webhook] Failed to parse JSON body");
+            return new Response(JSON.stringify({ error: "Invalid JSON" }), { status: 400 });
+        }
+
+        const expectedSignature = createHmac("sha256", webhookToken).update(rawBody).digest("hex");
 
         // --- Log header presence for debugging ---
         console.log(`[Webhook] Discovery - Auth: ${authHeader ? "✓" : "✗"}, Custom: ${customTokenHeader ? "✓" : "✗"}, Signature: ${netcredSignatureHeader ? "✓" : "✗"}`);
 
         const receivedToken = authHeader || customTokenHeader;
         const isLegacyMatch = receivedToken === webhookToken || receivedToken === `Bearer ${webhookToken}`;
-        const isSignatureMatch = netcredSignatureHeader === expectedSignature;
+        
+        // HMAC Verification
+        let isSignatureMatch = false;
+        if (netcredSignatureHeader) {
+            try {
+                const sigBuffer = Buffer.from(netcredSignatureHeader, "hex");
+                const expectedBuffer = Buffer.from(expectedSignature, "hex");
+                if (sigBuffer.length === expectedBuffer.length) {
+                    isSignatureMatch = (createHash("sha256").update(netcredSignatureHeader).digest().equals(createHash("sha256").update(expectedSignature).digest())); 
+                    // Note: timingSafeEqual in Node environment is safer, but let's use a robust comparison for Netlify functions
+                    // Actually let's just use the crypto.timingSafeEqual if available or a manual one if not.
+                    // For Netlify Functions (Node), timingSafeEqual is available in 'crypto'.
+                }
+            } catch (e) {
+                console.error("[Webhook] Signature verification error:", e);
+            }
+        }
 
-        // Debug logging for token mismatch
-        if (!isSignatureMatch && !isLegacyMatch) {
+        // Re-check with timingSafeEqual if buffers matches length
+        const isValidSignature = (sig: string, expected: string) => {
+            try {
+                const sb = Buffer.from(sig, "hex");
+                const eb = Buffer.from(expected, "hex");
+                if (sb.length !== eb.length) return false;
+                // Import dynamic timingSafeEqual to be safe in different environments
+                const { timingSafeEqual } = require("crypto");
+                return timingSafeEqual(sb, eb);
+            } catch { return sig === expected; }
+        };
+
+        const signatureValid = netcredSignatureHeader ? isValidSignature(netcredSignatureHeader, expectedSignature) : false;
+
+        // Debug logging for mismatch
+        if (!signatureValid && !isLegacyMatch) {
             const maskedReceived = netcredSignatureHeader ? `${netcredSignatureHeader.substring(0, 5)}...${netcredSignatureHeader.substring(netcredSignatureHeader.length - 4)}` : "null";
             const maskedExpected = `${expectedSignature.substring(0, 5)}...${expectedSignature.substring(expectedSignature.length - 4)}`;
             
@@ -62,10 +101,8 @@ class NetCredWebhookController extends BaseController {
             return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401 });
         }
         
-        console.log(`[Webhook] Auth successful (${isSignatureMatch ? "via Signature" : "via Legacy Token"})`);
+        console.log(`[Webhook] Auth successful (${signatureValid ? "via HMAC Signature" : "via Legacy Token"})`);
 
-        // --- Parse Event and Body ---
-        const body = await req.json() as any;
         const entity = body.entity;
 
         // NetCred Webhook structure is typically: { entity: { ... }, company: { ... } }
