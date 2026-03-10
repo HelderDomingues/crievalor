@@ -81,21 +81,21 @@ class CreateCheckoutController extends BaseController {
                 // 2.1 Sync SIO_MAR user (Trial version)
                 try {
                     const baseUrl = process.env.URL || "http://localhost:8888";
-                    await fetch(`${baseUrl}/.netlify/functions/sync-user-to-sio-mar`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            userId,
-                            email,
-                            name,
-                            workspaceId: workspace.id,
-                            workspaceName: workspace.name,
-                            planLevel: 'free',
-                            seatLimit: 1,
-                            role: 'admin',
-                            subscriptionId: sub.id
-                        })
-                    });
+                 const syncResponse = await fetch(`${baseUrl}/.netlify/functions/sync-user-to-sio-mar`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        userId: userId,
+                        email: email, // Use the 'email' from the request body
+                        name: name, // Use the 'name' from the request body
+                        workspaceId: workspace.id,
+                        workspaceName: workspace.name,
+                        planLevel: planId, // 'basico' for trial
+                        seatLimit: 1,
+                        role: 'admin',
+                        subscriptionId: sub.id // Use 'sub.id' for the newly created trial subscription
+                    })
+                });
                 } catch (syncErr) {
                     console.error("[CreateCheckout] Trial SIO_MAR sync fetch failed:", syncErr);
                 }

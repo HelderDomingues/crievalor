@@ -65,13 +65,15 @@ class SyncUserToSioMarController extends BaseController {
                 let finalSeatLimit = 1;
 
                 if (planLevel === 'basico' || planLevel === 'Básico') {
-                    finalPlanLevel = 'basico';
+                    finalPlanLevel = 'free'; // Basic trial is free in SIO_MAR terms? No, wait. 
+                    // Let's stick to the SIO_MAR constraint: free, pro, enterprise
+                    finalPlanLevel = 'pro'; 
                     finalSeatLimit = 1;
                 } else if (planLevel === 'intermediario' || planLevel === 'Intermediário') {
-                    finalPlanLevel = 'intermediario';
+                    finalPlanLevel = 'pro';
                     finalSeatLimit = 3;
-                } else if (planLevel === 'avancado' || planLevel === 'Avançado') {
-                    finalPlanLevel = 'avancado';
+                } else if (planLevel === 'avancado' || planLevel === 'Avançado' || planLevel === 'v-test') {
+                    finalPlanLevel = 'pro';
                     finalSeatLimit = 5;
                 }
 
