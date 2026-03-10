@@ -3,6 +3,7 @@ import { BaseController } from "./baseController";
 import { Context } from "@netlify/functions";
 import { supabaseAdmin } from "./lib/supabaseAdmin";
 import { sendTemplateEmail } from "./lib/emailService";
+import { createHash } from "crypto";
 
 // ---------------------------------------------------------------------------
 // NetCred Webhook Event Types
@@ -33,7 +34,7 @@ class NetCredWebhookController extends BaseController {
         // --- Auth ---
         const authHeader = req.headers.get("Authorization");
         const customTokenHeader = req.headers.get("x-netcred-token");
-        const netcredSignature = req.headers.get("x-netcred-signature");
+        const netcredSignatureHeader = req.headers.get("x-netcred-signature");
         const webhookToken = process.env.NETCRED_WEBHOOK_TOKEN;
 
         if (!webhookToken) {
@@ -41,21 +42,27 @@ class NetCredWebhookController extends BaseController {
             return new Response(JSON.stringify({ error: "Configuration error" }), { status: 500 });
         }
 
-        // --- Log header presence for debugging ---
-        console.log(`[Webhook] Discovery - Auth: ${authHeader ? "✓" : "✗"}, Custom: ${customTokenHeader ? "✓" : "✗"}, Signature: ${netcredSignature ? "✓" : "✗"}`);
+        // NetCred sends a SHA256 hash of the secret key in x-netcred-signature
+        const expectedSignature = createHash("sha256").update(webhookToken).digest("hex");
 
-        const receivedToken = authHeader || customTokenHeader || netcredSignature;
+        // --- Log header presence for debugging ---
+        console.log(`[Webhook] Discovery - Auth: ${authHeader ? "✓" : "✗"}, Custom: ${customTokenHeader ? "✓" : "✗"}, Signature: ${netcredSignatureHeader ? "✓" : "✗"}`);
+
+        const receivedToken = authHeader || customTokenHeader;
+        const isLegacyMatch = receivedToken === webhookToken || receivedToken === `Bearer ${webhookToken}`;
+        const isSignatureMatch = netcredSignatureHeader === expectedSignature;
 
         // Debug logging for token mismatch
-        if (!receivedToken || (receivedToken !== webhookToken && receivedToken !== `Bearer ${webhookToken}`)) {
-            const maskedReceived = receivedToken ? `${receivedToken.substring(0, 5)}...${receivedToken.substring(receivedToken.length - 4)}` : "null";
-            const maskedExpected = `${webhookToken.substring(0, 4)}...${webhookToken.substring(webhookToken.length - 4)}`;
-            console.warn(`[Webhook] Unauthorized — token mismatch. Received: ${maskedReceived}, Expected: ${maskedExpected}`);
+        if (!isSignatureMatch && !isLegacyMatch) {
+            const maskedReceived = netcredSignatureHeader ? `${netcredSignatureHeader.substring(0, 5)}...${netcredSignatureHeader.substring(netcredSignatureHeader.length - 4)}` : "null";
+            const maskedExpected = `${expectedSignature.substring(0, 5)}...${expectedSignature.substring(expectedSignature.length - 4)}`;
+            
+            console.warn(`[Webhook] Unauthorized — signature mismatch. Received: ${maskedReceived}, Expected: ${maskedExpected}`);
             
             return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401 });
         }
         
-        console.log("[Webhook] Auth successful");
+        console.log(`[Webhook] Auth successful (${isSignatureMatch ? "via Signature" : "via Legacy Token"})`);
 
         // --- Parse Event and Body ---
         const body = await req.json() as any;
