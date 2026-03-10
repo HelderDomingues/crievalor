@@ -31,7 +31,6 @@ class NetCredWebhookController extends BaseController {
         }
 
         // --- Auth ---
-        // Some systems might strip 'Authorization' or use custom headers
         const authHeader = req.headers.get("Authorization");
         const customTokenHeader = req.headers.get("x-netcred-token");
         const webhookToken = process.env.NETCRED_WEBHOOK_TOKEN;
@@ -41,6 +40,10 @@ class NetCredWebhookController extends BaseController {
             return new Response(JSON.stringify({ error: "Configuration error" }), { status: 500 });
         }
 
+        // --- Log all header keys for discovery ---
+        const headerKeys = Array.from(req.headers.keys());
+        console.log(`[Webhook] Discovery - Received header keys: ${headerKeys.join(", ")}`);
+
         const receivedToken = authHeader || customTokenHeader;
 
         // Debug logging for token mismatch
@@ -48,7 +51,6 @@ class NetCredWebhookController extends BaseController {
             const maskedReceived = receivedToken ? `${receivedToken.substring(0, 5)}...${receivedToken.substring(receivedToken.length - 4)}` : "null";
             const maskedExpected = `${webhookToken.substring(0, 4)}...${webhookToken.substring(webhookToken.length - 4)}`;
             console.warn(`[Webhook] Unauthorized — token mismatch. Received: ${maskedReceived}, Expected: ${maskedExpected}`);
-            console.log(`[Webhook] Headers debug: Auth: ${authHeader ? 'present' : 'null'}, Custom: ${customTokenHeader ? 'present' : 'null'}`);
             
             return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401 });
         }
