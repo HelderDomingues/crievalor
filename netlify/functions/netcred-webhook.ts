@@ -66,30 +66,51 @@ class NetCredWebhookController extends BaseController {
         // If it's a list of objects (some webhooks do this), take the first
         const entity = Array.isArray(activeEntity) ? activeEntity[0] : activeEntity;
 
-        // Extraction logic
-        const chargeLinkId = entity?.id?.toString() || body.id?.toString() || "";
-        const chargeStatus = entity?.charge_status || body.charge_status || "";
+        // --- Production Extraction Logic ---
+        // 1. ChargeLink ID (Mapping to netcred_id in DB)
+        // In CHARGE_CREATE, it's 'charge_link_id'. In TRANSACTION events, it's often nested in 'charge'.
+        const chargeLinkId = (
+            entity?.charge_link_id || 
+            entity?.charge?.charge_link_id || 
+            entity?.id?.toString() || 
+            body.id?.toString() || 
+            ""
+        );
+
+        // 2. Charge Status
+        const chargeStatus = entity?.charge_status || entity?.charge?.charge_status || body.charge_status || "";
         
-        // Reference code
-        const externalId = entity?.reference_code || entity?.transactions?.[0]?.charge?.reference_code || body.reference_code || "";
+        // 3. Reference and Subscription Mapping
+        const externalId = (
+            entity?.reference_code || 
+            entity?.charge?.reference_code || 
+            entity?.transactions?.[0]?.charge?.reference_code || 
+            body.reference_code || 
+            ""
+        );
         const subscriptionId = externalId.split("_")[0] || null;
 
-        // Customer details
+        // 4. Customer and Email
         const t0 = entity?.transactions?.[0] || body.transactions?.[0];
-        const billingInfo = t0?.billing_info || entity?.payment_profile?.customer || body.payment_profile?.customer;
+        const billingInfo = t0?.billing_info || entity?.payment_profile?.customer || body.payment_profile?.customer || entity?.customer;
         const customerEmail = billingInfo?.customer_email || billingInfo?.email || "";
         const customerName = billingInfo?.customer_name || billingInfo?.name || "Consultor";
         
         const amount = entity?.amount ? parseFloat(entity.amount) * 100 : (body.amount ? parseFloat(body.amount) * 100 : 0);
-        const paymentMethod = t0?.method || "";
+        const paymentMethod = t0?.method || entity?.method || "";
 
-        // Map NetCred status to internal events
+        // --- Event Mapping ---
         let internalEvent = "TRANSACTION_UPDATE";
         
-        // If the header or internal status says it's PAID / ENDED, map it properly
-        if (chargeStatus === "ENDED" || netcredEvent === "PAYMENT_PAID") {
+        // PAYMENT_PAID triggers:
+        // - Header event is TRANSACTION_CAPTURE (The most definitive for card/captured pix)
+        // - Header event is PAYMENT_PAID
+        // - Internal status is ENDED
+        if (netcredEvent === "TRANSACTION_CAPTURE" || netcredEvent === "PAYMENT_PAID" || chargeStatus === "ENDED") {
             internalEvent = "PAYMENT_PAID";
         }
+
+        // Other mappings
         if (chargeStatus === "EXPIRED" || netcredEvent === "PAYMENT_EXPIRED") {
             internalEvent = "PAYMENT_EXPIRED";
         }
@@ -97,7 +118,8 @@ class NetCredWebhookController extends BaseController {
             internalEvent = "PAYMENT_REFUNDED";
         }
 
-        console.log(`[Webhook] Processing LinkId: ${chargeLinkId}, Status: ${chargeStatus}, Event: ${netcredEvent}, InternalEvent: ${internalEvent}, SubId: ${subscriptionId}`);
+        console.log(`[Webhook] Extraction Result — LinkId: ${chargeLinkId}, Status: ${chargeStatus}, InternalEvent: ${internalEvent}, SubId: ${subscriptionId}`);
+        console.log(`[Webhook] Customer: ${customerName} (${customerEmail})`);
 
         try {
             await this.dispatch(internalEvent, {
