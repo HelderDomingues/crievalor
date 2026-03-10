@@ -108,13 +108,13 @@ class CreateCheckoutController extends BaseController {
             }
 
             // 3. Handle Paid Plan (NetCred)
-            // 3.1 Check for any existing subscription for this user and plan to avoid duplicates
-            // We look for 'pending', 'trialing' or even 'active' if they are trying to renew/upgrade same plan
+            // 3.1 Check for ANY existing subscription for this user to avoid duplicates
+            // We look for 'pending', 'trialing' or 'active' across ALL plans.
+            // If they are on 'basico' (trial) and buy 'avancado', we reuse/update the record.
             let { data: existingSub, error: subFetchError } = await supabaseAdmin
                 .from("subscriptions")
                 .select()
                 .eq('user_id', userId)
-                .eq('plan_id', planId)
                 .in('status', ['pending', 'trialing', 'active'])
                 .order('created_at', { ascending: false })
                 .limit(1)
@@ -140,7 +140,15 @@ class CreateCheckoutController extends BaseController {
                 if (createError) throw createError;
                 targetSub = newSub;
             } else {
-                console.log(`[CreateCheckout] Reusing existing subscription: ${targetSub.id} (Status: ${targetSub.status})`);
+                console.log(`[CreateCheckout] Reusing existing subscription: ${targetSub.id} (Existing Plan: ${targetSub.plan_id}, New Choice: ${planId}, Status: ${targetSub.status})`);
+                
+                // Update the plan_id if it's changing (e.g. from basico to avancado)
+                if (targetSub.plan_id !== planId) {
+                    const { error: updatePlanErr } = await supabaseAdmin.from('subscriptions')
+                        .update({ plan_id: planId })
+                        .eq('id', targetSub.id);
+                    if (updatePlanErr) console.error("[CreateCheckout] Failed to update plan preference:", updatePlanErr);
+                }
             }
 
             // Map planId to human-readable name
@@ -168,7 +176,8 @@ class CreateCheckoutController extends BaseController {
             // 3. Update the subscription with the NetCred Link ID for webhook mapping
             const { error: updateError } = await supabaseAdmin.from('subscriptions')
                 .update({
-                    netcred_id: netcredLink.chargeLinkCreate.chargeLink.id
+                    netcred_id: netcredLink.chargeLinkCreate.chargeLink.id,
+                    updated_at: new Date().toISOString()
                 })
                 .eq('id', targetSub.id);
 
