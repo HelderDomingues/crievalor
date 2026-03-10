@@ -92,9 +92,9 @@ class NetCredWebhookController extends BaseController {
 
         // 4. Customer and Email
         const t0 = entity?.transactions?.[0] || body.transactions?.[0];
-        const billingInfo = t0?.billing_info || entity?.payment_profile?.customer || body.payment_profile?.customer || entity?.customer;
-        const customerEmail = billingInfo?.customer_email || billingInfo?.email || "";
-        const customerName = billingInfo?.customer_name || billingInfo?.name || "Consultor";
+        const billingInfo = t0?.billing_info || entity?.payment_profile?.customer || body.payment_profile?.customer || entity?.customer || body.customer;
+        const customerEmail = billingInfo?.customer_email || billingInfo?.email || entity?.email || body.email || "";
+        const customerName = billingInfo?.customer_name || billingInfo?.name || entity?.name || body.name || "Consultor";
         
         const amount = entity?.amount ? parseFloat(entity.amount) * 100 : (body.amount ? parseFloat(body.amount) * 100 : 0);
         const paymentMethod = t0?.method || entity?.method || "";
@@ -208,6 +208,25 @@ class NetCredWebhookController extends BaseController {
             return;
         }
 
+        // --- Data Enrichment ---
+        // If email or name is missing, fetch from profile
+        let finalEmail = p.customerEmail;
+        let finalName = p.customerName;
+
+        if (!finalEmail || finalName === "Consultor") {
+            const { data: profile } = await supabaseAdmin
+                .from('profiles')
+                .select('email, full_name')
+                .eq('id', subscription.user_id)
+                .maybeSingle();
+            
+            if (profile) {
+                if (!finalEmail) finalEmail = profile.email || "";
+                if (finalName === "Consultor") finalName = profile.full_name || "Consultor";
+            }
+        }
+
+        console.log(`[Webhook] Data Enrichment: Email: ${finalEmail}, Name: ${finalName}`);
         console.log(`[Webhook] Activating subscription: ${subscription.id} for user: ${subscription.user_id}`);
 
         const { error: updateErr } = await supabaseAdmin
@@ -279,8 +298,8 @@ class NetCredWebhookController extends BaseController {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     userId: subscription.user_id,
-                    email: p.customerEmail,
-                    name: p.customerName,
+                    email: finalEmail,
+                    name: finalName,
                     subscriptionId: subscription.id
                 })
             });
