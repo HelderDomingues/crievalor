@@ -124,15 +124,16 @@ class NetCredWebhookController extends BaseController {
         const amount = entity?.amount ? parseFloat(entity.amount) * 100 : 0; // Convert to cents
         const paymentMethod = entity?.transactions?.[0]?.method || "";
 
-        console.log(`[Webhook] LinkId: ${chargeLinkId}, Status: ${chargeStatus}, Sub: ${subscriptionId}`);
+        // Map NetCred status to internal events
+        // Based on logs, NetCred sends TRANSACTION_UPDATE with charge_status: "ENDED" for captured payments.
+        let internalEvent = "TRANSACTION_UPDATE";
+        if (chargeStatus === "ENDED") internalEvent = "PAYMENT_PAID";
+        if (chargeStatus === "EXPIRED") internalEvent = "PAYMENT_EXPIRED";
+        if (chargeStatus === "VOIDED") internalEvent = "PAYMENT_REFUNDED";
+
+        console.log(`[Webhook] Processing LinkId: ${chargeLinkId}, Status: ${chargeStatus}, Sub: ${subscriptionId}, InternalEvent: ${internalEvent}`);
 
         try {
-            // Map NetCred status to internal events
-            let internalEvent = "TRANSACTION_UPDATE";
-            if (chargeStatus === "ENDED") internalEvent = "PAYMENT_PAID";
-            if (chargeStatus === "EXPIRED") internalEvent = "PAYMENT_EXPIRED";
-            if (chargeStatus === "VOIDED") internalEvent = "PAYMENT_REFUNDED";
-
             await this.dispatch(internalEvent, {
                 subscriptionId,
                 customerEmail,
@@ -282,8 +283,10 @@ class NetCredWebhookController extends BaseController {
 
         // SIO_MAR Sync
         try {
-            const baseUrl = process.env.URL || "http://localhost:8888";
-            await fetch(`${baseUrl}/.netlify/functions/sync-user-to-sio-mar`, {
+            const siteUrl = process.env.URL || "https://crievalor.com.br";
+            console.log(`[Webhook] Triggering SIO_MAR sync for ${subscription.user_id} at ${siteUrl}`);
+            
+            const response = await fetch(`${siteUrl}/.netlify/functions/sync-user-to-sio-mar`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -293,7 +296,16 @@ class NetCredWebhookController extends BaseController {
                     subscriptionId: subscription.id
                 })
             });
-        } catch (e) { /* non-fatal */ }
+            
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error(`[Webhook] SIO_MAR sync failed: ${response.status} ${errorText}`);
+            } else {
+                console.log("[Webhook] SIO_MAR sync successfully triggered.");
+            }
+        } catch (e: any) { 
+            console.error("[Webhook] SIO_MAR sync fetch error:", e.message);
+        }
 
         // Send Email
         if (p.customerEmail) {
