@@ -28,11 +28,13 @@ export class NetCredService {
       }
     `;
 
+    const finalCompanyId = await this.client.getAuthenticatedCompanyId() || process.env.NETCRED_COMPANY_ID || "2032";
+
     const result = await this.client.request(query, {
       input: {
-        companyId: this.client.getAuthenticatedCompanyId() || process.env.NETCRED_COMPANY_ID || "2032",
+        companyId: finalCompanyId,
         title: input.planId,
-        description: input.subscriptionId,
+        description: `Assinatura: ${input.subscriptionId}`,
         baseAmount: input.amount,
         subscription: true,
         cardRecurringAllowed: true,

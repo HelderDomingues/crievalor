@@ -108,25 +108,42 @@ class CreateCheckoutController extends BaseController {
             }
 
             // 3. Handle Paid Plan (NetCred)
-            // Create pending subscription first to get an ID for reference
-            const { data: pendingSub, error: pendingSubError } = await supabaseAdmin
+            // 3.1 Check for existing PENDING subscription for this user and plan
+            let { data: pendingSub, error: pendingSubError } = await supabaseAdmin
                 .from("subscriptions")
-                .insert({
-                    user_id: userId,
-                    workspace_id: workspace.id,
-                    status: 'pending',
-                    plan_id: planId
-                })
                 .select()
-                .single();
+                .eq('user_id', userId)
+                .eq('plan_id', planId)
+                .eq('status', 'pending')
+                .maybeSingle();
 
             if (pendingSubError) throw pendingSubError;
+
+            // 3.2 If no pending exists, create one
+            if (!pendingSub) {
+                const { data: newSub, error: createError } = await supabaseAdmin
+                    .from("subscriptions")
+                    .insert({
+                        user_id: userId,
+                        workspace_id: workspace.id,
+                        status: 'pending',
+                        plan_id: planId
+                    })
+                    .select()
+                    .single();
+
+                if (createError) throw createError;
+                pendingSub = newSub;
+            } else {
+                console.log(`[CreateCheckout] Reusing existing pending subscription: ${pendingSub.id}`);
+            }
 
             // Map planId to human-readable name
             const planNames: Record<string, string> = {
                 'basico': 'LUMIA - Básico',
                 'intermediario': 'LUMIA - Intermediário',
-                'avancado': 'LUMIA - Avançado'
+                'avancado': 'LUMIA - Avançado',
+                'v-test': 'LUMIA - Teste de Integração'
             };
             const planName = planNames[planId] || `LUMIA - ${planId}`;
 
@@ -149,6 +166,18 @@ class CreateCheckoutController extends BaseController {
 
             // Note: For paid plans, SIO_MAR synchronization is now handled in netcred-webhook.ts
             // to avoid Netlify function chaining timeouts (502).
+
+            // 3. Update the pending subscription with the NetCred Link ID for webhook mapping
+            const { error: updateError } = await supabaseAdmin.from('subscriptions')
+                .update({
+                    netcred_id: netcredLink.chargeLinkCreate.chargeLink.id
+                })
+                .eq('id', pendingSub.id);
+
+            if (updateError) {
+                console.error(`[CreateCheckout] Error saving NetCred ID:`, updateError);
+                // We don't throw here to avoid blocking the user, but it's a critical warning
+            }
 
             return new Response(JSON.stringify({
                 success: true,

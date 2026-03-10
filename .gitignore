@@ -44,3 +44,7 @@ dist-ssr
 .agent/NetCred_Credentials.md
 .agent/Netlify_Credentials.md
 .agent/Supabase_credentials.md
+.agent/Exemplos Notificação JSON NetCred/exemplo_cobrança_boleto.json
+.agent/Exemplos Notificação JSON NetCred/exemplo_cobranca_cartao.json
+.agent/Exemplos Notificação JSON NetCred/exemplo_cobranca_pix.json
+atalho de .agent 2

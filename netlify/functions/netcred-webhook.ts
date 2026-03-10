@@ -14,6 +14,16 @@ import { sendTemplateEmail } from "./lib/emailService";
 // SUBSCRIPTION_RENEWED  – recurring subscription auto-renewed (future)
 // ---------------------------------------------------------------------------
 
+interface PaymentPayload {
+    subscriptionId: string | null;
+    customerEmail: string;
+    customerName: string;
+    amount: number;
+    paymentMethod: string;
+    externalId: string;
+    chargeLinkId?: string;
+}
+
 class NetCredWebhookController extends BaseController {
     protected async handleRequest(req: Request, _ctx: Context): Promise<Response> {
         if (req.method !== "POST") {
@@ -29,37 +39,51 @@ class NetCredWebhookController extends BaseController {
             return new Response(JSON.stringify({ error: "Configuration error" }), { status: 500 });
         }
 
-        if (!authHeader || authHeader !== `Bearer ${webhookToken}`) {
-            console.warn("[Webhook] Unauthorized — token mismatch");
-            return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401 });
+        // Debug logging for token mismatch
+        if (authHeader !== `Bearer ${webhookToken}`) {
+            const maskedReceived = authHeader ? `${authHeader.substring(0, 10)}...${authHeader.substring(authHeader.length - 4)}` : "null";
+            const maskedExpected = `Bearer ${webhookToken.substring(0, 4)}...${webhookToken.substring(webhookToken.length - 4)}`;
+            console.warn(`[Webhook] Unauthorized — token mismatch. Received: ${maskedReceived}, Expected: ${maskedExpected}`);
+            
+            // If it's a simple case of NetCred not sending 'Bearer ', we handle it
+            if (authHeader === webhookToken) {
+                console.log("[Webhook] Auth match found WITHOUT Bearer prefix. Proceeding...");
+            } else {
+                return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401 });
+            }
         }
 
         // --- Parse Event and Body ---
-        const eventType = req.headers.get("x-netcred-event");
         const body = await req.json() as any;
+        const entity = body.entity;
 
-        // Common mapping based on NetCred Docs:
-        // transaction_state: "PAID", "EXPIRED", etc.
-        // charge.reference_code: Our internal subscription ID
-        const type = eventType || body.type; // Fallback to body.type for manual tests
-        const transactionState = body.transaction_state;
-        const externalId = body.charge?.reference_code || body.externalId || "";
+        // NetCred Webhook structure is typically: { entity: { ... }, company: { ... } }
+        // The entity ID is what maps to our netcred_id (chargeLink ID)
+        const chargeLinkId = entity?.id?.toString() || "";
+        
+        // Use entity status. 'ENDED' usually means captured/paid for simple links.
+        const chargeStatus = entity?.charge_status || "";
+        
+        // Reference code from first transaction or entity root
+        const externalId = entity?.reference_code || entity?.transactions?.[0]?.charge?.reference_code || "";
         const subscriptionId = externalId.split("_")[0] || null;
-        const customerEmail = body.charge?.customer_email || body.customerEmail || "";
-        const customerName = body.charge?.customer_name || body.customerName || "Consultor";
-        const amount = body.amount ?? 0;
-        const paymentMethod = body.method ?? body.paymentMethod ?? "";
 
-        console.log(`[Webhook] Event: ${type}, State: ${transactionState}, Sub: ${subscriptionId}`);
+        // Customer details from transactions or internal info
+        const billingInfo = entity?.transactions?.[0]?.billing_info || entity?.payment_profile?.customer;
+        const customerEmail = billingInfo?.customer_email || billingInfo?.email || "";
+        const customerName = billingInfo?.customer_name || billingInfo?.name || "Consultor";
+        
+        const amount = entity?.amount ? parseFloat(entity.amount) * 100 : 0; // Convert to cents
+        const paymentMethod = entity?.transactions?.[0]?.method || "";
+
+        console.log(`[Webhook] LinkId: ${chargeLinkId}, Status: ${chargeStatus}, Sub: ${subscriptionId}`);
 
         try {
-            // Map NetCred states to our internal dispatch events
-            let internalEvent = type;
-            if (type === "TRANSACTION_UPDATE") {
-                if (transactionState === "PAID") internalEvent = "PAYMENT_PAID";
-                if (transactionState === "EXPIRED") internalEvent = "PAYMENT_EXPIRED";
-                if (transactionState === "REFUNDED") internalEvent = "PAYMENT_REFUNDED";
-            }
+            // Map NetCred status to internal events
+            let internalEvent = "TRANSACTION_UPDATE";
+            if (chargeStatus === "ENDED") internalEvent = "PAYMENT_PAID";
+            if (chargeStatus === "EXPIRED") internalEvent = "PAYMENT_EXPIRED";
+            if (chargeStatus === "VOIDED") internalEvent = "PAYMENT_REFUNDED";
 
             await this.dispatch(internalEvent, {
                 subscriptionId,
@@ -67,7 +91,8 @@ class NetCredWebhookController extends BaseController {
                 customerName,
                 amount,
                 paymentMethod,
-                externalId: body.id || externalId
+                externalId: chargeLinkId,
+                chargeLinkId
             }, body);
 
             return new Response(JSON.stringify({ success: true }), { status: 200 });
@@ -77,43 +102,38 @@ class NetCredWebhookController extends BaseController {
         }
     }
 
-    // ------------------------------------------------------------------
-    // dispatch – routes each event type to its handler
-    // ------------------------------------------------------------------
-    private async dispatch(type: string, data: Record<string, any>, rawBody: any) {
-        const { subscriptionId, customerEmail, customerName, amount, paymentMethod, externalId } = data;
-
+    private async dispatch(type: string, data: PaymentPayload, rawBody: any) {
         // --- Always log the raw payment/event ---
         await this.logPayment({
-            subscriptionId,
-            externalId,
-            amount,
+            subscriptionId: data.subscriptionId,
+            externalId: data.externalId,
+            amount: data.amount,
             status: type,
-            paymentMethod,
+            paymentMethod: data.paymentMethod,
             payload: rawBody,
         });
 
         switch (type) {
             case "PAYMENT_PAID":
-            case "SUBSCRIPTION_PAID": // legacy alias
-                await this.onPaymentPaid({ subscriptionId, customerEmail, customerName, amount, paymentMethod });
+            case "SUBSCRIPTION_PAID":
+                await this.onPaymentPaid(data);
                 break;
 
             case "PAYMENT_EXPIRED":
-                await this.onPaymentExpired({ subscriptionId, customerEmail, customerName });
+                await this.onPaymentExpired(data);
                 break;
 
             case "PAYMENT_REFUNDED":
             case "CHARGEBACK":
-                await this.onPaymentRefunded({ subscriptionId, customerEmail, customerName, amount });
+                await this.onPaymentRefunded(data);
                 break;
 
             case "SUBSCRIPTION_CANCELED":
-                await this.onSubscriptionCanceled({ subscriptionId, customerEmail, customerName });
+                await this.onSubscriptionCanceled(data);
                 break;
 
             case "SUBSCRIPTION_RENEWED":
-                await this.onSubscriptionRenewed({ subscriptionId, customerEmail, customerName, amount });
+                await this.onSubscriptionRenewed(data);
                 break;
 
             default:
@@ -121,320 +141,170 @@ class NetCredWebhookController extends BaseController {
         }
     }
 
-    // ------------------------------------------------------------------
-    // PAID
-    // ------------------------------------------------------------------
-    private async onPaymentPaid(p: {
-        subscriptionId: string | null;
-        customerEmail: string;
-        customerName: string;
-        amount: number;
-        paymentMethod: string;
-    }) {
-        console.log("[Webhook][PAID] Activating subscription:", p.subscriptionId);
+    async onPaymentPaid(p: PaymentPayload) {
+        console.log(`[Webhook] Processing PAID. LinkId: ${p.chargeLinkId}, SubId: ${p.subscriptionId}`);
 
-        if (p.subscriptionId) {
-            const { error } = await supabaseAdmin
-                .from("subscriptions")
-                .update({
-                    status: "active",
-                    payment_status: "paid",
-                    updated_at: new Date().toISOString(),
-                })
-                .eq("id", p.subscriptionId);
+        let subscription: any = null;
 
-            if (error) console.error("[Webhook][PAID] Subscription update error:", error.message);
+        // 1. Try by ChargeLinkId (The most reliable for links)
+        if (p.chargeLinkId) {
+            const { data } = await supabaseAdmin
+                .from('subscriptions')
+                .select('*')
+                .eq('netcred_id', p.chargeLinkId)
+                .maybeSingle();
+            subscription = data;
+        }
 
-            // Also update the user's profile subscription_status
-            const { data: sub } = await supabaseAdmin
-                .from("subscriptions")
-                .select("user_id, plan_id")
-                .eq("id", p.subscriptionId)
-                .single();
+        // 2. Try by subscriptionId (Fallback)
+        if (!subscription && p.subscriptionId) {
+            const { data } = await supabaseAdmin
+                .from('subscriptions')
+                .select('*')
+                .eq('id', p.subscriptionId)
+                .maybeSingle();
+            subscription = data;
+        }
 
-            if (sub?.user_id) {
-                await supabaseAdmin
-                    .from("profiles")
-                    .update({ subscription_status: "active" })
-                    .eq("id", sub.user_id);
+        if (!subscription) {
+            console.warn(`[Webhook] Subscription NOT FOUND for activation attempt.`);
+            return;
+        }
 
-                // --- Workspace Management (multi-seat) ---
-                let workspaceId = null;
-                const multiSeatPlans = ['intermediario', 'avancado'];
-                const planSeats: Record<string, number> = {
-                    'basico': 1,
-                    'intermediario': 3,
-                    'avancado': 5
-                };
+        console.log(`[Webhook] Activating subscription: ${subscription.id} for user: ${subscription.user_id}`);
 
-                if (multiSeatPlans.includes(sub.plan_id)) {
-                    console.log(`[Webhook][PAID] Multi-seat plan detected (${sub.plan_id}). Checking for existing workspace.`);
-                    
-                    // Check if owner already has a workspace (could be from trial)
-                    const { data: existingWs } = await (supabaseAdmin as any).from("workspaces")
-                        .select("id")
-                        .eq("owner_id", sub.user_id)
-                        .maybeSingle();
+        const { error: updateErr } = await supabaseAdmin
+            .from("subscriptions")
+            .update({
+                status: "active",
+                payment_status: "paid",
+                updated_at: new Date().toISOString(),
+            })
+            .eq("id", subscription.id);
 
-                    if (existingWs) {
-                        workspaceId = existingWs.id;
-                        console.log(`[Webhook][PAID] Existing workspace found: ${workspaceId}. Updating plan level.`);
-                        
-                        await (supabaseAdmin as any).from("workspaces")
-                            .update({ 
-                                plan_level: sub.plan_id === 'avancado' ? 'pro' : 'pro', // Both levels get pro seats
-                                seat_limit: planSeats[sub.plan_id] || 3
-                            })
-                            .eq("id", workspaceId);
-                    } else {
-                        console.log(`[Webhook][PAID] Creating new workspace for ${sub.plan_id}.`);
-                        const { data: ws, error: wsErr } = await (supabaseAdmin as any).from("workspaces")
-                            .insert({
-                                name: `${p.customerName}'s Workspace`,
-                                owner_id: sub.user_id,
-                                plan_level: sub.plan_id === 'avancado' ? 'pro' : 'pro',
-                                seat_limit: planSeats[sub.plan_id] || 3
-                            })
-                            .select()
-                            .single();
+        if (updateErr) console.error("[Webhook] DB Update error:", updateErr.message);
 
-                        if (wsErr) {
-                            console.error("[Webhook][PAID] Workspace creation error:", wsErr.message);
-                        } else if (ws) {
-                            workspaceId = ws.id;
-                            // Add owner as first member if not already there
-                            await (supabaseAdmin as any).from("workspace_members")
-                                .upsert({
-                                    workspace_id: workspaceId,
-                                    user_id: sub.user_id,
-                                    role: 'admin'
-                                });
-                        }
-                    }
+        // Update profile
+        await supabaseAdmin
+            .from("profiles")
+            .update({ subscription_status: "active" })
+            .eq("id", subscription.user_id);
 
-                    // Link current subscription to workspace
-                    if (workspaceId) {
-                        await supabaseAdmin
-                            .from("subscriptions")
-                            .update({ workspace_id: workspaceId })
-                            .eq("id", p.subscriptionId);
-                    }
+        // Workspace Management
+        const multiSeatPlans = ['intermediario', 'avancado'];
+        const planSeats: Record<string, number> = { 'basico': 1, 'intermediario': 3, 'avancado': 5, 'v-test': 1 };
+
+        if (multiSeatPlans.includes(subscription.plan_id)) {
+            const { data: existingWs } = await (supabaseAdmin as any).from("workspaces")
+                .select("id")
+                .eq("owner_id", subscription.user_id)
+                .maybeSingle();
+
+            let workspaceId = existingWs?.id;
+
+            if (workspaceId) {
+                await (supabaseAdmin as any).from("workspaces")
+                    .update({ 
+                        plan_level: 'pro',
+                        seat_limit: planSeats[subscription.plan_id] || 3
+                    })
+                    .eq("id", workspaceId);
+            } else {
+                const { data: ws } = await (supabaseAdmin as any).from("workspaces")
+                    .insert({
+                        name: `${p.customerName}'s Workspace`,
+                        owner_id: subscription.user_id,
+                        plan_level: 'pro',
+                        seat_limit: planSeats[subscription.plan_id] || 3
+                    })
+                    .select()
+                    .single();
+                workspaceId = ws?.id;
+                
+                if (workspaceId) {
+                    await (supabaseAdmin as any).from("workspace_members")
+                        .upsert({ workspace_id: workspaceId, user_id: subscription.user_id, role: 'admin' });
                 }
+            }
 
-                // --- SIO_MAR Synchronization ---
-                // Now that payment is confirmed, we trigger the account sync
-                try {
-                    const baseUrl = process.env.URL || "http://localhost:8888";
-                    console.log(`[Webhook][PAID] Triggering SIO_MAR sync for user: ${sub.user_id}`);
-
-                    await fetch(`${baseUrl}/.netlify/functions/sync-user-to-sio-mar`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            userId: sub.user_id,
-                            email: p.customerEmail,
-                            name: p.customerName,
-                            workspaceId: workspaceId,
-                            workspaceName: `${p.customerName}'s Workspace`,
-                            planLevel: sub.plan_id === 'avancado' ? 'pro' : (sub.plan_id === 'basico' ? 'free' : 'pro'),
-                            seatLimit: planSeats[sub.plan_id] || 1,
-                            role: 'admin',
-                            subscriptionId: p.subscriptionId
-                        })
-                    });
-                } catch (syncErr: any) {
-                    console.error("[Webhook][PAID] SIO_MAR Sync trigger failed:", syncErr.message);
-                }
+            if (workspaceId) {
+                await supabaseAdmin.from("subscriptions").update({ workspace_id: workspaceId }).eq("id", subscription.id);
             }
         }
 
-        // Send confirmation email
+        // SIO_MAR Sync
+        try {
+            const baseUrl = process.env.URL || "http://localhost:8888";
+            await fetch(`${baseUrl}/.netlify/functions/sync-user-to-sio-mar`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    userId: subscription.user_id,
+                    email: p.customerEmail,
+                    name: p.customerName,
+                    subscriptionId: subscription.id
+                })
+            });
+        } catch (e) { /* non-fatal */ }
+
+        // Send Email
         if (p.customerEmail) {
             await this.safeSendEmail(p.customerEmail, "payment-confirmed", {
                 name: p.customerName,
                 amount: this.formatAmount(p.amount),
-                payment_method: p.paymentMethod === "PIX" ? "PIX" : "Cartão/Boleto",
+                payment_method: p.paymentMethod || "NetCred",
             });
         }
     }
 
-    // ------------------------------------------------------------------
-    // EXPIRED
-    // ------------------------------------------------------------------
-    private async onPaymentExpired(p: {
-        subscriptionId: string | null;
-        customerEmail: string;
-        customerName: string;
-    }) {
-        console.log("[Webhook][EXPIRED] Payment expired for subscription:", p.subscriptionId);
-
+    private async onPaymentExpired(p: PaymentPayload) {
         if (p.subscriptionId) {
-            await supabaseAdmin
-                .from("subscriptions")
-                .update({
-                    payment_status: "expired",
-                    updated_at: new Date().toISOString(),
-                })
-                .eq("id", p.subscriptionId);
+            await supabaseAdmin.from("subscriptions").update({ payment_status: "expired" }).eq("id", p.subscriptionId);
         }
-
-        if (p.customerEmail) {
-            await this.safeSendEmail(p.customerEmail, "payment-expired", {
-                name: p.customerName,
-            });
-        }
+        if (p.customerEmail) await this.safeSendEmail(p.customerEmail, "payment-expired", { name: p.customerName });
     }
 
-    // ------------------------------------------------------------------
-    // REFUNDED / CHARGEBACK
-    // ------------------------------------------------------------------
-    private async onPaymentRefunded(p: {
-        subscriptionId: string | null;
-        customerEmail: string;
-        customerName: string;
-        amount: number;
-    }) {
-        console.log("[Webhook][REFUNDED] Refund for subscription:", p.subscriptionId);
-
+    private async onPaymentRefunded(p: PaymentPayload) {
         if (p.subscriptionId) {
-            await supabaseAdmin
-                .from("subscriptions")
-                .update({
-                    status: "canceled",
-                    payment_status: "refunded",
-                    updated_at: new Date().toISOString(),
-                })
-                .eq("id", p.subscriptionId);
-
-            // Revoke profile status
-            const { data: sub } = await supabaseAdmin
-                .from("subscriptions")
-                .select("user_id")
-                .eq("id", p.subscriptionId)
-                .single();
-
-            if (sub?.user_id) {
-                await supabaseAdmin
-                    .from("profiles")
-                    .update({ subscription_status: "canceled" })
-                    .eq("id", sub.user_id);
-            }
+            await supabaseAdmin.from("subscriptions").update({ status: "canceled", payment_status: "refunded" }).eq("id", p.subscriptionId);
         }
-
-        if (p.customerEmail) {
-            await this.safeSendEmail(p.customerEmail, "payment-refunded", {
-                name: p.customerName,
-                amount: this.formatAmount(p.amount),
-            });
-        }
+        if (p.customerEmail) await this.safeSendEmail(p.customerEmail, "payment-refunded", { name: p.customerName, amount: this.formatAmount(p.amount) });
     }
 
-    // ------------------------------------------------------------------
-    // SUBSCRIPTION CANCELED
-    // ------------------------------------------------------------------
-    private async onSubscriptionCanceled(p: {
-        subscriptionId: string | null;
-        customerEmail: string;
-        customerName: string;
-    }) {
-        console.log("[Webhook][CANCELED] Subscription canceled:", p.subscriptionId);
-
+    private async onSubscriptionCanceled(p: PaymentPayload) {
         if (p.subscriptionId) {
-            await supabaseAdmin
-                .from("subscriptions")
-                .update({
-                    status: "canceled",
-                    payment_status: "canceled",
-                    updated_at: new Date().toISOString(),
-                })
-                .eq("id", p.subscriptionId);
-
-            const { data: sub } = await supabaseAdmin
-                .from("subscriptions")
-                .select("user_id")
-                .eq("id", p.subscriptionId)
-                .single();
-
-            if (sub?.user_id) {
-                await supabaseAdmin
-                    .from("profiles")
-                    .update({ subscription_status: "canceled" })
-                    .eq("id", sub.user_id);
-            }
+            await supabaseAdmin.from("subscriptions").update({ status: "canceled", payment_status: "canceled" }).eq("id", p.subscriptionId);
         }
-
-        if (p.customerEmail) {
-            await this.safeSendEmail(p.customerEmail, "subscription-canceled", {
-                name: p.customerName,
-            });
-        }
+        if (p.customerEmail) await this.safeSendEmail(p.customerEmail, "subscription-canceled", { name: p.customerName });
     }
 
-    // ------------------------------------------------------------------
-    // SUBSCRIPTION RENEWED
-    // ------------------------------------------------------------------
-    private async onSubscriptionRenewed(p: {
-        subscriptionId: string | null;
-        customerEmail: string;
-        customerName: string;
-        amount: number;
-    }) {
-        console.log("[Webhook][RENEWED] Subscription renewed:", p.subscriptionId);
-
+    private async onSubscriptionRenewed(p: PaymentPayload) {
         if (p.subscriptionId) {
-            await supabaseAdmin
-                .from("subscriptions")
-                .update({
-                    status: "active",
-                    payment_status: "paid",
-                    updated_at: new Date().toISOString(),
-                    current_period_end: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-                })
-                .eq("id", p.subscriptionId);
-        }
-
-        if (p.customerEmail) {
-            await this.safeSendEmail(p.customerEmail, "payment-confirmed", {
-                name: p.customerName,
-                amount: this.formatAmount(p.amount),
-                payment_method: "Renovação automática",
-            });
+            await supabaseAdmin.from("subscriptions").update({
+                status: "active",
+                payment_status: "paid",
+                current_period_end: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
+            }).eq("id", p.subscriptionId);
         }
     }
 
-    // ------------------------------------------------------------------
-    // Helpers
-    // ------------------------------------------------------------------
-    private async logPayment(p: {
-        subscriptionId: string | null;
-        externalId: string;
-        amount: number;
-        status: string;
-        paymentMethod: string;
-        payload: any;
-    }) {
-        const { error } = await (supabaseAdmin.from("netcred_payments") as any).insert({
-            subscription_id: p.subscriptionId || undefined,
-            external_id: p.externalId,
-            amount: p.amount,
-            status: p.status,
-            payment_method: p.paymentMethod,
-            payload: p.payload,
-        });
-
-        if (error) {
-            console.warn("[Webhook] logPayment error (non-fatal):", error.message);
-        }
+    private async logPayment(p: { subscriptionId: string | null, externalId: string, amount: number, status: string, paymentMethod: string, payload: any }) {
+        try {
+            await (supabaseAdmin.from("netcred_payments") as any).insert({
+                subscription_id: p.subscriptionId || undefined,
+                external_id: p.externalId,
+                amount: p.amount,
+                status: p.status,
+                payment_method: p.paymentMethod,
+                payload: p.payload,
+            });
+        } catch (e) { console.warn("[Webhook] Log error", e); }
     }
 
     private async safeSendEmail(to: string, templateId: string, vars: Record<string, string>) {
         try {
             await sendTemplateEmail(to, templateId, vars);
-            console.log(`[Webhook] Email "${templateId}" sent to ${to}`);
-        } catch (err: any) {
-            console.error(`[Webhook] Email "${templateId}" failed:`, err.message);
-            // Never throw — email failure must NOT fail the webhook response
-        }
+        } catch (e) { console.error("[Webhook] Email error", e); }
     }
 
     private formatAmount(cents: number): string {

@@ -227,12 +227,9 @@ const CheckoutController: React.FC<CheckoutControllerProps> = ({
       localStorage.setItem('checkoutPlanId', planId);
 
       // Define amount in cents
-      let amountCents = 0;
-      if (planId === 'basico') amountCents = 56000;
-      else if (planId === 'intermediario') amountCents = 74000;
-      else if (planId === 'avancado') amountCents = 81000;
-
-      console.log(`[${processId}] Requesting checkout for plan: ${planId}, amount: ${amountCents}`);
+      let amountCents = 100; // Temporarily R$ 1,00 for all plans for production testing
+      
+      console.log(`[${processId}] Requesting checkout for plan: ${planId}, amount: ${amountCents} (Testing override)`);
 
       // Visual feedback for user - show processing step
       setProcessingStep("processing");

@@ -53,9 +53,24 @@ const PLANS_DATA = {
             "Consultoria de Processos",
             "Tudo do Plano Intermediário"
         ],
-        color: "from-amber-500/20 to-orange-600/20",
+        color: "from-amber-500/20 to-amber-600/20",
         border: "border-amber-500/30",
         text: "text-amber-400"
+    },
+    'v-test': {
+        name: "LUMIA - Teste de Integração",
+        price: 1,
+        installments: 1,
+        description: "Plano de teste de fluxo de pagamento (Produção)",
+        features: [
+            "Teste de Checkout NetCred",
+            "Validação de Webhook",
+            "Sincronização de Assinatura",
+            "Ambiente Real"
+        ],
+        color: "from-green-500/20 to-green-600/20",
+        border: "border-green-500/30",
+        text: "text-green-400"
     }
 };
 
@@ -177,10 +192,12 @@ const Checkout = () => {
                                                 <div className="text-slate-500 text-xs mb-1 uppercase tracking-widest">Investimento</div>
                                                 <div className="flex items-baseline justify-center gap-2">
                                                     <span className="text-lg text-slate-400">R$</span>
-                                                    <span className="text-5xl font-bold text-white">{plan.price}</span>
+                                                    <span className="text-5xl font-bold text-white">1,00</span>
                                                     <span className="text-slate-400">/mês</span>
                                                 </div>
-                                                <div className="text-slate-500 text-[10px] mt-2 uppercase tracking-widest leading-relaxed">Cobrado semestralmente via NetCred</div>
+                                                <div className="text-amber-400 text-[10px] mt-2 uppercase tracking-widest font-bold leading-relaxed">
+                                                    Preço especial de teste ativado
+                                                </div>
                                             </>
                                         )}
                                     </div>

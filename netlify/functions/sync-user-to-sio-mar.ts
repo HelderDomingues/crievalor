@@ -66,16 +66,25 @@ class SyncUserToSioMarController extends BaseController {
             }
 
             // 4. Mark as synced in local crievalor DB
-            const { error: updateLocalError } = await supabaseAdmin
-                .from('profiles')
-                .update({
-                    sio_mar_synced: true,
-                    sio_mar_synced_at: new Date().toISOString()
-                })
-                .eq('id', userId);
+            try {
+                const { error: updateLocalError } = await supabaseAdmin
+                    .from('profiles')
+                    .update({
+                        sio_mar_synced: true,
+                        sio_mar_synced_at: new Date().toISOString()
+                    })
+                    .eq('id', userId);
 
-            if (updateLocalError) {
-                console.error('[SyncSioMar] Error marking as synced locally:', updateLocalError.message);
+                if (updateLocalError) {
+                    // Check if it's a "column does not exist" error
+                    if (updateLocalError.message.includes('column') && updateLocalError.message.includes('not find')) {
+                        console.warn('[SyncSioMar] LOCAL SYNC TRACKING FAILED: Columns sio_mar_synced/at missing in DB. Sync to SIO_MAR was still successful.');
+                    } else {
+                        console.error('[SyncSioMar] Error marking as synced locally:', updateLocalError.message);
+                    }
+                }
+            } catch (localErr: any) {
+                console.warn('[SyncSioMar] Local update exception (likely missing columns):', localErr.message);
             }
 
             return new Response(JSON.stringify({ success: true }), { status: 200 });

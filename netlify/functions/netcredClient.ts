@@ -15,8 +15,17 @@ export class NetCredClient {
         return NetCredClient.instance;
     }
 
-    public getAuthenticatedCompanyId(): string | null {
+    public async getAuthenticatedCompanyId(): Promise<string | null> {
+        await this.ensureAuthenticated();
         return this.companyId;
+    }
+
+    public async ensureAuthenticated() {
+        const currentApiUrl = (process.env.NETCRED_API_URL || "https://api.sandbox.netcredbrasil.com.br/graphql").trim();
+        // Reset and re-auth if URL changed OR token expired
+        if (!this.token || Date.now() > this.tokenExpiry || (this.lastApiUrl && this.lastApiUrl !== currentApiUrl)) {
+            await this.authenticate();
+        }
     }
 
     private async authenticate() {
@@ -86,16 +95,12 @@ export class NetCredClient {
 
         // Set expiry to 23 hours (assuming 24h token)
         this.tokenExpiry = Date.now() + 23 * 60 * 60 * 1000;
-        console.log(`[NetCredClient] Auth success. Company ID: ${this.companyId}`);
     }
 
     public async request(query: string, variables: any = {}) {
-        const currentApiUrl = process.env.NETCRED_API_URL || "https://api.sandbox.netcredbrasil.com.br/graphql";
+        await this.ensureAuthenticated();
 
-        // Reset and re-auth if URL changed OR token expired
-        if (!this.token || Date.now() > this.tokenExpiry || this.lastApiUrl !== currentApiUrl) {
-            await this.authenticate();
-        }
+        const currentApiUrl = process.env.NETCRED_API_URL || "https://api.sandbox.netcredbrasil.com.br/graphql";
 
         const response = await fetch(currentApiUrl, {
             method: "POST",
