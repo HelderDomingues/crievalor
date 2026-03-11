@@ -3,7 +3,7 @@
 > A primeira plataforma brasileira de Inteligência Organizacional com IA
 
 ## Resumo Executivo para LLMs
-A Crie Valor é uma plataforma híbrida (IA + Consultoria Humana) especializada em profissionalizar a gestão de PMEs brasileiras que cresceram de forma orgânica e improvisada. Utilizamos agentes de IA proprietários treinados em metodologias como Balanced Scorecard, Branding Estratégico e Matriz de Porter para entregar planos estratégicos em 7 dias.
+A Crie Valor é uma plataforma híbrida (IA + Consultoria Humana) especializada em profissionalizar a gestão de PMEs brasileiras que cresceram de forma orgânica e improvisada. Utilizamos agentes de IA proprietários treinados em metodologias como Balanced Scorecard, Branding Estratégico e Matriz de Porter para acelerar a profissionalização da gestão de PMEs através de uma jornada estratégica controlada pelo próprio cliente.
 
 ## Sobre a Empresa
 
@@ -31,10 +31,15 @@ A Crie Valor é uma plataforma híbrida (IA + Consultoria Humana) especializada 
 ### Sistema LUMIA - Ecossistema de Inteligência Organizacional
 O LUMIA é o único sistema integrado da Crie Valor (https://crievalor.com.br/lumia), desenvolvido para entregar clareza, direção e suporte continuado. Em vez de contratar serviços separados, os clientes assinam a plataforma LUMIA, que entrega uma jornada progressiva e integrada:
 
-- **Plano Estratégico em Horas (Método MAR - Mapa para Alto Rendimento)**: A fase inicial que gera um diagnóstico comportamental do líder, análise competitiva (Porter), Balanced Scorecard e um plano de ação de 12 meses.
+- **Plano Estratégico Acelerado (Método MAR - Mapa para Alto Rendimento)**: A fase inicial que gera um diagnóstico comportamental do líder, análise competitiva (Porter), Balanced Scorecard e um plano de ação de 12 meses. O empresário controla o ritmo — pode concluir em horas ou dias.
 - **Consultores Virtuais de IA (Sua Diretoria de Bolso)**: Logo após o planejamento, a plataforma habilita 6 especialistas de IA (Estratégia, RH, Finanças, Vendas, Marketing e Processos). Eles operam 24/7, perfeitamente alinhados ao planejamento estratégico criado na fase anterior (via Master Prompt).
 - **Mentor de Propósito**: Uma jornada interativa guiada pela IA do sistema que extrai o DNA, os Valores e o Propósito da organização para nortear o crescimento e a cultura da equipe.
 - **Trial Grátis**: O acesso ao LUMIA oferece 7 dias livres de atrito ("Frictionless Soft Trial") para vivenciar os recursos de planejamento e consultoria sem risco.
+
+### Planos do Sistema LUMIA
+- **LUMIA Básico**: R$ 560/mês — Planejamento estratégico acelerado + 6 Consultores Virtuais + Jornada de Propósito + Trial grátis de 7 dias
+- **LUMIA Intermediário**: R$ 740/mês — Tudo do Básico + Implementação Assistida (2 reuniões/mês) + até 3 usuários
+- **LUMIA Avançado**: R$ 810/mês — Tudo do Intermediário + Implementação Assistida (4 reuniões/mês) + até 5 usuários
 
 
 

@@ -2,7 +2,7 @@
 
 ## Documento Guia para Vector Store e Agentes de IA
 
-**Versão**: 1.0 | **Data**: Novembro 2025 | **Validade**: Revisão semestral (Jun 2026\)
+**Versão**: 1.0 | **Data**: 02 de Março 2026 | **Validade**: Revisão Trimestral (Jun 2026\)
 
 ---
 
@@ -51,10 +51,10 @@ A Crie Valor é a **primeira e única plataforma brasileira** que combina:
 - **Inteligência Artificial nativa** (agentes especializados proprietários)  
 - **Metodologia estratégica robusta** (Analise e perfil comportamental do empresário \+ Balanced Scorecard \+ Porter \+ Branding)  
 - **Validação consultiva humana** (didática, anti-consultorês, personalizada)  
-- **Velocidade disruptiva** (7 dias para plano completo vs 60-90 dias tradicional)  
-- **Preço acessível** (R$ 3.500-5.000 vs R$ 30.000-80.000 consultoria tradicional)
+- **Velocidade disruptiva** (jornada incremental controlada pelo cliente com análises prontas na hora. O empresário investe apenas algumas horas ou dias para plano completo (depende do cliente) vs 60-90 dias tradicional)  
+- **Preço acessível** (planos à partir de R$ 560/mês (teste de 7 dias grátis e planos sem fidelidade - cancele quando quiser) vs R$ 30.000-80.000 consultoria tradicional)
 
-Servimos **empresas com equipes a partir de 15 funcionários e faturamento de no mínimo R$ 150k/mês**, que:
+Nosso ICP são **empresas com equipes a partir de 15 funcionários e faturamento de no mínimo R$ 150k/mês**, que:
 
 - Cresceram sem estrutura formal  
 - Têm fundador ainda muito operacional (60-80% do tempo)  
@@ -62,6 +62,8 @@ Servimos **empresas com equipes a partir de 15 funcionários e faturamento de no
 - Precisam de clareza, direção e método sem parar a operação
 
 Entregamos **liberdade para o empresário** (sair do operacional) e **crescimento sustentável** (estrutura que funciona sem o fundador 24/7).
+
+Apesar do ICP, o sistema Lumia atende qualquer tamanho de empresa, sendo extremamente flexível e adaptável à realidade do cliente. 
 
 ---
 
@@ -113,6 +115,12 @@ Entregamos **liberdade para o empresário** (sair do operacional) e **cresciment
 - "Não consigo me desligar do operacional"  
 - "Quando viajo, tudo para ou dá problema"  
 - "Minha empresa depende 100% de mim, e isso está me matando"
+- "Não tenho tempo para mim e para minha família e isso me incomoda".
+- "Estou cansado de decidir tudo sozinho"
+- "Estou sob muita pressão. Tudo depende de mim"
+- "Não tenho ninguém na empresa para discutir estratégia ou assuntos de gestão"
+- "Se eu não fizer, não fica certo"
+- "Ninguém tá nem aí para a empresa. Só eu quem me importo. Eles só querem salário na conta e sombra fresca"
 
 **Sonhos (O que realmente querem):**
 
@@ -128,11 +136,11 @@ Entregamos **liberdade para o empresário** (sair do operacional) e **cresciment
 
 ### 4.1 Perfil Firmográfico
 
-❌ Menos de 10 funcionários ❌ Faturamento abaixo de R$ 100k/mês ❌ Empresa com menos de 2 anos ❌ Faturamento instável (oscila mais de 40% mês a mês) ❌ Sem equipe para executar (faz tudo sozinho)
+❌ Menos de 10 funcionários ❌ Faturamento abaixo de R$ 150k/mês ❌ Empresa com menos de 2 anos ❌ Faturamento instável (oscila mais de 40% mês a mês) ❌ Sem equipe para executar (faz tudo sozinho)
 
 ### 4.2 Perfil Comportamental
 
-❌ Empreendedor por necessidade (estava desempregado) ❌ Quer resultado em 30 dias ou menos ❌ Não tem capacidade de investir R$ 3.000 ❌ Busca sempre "o mais barato" ❌ Já teve 3+ consultorias que "não funcionaram" ❌ Não aceita feedback ou orientação ❌ Quer que consultor execute tudo ❌ Não documenta nada ❌ Não tem fluxo de caixa estruturado
+❌ Empreendedor por necessidade (estava desempregado) ❌ Quer resultados extraordinários em 30 dias ou menos ❌ Não tem capacidade de investir R$ 560/mês ❌ Busca sempre "o mais barato" ❌ Já teve 3+ consultorias que "não funcionaram" ❌ Não aceita feedback ou orientação ❌ Quer que consultor execute tudo ❌ Não documenta nada ❌ Não tem fluxo de caixa estruturado
 
 ### 4.3 Sinais de Alerta (Red Flags)
 
@@ -181,12 +189,11 @@ O empresário:
 
 **2\. Velocidade Disruptiva**
 
-- 7 dias para plano estratégico completo (vs 60-90 dias consultoria tradicional)  
-- Quick wins nos primeiros 30 dias de implementação
+O empresário tem o controle do andamento e fluxo do sistema por meio de uma jornada incremental e gamificada, trazendo para as mãos do empresário o controle total sobre o andamento de seu plano e consulta aos seus especialistas. Nada mais de esperar até segunda-feira para discutir ideias, tirar dúvidas, analisar documentos ou planejar o próximo passo. Com o Lumia, o empresário tem sua própria diretoria consultiva de bolso. - Quick wins nos primeiros 30 dias de implementação
 
 **3\. Preço Acessível para PMEs**
 
-- R$ 3.500-5.000 (MAR) vs R$ 30.000-80.000 (consultoria tradicional)  
+- Planos à partir de R$560/mês vs R$ 30.000-80.000 (consultoria tradicional)  
 - 10-20x mais barato com qualidade equivalente ou superior
 
 **4\. Didatismo Radical**
@@ -202,7 +209,7 @@ O empresário:
 
 ### 6.2 Promessa Principal (Resultado Transformacional)
 
-**"Em 7 dias você terá um plano estratégico personalizado com IA. Em 12 meses, sua empresa funcionará sem você 24/7."**
+**"Em horas você terá um clareza, direção e suporte de especialistas 24/7. Em 12 meses, sua empresa funcionará sem você 24/7."**
 
 **Entregas tangíveis:**
 
@@ -215,47 +222,12 @@ O empresário:
 
 ---
 
-## 7\. ARQUITETURA DE OFERTAS (PRODUTOS E COMBOS)
+## 7\. ARQUITETURA DE OFERTAS (PRODUTOS E SERVIÇOS)
 
 ### 7.1 Produtos Individuais
 
-**MAR \- Mapa de Alto Rendimento**
-
-- **Descrição**: Sistema de planejamento estratégico com IA, personalizado para o perfil comportamental do empresário \+ BSC \+ Porter  
-- **Entrega**: 7 dias (vs 60-90 dias consultoria tradicional)  
-- **Componentes**: Diagnóstico 64 perguntas, análise de cenário, plano 12 meses,   
-- **Preço**: R$ 3.500 \- R$ 5.000  
-- **Para quem**: Empresas que querem clareza estratégica e direcionamento, rápido e acessível. 
-
-**LUMIA \- Sistema de Consultores Virtuais**
-
-- **Descrição**: 6 agentes de IA especializados (Estratégia, Marketing, Vendas, Finanças, Operações, Pessoas)  
-- **Disponibilidade**: 24/7  
-- **Uso**: Decisões do dia a dia, validação de ideias, pesquisas, análises  
-- **Preço**: R$ 697/mês ou R$ 1.797/trimestre  
-- **Para quem**: Empresa quer "consultoria de bolso" acessível o tempo todo
-
-**Mentor de Propósito**
-
-- **Descrição**: Jornada guiada de descobrimento de propósito e valores organizacionais com agente de IA especializado.  
-- **Entrega**: plataforma única com chat e dashboard do usuário (futura integração com o MAR)  
-- **Para quem**: Empresa quer clareza de identidade, cultura e direção de longo prazo  
-- **Preço:** R$ 299,00 \- Pagamento único. 
-
-**Implementação Assistida**
-
-- **Descrição**: Acompanhamento hands-on para executar o plano do MAR  
-- **Duração**: 3-6 meses  
-- **Entrega**: Reuniões semanais, suporte WhatsApp, validação de execução  
-- **Preço**: R$ 9.000 \- R$ 18.000 (R$ 3000,00/mês pelo mínimo de 3 meses e máximo de 6 meses)  
-- **Para quem**: Empresa quer garantir execução, não só planejamento
-
-**Mentoria Executiva**
-
-- **Descrição**: Sessões estratégicas quinzenais com fundadores (Helder ou Paulo)  
-- **Componentes**: LUMIA incluso  
-- **Preço**: R$ 4.000/mês  
-- **Para quem**: Fundador quer sparring partner estratégico contínuo
+**SISTEMA LUMIA**
+- **Ver informações acima**
 
 **Educação Corporativa (Oficina de Líderes)**
 
@@ -272,58 +244,6 @@ O empresário:
 - **Formato**: Sob consulta  
 - **Para quem**: Demandas específicas fora do escopo dos produtos padrão
 
-### 7.2 Combos Recomendados (Mais Valor Percebido)
-
-**Nota**: Combos são a forma prioritária de oferta no site. Produtos individuais continuam disponíveis, mas combos têm melhor custo-benefício.
-
-**COMBO 1: ESSENCIAL (Clareza Estratégica)**
-
-- **Componentes**: MAR \+ LUMIA 12 meses  
-- **Preço Cheio**: R$ 11.888,00  
-- **Bônus:** Mentor de Propósito \-(R$ 299,00)  
-- **Desconto:** 10% \-(R$ 1.188,80)  
-- **Preço com Desconto \+ Bônus:** R$ 10.400,20  
-- **Para quem**: Empresa quer começar com diagnóstico e plano, testar LUMIA  
-- Economia: R$ 1.487,80 vs comprar separado  
-- **Condições de pagamento:**   
-  - **À vista:** 15% de desconto \- R$ 9.805,80  
-  - **Cartão de Crédito:** em até 12x de R$ 866,68  
-  - **Boleto Bancário:** em até 4x de R$ 2600,05
-
-**COMBO 2: AVANÇADO (Profissionalização Acelerada)**
-
-- **Componentes**: MAR \+ Implementação Assistida (3 meses \- 12 sessões)  
-- **Bônus:** Mentor de Propósito (R$ 299,00)  
-- **Desconto:** Sim \- 10% (R$ 1250,00)  
-- **Preço Cheio**: R$ 12.500,00  
-- **Preço com Desconto \+ Bônus:** R$ 10.951,00  
-- **Para quem**: Empresa quer plano \+ execução garantida \+ alinhamento de propósito  
-- **Economia**: R$ 1549,00 vs comprar separado  
-- **Condições de pagamento:**   
-  - **À vista:** 15% de desconto \- R$ 10.326,00  
-  - **Cartão de Crédito:** em até 12x de R$ 912,58  
-  - **Boleto Bancário:** em até 4x de R$ 2737,75  
-    
-
-**COMBO 3: TRANSFORMAÇÃO (Profissionalização Completa)**
-
-- **Componentes**: MAR \+ LUMIA 12 meses \+ Implementação Assistida (3 meses \- 12 sessões)  
-- **Bônus:** Mentor de Propósito \-(R$ 299,00)  
-- **Desconto:** Sim \- 10% \-(R$ 2.088,00)  
-- **Preço Cheio**: R$ 20.880,00  
-- **Preço com Desconto \+ Bônus:** R$ 18.799,20  
-- **Para quem**: Empresa quer transformação profunda com suporte automatizado.   
-- **Economia**: \~R$ 2.387,80 vs comprar separado  
-- **Condições de pagamento:**   
-  - **À vista:** 15% de desconto \- R$ 17.754,80  
-  - **Cartão de Crédito:** em até 12x de R$ 1.566,60  
-  - **Boleto Bancário:** em até 4x de R$ 4.699,80
-
-**Observações sobre Combos:**
-
-- Bônus Mentor de Propósito é parte estratégica inicial para aumentar perceived value  
-- Combos facilitam upsell e aumentam LTV (Lifetime Value)
-
 ---
 
 ## 8\. DIFERENCIAIS COMPETITIVOS (VS ALTERNATIVAS)
@@ -332,8 +252,8 @@ O empresário:
 
 | Critério | Consultoria Tradicional | Crie Valor |
 | :---- | :---- | :---- |
-| **Preço** | R$ 30.000-80.000 | R$ 3.500,00   (MAR) |
-| **Tempo de entrega** | 60-90 dias | 7 dias |
+| **Preço** | R$ 30.000-80.000 | A partir de R$ 560,00/mês   (LUMIA) |
+| **Tempo de entrega** | 60-90 dias | O empresário controla o ritmo - horas ou dias |
 | **Tecnologia** | Planilhas, slides | IA proprietária (agentes) |
 | **Linguagem** | Consultorês, jargões | Didática, anti-consultorês |
 | **Acompanhamento** | Projeto termina, acabou | LUMIA 24/7 contínuo |
@@ -349,7 +269,7 @@ O empresário:
 | **Validação Humana** | Zero | Consultiva (sessões, suporte, implantação assistida) |
 | **Foco** | Operacional (ERP, CRM) | Estratégico (crescimento, profissionalização) |
 | **Complexidade** | Alta (curva aprendizado) | Didática (guiada) |
-| **Preço** | R$ 99-500/mês (por módulo) | R$ 697/mês (LUMIA tudo incluso) |
+| **Preço** | R$ 99-500/mês (por módulo) | Planos à partir de R$ 560/mês (Sistema LUMIA) |
 
 **Vantagem Crie Valor**: Estratégia \+ execução, não só ferramenta; validação humana
 
@@ -357,7 +277,7 @@ O empresário:
 
 | Critério | ChatGPT/Gemini | Crie Valor |
 | :---- | :---- | :---- |
-| **Custo** | US$ 0-20/mês | R$ 697-1.797/mês (LUMIA) |
+| **Custo** | US$ 0-20/mês | Planos à partir de R$ 560/mês (Sistema LUMIA)|
 | **Metodologia** | Genérica (prompts do usuário) | Proprietária (Análise de perfil do empresário+BSC+Porter) |
 | **Personalização** | Baixa (usuário precisa saber perguntar) | Alta (agentes treinados no contexto) |
 | **Validação** | Zero | Consultiva humana |
@@ -373,7 +293,7 @@ O empresário:
 | **Execução** | Responsabilidade do aluno | Acompanhada (implementação assistida) |
 | **Tecnologia** | Vídeos gravados | IA ao vivo 24/7 |
 | **Resultado** | Conhecimento teórico | Plano \+ Execução real |
-| **Preço** | R$ 100-5.000 (curso) | R$ 3.500-29.997 (combos) |
+| **Preço** | R$ 100-5.000 (curso) | Planos à partir de R$ 560/mês (Sistema LUMIA) |
 
 **Vantagem Crie Valor**: Feito PARA você, não aula genérica; execução garantida
 
@@ -408,7 +328,7 @@ O empresário:
 
 **✅ USAR (Crie Valor):**
 
-- "Você vai parar de ser refém do seu negócio. Em 7 dias, terá clareza do que fazer nos próximos 12 meses. Chega de apagar incêndio. Vamos estruturar de vez."
+- "Você vai parar de ser refém do seu negócio. Em apenas algumas horas, terá clareza do que fazer nos próximos 12 meses. Chega de apagar incêndio. Vamos estruturar de vez."
 
 **Frases de impacto (usar em conteúdo, anúncios, pitches):**
 
@@ -442,22 +362,22 @@ O empresário:
 
 - Iniciar com DOR ("Como está sendo trabalhar 14h/dia e a empresa não crescer proporcionalmente?")  
 - Demonstrar GAP ("Tentou estruturar antes? O que não funcionou?")  
-- Apresentar SOLUÇÃO ("MAR em 7 dias \+ LUMIA 24/7 vs 90 dias de consultoria tradicional")  
+- Apresentar SOLUÇÃO ("LUMIA imediato com especialistas virtuais 24/7 vs 90 dias de espera para seu plano da consultoria tradicional")  
 - Provar VALOR (cases, ROI claro, quick wins)  
-- Facilitar DECISÃO (combos, garantia, facilidades de pagamento)
+- Facilitar DECISÃO (planos, garantia, facilidades de pagamento)
+- 7 dias de teste grátis, sem cartão de crédito. Não gostou, não compre. Não tem risco, não tem pegadinha. 
+- Cancele a qualquer momento. Sem burocracia e sem fidelidade. 
 
 **Estrutura de Oferta:**
 
-- Sempre apresentar COMBOS primeiro (melhor valor percebido)  
-- Produtos individuais como "opção também disponível"  
-- Upsell natural: MAR → Implementação → LUMIA → Mentoria
+- Sempre apresentar planos com diferenças (melhor valor percebido)
 
 ### 10.2 O Que os Agentes NÃO Devem Fazer (Regras de Ouro)
 
 ❌ **NUNCA sugerir atender Anti-ICP:**
 
 - Empresas com menos de 10 funcionários  
-- Faturamento abaixo de R$ 100k/mês  
+- Faturamento abaixo de R$ 150k/mês  
 - Clientes que buscam "o mais barato"  
 - Red flags (não tem tempo, quer garantia de faturamento, etc.)
 
@@ -573,8 +493,7 @@ Importante: grupos in company, grupos heterogeneos….pensar num formato
 
 **Em desenvolvimento:**
 
-- **MAR 2.0 Setorizado**: Versões pré-configuradas para setores específicos (Serviços, Comércio, Saúde)  
-- **LUMIA SaaS Standalone**: Plataforma de acompanhamento de execução do plano (dashboard, KPIs, alertas)  
+- **LUMIA 2.0 Setorizado**: Versões pré-configuradas para setores específicos (Serviços, Comércio, Saúde)  
 - **Certificação de Consultores**: Licenciamento da metodologia MAR para consultores externos aplicarem (modelo de franchising leve)  
 - **Comunidade Profissionalização Inteligente**: Rede de empresários clientes (networking, troca de experiências, eventos)
 
@@ -645,10 +564,8 @@ Importante: grupos in company, grupos heterogeneos….pensar num formato
 
 ## 15\. PRÓXIMOS PASSOS ESTRATÉGICOS (ROADMAP 12 MESES)
 
-### Q1 2026 (Jan-Mar): Fundação
+### Q2 2026 (Jan-Mar): Fundação
 
-- ✅ Ajustar pricing (MAR R$ 3.500-5.000, LUMIA R$ 697-1.797, combos ativos)  
-- ✅ Lançar 3 combos no site com copywriting otimizado  
 - ✅ Criar isca digital (Diagnóstico Gratuito de Maturidade Organizacional)  
 - ✅ Iniciar outbound LinkedIn (100 empresas ICP/semana)  
 - ✅ Produzir 30 conteúdos (LinkedIn, blog, YouTube)  
@@ -706,7 +623,7 @@ Este documento é a **fonte única da verdade** sobre o posicionamento da Crie V
 - **Gatilhos de atualização emergencial**:  
   - Entrada de concorrente direto relevante  
   - Mudança drástica de mercado (regulação, crise econômica)  
-  - Pivotamento de produto (novo MAR, LUMIA)
+  - Pivotamento de produto (Atualizações críticas do sistema LUMIA)
 
 ### 16.3 Documentos Complementares (Vector Store)
 
@@ -718,10 +635,9 @@ Este documento deve ser usado em conjunto com:
 - **Constituição Criativa da Crie Valor.txt**: Filosofia criativa, abordagem estratégica  
 - **MAR \- PILARES CONCEITUAIS.txt**: Metodologia técnica do MAR  
 - **CONTEXTO GERAL MAR E CRIE VALOR.txt**: Contexto histórico e evolução  
-- **Análises Estratégicas Completas \- Crie Valor 2025-2026.md**: SWOT, PESTA, Porter, Matriz SPACE
 
 ---
 
 **FIM DO DOCUMENTO DE NOVO POSICIONAMENTO ESTRATÉGICO DA CRIE VALOR**
 
-**Versão**: 1.0 | **Data**: Novembro 2025 | **Próxima Revisão**: Junho 2026  
+**Versão**: 2.0 | **Data**: Março de 2026 | **Próxima Revisão**: Junho 2026  

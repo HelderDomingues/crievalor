@@ -82,7 +82,7 @@ const Sobre = () => {
               "@type": "Person",
               "@id": "https://crievalor.com.br/#paulo-gaudioso",
               "name": "Paulo Gaudioso",
-              "jobTitle": "Co-fundador e Co-autor do Método MAR",
+              "jobTitle": "Co-fundador e Consultor Estratégico Sênior, Crie Valor",
               "image": "https://crievalor.com.br/uploads/paulo.jpg",
               "sameAs": [
                 "https://www.linkedin.com/in/paulogaudioso/"
@@ -153,7 +153,7 @@ const Sobre = () => {
               {/* Answer Capsule (40-60 palavras) */}
               <div className="bg-primary/5 border-l-4 border-primary rounded-r-lg p-6 mb-6 text-left">
                 <p className="text-lg leading-relaxed">
-                  A Crie Valor é a <strong>primeira plataforma brasileira</strong> de Inteligência Organizacional com IA que combina metodologia estratégica robusta (Mapeamento do DNA de Liderança + BSC + Porter) com agentes especializados. Fundada em abril/2015 por Helder Domingues e Paulo Gaudioso, entregamos planos estratégicos em 7 dias (vs 90 dias tradicional) para empresas com 15+ funcionários e faturamento a partir de R$ 150k/mês.
+                  A Crie Valor é a <strong>primeira plataforma brasileira</strong> de Inteligência Organizacional com IA que combina metodologia estratégica robusta (Mapeamento do DNA de Liderança + BSC + Porter) com agentes especializados. Fundada em abril/2015 por Helder Domingues e Paulo Gaudioso, usamos a metodologia MAR (Mapa para Alto Rendimento) para acelerar o planejamento estratégico. O empresário controla o ritmo — o que leva 60-90 dias numa consultoria tradicional pode ser concluído em horas ou poucos dias — para empresas com 15+ funcionários e faturamento a partir de R$ 150k/mês.
                 </p>
               </div>
 
@@ -347,7 +347,7 @@ const Sobre = () => {
                   icon: Sparkles,
                   title: "Sistema LUMIA",
                   description:
-                    "Ecossistema completo que unifica planejamento estratégico em 7 dias, consultores virtuais 24/7 e jornada de propósito.",
+                    "Plataforma de Inteligência Organizacional com IA: planejamento estratégico acelerado (pela metodologia MAR), 6 Consultores Virtuais 24/7 e jornada de Identidade e Propósito. Trial grátis de 7 dias.",
                   link: "/lumia"
                 },
                 {
@@ -361,7 +361,7 @@ const Sobre = () => {
                   icon: TrendingUp,
                   title: "Implementação Assistida",
                   description:
-                    "Acompanhamento hands-on para executar o plano do MAR. Reuniões semanais, suporte WhatsApp e validação de execução por 3-6 meses.",
+                    "Acompanhamento hands-on para executar o plano estratégico gerado no LUMIA. Reuniões mensais, suporte WhatsApp e validação de execução. Disponível nos planos Intermediário e Avançado.",
                   link: "/contato"
                 },
                 {

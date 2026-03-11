@@ -7,49 +7,49 @@ const MarComparativeTable = () => {
         {
             criterion: "Tempo de Entrega",
             icon: Clock,
-            mar: { value: "em até 7 dias", highlight: true },
+            lumia: { value: "você controla o ritmo", highlight: true },
             traditional: { value: "60-90 dias", highlight: false },
             saas: { value: "Imediato", highlight: false }
         },
         {
             criterion: "Preço",
             icon: DollarSign,
-            mar: { value: "R$ 3.497", highlight: true },
+            lumia: { value: "A partir de R$ 560/mês", highlight: true },
             traditional: { value: "R$ 30.000 - 80.000", highlight: false },
             saas: { value: "R$ 200 - 500/mês", highlight: false }
         },
         {
             criterion: "Personalização",
             icon: Target,
-            mar: { value: "Alta (DNA de Liderança)", highlight: true },
+            lumia: { value: "Alta (DNA de Liderança)", highlight: true },
             traditional: { value: "Alta", highlight: false },
             saas: { value: "Baixa (genérico)", highlight: false }
         },
         {
             criterion: "Validação Humana",
             icon: Users,
-            mar: { value: "Sim (26+ e 27+ anos exp.)", highlight: true },
+            lumia: { value: "Sim (26+ e 27+ anos exp.)", highlight: true },
             traditional: { value: "Sim", highlight: false },
             saas: { value: "Não", highlight: false }
         },
         {
             criterion: "Tecnologia IA",
             icon: Sparkles,
-            mar: { value: "IA Nativa + Metodologia", highlight: true },
+            lumia: { value: "IA Nativa + Metodologia", highlight: true },
             traditional: { value: "Não", highlight: false },
             saas: { value: "Sim (básica)", highlight: false }
         },
         {
             criterion: "Acompanhamento",
             icon: TrendingUp,
-            mar: { value: "Contínuo (Lumia 24/7)", highlight: true },
+            lumia: { value: "Contínuo (Lumia 24/7)", highlight: true },
             traditional: { value: "Limitado", highlight: false },
             saas: { value: "Autoatendimento", highlight: false }
         },
         {
             criterion: "Metodologia",
             icon: Target,
-            mar: { value: "BSC + Porter + Branding", highlight: true },
+            lumia: { value: "BSC + Porter + Branding", highlight: true },
             traditional: { value: "Variável", highlight: false },
             saas: { value: "Templates", highlight: false }
         }
@@ -73,10 +73,10 @@ const MarComparativeTable = () => {
                     transition={{ duration: 0.6 }}
                 >
                     <h2 className="text-3xl md:text-4xl font-bold mb-4">
-                        Por que escolher o MAR?
+                        Por que escolher o Sistema LUMIA?
                     </h2>
                     <p className="text-lg text-muted-foreground">
-                        Compare e veja como o MAR combina o melhor dos dois mundos: velocidade da tecnologia com profundidade da consultoria tradicional.
+                        Compare e veja como o LUMIA combina velocidade da tecnologia com profundidade da consultoria tradicional.
                     </p>
                 </motion.div>
 
@@ -139,10 +139,10 @@ const MarComparativeTable = () => {
                                         {/* MAR */}
                                         <td className="p-4 text-center bg-primary/5">
                                             <div className="flex flex-col items-center gap-1">
-                                                <span className={`font-semibold ${item.mar.highlight ? 'text-primary' : ''}`}>
-                                                    {item.mar.value}
+                                                <span className={`font-semibold ${item.lumia.highlight ? 'text-primary' : ''}`}>
+                                                    {item.lumia.value}
                                                 </span>
-                                                {item.mar.highlight && (
+                                                {item.lumia.highlight && (
                                                     <Check className="h-4 w-4 text-green-500" />
                                                 )}
                                             </div>
@@ -183,8 +183,8 @@ const MarComparativeTable = () => {
 
                                 <div className="space-y-3">
                                     <div className="flex justify-between items-center p-3 bg-primary/10 rounded-lg">
-                                        <span className="text-sm font-medium">MAR</span>
-                                        <span className="text-sm font-semibold text-primary">{item.mar.value}</span>
+                                        <span className="text-sm font-medium">LUMIA</span>
+                                        <span className="text-sm font-semibold text-primary">{item.lumia.value}</span>
                                     </div>
                                     <div className="flex justify-between items-center p-3 bg-secondary/10 rounded-lg">
                                         <span className="text-sm font-medium">Tradicional</span>
@@ -208,7 +208,7 @@ const MarComparativeTable = () => {
                         transition={{ duration: 0.6, delay: 0.4 }}
                     >
                         <p className="text-lg mb-6">
-                            <strong>O MAR é a única solução</strong> que combina IA nativa, metodologia estratégica robusta e validação humana especializada.
+                            <strong>O Sistema LUMIA é a única solução</strong> que combina IA nativa, metodologia estratégica robusta (MAR) e validação humana especializada.
                         </p>
                         <div className="flex flex-col sm:flex-row gap-4 justify-center">
                             <a

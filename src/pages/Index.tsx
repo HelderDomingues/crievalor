@@ -102,7 +102,7 @@ const Index = () => {
 
       <ServiceSchema
         name="LUMIA - Sistema de Inteligência Organizacional"
-        description="Ecossistema completo que unifica planejamento estratégico executável em 7 dias, um time de 6 especialistas de Inteligência Artificial para consultoria 24/7 e jornadas de definição de DNA corporativo."
+        description="Ecossistema de Inteligência Organizacional com IA que unifica planejamento estratégico acelerado (metodologia MAR), um time de 6 Consultores Virtuais especializados para consultoria 24/7, e jornada guiada de Identidade e Propósito. Trial grátis de 7 dias."
         image="https://iili.io/KnFOVTb.png"
         brand="Crie Valor - Inteligência Organizacional"
         offers={{

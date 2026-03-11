@@ -23,13 +23,13 @@ export const ecosystemPlans: PricingPlan[] = [
     annualPrice: "R$ 6.720",
     hasTrial: true,
     features: [
-      "Planejamento Estratégico Acelerado (7 dias)",
+      "Planejamento Estratégico Acelerado (metodologia MAR)",
       "6 Consultores Virtuais Especialistas (24/7)",
       "Jornada de Identidade e Propósito",
       "Acesso para 1 usuário principal",
       "Suporte básico via plataforma"
     ],
-    cta: "Iniciar Trial Grátis (7 Dias)",
+    cta: "Iniciar Trial Grátis — 7 dias sem compromisso",
     ctaUrl: "/subscription?plan=basico",
     popular: false
   },
