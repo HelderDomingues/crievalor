@@ -68,7 +68,7 @@ const CheckoutCanceled = () => {
     localStorage.removeItem('checkoutInstallments');
     localStorage.removeItem('checkoutTimestamp');
     
-    navigate("/mar#pricing");
+    navigate("/planos");
   };
 
   return (

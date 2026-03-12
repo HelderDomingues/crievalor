@@ -192,11 +192,8 @@ const Checkout = () => {
                                                 <div className="text-slate-500 text-xs mb-1 uppercase tracking-widest">Investimento</div>
                                                 <div className="flex items-baseline justify-center gap-2">
                                                     <span className="text-lg text-slate-400">R$</span>
-                                                    <span className="text-5xl font-bold text-white">1,00</span>
+                                                    <span className="text-5xl font-bold text-white">{plan.price.toFixed(2).replace('.', ',')}</span>
                                                     <span className="text-slate-400">/mês</span>
-                                                </div>
-                                                <div className="text-amber-400 text-[10px] mt-2 uppercase tracking-widest font-bold leading-relaxed">
-                                                    Preço especial de teste ativado
                                                 </div>
                                             </>
                                         )}

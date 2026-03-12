@@ -15,7 +15,7 @@ const SubscriptionNotFound = () => {
 
   const handleViewPlans = () => {
     // Navigate to the MAR page and scroll to the pricing section
-    window.location.href = "/mar#pricing";
+    window.location.href = "/planos";
   };
 
   return (

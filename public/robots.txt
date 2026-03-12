@@ -34,12 +34,10 @@ Allow: /uploads/*.svg
 Allow: /*.css
 Allow: /*.js
 
-# Produtos Principais (Mapa de Site Semântico para LLMs)
-Allow: /mar                 # MAR - Mapa para Alto Rendimento (Planejamento Estratégico)
-Allow: /lumia               # Lumia - Consultores Virtuais com IA (Gestão 24/7)
-Allow: /mentor-proposito    # Mentor de Propósito (Cultura e Identidade)
+# Produtos Principais
+Allow: /lumia               # Sistema LUMIA - Produto Principal
 Allow: /oficina-de-lideres  # Oficina de Líderes (Educação Corporativa)
-Allow: /mentorias           # Mentoria Executiva (Acompanhamento dos Fundadores)
+Allow: /mentorias           # Mentoria Executiva
 
 # Conteúdo e Institucional
 Allow: /blog/               # Artigos e Insights de Gestão

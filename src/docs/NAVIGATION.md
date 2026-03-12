@@ -12,7 +12,7 @@ These routes are accessible to all users without authentication.
 | Route | Component | Purpose | Navigation Access Points |
 |-------|-----------|---------|--------------------------|
 | `/` | `Index.tsx` | Main landing page | Header, Footer, Logo |
-| `/mar` | `Mar.tsx` | MAR Program information | Header, Footer, Services Section |
+| `/lumia` | `Ecosystem.tsx` | Sistema LUMIA - Ecossistema de Inteligência Organizacional | Header, Footer, Services Section |
 | `/sobre` | `Sobre.tsx` | About the company | Header, Footer |
 | `/contato` | `Contato.tsx` | Contact information and form | Header, Footer, CTA buttons |
 | `/projetos` | `Projetos.tsx` | Custom projects showcase | Footer, Services Section |

@@ -183,7 +183,7 @@ trackButtonClick('cta_hero', 'home_hero_section');
 // Menu navegação
 trackEvent('navigation_click', {
   menu_item: 'produtos',
-  destination: '/mar'
+  destination: '/lumia'
 });
 ```
 

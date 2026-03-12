@@ -38,7 +38,7 @@ export class NetCredService {
         baseAmount: input.amount,
         subscription: true,
         cardRecurringAllowed: true,
-        pixAllowed: false,
+        pixAllowed: true,
         billetAllowed: false,
         rrule: "FREQ=MONTHLY;COUNT=60", // Maximum allowed cycles by NetCred
       }
