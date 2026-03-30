@@ -153,7 +153,7 @@ const MaterialForm: React.FC<MaterialFormProps> = ({ onMaterialAdded, onCancel, 
             access_count: 0
           };
 
-          const { error: insertError } = await supabaseExtended.from('materials').insert([materialData]);
+          const { error: insertError } = await (supabaseExtended as any).from('materials').insert([materialData]);
           if (insertError) throw insertError;
         }
         toast({ title: isBatchUpload ? "Materiais adicionados com sucesso!" : "Material adicionado com sucesso" });
@@ -168,7 +168,7 @@ const MaterialForm: React.FC<MaterialFormProps> = ({ onMaterialAdded, onCancel, 
           thumbnail_url: thumbnailUrl
         };
 
-        const { error: updateError } = await supabaseExtended.from('materials').update(updateData).eq('id', initialData.id);
+        const { error: updateError } = await (supabaseExtended as any).from('materials').update(updateData).eq('id', initialData.id);
         if (updateError) throw updateError;
         toast({ title: "Material atualizado com sucesso" });
       }
@@ -207,7 +207,7 @@ const MaterialForm: React.FC<MaterialFormProps> = ({ onMaterialAdded, onCancel, 
             
             {/* Secção de Arquivos (Em Destaque) */}
             {!initialData && (
-              <div className="bg-primary/5 p-6 rounded-xl border border-primary/20">
+              <div className="bg-muted p-6 rounded-xl border border-border">
                 <FormField
                   control={form.control}
                   name="files"
@@ -215,12 +215,12 @@ const MaterialForm: React.FC<MaterialFormProps> = ({ onMaterialAdded, onCancel, 
                     <FormItem>
                       <FormLabel className="text-base font-semibold text-primary">Arquivos (Selecione um ou vários)</FormLabel>
                       <FormControl>
-                        <div className="border-2 border-dashed border-primary/40 bg-white rounded-lg p-8 flex flex-col items-center justify-center transition-colors hover:bg-primary/5 cursor-pointer relative">
+                        <div className="border-2 border-dashed border-primary/40 bg-card rounded-lg p-8 flex flex-col items-center justify-center transition-colors hover:bg-accent cursor-pointer relative">
                           <UploadCloud className="h-12 w-12 text-primary mb-3" />
-                          <p className="text-sm font-medium text-slate-700 mb-1">
+                          <p className="text-sm font-medium text-foreground mb-1">
                             Arraste arquivos ou clique para selecionar
                           </p>
-                          <p className="text-xs text-slate-500 mb-4">
+                          <p className="text-xs text-muted-foreground mb-4">
                             Você pode selecionar múltiplos arquivos para Upload em Lote
                           </p>
                           <Input
@@ -236,9 +236,9 @@ const MaterialForm: React.FC<MaterialFormProps> = ({ onMaterialAdded, onCancel, 
                               <p className="text-sm font-medium text-primary mb-2 flex items-center gap-2">
                                 <CheckSquare className="h-4 w-4" /> {selectedFiles.length} arquivo(s) selecionado(s):
                               </p>
-                              <ul className="text-xs text-slate-600 max-h-32 overflow-auto bg-slate-50 p-2 rounded border">
+                              <ul className="text-xs text-muted-foreground max-h-32 overflow-auto bg-muted p-2 rounded border border-border">
                                 {selectedFiles.map((f, i) => (
-                                  <li key={i} className="truncate truncate py-1 border-b last:border-0">{f.name}</li>
+                                  <li key={i} className="truncate py-1 border-b border-border last:border-0">{f.name}</li>
                                 ))}
                               </ul>
                             </div>
@@ -333,8 +333,8 @@ const MaterialForm: React.FC<MaterialFormProps> = ({ onMaterialAdded, onCancel, 
                   control={form.control}
                   name="product_types"
                   render={() => (
-                    <FormItem className="bg-slate-50 p-4 rounded-lg border border-slate-200">
-                      <FormLabel className="font-semibold text-slate-800 text-base mb-3 block">Regras de Acesso (Produtos)</FormLabel>
+                    <FormItem className="bg-muted/50 p-4 rounded-lg border border-border">
+                      <FormLabel className="font-semibold text-foreground text-base mb-3 block">Regras de Acesso (Produtos)</FormLabel>
                       <FormDescription className="mb-4">
                         Quem poderá ver {isBatchUpload ? "estes materiais" : "este material"}? Selecione um ou vários.
                       </FormDescription>
@@ -346,7 +346,7 @@ const MaterialForm: React.FC<MaterialFormProps> = ({ onMaterialAdded, onCancel, 
                             name="product_types"
                             render={({ field }) => {
                               return (
-                                <FormItem key={product.id} className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-3 bg-white hover:bg-slate-50 transition-colors">
+                                <FormItem key={product.id} className="flex flex-row items-start space-x-3 space-y-0 rounded-md border border-border p-3 bg-card hover:bg-accent hover:text-accent-foreground transition-colors">
                                   <FormControl>
                                     <Checkbox
                                       checked={field.value?.includes(product.id)}
@@ -378,12 +378,12 @@ const MaterialForm: React.FC<MaterialFormProps> = ({ onMaterialAdded, onCancel, 
                     <FormItem>
                       <FormLabel>Capa (Aplicada a todos)</FormLabel>
                       <FormControl>
-                        <div className="border border-dashed border-gray-300 rounded-lg p-4 flex flex-col items-center justify-center bg-slate-50 relative cursor-pointer hover:bg-slate-100 transition-colors">
+                        <div className="border border-dashed border-border rounded-lg p-4 flex flex-col items-center justify-center bg-muted/30 relative cursor-pointer hover:bg-accent transition-colors">
                           {thumbnailPreview ? (
                             <img src={thumbnailPreview} alt="Preview" className="h-24 object-cover rounded shadow-sm opacity-80" />
                           ) : (
                             <div className="text-center">
-                              <UploadCloud className="h-6 w-6 text-gray-400 mx-auto mb-1" />
+                              <UploadCloud className="h-6 w-6 text-muted-foreground mx-auto mb-1" />
                               <span className="text-xs text-muted-foreground">Adicionar Capa</span>
                             </div>
                           )}
