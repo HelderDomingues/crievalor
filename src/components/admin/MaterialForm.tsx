@@ -83,7 +83,7 @@ const MaterialForm: React.FC<MaterialFormProps> = ({ onMaterialAdded, onCancel, 
       // Upload file to storage ONLY if a new file is selected
       let fileUrl = initialData?.file_url;
 
-      if (values.file && values.file instanceof File) {
+      if (values.file && values.file instanceof window.File) {
         const file = values.file as File;
         const fileExt = file.name.split('.').pop();
         const fileName = `${uuidv4()}.${fileExt}`;
@@ -107,7 +107,7 @@ const MaterialForm: React.FC<MaterialFormProps> = ({ onMaterialAdded, onCancel, 
       let thumbnailUrl = initialData?.thumbnail_url || null;
 
       // Upload thumbnail if provided
-      if (values.thumbnail && values.thumbnail instanceof File) {
+      if (values.thumbnail && values.thumbnail instanceof window.File) {
         const thumb = values.thumbnail as File;
         const thumbExt = thumb.name.split('.').pop();
         const thumbName = `${uuidv4()}.${thumbExt}`;

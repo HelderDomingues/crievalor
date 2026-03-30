@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { formatDate } from "@/lib/utils";
-import { File, FileText, FilePenLine, FileSpreadsheet, FileImage, Eye, Trash2, Search } from "lucide-react";
+import { File as FileIcon, FileText, FilePenLine, FileSpreadsheet, FileImage, Eye, Trash2, Search } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -42,7 +42,7 @@ const MaterialsList: React.FC<MaterialsListProps> = ({ materials, onDelete, onEd
       case "guia":
         return <FileImage className="h-4 w-4" />;
       default:
-        return <File className="h-4 w-4" />;
+        return <FileIcon className="h-4 w-4" />;
     }
   };
 
