@@ -39,11 +39,26 @@ export const useMaterialFolders = () => {
         fetchFolders();
     }, []);
 
-    const createFolder = async (folder: Partial<MaterialFolder> & { name: string }) => {
+    const [currentProductType, setCurrentProductType] = useState<string>('lumia');
+
+    useEffect(() => {
+        // Try to determine product_type from URL or local storage
+        if (window.location.pathname.includes('oficina-lideres')) {
+            setCurrentProductType('oficina_lideres');
+        } else {
+            setCurrentProductType('lumia');
+        }
+    }, []);
+
+    const createFolder = async (folder: Partial<MaterialFolder> & { name: string; product_type?: string }) => {
         try {
+            const folderData = {
+                ...folder,
+                product_type: folder.product_type || currentProductType
+            };
             const { data, error } = await (supabaseExtended as any)
                 .from("material_folders")
-                .insert([folder])
+                .insert([folderData])
                 .select()
                 .single();
 

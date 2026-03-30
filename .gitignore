@@ -23,32 +23,31 @@ dist-ssr
 *.sln
 *.sw?
 
-# Agent
-.agent/skills/skills/
-.agent/skills/docs/
-.agent/skills/assets/
-.agent/skills/*.json
-.agent/skills/*.md
-.agent/skills/scripts/
-.agent/*.md
-!.agent/Supabase_credentials.md
-!.agent/Netlify_Credentials.md
-!.agent/NetCred_Credentials.md
+# Agent Workbench (System)
+.agent/
+!.agent/ARCHITECTURE.md
+!.agent/rules/
+!.agent/workflows/
+!.agent/agents/
+# NEVER commit credentials
+.agent/*_Credentials.md
+.agent/Supabase_credentials.md
+.agent/Netlify_Credentials.md
+.agent/NetCred_Credentials.md
+"atalho de .agent 2"
 
-# Local Netlify folder
-.netlify
-
-# Claude/Antigravity local cache and config
+# Local Netlify and Claude folders
+.netlify/
 .claude/
 .antigravity/
-.agent/NetCred_Credentials.md
-.agent/Netlify_Credentials.md
-.agent/Supabase_credentials.md
-.agent/Exemplos Notificação JSON NetCred/exemplo_cobrança_boleto.json
-.agent/Exemplos Notificação JSON NetCred/exemplo_cobranca_cartao.json
-.agent/Exemplos Notificação JSON NetCred/exemplo_cobranca_pix.json
-atalho de .agent 2
-.agent/API NetCred Docs/API Netcred.postman_collection.json
+
+# Common noise
+templates/
+nodes/
+node_modules/
+dist/
+build/
+.DS_Store
 
 # Supabase temp files
 supabase/.temp/
