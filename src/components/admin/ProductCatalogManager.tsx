@@ -46,6 +46,13 @@ import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
 
 interface Product {
     id: string;
@@ -73,7 +80,7 @@ export const ProductCatalogManager: React.FC = () => {
         name: "",
         slug: "",
         description: "",
-        type: "digital_product",
+        type: "course",
         price: 0,
         is_active: true
     });
@@ -152,7 +159,7 @@ export const ProductCatalogManager: React.FC = () => {
             name: "",
             slug: "",
             description: "",
-            type: "digital_product",
+            type: "course",
             price: 0,
             is_active: true
         });
@@ -327,8 +334,16 @@ export const ProductCatalogManager: React.FC = () => {
                                 </Label>
                                 <Input 
                                     value={formData.slug} 
-                                    onChange={(e) => setFormData({...formData, slug: e.target.value.toLowerCase().replace(/\s+/g, '_')})}
-                                    placeholder="ex: mentoria_elite"
+                                    onChange={(e) => {
+                                        // Enforce kebab-case: lowercase, hyphens only (no underscores)
+                                        const sanitized = e.target.value
+                                            .toLowerCase()
+                                            .replace(/[^a-z0-9-]/g, '-')  // Replace invalid chars with hyphen
+                                            .replace(/-+/g, '-')          // Collapse multiple hyphens
+                                            .replace(/^-|-$/g, '');       // Trim leading/trailing hyphens
+                                        setFormData({...formData, slug: sanitized});
+                                    }}
+                                    placeholder="ex: mentoria-elite"
                                     className="bg-muted/30 font-mono text-sm"
                                     required
                                     disabled={!!editingProduct}
@@ -349,12 +364,22 @@ export const ProductCatalogManager: React.FC = () => {
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-2">
                                 <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Tipo</Label>
-                                <Input 
+                                <Select 
                                     value={formData.type} 
-                                    onChange={(e) => setFormData({...formData, type: e.target.value})}
-                                    placeholder="digital_product"
-                                    className="bg-muted/30"
-                                />
+                                    onValueChange={(value) => setFormData({...formData, type: value})}
+                                >
+                                    <SelectTrigger className="bg-muted/30">
+                                        <SelectValue placeholder="Selecione o tipo..." />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="course">Curso (Course)</SelectItem>
+                                        <SelectItem value="subscription">Assinatura (Subscription)</SelectItem>
+                                        <SelectItem value="service">Serviço (Service)</SelectItem>
+                                        <SelectItem value="digital">Produto Digital (Digital)</SelectItem>
+                                        <SelectItem value="mentorship">Mentoria (Mentorship)</SelectItem>
+                                        <SelectItem value="physical">Físico (Physical)</SelectItem>
+                                    </SelectContent>
+                                </Select>
                             </div>
                             <div className="space-y-2">
                                 <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1">
