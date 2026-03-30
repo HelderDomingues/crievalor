@@ -5,6 +5,7 @@ import AdminAuth from "@/components/admin/AdminAuth";
 import MaterialsList from "@/components/admin/MaterialsList";
 import MaterialForm from "@/components/admin/MaterialForm";
 import { FolderTreeManager } from "@/components/admin/FolderTreeManager";
+import { ProductCatalogManager } from "@/components/admin/ProductCatalogManager";
 import { useToast } from "@/hooks/use-toast";
 import { supabaseExtended } from "@/integrations/supabase/extendedClient";
 import { Material } from "@/pages/MaterialExclusivo";
@@ -108,6 +109,7 @@ const AdminMaterialsManager: React.FC = () => {
                             {editingMaterial ? "Editar Material" : "Adicionar Material"}
                         </TabsTrigger>
                         <TabsTrigger value="folders">Gerenciar Pastas</TabsTrigger>
+                        <TabsTrigger value="products">Catálogo de Produtos</TabsTrigger>
                     </TabsList>
 
                     <TabsContent value="list">
@@ -133,6 +135,10 @@ const AdminMaterialsManager: React.FC = () => {
                             onEditMaterial={handleEditMaterial}
                             onDeleteMaterial={handleMaterialDeleted}
                         />
+                    </TabsContent>
+
+                    <TabsContent value="products">
+                        <ProductCatalogManager />
                     </TabsContent>
                 </Tabs>
             )}
