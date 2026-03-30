@@ -12,7 +12,7 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { File, UploadCloud, Loader2 } from "lucide-react";
+import { File as FileIcon, UploadCloud, Loader2 } from "lucide-react";
 import { PLANS } from "@/services/subscriptionService";
 import { FolderSelect } from "./FolderSelect";
 
@@ -279,7 +279,7 @@ const MaterialForm: React.FC<MaterialFormProps> = ({ onMaterialAdded, onCancel, 
                   <FormLabel>Arquivo</FormLabel>
                   <FormControl>
                     <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 flex flex-col items-center justify-center">
-                      <File className="h-10 w-10 text-gray-400 mb-2" />
+                      <FileIcon className="h-10 w-10 text-gray-400 mb-2" />
                       <p className="text-sm text-muted-foreground mb-2">
                         Arraste um arquivo ou clique para selecionar
                       </p>
