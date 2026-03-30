@@ -30,6 +30,7 @@ export interface Material {
   created_at: string;
   updated_at: string;
   plan_level: string;
+  product_types?: string[];
   access_count: number;
   folder_id?: string | null;
 }

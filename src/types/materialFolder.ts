@@ -7,6 +7,7 @@ export interface MaterialFolder {
     description?: string | null;
     parent_id?: string | null;
     order_number: number;
+    product_types?: string[];
     created_at: string;
     updated_at: string;
     children?: MaterialFolder[]; // For tree structure

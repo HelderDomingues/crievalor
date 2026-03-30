@@ -16,7 +16,9 @@ export type ExtendedDatabaseTables = OriginalDatabase & {
           file_url: string;
           thumbnail_url: string | null;
           plan_level: string;
+          product_types: string[];
           access_count: number;
+          folder_id: string | null;
           created_at: string;
           updated_at: string;
         };
@@ -28,7 +30,9 @@ export type ExtendedDatabaseTables = OriginalDatabase & {
           file_url: string;
           thumbnail_url?: string | null;
           plan_level: string;
+          product_types?: string[];
           access_count?: number;
+          folder_id?: string | null;
           created_at?: string;
           updated_at?: string;
         };
@@ -40,7 +44,9 @@ export type ExtendedDatabaseTables = OriginalDatabase & {
           file_url?: string;
           thumbnail_url?: string | null;
           plan_level?: string;
+          product_types?: string[];
           access_count?: number;
+          folder_id?: string | null;
           created_at?: string;
           updated_at?: string;
         };
@@ -269,7 +275,7 @@ export type ExtendedDatabaseTables = OriginalDatabase & {
           created_at?: string;
         };
       };
-    } & OriginalDatabase['public']['Tables'];
+    } & Omit<OriginalDatabase['public']['Tables'], 'materials' | 'client_logos' | 'material_accesses' | 'user_roles' | 'subscriptions' | 'products' | 'user_products' | 'product_resources'>;
     Views: {
       user_active_products: {
         Row: {
@@ -281,7 +287,7 @@ export type ExtendedDatabaseTables = OriginalDatabase & {
           access_expires_at: string | null;
         };
       };
-    } & OriginalDatabase['public']['Views'];
+    } & Omit<OriginalDatabase['public']['Views'], 'user_active_products'>;
     Functions: {
       get_user_products: {
         Args: {
@@ -307,7 +313,7 @@ export type ExtendedDatabaseTables = OriginalDatabase & {
         };
         Returns: boolean;
       };
-    } & OriginalDatabase['public']['Functions'];
+    } & Omit<OriginalDatabase['public']['Functions'], 'get_user_products' | 'user_can_access_resource'>;
   };
 };
 

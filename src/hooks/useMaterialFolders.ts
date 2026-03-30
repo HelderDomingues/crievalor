@@ -50,11 +50,11 @@ export const useMaterialFolders = () => {
         }
     }, []);
 
-    const createFolder = async (folder: Partial<MaterialFolder> & { name: string; product_type?: string }) => {
+    const createFolder = async (folder: Partial<MaterialFolder> & { name: string; product_types?: string[] }) => {
         try {
             const folderData = {
                 ...folder,
-                product_type: folder.product_type || currentProductType
+                product_types: folder.product_types || [currentProductType, 'geral']
             };
             const { data, error } = await (supabaseExtended as any)
                 .from("material_folders")
