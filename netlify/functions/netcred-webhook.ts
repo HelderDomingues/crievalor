@@ -54,6 +54,19 @@ class NetCredWebhookController extends BaseController {
 
         const expectedSignature = createHmac("sha256", webhookToken).update(rawBody).digest("hex");
 
+        // Validar HMAC signature
+        if (netcredSignatureHeader) {
+            const signatureBuffer = Buffer.from(netcredSignatureHeader);
+            const expectedBuffer = Buffer.from(expectedSignature);
+            
+            if (signatureBuffer.length !== expectedBuffer.length || 
+                !timingSafeEqual(signatureBuffer, expectedBuffer)) {
+                console.error("[Webhook] Invalid HMAC signature");
+                return new Response(JSON.stringify({ error: "Invalid signature" }), { status: 401 });
+            }
+            console.log("[Webhook] HMAC signature verified successfully");
+        }
+
         const netcredEvent = req.headers.get("x-netcred-event");
 
         // --- Log discovery info ---

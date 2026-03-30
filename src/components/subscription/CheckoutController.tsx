@@ -43,7 +43,7 @@ const CheckoutController: React.FC<CheckoutControllerProps> = ({
   autoTrigger = false
 }) => {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, session } = useAuth();
   const { toast } = useToast();
   const [isCheckingOut, setIsCheckingOut] = useState(false);
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
@@ -254,10 +254,12 @@ const CheckoutController: React.FC<CheckoutControllerProps> = ({
       const functionUrl = `${window.location.origin}/.netlify/functions/create-checkout`;
       const response = await fetch(functionUrl, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session?.access_token || ''}`
+        },
         body: JSON.stringify({
           planId,
-          userId: user.id,
           amount: amountCents,
           name: user.user_metadata?.full_name || user.email,
           email: user.email,

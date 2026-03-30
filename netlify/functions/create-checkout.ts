@@ -13,9 +13,41 @@ class CreateCheckoutController extends BaseController {
             return new Response(JSON.stringify({ error: "Method not allowed" }), { status: 405 });
         }
 
+        // Validar Authorization header
+        const authHeader = req.headers.get("Authorization");
+        if (!authHeader?.startsWith("Bearer ")) {
+            return new Response(JSON.stringify({ error: "Unauthorized - No token provided" }), { status: 401 });
+        }
+
+        const token = authHeader.replace("Bearer ", "");
+
+        // Verificar token com Supabase Auth
+        const SUPABASE_URL = process.env.SUPABASE_URL || "https://nmxfknwkhnengqqjtwru.supabase.co";
+        const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5teGZrbndraG5lbmdxcWp0d3J1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI2NTUyMjgsImV4cCI6MjA1ODIzMTIyOH0.3I_qClajzP-s1j_GF2WRY7ZkVSWC4fcLgKMH8Ut-TbA";
+
+        const authResponse = await fetch(`${SUPABASE_URL}/auth/v1/user`, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'apikey': SUPABASE_ANON_KEY
+            }
+        });
+
+        if (!authResponse.ok) {
+            console.error("[CreateCheckout] Invalid token:", authResponse.status);
+            return new Response(JSON.stringify({ error: "Unauthorized - Invalid token" }), { status: 401 });
+        }
+
+        const userData = await authResponse.json();
+        const verifiedUserId = userData.id;
+
+        console.log("[CreateCheckout] Authenticated user:", verifiedUserId);
+
         try {
             const body = await req.json();
-            const { planId, userId, amount, name, email, intent } = body;
+            const { planId, amount, name, email, intent } = body;
+
+            // Usar userId verificado do token, não do corpo da requisição
+            const userId = verifiedUserId;
 
             // 1. Get or Create Workspace for user
             let { data: workspace, error: wsError } = await (supabaseAdmin as any).from("workspaces")
