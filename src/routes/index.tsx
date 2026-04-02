@@ -29,6 +29,7 @@ import Accessibility from "@/pages/Accessibility";
 import WhatsAppDashboard from "@/pages/WhatsAppDashboard";
 import Palestra from "@/pages/Palestra";
 import PalestraSucesso from "@/pages/PalestraSucesso";
+import PalestraMateriais from "@/pages/PalestraMateriais";
 import LecturesAdmin from "@/pages/LecturesAdmin";
 import EventLeadsAdmin from "@/pages/EventLeadsAdmin";
 import LumiaSuccess from "@/pages/LumiaSuccess";
@@ -259,6 +260,10 @@ export const router = createBrowserRouter([
       {
         path: "palestra/sucesso",
         element: <PalestraSucesso />,
+      },
+      {
+        path: "palestra/materiais",
+        element: <PalestraMateriais />,
       },
       {
         path: "admin-lectures",

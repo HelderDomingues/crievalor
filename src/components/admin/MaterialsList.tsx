@@ -30,8 +30,8 @@ interface MaterialsListProps {
 
 const SYSTEM_PRODUCTS = [
   { id: 'geral', name: 'Geral' },
-  { id: 'lumia', name: 'Lumia' },
-  { id: 'oficina_lideres', name: 'Oficina' },
+  { id: 'lumia', name: 'Sistema Lumia' },
+  { id: 'oficina_lideres', name: 'Oficina de Líderes' },
 ];
 
 const MaterialsList: React.FC<MaterialsListProps> = ({ materials, onDelete, onEdit, isLoading }) => {
@@ -51,8 +51,9 @@ const MaterialsList: React.FC<MaterialsListProps> = ({ materials, onDelete, onEd
 
   const allTabs = [
     { id: 'all', name: 'Todos' },
-    ...SYSTEM_PRODUCTS,
-    ...dynamicProducts.filter(dp => !SYSTEM_PRODUCTS.some(sp => sp.id === dp.slug)).map(dp => ({ id: dp.slug, name: dp.name }))
+    // Keep system products ONLY if no dynamic product shares the exact same name
+    ...SYSTEM_PRODUCTS.filter(sp => !dynamicProducts.some(dp => dp.name.trim().toLowerCase() === sp.name.trim().toLowerCase())),
+    ...dynamicProducts.map(dp => ({ id: dp.slug, name: dp.name }))
   ];
 
   const getCategoryIcon = (category: string) => {

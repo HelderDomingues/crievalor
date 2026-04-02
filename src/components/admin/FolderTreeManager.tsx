@@ -198,10 +198,9 @@ export const FolderTreeManager = ({ materials, onEditMaterial, onDeleteMaterial 
     });
 
     const allAvailableProducts = [
-        ...SYSTEM_PRODUCTS,
-        ...dynamicProducts
-            .filter(dp => !SYSTEM_PRODUCTS.some(sp => sp.id === dp.slug))
-            .map(dp => ({ id: dp.slug, name: dp.name }))
+        // Keep system products ONLY if no dynamic product shares the exact same name
+        ...SYSTEM_PRODUCTS.filter(sp => !dynamicProducts.some(dp => dp.name.trim().toLowerCase() === sp.name.trim().toLowerCase())),
+        ...dynamicProducts.map(dp => ({ id: dp.slug, name: dp.name }))
     ];
 
     const handleOpenCreateDialog = (parentId?: string) => {
