@@ -68,9 +68,9 @@ export const SISTEMA_LUMIA_PRICING = {
 
 export const OFICINA_LIDERES_PRICING = {
     name: "Oficina de Líderes",
-    price: 6990.00,
-    priceFormatted: "R$ 6.990,00",
-    installments: "10x de R$ 699,00",
+    price: 9990.00,
+    priceFormatted: "R$ 9.990,00",
+    installments: "10x de R$ 999,00",
     description: "Programa de educação corporativa com 4 módulos (Gestão Geral, RH, Financeiro, Marketing/Comercial), 10 aulas por módulo. Metodologia: 70% prática + 20% troca social + 10% teoria."
 } as const;
 

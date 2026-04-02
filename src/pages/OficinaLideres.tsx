@@ -35,7 +35,7 @@ const OficinaLideres = () => {
     <div className="min-h-screen flex flex-col">
       <Helmet>
         <title>Como Desenvolver Líderes Estratégicos em 10 Meses? | Oficina de Líderes - Crie Valor</title>
-        <meta name="description" content="Programa completo de desenvolvimento de liderança para o Baixo Vale do Itajaí/SC. 10 meses, híbrido (presencial + online). R$ 6.990 (10x R$ 699). Treinamentos práticos com 25+ anos de experiência. Fundadores: Helder Domingues e Paulo Gaudioso." />
+        <meta name="description" content="Programa completo de desenvolvimento de liderança para o Baixo Vale do Itajaí/SC. 10 meses, híbrido (presencial + online). R$ 9.990 (10x R$ 999). Treinamentos práticos com 25+ anos de experiência. Fundadores: Helder Domingues e Paulo Gaudioso." />
         <meta name="keywords" content="oficina de líderes, formação executiva navegantes, curso liderança baixo vale itajaí, desenvolvimento gestores sc, treinamento líderes santa catarina, capacitação empresarial navegantes" />
         <link rel="canonical" href="https://crievalor.com.br/oficina-de-lideres" />
         <meta property="og:title" content="Oficina de Líderes - Formação Executiva Presencial" />
@@ -116,7 +116,7 @@ const OficinaLideres = () => {
                 {/* Answer Capsule */}
                 <div className="mb-6 p-6 bg-primary/5 border-l-4 border-primary rounded-r-lg">
                   <p className="text-lg leading-relaxed">
-                    A <strong>Oficina de Líderes</strong> é um programa completo de desenvolvimento de competências de liderança voltado para profissionais e empresários do <strong>Baixo Vale do Itajaí/SC</strong>. <strong>10 meses</strong>, híbrido (presencial + online). <strong>R$ 6.990</strong> (10x R$ 699). Métodos práticos com <strong>25+ anos de experiência</strong>.
+                    A <strong>Oficina de Líderes</strong> é um programa completo de desenvolvimento de competências de liderança voltado para profissionais e empresários do <strong>Baixo Vale do Itajaí/SC</strong>. <strong>10 meses</strong>, híbrido (presencial + online). <strong>R$ 9.990</strong> (10x R$ 999). Métodos práticos com <strong>25+ anos de experiência</strong>.
                   </p>
                 </div>
 
