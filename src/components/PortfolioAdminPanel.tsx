@@ -251,24 +251,27 @@ const PortfolioAdmin = () => {
       };
 
       if (selectedProject) {
-        if (selectedProject.coverImage !== formData.coverImage) {
-          try {
-            await deletePortfolioImage(selectedProject.coverImage);
-          } catch (error) {
-            console.error('Error deleting old cover image:', error);
-          }
-        }
-        
+        // Integridade: primeiro grava no banco; só depois remove do storage as imagens que saíram do projeto.
+        // Se o banco recusar (RLS/erro), nenhuma imagem é apagada.
         const oldGallery = selectedProject.gallery || [];
         const newGallery = formData.gallery || [];
-        const removedImages = oldGallery.filter(img => !newGallery.includes(img));
-        
-        await Promise.all(removedImages.map(img => deletePortfolioImage(img)));
+        const imagesToRemove = [
+          ...(selectedProject.coverImage !== formData.coverImage ? [selectedProject.coverImage] : []),
+          ...oldGallery.filter(img => !newGallery.includes(img)),
+        ].filter(img => img && img !== formData.coverImage && !newGallery.includes(img));
 
         const updatedProject = await updateProject({
           ...selectedProject,
           ...projectWithTags
         } as PortfolioProject);
+
+        await Promise.all(imagesToRemove.map(async img => {
+          try {
+            await deletePortfolioImage(img);
+          } catch (error) {
+            console.error('Error deleting old image (registro já salvo):', error);
+          }
+        }));
         
         setProjects(prevProjects => 
           prevProjects.map(p => p.id === updatedProject.id ? updatedProject : p)
@@ -306,13 +309,18 @@ const PortfolioAdmin = () => {
     try {
       setIsDeleting(true);
       
-      await deletePortfolioImage(selectedProject.coverImage);
-      
-      if (selectedProject.gallery?.length) {
-        await Promise.all(selectedProject.gallery.map(img => deletePortfolioImage(img)));
-      }
-      
+      // Integridade: exclui primeiro o registro no banco (lança erro se RLS bloquear);
+      // só depois remove as imagens do storage, sem derrubar a exclusão se alguma falhar.
       await deleteProject(selectedProject.id);
+
+      const imagesToRemove = [selectedProject.coverImage, ...(selectedProject.gallery || [])].filter(Boolean);
+      await Promise.all(imagesToRemove.map(async img => {
+        try {
+          await deletePortfolioImage(img);
+        } catch (error) {
+          console.error('Error deleting image (registro já excluído):', error);
+        }
+      }));
       setProjects(prevProjects => prevProjects.filter(p => p.id !== selectedProject.id));
       
       toast({

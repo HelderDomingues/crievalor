@@ -133,7 +133,9 @@ const PortfolioGallery = ({ projects }: PortfolioGalleryProps) => {
             </CardHeader>
             <CardFooter className="p-4 pt-0 flex justify-between items-center">
               <span className="text-sm text-muted-foreground">
-                {new Date(project.date).toLocaleDateString('pt-BR', { year: 'numeric', month: 'short' })}
+                {project.date
+                  ? new Date(project.date + "T00:00:00").toLocaleDateString('pt-BR', { year: 'numeric', month: 'short' })
+                  : ""}
               </span>
               <Button variant="outline" size="sm" onClick={() => handleSelectProject(project)}>
                 Ver detalhes
