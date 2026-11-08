@@ -10,7 +10,32 @@ export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "12.2.3 (519615d)"
+    PostgrestVersion: "12.2.3"
+  }
+  graphql_public: {
+    Tables: {
+      [_ in never]: never
+    }
+    Views: {
+      [_ in never]: never
+    }
+    Functions: {
+      graphql: {
+        Args: {
+          extensions?: Json
+          operationName?: string
+          query?: string
+          variables?: Json
+        }
+        Returns: Json
+      }
+    }
+    Enums: {
+      [_ in never]: never
+    }
+    CompositeTypes: {
+      [_ in never]: never
+    }
   }
   public: {
     Tables: {
@@ -71,6 +96,30 @@ export type Database = {
           updated_at?: string | null
           user_id?: string | null
           website?: string | null
+        }
+        Relationships: []
+      }
+      categories: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          name: string
+          slug: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name: string
+          slug: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
+          slug?: string
         }
         Relationships: []
       }
@@ -373,6 +422,57 @@ export type Database = {
           },
         ]
       }
+      material_folders: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          id: string
+          name: string
+          order_number: number | null
+          parent_id: string | null
+          product_id: string | null
+          product_types: string[] | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          name: string
+          order_number?: number | null
+          parent_id?: string | null
+          product_id?: string | null
+          product_types?: string[] | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          name?: string
+          order_number?: number | null
+          parent_id?: string | null
+          product_id?: string | null
+          product_types?: string[] | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "material_folders_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "material_folders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "material_folders_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       materials: {
         Row: {
           access_count: number | null
@@ -380,8 +480,11 @@ export type Database = {
           created_at: string | null
           description: string
           file_url: string
+          folder_id: string | null
           id: string
           plan_level: string
+          product_id: string | null
+          product_types: string[] | null
           thumbnail_url: string | null
           title: string
           type: string
@@ -393,8 +496,11 @@ export type Database = {
           created_at?: string | null
           description: string
           file_url: string
+          folder_id?: string | null
           id?: string
           plan_level: string
+          product_id?: string | null
+          product_types?: string[] | null
           thumbnail_url?: string | null
           title: string
           type?: string
@@ -406,14 +512,73 @@ export type Database = {
           created_at?: string | null
           description?: string
           file_url?: string
+          folder_id?: string | null
           id?: string
           plan_level?: string
+          product_id?: string | null
+          product_types?: string[] | null
           thumbnail_url?: string | null
           title?: string
           type?: string
           updated_at?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "materials_folder_id_fkey"
+            columns: ["folder_id"]
+            isOneToOne: false
+            referencedRelation: "material_folders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "materials_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      netcred_payments: {
+        Row: {
+          amount: number
+          created_at: string | null
+          external_id: string
+          id: string
+          payload: Json | null
+          payment_method: string | null
+          status: string
+          subscription_id: string | null
+        }
+        Insert: {
+          amount: number
+          created_at?: string | null
+          external_id: string
+          id?: string
+          payload?: Json | null
+          payment_method?: string | null
+          status: string
+          subscription_id?: string | null
+        }
+        Update: {
+          amount?: number
+          created_at?: string | null
+          external_id?: string
+          id?: string
+          payload?: Json | null
+          payment_method?: string | null
+          status?: string
+          subscription_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "netcred_payments_subscription_id_fkey"
+            columns: ["subscription_id"]
+            isOneToOne: false
+            referencedRelation: "subscriptions"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       onboarding_content: {
         Row: {
@@ -448,6 +613,221 @@ export type Database = {
         }
         Relationships: []
       }
+      portfolio_projects: {
+        Row: {
+          category: string
+          client: string | null
+          cover_image: string
+          created_at: string
+          description: string
+          gallery: string[]
+          id: string
+          project_date: string | null
+          project_url: string | null
+          sort_order: number
+          tags: string[]
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          category?: string
+          client?: string | null
+          cover_image: string
+          created_at?: string
+          description?: string
+          gallery?: string[]
+          id?: string
+          project_date?: string | null
+          project_url?: string | null
+          sort_order?: number
+          tags?: string[]
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          client?: string | null
+          cover_image?: string
+          created_at?: string
+          description?: string
+          gallery?: string[]
+          id?: string
+          project_date?: string | null
+          project_url?: string | null
+          sort_order?: number
+          tags?: string[]
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      post_categories: {
+        Row: {
+          category_id: string
+          post_id: string
+        }
+        Insert: {
+          category_id: string
+          post_id: string
+        }
+        Update: {
+          category_id?: string
+          post_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "post_categories_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "post_categories_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      posts: {
+        Row: {
+          author_id: string | null
+          content: string
+          cover_image_url: string | null
+          created_at: string
+          display_author_id: string | null
+          excerpt: string | null
+          featured: boolean
+          id: string
+          published: boolean
+          published_at: string | null
+          slug: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          author_id?: string | null
+          content: string
+          cover_image_url?: string | null
+          created_at?: string
+          display_author_id?: string | null
+          excerpt?: string | null
+          featured?: boolean
+          id?: string
+          published?: boolean
+          published_at?: string | null
+          slug: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          author_id?: string | null
+          content?: string
+          cover_image_url?: string | null
+          created_at?: string
+          display_author_id?: string | null
+          excerpt?: string | null
+          featured?: boolean
+          id?: string
+          published?: boolean
+          published_at?: string | null
+          slug?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "posts_author_id_fkey"
+            columns: ["author_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "posts_display_author_id_fkey"
+            columns: ["display_author_id"]
+            isOneToOne: false
+            referencedRelation: "authors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      product_resources: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          product_id: string
+          resource_id: string | null
+          resource_path: string | null
+          resource_type: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          product_id: string
+          resource_id?: string | null
+          resource_path?: string | null
+          resource_type: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          product_id?: string
+          resource_id?: string | null
+          resource_path?: string | null
+          resource_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_resources_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      products: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          is_active: boolean
+          name: string
+          price: number | null
+          slug: string
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          name: string
+          price?: number | null
+          slug: string
+          type: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          name?: string
+          price?: number | null
+          slug?: string
+          type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -457,11 +837,13 @@ export type Database = {
           cpf: string | null
           email: string | null
           full_name: string | null
-          has_asaas_customer: boolean | null
           id: string
           phone: string | null
           role: string | null
+          sio_mar_synced: boolean
+          sio_mar_synced_at: string | null
           social_media: Json | null
+          subscription_status: string | null
           updated_at: string | null
           username: string | null
           website: string | null
@@ -474,11 +856,13 @@ export type Database = {
           cpf?: string | null
           email?: string | null
           full_name?: string | null
-          has_asaas_customer?: boolean | null
           id: string
           phone?: string | null
           role?: string | null
+          sio_mar_synced?: boolean
+          sio_mar_synced_at?: string | null
           social_media?: Json | null
+          subscription_status?: string | null
           updated_at?: string | null
           username?: string | null
           website?: string | null
@@ -491,11 +875,13 @@ export type Database = {
           cpf?: string | null
           email?: string | null
           full_name?: string | null
-          has_asaas_customer?: boolean | null
           id?: string
           phone?: string | null
           role?: string | null
+          sio_mar_synced?: boolean
+          sio_mar_synced_at?: string | null
           social_media?: Json | null
+          subscription_status?: string | null
           updated_at?: string | null
           username?: string | null
           website?: string | null
@@ -899,11 +1285,26 @@ export type Database = {
         }
         Relationships: []
       }
+      storage_buckets_metadata: {
+        Row: {
+          bucket_name: string
+          created_at: string | null
+          id: string
+        }
+        Insert: {
+          bucket_name: string
+          created_at?: string | null
+          id?: string
+        }
+        Update: {
+          bucket_name?: string
+          created_at?: string | null
+          id?: string
+        }
+        Relationships: []
+      }
       subscriptions: {
         Row: {
-          asaas_customer_id: string | null
-          asaas_payment_link: string | null
-          asaas_subscription_id: string | null
           contract_accepted: boolean | null
           contract_accepted_at: string | null
           created_at: string
@@ -911,18 +1312,18 @@ export type Database = {
           external_reference: string | null
           id: string
           installments: number | null
+          netcred_id: string | null
           payment_details: Json | null
           payment_id: string | null
           payment_status: string | null
           plan_id: string
           status: string
+          trial_ends_at: string | null
           updated_at: string
           user_id: string
+          workspace_id: string | null
         }
         Insert: {
-          asaas_customer_id?: string | null
-          asaas_payment_link?: string | null
-          asaas_subscription_id?: string | null
           contract_accepted?: boolean | null
           contract_accepted_at?: string | null
           created_at?: string
@@ -930,18 +1331,18 @@ export type Database = {
           external_reference?: string | null
           id?: string
           installments?: number | null
+          netcred_id?: string | null
           payment_details?: Json | null
           payment_id?: string | null
           payment_status?: string | null
           plan_id: string
           status: string
+          trial_ends_at?: string | null
           updated_at?: string
           user_id: string
+          workspace_id?: string | null
         }
         Update: {
-          asaas_customer_id?: string | null
-          asaas_payment_link?: string | null
-          asaas_subscription_id?: string | null
           contract_accepted?: boolean | null
           contract_accepted_at?: string | null
           created_at?: string
@@ -949,13 +1350,51 @@ export type Database = {
           external_reference?: string | null
           id?: string
           installments?: number | null
+          netcred_id?: string | null
           payment_details?: Json | null
           payment_id?: string | null
           payment_status?: string | null
           plan_id?: string
           status?: string
+          trial_ends_at?: string | null
           updated_at?: string
           user_id?: string
+          workspace_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subscriptions_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      system_installation_status: {
+        Row: {
+          component: string
+          created_at: string | null
+          id: number
+          message: string | null
+          status: string
+          updated_at: string | null
+        }
+        Insert: {
+          component: string
+          created_at?: string | null
+          id?: number
+          message?: string | null
+          status: string
+          updated_at?: string | null
+        }
+        Update: {
+          component?: string
+          created_at?: string | null
+          id?: number
+          message?: string | null
+          status?: string
+          updated_at?: string | null
         }
         Relationships: []
       }
@@ -993,6 +1432,7 @@ export type Database = {
           created_at: string | null
           id: string
           name: string
+          photo_path: string | null
           role: string
           text: string
           updated_at: string | null
@@ -1003,6 +1443,7 @@ export type Database = {
           created_at?: string | null
           id?: string
           name: string
+          photo_path?: string | null
           role: string
           text: string
           updated_at?: string | null
@@ -1013,11 +1454,59 @@ export type Database = {
           created_at?: string | null
           id?: string
           name?: string
+          photo_path?: string | null
           role?: string
           text?: string
           updated_at?: string | null
         }
         Relationships: []
+      }
+      user_products: {
+        Row: {
+          access_expires_at: string | null
+          access_granted_at: string
+          created_at: string
+          granted_by: string | null
+          id: string
+          notes: string | null
+          product_id: string
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          access_expires_at?: string | null
+          access_granted_at?: string
+          created_at?: string
+          granted_by?: string | null
+          id?: string
+          notes?: string | null
+          product_id: string
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          access_expires_at?: string | null
+          access_granted_at?: string
+          created_at?: string
+          granted_by?: string | null
+          id?: string
+          notes?: string | null
+          product_id?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_products_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_roles: {
         Row: {
@@ -1135,6 +1624,78 @@ export type Database = {
           },
         ]
       }
+      workspace_members: {
+        Row: {
+          created_at: string | null
+          id: string
+          role: string
+          updated_at: string | null
+          user_id: string
+          workspace_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          role?: string
+          updated_at?: string | null
+          user_id: string
+          workspace_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          role?: string
+          updated_at?: string | null
+          user_id?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "workspace_members_user_id_fkey_profiles"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "workspace_members_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      workspaces: {
+        Row: {
+          created_at: string | null
+          id: string
+          name: string
+          owner_id: string
+          plan_level: string | null
+          seat_limit: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          name: string
+          owner_id: string
+          plan_level?: string | null
+          seat_limit?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          name?: string
+          owner_id?: string
+          plan_level?: string | null
+          seat_limit?: number | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       quiz_responses_flat: {
@@ -1163,6 +1724,31 @@ export type Database = {
         }
         Relationships: []
       }
+      user_active_products: {
+        Row: {
+          access_expires_at: string | null
+          access_granted_at: string | null
+          created_at: string | null
+          description: string | null
+          has_access: boolean | null
+          id: string | null
+          name: string | null
+          product_id: string | null
+          slug: string | null
+          status: string | null
+          type: string | null
+          user_id: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_products_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
       bootstrap_admin_role: {
@@ -1171,10 +1757,17 @@ export type Database = {
       }
       check_and_migrate_data: { Args: never; Returns: Json }
       check_if_user_is_admin: { Args: { user_id: string }; Returns: boolean }
+      check_is_admin: { Args: never; Returns: boolean }
       complete_quiz_submission: {
         Args: { p_user_id: string }
         Returns: boolean
       }
+      create_bucket_if_not_exists:
+        | { Args: { bucket_name: string }; Returns: boolean }
+        | {
+            Args: { bucket_name: string; is_public?: boolean }
+            Returns: boolean
+          }
       create_table_if_not_exists: {
         Args: { table_definition: string; table_name: string }
         Returns: undefined
@@ -1183,10 +1776,22 @@ export type Database = {
         | { Args: never; Returns: undefined }
         | { Args: { sql_query: string }; Returns: undefined }
       get_system_setting: { Args: { setting_key: string }; Returns: string }
+      get_user_accessible_products: { Args: never; Returns: string[] }
       get_user_emails: {
         Args: never
         Returns: {
           email: string
+        }[]
+      }
+      get_user_products: {
+        Args: { p_user_id: string }
+        Returns: {
+          access_expires_at: string
+          has_access: boolean
+          product_id: string
+          product_name: string
+          product_slug: string
+          product_type: string
         }[]
       }
       import_user_from_asaas: {
@@ -1206,6 +1811,8 @@ export type Database = {
       }
       is_admin: { Args: never; Returns: boolean }
       is_quiz_admin: { Args: { user_email: string }; Returns: boolean }
+      is_workspace_member: { Args: { ws_id: string }; Returns: boolean }
+      is_workspace_owner: { Args: { ws_id: string }; Returns: boolean }
       link_user_to_asaas_customer: {
         Args: { asaas_email: string; user_email: string }
         Returns: boolean
@@ -1213,8 +1820,31 @@ export type Database = {
       process_quiz_completion:
         | { Args: never; Returns: undefined }
         | { Args: { p_user_id: string }; Returns: undefined }
+      setup_storage_bucket_policies: {
+        Args: { bucket_name: string }
+        Returns: boolean
+      }
       setup_subscriptions_rls_policies: { Args: never; Returns: undefined }
       sync_existing_users: { Args: never; Returns: number }
+      track_installation_status:
+        | {
+            Args: { component: string; message?: string; status: string }
+            Returns: undefined
+          }
+        | { Args: { status?: string }; Returns: boolean }
+      user_can_access_resource: {
+        Args: {
+          p_resource_id?: string
+          p_resource_path?: string
+          p_resource_type: string
+          p_user_id: string
+        }
+        Returns: boolean
+      }
+      user_has_product_access: {
+        Args: { p_product_slug: string; p_user_id: string }
+        Returns: boolean
+      }
     }
     Enums: {
       [_ in never]: never
@@ -1233,12 +1863,12 @@ export type Tables<
   DefaultSchemaTableNameOrOptions extends
     | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
         DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -1262,11 +1892,11 @@ export type TablesInsert<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -1287,11 +1917,11 @@ export type TablesUpdate<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -1312,11 +1942,11 @@ export type Enums<
   DefaultSchemaEnumNameOrOptions extends
     | keyof DefaultSchema["Enums"]
     | { schema: keyof DatabaseWithoutInternals },
-  EnumName extends DefaultSchemaEnumNameOrOptions extends {
+  EnumName extends (DefaultSchemaEnumNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaEnumNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -1329,11 +1959,11 @@ export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
     | keyof DefaultSchema["CompositeTypes"]
     | { schema: keyof DatabaseWithoutInternals },
-  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
+  CompositeTypeName extends (PublicCompositeTypeNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
-    : never = never,
+    : never) = never,
 > = PublicCompositeTypeNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -1343,6 +1973,9 @@ export type CompositeTypes<
     : never
 
 export const Constants = {
+  graphql_public: {
+    Enums: {},
+  },
   public: {
     Enums: {},
   },
