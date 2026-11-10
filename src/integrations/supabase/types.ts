@@ -10,7 +10,7 @@ export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "12.2.3"
+    PostgrestVersion: "14.18"
   }
   graphql_public: {
     Tables: {
@@ -1772,9 +1772,7 @@ export type Database = {
         Args: { table_definition: string; table_name: string }
         Returns: undefined
       }
-      execute_sql:
-        | { Args: never; Returns: undefined }
-        | { Args: { sql_query: string }; Returns: undefined }
+      execute_sql: { Args: { sql_query: string }; Returns: undefined }
       get_system_setting: { Args: { setting_key: string }; Returns: string }
       get_user_accessible_products: { Args: never; Returns: string[] }
       get_user_emails: {
@@ -1794,17 +1792,6 @@ export type Database = {
           product_type: string
         }[]
       }
-      import_user_from_asaas: {
-        Args: {
-          p_asaas_id: string
-          p_cpf_cnpj: string
-          p_email: string
-          p_nome: string
-          p_password?: string
-          p_telefone: string
-        }
-        Returns: string
-      }
       increment_material_access_count: {
         Args: { material_id: string }
         Returns: undefined
@@ -1813,10 +1800,6 @@ export type Database = {
       is_quiz_admin: { Args: { user_email: string }; Returns: boolean }
       is_workspace_member: { Args: { ws_id: string }; Returns: boolean }
       is_workspace_owner: { Args: { ws_id: string }; Returns: boolean }
-      link_user_to_asaas_customer: {
-        Args: { asaas_email: string; user_email: string }
-        Returns: boolean
-      }
       process_quiz_completion:
         | { Args: never; Returns: undefined }
         | { Args: { p_user_id: string }; Returns: undefined }

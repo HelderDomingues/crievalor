@@ -85,9 +85,6 @@ export interface Subscription {
   plan_id: string;
   status: string;
   current_period_end?: string;
-  asaas_customer_id?: string;
-  asaas_subscription_id?: string;
-  asaas_payment_link?: string;
   payment_id?: string;
   payment_status?: string;
   payment_details?: PaymentDetails;

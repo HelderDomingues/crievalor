@@ -73,7 +73,7 @@ export function redirectToPayment(planId: string, paymentType: PaymentType = 'in
     if (isCorporatePlan(planId)) {
       window.open(paymentLink, '_blank');
     } else {
-      // Para outros planos, redirecionamos para o link de pagamento Asaas
+      // Para outros planos, redirecionamos para o link de pagamento NetCred
       window.location.href = paymentLink;
     }
   }
