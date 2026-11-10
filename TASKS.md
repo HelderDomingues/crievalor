@@ -382,7 +382,7 @@
 ## 🔒 ÁREAS PROTEGIDAS (NÃO MODIFICAR)
 
 **Funcionalidades Críticas:**
-- Sistema de pagamentos Asaas
+- Sistema de pagamentos NetCred (checkout, webhook e emails)
 - Checkout e fluxo de compra
 - Autenticação de usuários
 - Edge Functions de webhook

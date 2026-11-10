@@ -71,7 +71,7 @@ export const checkoutTestUtils = {
     }
     else if (scenario === 'recovery') {
       // Simulação de recuperação de checkout
-      const mockPaymentLink = 'https://sandbox.asaas.com/c/123456789';
+      const mockPaymentLink = 'https://checkout.example.test/c/123456789';
       localStorage.setItem('lastPaymentUrl', mockPaymentLink);
       localStorage.setItem('checkoutTimestamp', String(Date.now() - 5 * 60 * 1000)); // 5 minutos atrás
       
