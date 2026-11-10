@@ -2,15 +2,11 @@
 # This file controls the Supabase Edge Functions configuration.
 project_id = "nmxfknwkhnengqqjtwru"
 
-[functions.asaas-webhook]
-verify_jwt = false
-
 [functions.setup-rls]
-verify_jwt = false
+verify_jwt = true
 
 [functions.setup-storage-policies]
-verify_jwt = false
+verify_jwt = true
 
 [functions.diagnose-system]
-verify_jwt = false
-
+verify_jwt = true

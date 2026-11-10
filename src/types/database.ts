@@ -118,9 +118,6 @@ export type ExtendedDatabaseTables = OriginalDatabase & {
         Row: {
           id: string;
           user_id: string;
-          asaas_customer_id: string | null;
-          asaas_subscription_id: string | null;
-          asaas_payment_link: string | null;
           plan_id: string;
           status: string;
           installments: number;
@@ -137,9 +134,6 @@ export type ExtendedDatabaseTables = OriginalDatabase & {
         Insert: {
           id?: string;
           user_id: string;
-          asaas_customer_id?: string | null;
-          asaas_subscription_id?: string | null;
-          asaas_payment_link?: string | null;
           plan_id: string;
           status: string;
           installments?: number;
@@ -156,9 +150,6 @@ export type ExtendedDatabaseTables = OriginalDatabase & {
         Update: {
           id?: string;
           user_id?: string;
-          asaas_customer_id?: string | null;
-          asaas_subscription_id?: string | null;
-          asaas_payment_link?: string | null;
           plan_id?: string;
           status?: string;
           installments?: number;

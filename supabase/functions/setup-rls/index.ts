@@ -1,29 +1,22 @@
 
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.38.4";
+import { postCorsHeaders as corsHeaders } from "../_shared/cors.ts";
+import { requireAdmin } from "../_shared/require-admin.ts";
+import type { SupabaseClient } from "@supabase/supabase-js";
 
-// Configurações do Supabase
-const supabaseUrl = Deno.env.get("SUPABASE_URL") || "";
-const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
-
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-  "Access-Control-Allow-Methods": "POST, GET, OPTIONS"
-};
-
-serve(async (req) => {
-  console.log("Setup RLS function invoked");
-  
-  // Lidar com requisições OPTIONS (CORS)
+Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders, status: 204 });
   }
 
+  if (req.method !== "POST") {
+    return new Response(null, { status: 405, headers: corsHeaders });
+  }
+
+  const access = await requireAdmin(req);
+  if (access instanceof Response) return access;
+
   try {
-    // Inicializar cliente Supabase com chave de serviço para ter permissões de admin
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
-    
+    const { client: supabase } = access;
     console.log("Iniciando configuração de políticas RLS");
     
     // Registrar início da configuração no log de instalação
@@ -56,11 +49,11 @@ serve(async (req) => {
       }
     );
   } catch (error) {
-    console.error(`Erro: ${error.message}`);
+    console.error("Erro ao configurar políticas RLS:", error);
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ error: "Falha ao configurar políticas RLS" }),
       {
-        status: 400,
+        status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" }
       }
     );
@@ -68,7 +61,7 @@ serve(async (req) => {
 });
 
 // Função para configurar buckets e políticas
-async function configureBucketsAndPolicies(supabase) {
+async function configureBucketsAndPolicies(supabase: SupabaseClient) {
   const buckets = ['clientlogos', 'materials', 'portfolio', 'avatars'];
   
   for (const bucket of buckets) {
@@ -83,7 +76,7 @@ async function configureBucketsAndPolicies(supabase) {
       });
       
       // Criar bucket
-      const { data: bucketData, error: bucketError } = await supabase
+      const { error: bucketError } = await supabase
         .rpc("create_bucket_if_not_exists", {
           bucket_name: bucket,
           is_public: true
@@ -100,7 +93,7 @@ async function configureBucketsAndPolicies(supabase) {
       }
       
       // Configurar políticas
-      const { data: policyData, error: policyError } = await supabase
+      const { error: policyError } = await supabase
         .rpc("setup_storage_bucket_policies", {
           bucket_name: bucket
         });
@@ -125,7 +118,7 @@ async function configureBucketsAndPolicies(supabase) {
       await supabase.rpc("track_installation_status", {
         component: `setup_bucket_${bucket}`,
         status: "error",
-        message: `Exceção: ${error.message}`
+        message: `Exceção: ${error instanceof Error ? error.message : String(error)}`
       });
     }
   }

@@ -1,39 +1,32 @@
 
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.38.4";
+import { postCorsHeaders as corsHeaders } from "../_shared/cors.ts";
+import { requireAdmin } from "../_shared/require-admin.ts";
+import type { SupabaseClient } from "@supabase/supabase-js";
 
-// Configurações do Supabase
-const supabaseUrl = Deno.env.get("SUPABASE_URL") || "";
-const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
-
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-  "Access-Control-Allow-Methods": "POST, GET, OPTIONS"
-};
-
-serve(async (req) => {
-  console.log("Setup storage policies function loaded");
-
-  // Lidar com requisições OPTIONS (CORS)
+Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders, status: 204 });
   }
 
-  try {
-    // Inicializar cliente Supabase com chave de serviço para ter permissões de admin
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+  if (req.method !== "POST") {
+    return new Response(null, { status: 405, headers: corsHeaders });
+  }
 
-    let body = {};
-    try {
-      body = await req.json();
-    } catch (e) {
-      body = {};
-    }
+  const access = await requireAdmin(req);
+  if (access instanceof Response) return access;
+
+  try {
+    const { client: supabase } = access;
+
+    const body = await req.json().catch(() => ({})) as {
+      action?: string;
+      bucket_name?: string;
+      is_public?: boolean;
+    };
 
     const action = body.action || "setup_all";
     const bucketName = body.bucket_name;
-    const isPublic = body.is_public || true;
+    const isPublic = body.is_public ?? true;
 
     let result = {};
 
@@ -57,11 +50,11 @@ serve(async (req) => {
       }
     );
   } catch (error) {
-    console.error(`Erro ao configurar políticas: ${error.message}`);
+    console.error("Erro ao configurar políticas de armazenamento:", error);
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ error: "Falha ao configurar políticas de armazenamento" }),
       {
-        status: 400,
+        status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" }
       }
     );
@@ -69,7 +62,7 @@ serve(async (req) => {
 });
 
 // Função para criar um bucket se não existir
-async function createBucket(supabase, bucketName, isPublic = true) {
+async function createBucket(supabase: SupabaseClient, bucketName: string, isPublic = true): Promise<Record<string, unknown>> {
   try {
     // Verificar se o bucket já existe
     const { data: existingBuckets, error: listError } = await supabase
@@ -118,14 +111,14 @@ async function createBucket(supabase, bucketName, isPublic = true) {
   } catch (error) {
     return {
       success: false,
-      message: `Exception creating bucket ${bucketName}: ${error.message}`,
+        message: `Exception creating bucket ${bucketName}: ${errorMessage(error)}`,
       error: error
     };
   }
 }
 
 // Função para configurar políticas de acesso a um bucket
-async function setupBucketPolicies(supabase, bucketName) {
+async function setupBucketPolicies(supabase: SupabaseClient, bucketName: string): Promise<Record<string, unknown>> {
   try {
     const { data, error } = await supabase.rpc('setup_storage_bucket_policies', {
       bucket_name: bucketName
@@ -147,16 +140,16 @@ async function setupBucketPolicies(supabase, bucketName) {
   } catch (error) {
     return {
       success: false,
-      message: `Exception setting up policies for bucket ${bucketName}: ${error.message}`,
+        message: `Exception setting up policies for bucket ${bucketName}: ${errorMessage(error)}`,
       error: error
     };
   }
 }
 
 // Função para configurar todos os buckets necessários
-async function setupAllBuckets(supabase) {
+async function setupAllBuckets(supabase: SupabaseClient): Promise<Record<string, unknown>> {
   const buckets = ['clientlogos', 'materials', 'portfolio', 'avatars', 'blog_images'];
-  const results = {};
+  const results: Record<string, unknown> = {};
 
   for (const bucket of buckets) {
     console.log(`Setting up ${bucket} bucket...`);
@@ -177,4 +170,8 @@ async function setupAllBuckets(supabase) {
     message: "Storage buckets and policies setup completed",
     results: results
   };
+}
+
+function errorMessage(error: unknown): string {
+  return error instanceof Error ? error.message : String(error);
 }
