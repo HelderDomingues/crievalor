@@ -173,17 +173,6 @@ const Index = () => {
         {/* Blog Preview - Conectando com o blog */}
         <BlogPreview />
 
-        {/* CTA após Blog Preview */}
-        <QuickCTA
-          title="Quer conteúdo estratégico exclusivo?"
-          description="Acesse materiais avançados e insights que só compartilhamos com nossa comunidade VIP."
-          ctaText="Acessar conteúdo exclusivo"
-          ctaUrl="/material-exclusivo"
-          variant="outline"
-          centerAlign
-          className="bg-secondary/30"
-        />
-
         {/* Testimonials Section */}
         <TestimonialsSection />
 
