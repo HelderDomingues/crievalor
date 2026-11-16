@@ -2,6 +2,7 @@ import React from "react";
 import { createBrowserRouter } from "react-router-dom";
 import Index from "@/pages/Index";
 import NotFound from "@/pages/NotFound";
+import Portfolio from "@/pages/Portfolio";
 import AdminSetup from "@/pages/AdminSetup";
 
 import PortfolioAdmin from "@/pages/PortfolioAdmin";
@@ -331,6 +332,10 @@ export const router = createBrowserRouter([
         ),
       },
       // Blog Routes
+      {
+        path: "portfolio",
+        element: <Portfolio />,
+      },
       {
         path: "blog",
         element: <BlogHome />,

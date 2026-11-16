@@ -60,6 +60,12 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://crievalor.com.br/portfolio</loc>
+    <lastmod>2026-11-16</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://crievalor.com.br/oficina-de-lideres</loc>
     <lastmod>2025-12-22</lastmod>
     <changefreq>monthly</changefreq>

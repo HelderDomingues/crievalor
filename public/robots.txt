@@ -38,6 +38,7 @@ Allow: /*.js
 Allow: /lumia               # Sistema LUMIA - Produto Principal
 Allow: /oficina-de-lideres  # Oficina de Líderes (Educação Corporativa)
 Allow: /mentorias           # Mentoria Executiva
+Allow: /portfolio           # Portfólio de Projetos
 
 # Conteúdo e Institucional
 Allow: /blog/               # Artigos e Insights de Gestão
