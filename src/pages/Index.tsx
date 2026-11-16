@@ -58,11 +58,6 @@ const Index = () => {
           "logo": "https://crievalor.com.br/uploads/d2f508b6-c101-4928-b7f7-161a378bb6e8.png",
           "description": "Primeiro Ecossistema de Inteligência Organizacional com IA do Brasil",
           "foundingDate": "2015-04",
-          "aggregateRating": {
-            "@type": "AggregateRating",
-            "ratingValue": 5.0,
-            "reviewCount": 10
-          },
           "founder": [
             {
               "@type": "Person",
