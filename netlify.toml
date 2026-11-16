@@ -21,6 +21,17 @@
   status = 301
   force = true
 
+# URLs mortas sem substituto: status 404 real (decisão 16/11/2026)
+[[redirects]]
+  from = "/mar"
+  to = "/404"
+  status = 404
+
+[[redirects]]
+  from = "/projetos-1"
+  to = "/404"
+  status = 404
+
 # SPA fallback (deve ser o último)
 [[redirects]]
   from = "/*"
