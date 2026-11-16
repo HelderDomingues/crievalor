@@ -17,9 +17,7 @@ import Contato from "@/pages/Contato";
 import Projetos from "@/pages/Projetos";
 import OficinaLideres from "@/pages/OficinaLideres";
 import Mentorias from "@/pages/Mentorias";
-import ComingSoon from "@/pages/ComingSoon";
 import Pricing from "@/pages/Pricing";
-import IdentidadeVisualOriginal from "@/pages/IdentidadeVisualOriginal";
 import PrivacyPolicy from "@/pages/PrivacyPolicy";
 import RefundPolicy from "@/pages/RefundPolicy";
 import TermsOfService from "@/pages/TermsOfService";
@@ -97,14 +95,6 @@ export const router = createBrowserRouter([
       {
         path: "lumia",
         element: <Ecosystem />,
-      },
-      {
-        path: "identidade-visual",
-        element: <ComingSoon />,
-      },
-      {
-        path: "identidade-visual-preview",
-        element: <IdentidadeVisualOriginal />,
       },
       {
         path: "politica-de-privacidade",

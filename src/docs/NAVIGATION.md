@@ -18,7 +18,6 @@ These routes are accessible to all users without authentication.
 | `/projetos` | `Projetos.tsx` | Custom projects showcase | Footer, Services Section |
 | `/oficina-de-lideres` | `OficinaLideres.tsx` | Leadership Workshop information | Footer, Services Section |
 | `/mentorias` | `Mentorias.tsx` | Mentoring services | Footer, Services Section |
-| `/identidade-visual` | `IdentidadeVisual.tsx` | Visual identity services | Footer, Services Section |
 
 ### Authentication Routes
 These routes handle user authentication and profile management.

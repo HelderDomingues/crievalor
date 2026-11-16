@@ -32,6 +32,16 @@
   to = "/404"
   status = 404
 
+[[redirects]]
+  from = "/identidade-visual"
+  to = "/404"
+  status = 404
+
+[[redirects]]
+  from = "/identidade-visual-preview"
+  to = "/404"
+  status = 404
+
 # SPA fallback (deve ser o último)
 [[redirects]]
   from = "/*"

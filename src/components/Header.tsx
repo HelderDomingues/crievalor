@@ -63,7 +63,6 @@ const Header = () => {
 
   const servicesItems = [
     { title: "Projetos Customizados", path: "/projetos" },
-    { title: "Identidades Visuais", path: "/identidade-visual" },
     { title: "Treinamentos", path: "/mentorias" },
   ];
 
