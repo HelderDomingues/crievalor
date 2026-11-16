@@ -85,9 +85,9 @@ const Portfolio = () => {
         />
         <meta property="og:url" content="https://crievalor.com.br/portfolio" />
         <meta property="og:type" content="website" />
-
-        <FAQSchema questions={faqItems} />
       </Helmet>
+
+      <FAQSchema questions={faqItems} />
 
       <Header />
 
