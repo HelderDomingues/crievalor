@@ -1,5 +1,6 @@
 
 import React, { useEffect } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { HeroJourney } from '@/components/ecosystem/HeroJourney';
 import { DigitalBenefits } from '@/components/ecosystem/DigitalBenefits';
 import { TestimonialsSection } from '@/components/blocks/testimonials-with-marquee';
@@ -23,6 +24,22 @@ const Ecosystem = () => {
 
     return (
         <div className="min-h-screen bg-[#010816] text-slate-200 selection:bg-violet-500/30">
+
+            <Helmet>
+                <title>LUMIA — Ecossistema de Inteligência Organizacional | Crie Valor</title>
+                <meta
+                    name="description"
+                    content="O primeiro Ecossistema de Inteligência Organizacional que transforma dados em insights e estratégia em execução. Pare de decidir no escuro."
+                />
+                <link rel="canonical" href="https://crievalor.com.br/lumia" />
+                <meta property="og:title" content="LUMIA — Ecossistema de Inteligência Organizacional | Crie Valor" />
+                <meta
+                    property="og:description"
+                    content="O primeiro Ecossistema de Inteligência Organizacional que transforma dados em insights e estratégia em execução. Pare de decidir no escuro."
+                />
+                <meta property="og:url" content="https://crievalor.com.br/lumia" />
+                <meta property="og:type" content="website" />
+            </Helmet>
 
             {/* 1. Hero (The Hook + Strategic Intelligence) */}
             <HeroJourney />
