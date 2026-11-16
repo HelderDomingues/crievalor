@@ -55,3 +55,4 @@ atalho de .agent 2
 
 # Agent skills vendidas (reinstaláveis via skills-lock.json)
 .agents/
+.firecrawl/

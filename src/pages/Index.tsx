@@ -77,20 +77,6 @@ const Index = () => {
               "alumniOf": { "@type": "EducationalOrganization", "name": "Universidade Católica Dom Bosco" },
               "knowsAbout": ["Gestão de Pessoas", "Coaching", "Desenvolvimento Organizacional"]
             }
-          ],
-          "review": [
-            {
-              "@type": "Review",
-              "author": { "@type": "Person", "name": "Jefferson Mareco" },
-              "reviewRating": { "@type": "Rating", "ratingValue": 5 },
-              "reviewBody": "Atendimento excelente, criatividade aliada com ética."
-            },
-            {
-              "@type": "Review",
-              "author": { "@type": "Person", "name": "Thiago Monteiro Yatros" },
-              "reviewRating": { "@type": "Rating", "ratingValue": 5 },
-              "reviewBody": "Excelente atendimento!"
-            }
           ]
         })}
       </script>

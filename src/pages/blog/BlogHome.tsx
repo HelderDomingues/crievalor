@@ -80,11 +80,11 @@ export default function BlogHome() {
                         {activeCategoryName ? `${activeCategoryName} | Blog Crie Valor` : "Blog Crie Valor | Insights sobre Negócios e Gestão"}
                     </title>
                     <meta name="description" content="Artigos, dicas e insights sobre gestão empresarial, liderança, marketing e vendas para impulsionar o seu negócio. Profissionalize sua empresa com a Crie Valor." />
-                    <link rel="canonical" href={`https://crievalor.com.br/blog${categorySlug ? `?category=${categorySlug}` : ""}`} />
+                    <link rel="canonical" href="https://crievalor.com.br/blog" />
 
                     {/* Open Graph / Facebook */}
                     <meta property="og:type" content="website" />
-                    <meta property="og:url" content={`https://crievalor.com.br/blog${categorySlug ? `?category=${categorySlug}` : ""}`} />
+                    <meta property="og:url" content="https://crievalor.com.br/blog" />
                     <meta property="og:title" content={activeCategoryName ? `${activeCategoryName} | Blog Crie Valor` : "Blog Crie Valor | Insights sobre Negócios e Gestão"} />
                     <meta property="og:description" content="Artigos, dicas e insights sobre gestão empresarial, liderança, marketing e vendas. Descubra como profissionalizar sua empresa." />
                     <meta property="og:image" content="https://crievalor.com.br/og-image.png" />

@@ -88,6 +88,10 @@ export default function BlogPost() {
     if (error || !post) {
         return (
             <div className="min-h-screen flex flex-col">
+                <Helmet>
+                    <title>Artigo não encontrado | Crie Valor</title>
+                    <meta name="robots" content="noindex" />
+                </Helmet>
                 <Header />
                 <main className="flex-grow pt-24 pb-20 flex items-center justify-center">
                     <div className="container mx-auto px-4 text-center">

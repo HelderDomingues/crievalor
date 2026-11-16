@@ -60,22 +60,6 @@ const Contato = () => {
           latitude: -26.8977,
           longitude: -48.6519
         }}
-        aggregateRating={{
-          ratingValue: 5.0,
-          reviewCount: 10
-        }}
-        reviews={[
-          {
-            author: "Jefferson Mareco",
-            reviewRating: 5,
-            reviewBody: "Atendimento excelente, criatividade aliada com ética."
-          },
-          {
-            author: "Thiago Monteiro Yatros",
-            reviewRating: 5,
-            reviewBody: "Excelente atendimento!"
-          }
-        ]}
       />
 
       <BreadcrumbSchema
